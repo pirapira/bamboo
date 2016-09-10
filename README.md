@@ -109,7 +109,8 @@ What would be difficult to implement?  Maybe not much: one word in
 the storage to keep track where we are in the program, and some
 dataflow analysis to decide which variable should live in the storage.
 The ABI should be the common one while the method names should be
-piped into the program in a nice syntax.
+piped into the program in a nice syntax (something like the pattern
+match in Erlang).
 
 ### Name
 
