@@ -112,6 +112,10 @@ The ABI should be the common one while the method names should be
 piped into the program in a nice syntax (something like the pattern
 match in Erlang).
 
+I'm thinking about using OCaml, but type-level lists in Haskell might
+be convenient for keeping track of the stack elements during EVM code
+generation.
+
 ### Name
 
 [Jaculus](https://en.wikipedia.org/wiki/Jaculus).
