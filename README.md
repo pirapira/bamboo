@@ -5,19 +5,13 @@
 Smart contracts should be written to achieve the least surprises.
 The code should reveal what can happen in which order, and the same
 ordering must be enforced mechanically.  This is not done in the usual
-way of writing smart contracts, where a smart contract is described by
+way of writing smart contracts, where a smart contract is described as
 several interface functions.
 
 In the following example, the names of functions suggest when these
 interface functions are supposed to be called, but this ordering can
-only be enforced by careful timestamp checking or a global
-state tracking.  To make my point clearer, I added the last function
-`notSureWhatThisDoes()`.  Whenever such a function exists the
-temporal order is ambiguous because an opaque function can be called
-at any moment by default.  A closer look is necessary for every
-interface function before a reader or the machine can be sure about
-the possible ordering of events.
-
+only be enforced by careful timestamp checking or global
+state tracking.
 ```
 contract CrowdFund {
 	function toBeCalledDuringFunding() {
@@ -34,6 +28,12 @@ contract CrowdFund {
 	}
 }
 ```
+To make my point clearer, I added the last function
+`notSureWhatThisDoes()`.  Whenever such a function exists the
+temporal order is ambiguous because an opaque function can be called
+at any moment by default.  A closer look is necessary for every
+interface function before a reader or the machine can enumerate
+the possible orderings of events.
 
 ## Solution
 
@@ -61,7 +61,8 @@ contract CrowdFund {
 	}
 }
 ```
-
+Here I used common syntax so that it's clear to people and the
+(not-yet implemented) machine what can happen in which order.
 Where has gone the `notSureWhatThisDoes()` function in the previous
 example?  It's not there because, well, I am not sure where it goes.
 The new style forces temporal organization of the code lines.
@@ -98,8 +99,8 @@ returned or a reentrancy has happened.
 
 ```
 sleep_after_calling(account, value, data) with reentrancy(_call) {
-   // what should happen when reentered
-   // fall through
+	// What should happen when reentered.  For instance
+	cancel_current_call();
 }
 ```
 
