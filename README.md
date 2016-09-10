@@ -2,16 +2,15 @@
 
 ## Problem
 
-Smart contracts should be written to achieve the least surprises.
+Smart contracts should reduce surprises.
 The code should reveal what can happen in which order, and the same
 ordering must be enforced mechanically.  This is not done in the usual
-way of writing smart contracts, where a smart contract is described as
+way of writing smart contracts where a smart contract is described as
 several interface functions.
 
-In the following example, the names of functions suggest when these
-interface functions are supposed to be called, but this ordering can
-only be enforced by careful timestamp checking or global
-state tracking.
+In the following example, the names of functions suggest the timing of
+the calls, but this ordering can only be enforced by careful timestamp
+checking or global state tracking in the body of the functions.
 ```
 contract CrowdFund {
 	function toBeCalledDuringFunding() {
@@ -109,3 +108,5 @@ sleep_after_calling(account, value, data) with reentrancy(_call) {
 What would be difficult to implement?  Maybe not much: one word in
 the storage to keep track where we are in the program, and some
 dataflow analysis to decide which variable should live in the storage.
+The ABI should be the common one while the method names should be
+piped into the program in a nice syntax.
