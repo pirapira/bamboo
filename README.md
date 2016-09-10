@@ -36,8 +36,7 @@ the possible orderings of events.
 
 ## Solution
 
-We can solve the problem because our programming language runs from
-top to bottom.
+The solution is a programming language that runs from top to bottom.
 
 ```
 contract CrowdFund {
