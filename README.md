@@ -29,7 +29,7 @@ contract CrowdFund {
 ```
 To make my point clearer, I added the last function
 `notSureWhatThisDoes()`.  Whenever such a function exists the
-temporal order is ambiguous. An opaque function can be called
+temporal order is ambiguous. An interface function can be called
 at any moment by default.  A closer look is necessary for every
 interface function before a reader or the machine can enumerate
 the possible orderings of events.
