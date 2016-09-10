@@ -110,3 +110,7 @@ the storage to keep track where we are in the program, and some
 dataflow analysis to decide which variable should live in the storage.
 The ABI should be the common one while the method names should be
 piped into the program in a nice syntax.
+
+### Name
+
+[Jaculus](https://en.wikipedia.org/wiki/Jaculus)
