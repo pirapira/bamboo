@@ -1,4 +1,4 @@
-# Jaculus: an embryonic thought on a smart contract language
+# Bamboo: an embryonic thought on a smart contract language
 
 ## Problem
 
@@ -115,6 +115,3 @@ I'm thinking about using OCaml, but type-level lists in Haskell might
 be convenient for keeping track of the stack elements during EVM code
 generation.
 
-### Name
-
-[Jaculus](https://en.wikipedia.org/wiki/Jaculus).
