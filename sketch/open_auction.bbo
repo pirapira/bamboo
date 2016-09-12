@@ -1,0 +1,80 @@
+// add definition of address_set
+
+// 
+
+contract auction
+	(address _beneficiary
+	,uint _bidding_time
+	,address_set _bids
+	,uint _highest_bid)
+{
+	case (bool bid(_msg))
+	{
+		if (now > _bidding_time)
+			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
+		if (_msg.value < _highest_bid)
+			abort;
+		bid new_bid =
+			new bid(_msg.sender, _msg.value, this) with _msg.value; // failure throws.
+		_bids.add(new_bid) with reentrance { abort; } ;         // failure throws.
+		return (true) then
+			auction(_beneficiary, _biddingTime, _bids, _msg.value);
+	}
+	case (uint highest_bid(_msg))
+	{
+		return (_highest_bid) then
+			auction(_beneficiary, _biddingTime, _bids, _highest_bid)
+	}
+	default
+	{
+		abort; // cancels the call.
+	}
+
+// When the control reaches the end of a contract block,
+// it causes a self destruction.
+} heir(_beneficiary);
+
+
+contract bid
+	(address _bidder
+	,uint _value
+	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
+{
+	case (bool refund(_msg))
+	{
+		if (_msg.sender != _bidder)
+			abort;
+		if (_auction.bid_is_highest(_value))
+			abort;
+		heir(_bidder);  // self-destruct
+	}
+	case (bool pay_beneficiary(_msg))
+	{
+		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
+			abort;
+		address beneficiary = _auction.beneficiary();
+		heir(_beneficiary); // self-destruct
+	}
+	default
+	{
+		abort;
+	}
+} heir(_bidder);
+
+contract auction_done(address _beneficiary, address _bids, uint _highest_bid)
+{
+	case (bool bid_is_highest(_msg, uint _cand) with reentrance { abort; })
+	{
+		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
+		return (highest_bid == _cand) then auction_done(_bids, _highest_bid);
+	}
+	case (address beneficiary(_msg))
+	{
+		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
+		return (_beneficiary) then auction_done(_bids, _highest_bid);
+	}
+	default
+	{
+		abort;
+	}
+} heir(_beneficiary);
