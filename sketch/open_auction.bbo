@@ -1,7 +1,3 @@
-// add definition of address_set
-
-// 
-
 contract auction
 	(address _beneficiary
 	,uint _bidding_time
@@ -61,17 +57,17 @@ contract bid
 	}
 } heir(_bidder);
 
-contract auction_done(address _beneficiary, address _bids, uint _highest_bid)
+contract auction_done(address _beneficiary, address_set _bids, uint _highest_bid)
 {
 	case (bool bid_is_highest(_msg, uint _cand) with reentrance { abort; })
 	{
 		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
-		return (highest_bid == _cand) then auction_done(_bids, _highest_bid);
+		return (highest_bid == _cand) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
 	case (address beneficiary(_msg))
 	{
 		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
-		return (_beneficiary) then auction_done(_bids, _highest_bid);
+		return (_beneficiary) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
 	default
 	{
