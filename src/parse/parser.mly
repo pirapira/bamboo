@@ -50,45 +50,47 @@ rev_contracts:
     CONTRACT;
     IDENT; LPAR; RPAR;
     LBRACE;
-    cases;
-    opt_default;
+    css = cases;
     RBRACE;
-    { () :: cs }
-  ;
-
-opt_default:
-  | DEFAULT;
-    case_body;
-    {}
-  | {}
+    { { Contract.contract_cases = css; } :: cs }
   ;
 
 cases:
-  | css = rev_cases { }
+  | css = rev_cases { List.rev css }
   ;
 
 rev_cases:
-  | (* empty *) { }
+  | (* empty *) { [] }
   | css = rev_cases;
-    case_body;
-    { }
+    ch  = case_header;
+    cb  = case_body;
+    {
+      { Contract.case_header = ch
+      ; Contract.case_body = cb
+      }
+      :: css }
   ;
 
 case_body:
   | LBRACE;
-    sentences;
+    scs = sentences;
     RBRACE;
-    { }
+    { scs }
+  ;
+
+case_header:
+  | DEFAULT { DefaultCaseHeader }
+  | (* to be defined *) { UsualCaseHeader }
   ;
 
 sentences:
-  | scs = rev_sentences { }
+  | scs = rev_sentences { List.rev scs }
   ;
 
 rev_sentences:
-  | (* empty *) { }
-  | rev_sentences;
+  | (* empty *) { [] }
+  | scs = rev_sentences;
     ABORT;
     SEMICOLON;
-    { }
+    { Contract.AbortSentence :: scs }
   ;
