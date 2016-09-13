@@ -142,6 +142,8 @@ sentence :
   | ABORT; SEMICOLON { Contract.AbortSentence }
   | RETURN; value = exp; THEN; cont = exp; SEMICOLON
     { Contract.ReturnSentence { return_value = value; return_cont = cont} }
+  | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
+    { Contract.AssignmentSentence (lhs, rhs) }
   ;
 
 exp:
@@ -155,6 +157,10 @@ exp:
   | s = IDENT; LPAR; RPAR { Contract.CallExp { call_head = s; call_args = [] } }
   | s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR { Contract.CallExp { call_head = s; call_args = fst :: lst } }
+  ;
+
+lexp:
+  | s = IDENT { Contract.IdentifierLExp s }
   ;
 
 comma_exp_list:

@@ -7,6 +7,8 @@ and exp =
   | CallExp of call
   | IdentifierExp of string
   | ParenthExp of exp
+and lexp =
+  | IdentifierLExp of string
 
 type typ =
   | UintType
@@ -27,6 +29,7 @@ type return =
 type sentence =
   | AbortSentence
   | ReturnSentence of return
+  | AssignmentSentence of lexp * exp
 
 type case_body =
   sentence list
