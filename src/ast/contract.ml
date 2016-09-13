@@ -24,6 +24,7 @@ and typ =
   | AddressType
   | BoolType
   | MappingType of typ * typ
+  | IdentType of string
 
 type arg =
   { arg_typ : typ

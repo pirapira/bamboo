@@ -126,6 +126,7 @@ typ:
     key = typ;
     RSQBR;
     { Contract.MappingType (key, value) }
+  | s = IDENT { Contract.IdentType s }
 
 sentences:
   | scs = rev_sentences { List.rev scs }
