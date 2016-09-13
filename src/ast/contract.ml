@@ -2,11 +2,21 @@ type call =
   {  call_head : string
   ;  call_args : exp list
   }
+and message_info =
+  { message_value_info : exp option
+  ; message_reentrance_info : sentence list
+  }
+and new_exp =
+  { new_head : string
+  ; new_args : exp list
+  ; new_msg_info : message_info
+  }
 and exp =
   | TrueExp
   | CallExp of call
   | IdentifierExp of string
   | ParenthExp of exp
+  | NewExp of new_exp
 and lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of array_access
@@ -25,22 +35,22 @@ and typ =
   | BoolType
   | MappingType of typ * typ
   | IdentType of string
+and sentence =
+  | AbortSentence
+  | ReturnSentence of return
+  | AssignmentSentence of lexp * exp
+  | VariableInitSentence of variable_init
+and return =
+  { return_value : exp
+  ; return_cont : exp
+  }
 
 type arg =
   { arg_typ : typ
   ; arg_ident : string
   }
 
-type return =
-  { return_value : exp
-  ; return_cont : exp
-  }
 
-type sentence =
-  | AbortSentence
-  | ReturnSentence of return
-  | AssignmentSentence of lexp * exp
-  | VariableInitSentence of variable_init
 
 type case_body =
   sentence list

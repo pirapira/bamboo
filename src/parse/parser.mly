@@ -168,6 +168,23 @@ exp:
   | s = IDENT; LPAR; RPAR { Contract.CallExp { call_head = s; call_args = [] } }
   | s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR { Contract.CallExp { call_head = s; call_args = fst :: lst } }
+  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = []; new_msg_info = m } }
+  | NEW; s = IDENT; LPAR; fst = exp;
+    lst = comma_exp_list; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
+  ;
+
+msg_info:
+  | v = value_info; r = reentrance_info { { Contract.message_value_info = v;
+                                            message_reentrance_info = r } }
+  ;
+
+value_info:
+  | (* empty *) { None }
+  | ALONG; v = exp; { Some v }
+  ;
+
+reentrance_info:
+  | WITH; REENTRANCE; b = block { b }
   ;
 
 lexp:
