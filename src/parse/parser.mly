@@ -120,6 +120,12 @@ arg:
 typ:
   | UINT { Contract.UintType }
   | ADDRESS { Contract.AddressType }
+  | BOOL { Contract.BoolType }
+  | value = typ;
+    LSQBR;
+    key = typ;
+    RSQBR;
+    { Contract.MappingType (key, value) }
 
 sentences:
   | scs = rev_sentences { List.rev scs }

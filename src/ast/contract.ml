@@ -1,6 +1,7 @@
 type typ =
   | UintType
   | AddressType
+  | BoolType
   | MappingType of typ * typ
 
 type arg =
