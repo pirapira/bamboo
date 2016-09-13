@@ -1,3 +1,11 @@
+type typ =
+  | UintType
+
+type arg =
+  { arg_typ : typ
+  ; arg_ident : string
+  }
+
 type sentence =
   | AbortSentence
 

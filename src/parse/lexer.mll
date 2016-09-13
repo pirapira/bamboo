@@ -28,7 +28,9 @@ rule read =
   | newline  { next_line lexbuf; read lexbuf }
   | "contract" { CONTRACT }
   | "default"  { DEFAULT }
+  | "case"     { CASE }
   | "abort"    { ABORT }
+  | "uint"     { UINT }
   | ";" { SEMICOLON }
   | "(" { LPAR }
   | ")" { RPAR }

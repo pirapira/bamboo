@@ -74,14 +74,48 @@ rev_cases:
 case_body:
   | LBRACE;
     scs = sentences;
-    RBRACE;
+    RBRACE
     { scs }
   ;
 
 case_header:
   | DEFAULT { DefaultCaseHeader }
-  | (* to be defined *) { UsualCaseHeader }
+  | CASE; LPAR;
+    typ;
+    IDENT; (* function name *)
+    LPAR;
+    args = argument_list;
+    RPAR;
+    RPAR { UsualCaseHeader }
   ;
+
+argument_list:
+  | args = rev_argument_list { List.rev args }
+
+rev_argument_list:
+  | (* empty *) { [] }
+  | args = non_empty_rev_argument_list;
+    { args }
+  ;
+
+non_empty_rev_argument_list:
+  | a = arg { [ a ] }
+  | args = non_empty_rev_argument_list;
+    COMMA;
+    a = arg
+    { a :: args }
+  ;
+
+arg:
+  | t = typ;
+    i = IDENT
+    { { Contract.arg_typ = t
+      ; Contract.arg_ident = i
+      }
+    }
+
+typ:
+  | UINT { Contract.UintType }
 
 sentences:
   | scs = rev_sentences { List.rev scs }
