@@ -160,7 +160,9 @@ sentence :
 
 exp:
   | TRUE { Contract.TrueExp }
+  | FALSE { Contract.FalseExp }
   | lhs = exp; LT; rhs = exp { Contract.LtExp (lhs, rhs) }
+  | lhs = exp; GT; rhs = exp { Contract.GtExp (lhs, rhs) }
   | s = IDENT
     { Contract.IdentifierExp s }
   | LPAR;

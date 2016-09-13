@@ -8,6 +8,8 @@ contract auction
 {
    default
    {
+if (now > _bidding_time)
+return (false) then auction_done(_beneficiary, _bids, _highest_bid);
 if (value(msg) < _highest_bid)
 			abort;
 bid new_bid =

@@ -13,11 +13,13 @@ and new_exp =
   }
 and exp =
   | TrueExp
+  | FalseExp
   | CallExp of call
   | IdentifierExp of string
   | ParenthExp of exp
   | NewExp of new_exp
   | LtExp of exp * exp
+  | GtExp of exp * exp
 and lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of array_access
