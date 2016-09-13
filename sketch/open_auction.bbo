@@ -48,14 +48,14 @@ contract bid
 			abort;
 		if (_auction.bid_is_highest(_value))
 			abort;
-		selfdestruct(_bidder);  // self-destruct
+		selfdestruct(_bidder);
 	}
 	case (bool pay_beneficiary(_msg))
 	{
 		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
 			abort;
 		address beneficiary = _auction.beneficiary();
-		selfdestruct(_beneficiary); // self-destruct
+		selfdestruct(_beneficiary);
 	}
 	default
 	{

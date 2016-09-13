@@ -102,6 +102,48 @@ sleep_after_calling(account, value, data) with reentrancy(_call) {
 }
 ```
 
+### Syntax
+
+After some polishing I ended up to something like this.
+There is some influence from Erlang.
+```
+contract bid
+	(address _bidder
+	,uint _value
+	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
+{
+	case (bool refund(_msg))
+	{
+		if (_msg.sender != _bidder)
+			abort;
+		if (_auction.bid_is_highest(_value))
+			abort;
+		selfdestruct(_bidder);
+	}
+	case (bool pay_beneficiary(_msg))
+	{
+		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
+			abort;
+		address beneficiary = _auction.beneficiary();
+		selfdestruct(_beneficiary);
+	}
+	default
+	{
+		abort;
+	}
+}
+```
+
+### Parser in development
+
+Currently,
+```
+cd src
+sh build_parser.sh
+```
+builds a parser and tests it against the example files
+`src/parse/examples/*.sol`
+
 ### Implementation
 
 What would be difficult to implement?  Maybe not much: one word in
