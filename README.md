@@ -1,4 +1,4 @@
-# Bamboo: an embryonic thought on a smart contract language
+# Bamboo: an embryonic smart contract language
 
 ## Problem
 
