@@ -17,6 +17,7 @@ and exp =
   | IdentifierExp of string
   | ParenthExp of exp
   | NewExp of new_exp
+  | LtExp of exp * exp
 and lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of array_access
@@ -40,6 +41,7 @@ and sentence =
   | ReturnSentence of return
   | AssignmentSentence of lexp * exp
   | VariableInitSentence of variable_init
+  | IfSingleSentence of exp * sentence
 and return =
   { return_value : exp
   ; return_cont : exp

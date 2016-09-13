@@ -155,10 +155,12 @@ sentence :
                 ; variable_init_value = value
                 }
               }
+  | IF; LPAR; cond = exp; RPAR; body =sentence { Contract.IfSingleSentence (cond, body) }
   ;
 
 exp:
   | TRUE { Contract.TrueExp }
+  | lhs = exp; LT; rhs = exp { Contract.LtExp (lhs, rhs) }
   | s = IDENT
     { Contract.IdentifierExp s }
   | LPAR;

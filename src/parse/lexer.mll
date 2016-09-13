@@ -47,6 +47,8 @@ rule read =
   | "}" { RBRACE }
   | "," { COMMA }
   | "==" { EQUALITY }
+  | "<" { LT }
+  | ">" { GT }
   | "="  { SINGLE_EQ }
   | "new" { NEW }
   | "along" { ALONG }
