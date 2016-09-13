@@ -65,7 +65,7 @@ contract bid
 
 contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
 {
-	case (bool bid_is_highest(_msg, uint _cand) with reentrance { abort; })
+	case (bool bid_is_highest(_msg, uint _cand))
 	{
 		if (not _bids[_msg.sender]) abort;
 		return (highest_bid == _cand) then auction_done(_beneficiary, _bids, _highest_bid);
