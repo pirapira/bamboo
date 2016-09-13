@@ -144,6 +144,16 @@ sentence :
     { Contract.ReturnSentence { return_value = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Contract.AssignmentSentence (lhs, rhs) }
+  | t = typ;
+    name = IDENT;
+    SINGLE_EQ;
+    value = exp;
+    SEMICOLON { Contract.VariableInitSentence
+                { variable_init_type = t
+                ; variable_init_name = name
+                ; variable_init_value = value
+                }
+              }
   ;
 
 exp:

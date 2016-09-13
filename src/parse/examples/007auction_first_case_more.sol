@@ -8,8 +8,8 @@ contract auction
 {
    default
    {
-_bids[sender(msg)] = true;
+     _bids[sender(msg)] = true;
      return (true) then
-     auction(_beneficiary, _biddingTime, _bids, value(msg));
+         auction(_beneficiary, _biddingTime, _bids, value(msg));
    }
 }

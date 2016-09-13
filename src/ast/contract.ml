@@ -14,8 +14,12 @@ and array_access =
   { array_access_array : string
   ; array_access_index : exp
   }
-
-type typ =
+and variable_init =
+  { variable_init_type : typ
+  ; variable_init_name : string
+  ; variable_init_value : exp
+  }
+and typ =
   | UintType
   | AddressType
   | BoolType
@@ -35,6 +39,7 @@ type sentence =
   | AbortSentence
   | ReturnSentence of return
   | AssignmentSentence of lexp * exp
+  | VariableInitSentence of variable_init
 
 type case_body =
   sentence list
