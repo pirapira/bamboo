@@ -33,8 +33,21 @@
 %token EOF
 
 
-%start <list Contract.contract> file
+%start <Contract.contract list> file
 %%
 
 file:
-| EOF { [] }
+  | cs = contracts; EOF; { cs }
+  ;
+
+contracts:
+  | cs = rev_contracts { List.rev cs }
+  ;
+
+rev_contracts:
+  | (* empty *) { [] }
+  | cs = rev_contracts;
+    CONTRACT;
+    IDENT; LPAR; RPAR; LBRACE; RBRACE;
+    { () :: cs }
+  ;

@@ -15,12 +15,15 @@ let parse_with_error lexbuf =
   try Parser.file Lexer.read lexbuf with
   | SyntaxError msg ->
     fprintf stderr "%a: %s\n" print_position lexbuf msg;
-    ()
+    exit (-1)
   | Parser.Error ->
+    fprintf stderr "%a: syntax error\n" print_position lexbuf;
+    exit (-1)
+  | _ ->
     fprintf stderr "%a: syntax error\n" print_position lexbuf;
     exit (-1)
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let () = parse_with_error lexbuf in
+  let _ = parse_with_error lexbuf in
   Printf.printf "Finished parsing.\n"

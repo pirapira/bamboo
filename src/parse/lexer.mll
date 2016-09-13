@@ -15,6 +15,17 @@
     }
 }
 
+let white = [' ' '\t']+
+let newline = '\r' | '\n' | "\r\n"
+
 rule read =
   parse
+  | white    { read lexbuf }
+  | newline  { next_line lexbuf; read lexbuf }
+  | "contract" { CONTRACT }
+  | "(" { LPAR }
+  | ")" { RPAR }
+  | "{" { LBRACE }
+  | "}" { RBRACE }
+  | "C" { IDENT "C" }
   | eof { EOF }

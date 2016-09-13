@@ -1,2 +1,3 @@
-contract C() {
-}
+
+
+contract C() {}
