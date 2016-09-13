@@ -20,6 +20,7 @@ and exp =
   | NewExp of new_exp
   | LtExp of exp * exp
   | GtExp of exp * exp
+  | AddressExp of exp
 and lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of array_access

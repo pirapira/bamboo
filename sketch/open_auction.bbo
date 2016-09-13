@@ -20,12 +20,12 @@ contract auction
 	case (uint highest_bid())
 	{
 		return (_highest_bid) then
-			auction(_beneficiary, _biddingTime, _bids, _highest_bid)
+			auction(_beneficiary, _biddingTime, _bids, _highest_bid);
 	}
 	case (uint bidding_time())
 	{
 		return (_bidding_time) then
-			auction(_beneficiary, _biddingTime, _bids, _highest_bid)
+			auction(_beneficiary, _biddingTime, _bids, _highest_bid);
 	}
 	default
 	{

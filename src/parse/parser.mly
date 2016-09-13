@@ -175,6 +175,7 @@ exp:
   | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = []; new_msg_info = m } }
   | NEW; s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
+  | ADDRESS; e = exp { Contract.AddressExp e }
   ;
 
 msg_info:
