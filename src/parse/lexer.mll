@@ -1,4 +1,4 @@
-(* The code in the following block comes from
+(* Some code in this file comes from
  * https://github.com/realworldocaml/examples/tree/master/code/parsing-test
  * which is under UNLICENSE
  *)
@@ -17,6 +17,8 @@
 
 let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
+let digit = ['0'-'9']
+let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
 
 rule read =
   parse
@@ -27,5 +29,5 @@ rule read =
   | ")" { RPAR }
   | "{" { LBRACE }
   | "}" { RBRACE }
-  | "C" { IDENT "C" }
+  | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }
