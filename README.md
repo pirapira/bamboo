@@ -112,15 +112,15 @@ contract bid
 	,uint _value
 	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
 {
-	case (bool refund(_msg))
+	case (bool refund())
 	{
-		if (_msg.sender != _bidder)
+		if (sender(msg) != _bidder)
 			abort;
 		if (_auction.bid_is_highest(_value))
 			abort;
 		selfdestruct(_bidder);
 	}
-	case (bool pay_beneficiary(_msg))
+	case (bool pay_beneficiary())
 	{
 		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
 			abort;
