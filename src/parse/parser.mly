@@ -33,8 +33,8 @@
 %token EOF
 
 
-%start <unit> file
+%start <list Contract.contract> file
 %%
 
 file:
-| EOF { () }
+| EOF { [] }
