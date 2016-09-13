@@ -19,10 +19,12 @@ let white = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 let digit = ['0'-'9']
 let id = ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
+let comment = "//" (_ # ['\r' '\n'])* newline
 
 rule read =
   parse
   | white    { read lexbuf }
+  | comment  { next_line lexbuf; read lexbuf }
   | newline  { next_line lexbuf; read lexbuf }
   | "contract" { CONTRACT }
   | "(" { LPAR }
