@@ -63,7 +63,7 @@ rev_cases:
   | (* empty *) { [] }
   | css = rev_cases;
     ch  = case_header;
-    cb  = case_body;
+    cb  = block;
     {
       { Contract.case_header = ch
       ; Contract.case_body = cb
@@ -71,7 +71,7 @@ rev_cases:
       :: css }
   ;
 
-case_body:
+block:
   | LBRACE;
     scs = sentences;
     RBRACE
