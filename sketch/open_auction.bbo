@@ -33,8 +33,8 @@ contract auction
 	}
 
 // When the control reaches the end of a contract block,
-// it causes a self destruction.
-} heir(_beneficiary);
+// it causes an abort.
+}
 
 
 contract bid
@@ -61,7 +61,7 @@ contract bid
 	{
 		abort;
 	}
-} heir(_bidder);
+}
 
 contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
 {
@@ -79,4 +79,4 @@ contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_b
 	{
 		abort;
 	}
-} heir(_beneficiary);
+}
