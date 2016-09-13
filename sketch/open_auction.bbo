@@ -1,7 +1,7 @@
 contract auction
 	(address _beneficiary
 	,uint _bidding_time
-	,address_set _bids
+	,bool[address] _bids
 	,uint _highest_bid)
 {
 	case (bool bid(_msg))
@@ -11,14 +11,20 @@ contract auction
 		if (_msg.value < _highest_bid)
 			abort;
 		bid new_bid =
-			new bid(_msg.sender, _msg.value, this) with _msg.value; // failure throws.
-		_bids.add(new_bid) with reentrance { abort; } ;         // failure throws.
+			new bid(_msg.sender, _msg.value, this) along _msg.value
+				with reentrance { abort; }; // failure throws.
+		_bids[address(new_bid)] = true;
 		return (true) then
 			auction(_beneficiary, _biddingTime, _bids, _msg.value);
 	}
 	case (uint highest_bid(_msg))
 	{
 		return (_highest_bid) then
+			auction(_beneficiary, _biddingTime, _bids, _highest_bid)
+	}
+	case (uint bidding_time(_msg))
+	{
+		return (_bidding_time) then
 			auction(_beneficiary, _biddingTime, _bids, _highest_bid)
 	}
 	default
@@ -42,14 +48,14 @@ contract bid
 			abort;
 		if (_auction.bid_is_highest(_value))
 			abort;
-		heir(_bidder);  // self-destruct
+		selfdestruct(_bidder);  // self-destruct
 	}
 	case (bool pay_beneficiary(_msg))
 	{
 		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
 			abort;
 		address beneficiary = _auction.beneficiary();
-		heir(_beneficiary); // self-destruct
+		selfdestruct(_beneficiary); // self-destruct
 	}
 	default
 	{
@@ -57,16 +63,16 @@ contract bid
 	}
 } heir(_bidder);
 
-contract auction_done(address _beneficiary, address_set _bids, uint _highest_bid)
+contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
 {
 	case (bool bid_is_highest(_msg, uint _cand) with reentrance { abort; })
 	{
-		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
+		if (not _bids[_msg.sender]) abort;
 		return (highest_bid == _cand) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
 	case (address beneficiary(_msg))
 	{
-		if (not _bids.member(_msg.sender) with reentrance { abort; }) abort;
+		if (not _bids[_msg.sender]) abort;
 		return (_beneficiary) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
 	default
