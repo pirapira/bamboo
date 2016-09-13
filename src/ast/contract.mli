@@ -1,3 +1,13 @@
+type call =
+  {  call_head : string
+  ;  call_args : exp list
+  }
+and exp =
+  | TrueExp
+  | CallExp of call
+  | IdentifierExp of string
+  | ParenthExp of exp
+
 type typ =
   | UintType
   | AddressType
@@ -9,8 +19,14 @@ type arg =
   ; arg_ident : string
   }
 
+type return =
+  { return_value : exp
+  ; return_cont : exp
+  }
+
 type sentence =
   | AbortSentence
+  | ReturnSentence of return
 
 type case_body =
   sentence list

@@ -39,6 +39,7 @@ rule read =
   | "true"     { TRUE }
   | "false"    { FALSE }
   | "then"     { THEN }
+  | "return"   { RETURN }
   | ";" { SEMICOLON }
   | "(" { LPAR }
   | ")" { RPAR }

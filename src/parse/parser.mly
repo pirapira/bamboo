@@ -134,7 +134,38 @@ sentences:
 rev_sentences:
   | (* empty *) { [] }
   | scs = rev_sentences;
-    ABORT;
-    SEMICOLON;
-    { Contract.AbortSentence :: scs }
+    s = sentence;
+    { s :: scs }
+  ;
+
+sentence :
+  | ABORT; SEMICOLON { Contract.AbortSentence }
+  | RETURN; value = exp; THEN; cont = exp; SEMICOLON
+    { Contract.ReturnSentence { return_value = value; return_cont = cont} }
+  ;
+
+exp:
+  | TRUE { Contract.TrueExp }
+  | s = IDENT
+    { Contract.IdentifierExp s }
+  | LPAR;
+    e = exp;
+    RPAR
+    { Contract.ParenthExp e }
+  | s = IDENT; LPAR; RPAR { Contract.CallExp { call_head = s; call_args = [] } }
+  | s = IDENT; LPAR; fst = exp;
+    lst = comma_exp_list; RPAR { Contract.CallExp { call_head = s; call_args = fst :: lst } }
+  ;
+
+comma_exp_list:
+  | lst = rev_comma_exp_list
+    { List.rev lst }
+  ;
+
+rev_comma_exp_list:
+  | (* empty *) { [] }
+  | lst = rev_comma_exp_list;
+    COMMA;
+    e = exp
+    { e :: lst }
   ;
