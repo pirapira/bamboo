@@ -19,7 +19,7 @@ type token =
   | TRUE
   | THEN
   | SEMICOLON
-  | EQUQLITY
+  | EQUALITY
   | NEQ
   | LT
   | GT
@@ -29,6 +29,5 @@ type token =
   | WITH
   | REENTRANCE
   | ABORT
-  | HEIR
   | SELFDESTRUCT
   | EOF

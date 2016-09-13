@@ -31,10 +31,26 @@ rule read =
   | "case"     { CASE }
   | "abort"    { ABORT }
   | "uint"     { UINT }
+  | "address"  { ADDRESS }
+  | "bool"     { BOOL }
+  | "["        { LSQBR }
+  | "]"        { RSQBR }
+  | "if"       { IF }
+  | "true"     { TRUE }
+  | "false"    { FALSE }
+  | "then"     { THEN }
   | ";" { SEMICOLON }
   | "(" { LPAR }
   | ")" { RPAR }
   | "{" { LBRACE }
   | "}" { RBRACE }
+  | "," { COMMA }
+  | "==" { EQUALITY }
+  | "="  { SINGLE_EQ }
+  | "new" { NEW }
+  | "along" { ALONG }
+  | "with" { WITH }
+  | "reentrance" { REENTRANCE }
+  | "selfdestruct" { SELFDESTRUCT }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

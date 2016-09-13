@@ -18,7 +18,7 @@
 %token TRUE
 %token THEN
 %token SEMICOLON
-%token EQUQLITY
+%token EQUALITY
 %token NEQ
 %token LT
 %token GT
