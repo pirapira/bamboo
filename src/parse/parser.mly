@@ -48,6 +48,47 @@ rev_contracts:
   | (* empty *) { [] }
   | cs = rev_contracts;
     CONTRACT;
-    IDENT; LPAR; RPAR; LBRACE; RBRACE;
+    IDENT; LPAR; RPAR;
+    LBRACE;
+    cases;
+    opt_default;
+    RBRACE;
     { () :: cs }
+  ;
+
+opt_default:
+  | DEFAULT;
+    case_body;
+    {}
+  | {}
+  ;
+
+cases:
+  | css = rev_cases { }
+  ;
+
+rev_cases:
+  | (* empty *) { }
+  | css = rev_cases;
+    case_body;
+    { }
+  ;
+
+case_body:
+  | LBRACE;
+    sentences;
+    RBRACE;
+    { }
+  ;
+
+sentences:
+  | scs = rev_sentences { }
+  ;
+
+rev_sentences:
+  | (* empty *) { }
+  | rev_sentences;
+    ABORT;
+    SEMICOLON;
+    { }
   ;

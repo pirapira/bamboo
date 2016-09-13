@@ -27,6 +27,9 @@ rule read =
   | comment  { next_line lexbuf; read lexbuf }
   | newline  { next_line lexbuf; read lexbuf }
   | "contract" { CONTRACT }
+  | "default"  { DEFAULT }
+  | "abort"    { ABORT }
+  | ";" { SEMICOLON }
   | "(" { LPAR }
   | ")" { RPAR }
   | "{" { LBRACE }
