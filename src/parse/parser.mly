@@ -48,7 +48,10 @@ rev_contracts:
   | (* empty *) { [] }
   | cs = rev_contracts;
     CONTRACT;
-    IDENT; LPAR; RPAR;
+    IDENT;
+    LPAR;
+    argument_list;
+    RPAR;
     LBRACE;
     css = cases;
     RBRACE;
@@ -116,6 +119,7 @@ arg:
 
 typ:
   | UINT { Contract.UintType }
+  | ADDRESS { Contract.AddressType }
 
 sentences:
   | scs = rev_sentences { List.rev scs }

@@ -1,5 +1,7 @@
 type typ =
   | UintType
+  | AddressType
+  | MappingType of typ * typ
 
 type arg =
   { arg_typ : typ
