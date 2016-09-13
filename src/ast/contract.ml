@@ -9,6 +9,11 @@ and exp =
   | ParenthExp of exp
 and lexp =
   | IdentifierLExp of string
+  | ArrayAccessLExp of array_access
+and array_access =
+  { array_access_array : string
+  ; array_access_index : exp
+  }
 
 type typ =
   | UintType

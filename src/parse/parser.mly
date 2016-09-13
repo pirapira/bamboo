@@ -161,6 +161,11 @@ exp:
 
 lexp:
   | s = IDENT { Contract.IdentifierLExp s }
+  | s = IDENT;
+    LSQBR;
+    idx = exp;
+    RSQBR
+    { Contract.ArrayAccessLExp {array_access_array = s; array_access_index = idx} }
   ;
 
 comma_exp_list:
