@@ -13,14 +13,28 @@ type contract_interface =
         this one can continue into *)
   }
 
-let collect_continuation_in_sentence (raw : unit Syntax.sentence) : string list =
-  failwith "collect_continuation_in_sentence"
+let rec collect_continuation_in_sentence (raw : unit Syntax.sentence) : string list =
+  Syntax.(
+    match raw with
+    | AbortSentence -> []
+    | ReturnSentence r ->
+       begin
+         match contract_name_of_return_cont r.return_cont with
+         | None -> []
+         | Some name -> [name]
+       end
+    | AssignmentSentence (_, _) -> []
+    | VariableInitSentence _ -> []
+    | SelfdestructSentence _ -> []
+    | IfSingleSentence (_, s) ->
+       collect_continuation_in_sentence s
+  )
 
 let collect_continuation_in_case (raw : unit Syntax.case) : string list =
-  List.concat (List.map collect_continuation_in_sentence raw.case_body)
+  List.concat Syntax.(List.map collect_continuation_in_sentence raw.case_body)
 
 let collect_continuation_in_contract (raw : unit Syntax.contract) : string list =
-  List.concat (List.map collect_continuation_in_case raw.contract_cases)
+  List.concat Syntax.(List.map collect_continuation_in_case raw.contract_cases)
 
 let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
   Syntax.

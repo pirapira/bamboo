@@ -86,3 +86,9 @@ type 'exp_annot contract =
   ; contract_arguments : arg list
   ; contract_cases : 'exp_annot case list
   }
+
+
+let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
+  match r with
+  | CallExp c -> Some c.call_head
+  | _ -> None
