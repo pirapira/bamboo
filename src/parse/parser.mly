@@ -48,14 +48,16 @@ rev_contracts:
   | (* empty *) { [] }
   | cs = rev_contracts;
     CONTRACT;
-    IDENT;
+    name = IDENT;
     LPAR;
-    argument_list;
+    args = argument_list;
     RPAR;
     LBRACE;
     css = cases;
     RBRACE;
-    { { Syntax.contract_cases = css; } :: cs }
+    { { Syntax.contract_cases = css
+      ; contract_name = name
+      ; contract_arguments = args} :: cs }
   ;
 
 cases:

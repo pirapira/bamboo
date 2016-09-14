@@ -82,6 +82,7 @@ type 'exp_annot case =
   }
 
 type 'exp_annot contract =
-  { (* TODO: add contract_signature *)
-    contract_cases : 'exp_annot case list
+  { contract_name : string
+  ; contract_arguments : arg list
+  ; contract_cases : 'exp_annot case list
   }
