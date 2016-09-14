@@ -160,41 +160,41 @@ sentence :
   ;
 
 exp:
-  | TRUE { Syntax.TrueExp }
-  | FALSE { Syntax.FalseExp }
-  | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs) }
-  | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs) }
-  | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs) }
-  | lhs = exp; EQUALITY; rhs = exp { Syntax.EqualityExp (lhs, rhs) }
+  | TRUE { Syntax.TrueExp, () }
+  | FALSE { Syntax.FalseExp, () }
+  | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs), () }
+  | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs), () }
+  | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs), () }
+  | lhs = exp; EQUALITY; rhs = exp { Syntax.EqualityExp (lhs, rhs), () }
   | s = IDENT
-    { Syntax.IdentifierExp s }
+    { Syntax.IdentifierExp s, () }
   | LPAR;
     e = exp;
     RPAR
-    { Syntax.ParenthExp e }
-  | s = IDENT; LPAR; RPAR { Syntax.CallExp { Syntax.call_head = s; call_args = [] } }
+    { Syntax.ParenthExp e, () }
+  | s = IDENT; LPAR; RPAR { Syntax.CallExp { Syntax.call_head = s; call_args = [] }, () }
   | s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR { Syntax.CallExp {
-                                   Syntax.call_head = s; call_args = fst :: lst } }
-  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m } }
+                                   Syntax.call_head = s; call_args = fst :: lst }, () }
+  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m }, () }
   | NEW; s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m } }
+    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
-                       ; send_args = []; send_msg_info = m } }
+                       ; send_args = []; send_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
-                       ; send_args = (fst :: lst); send_msg_info = m } }
-  | ADDRESS; e = exp { Syntax.AddressExp e }
-  | NOT; e = exp { Syntax.NotExp e }
+                       ; send_args = (fst :: lst); send_msg_info = m }, () }
+  | ADDRESS; e = exp { Syntax.AddressExp e, () }
+  | NOT; e = exp { Syntax.NotExp e, () }
   | s = IDENT;
     LSQBR;
     idx = exp;
     RSQBR
     { Syntax.ArrayAccessExp {
-        Syntax.array_access_array = s; array_access_index = idx} }
+        Syntax.array_access_array = s; array_access_index = idx}, () }
   ;
 
 msg_info:

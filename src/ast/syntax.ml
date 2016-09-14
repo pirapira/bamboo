@@ -17,7 +17,8 @@ and 'exp_annot send_exp =
   ; send_args : 'exp_annot exp list
   ; send_msg_info : 'exp_annot message_info
   }
-and 'exp_annot exp =
+and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
+and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
   | CallExp of 'exp_annot call
