@@ -1,10 +1,12 @@
 type interface_typ =
   | InterfaceUint of int
+  | InterfaceAddress
+  | InterfaceBool
 
 type interface_arg = string * interface_typ
 
 (** [interpret_interface_type] parses "uint" into InterfaceUint 256, etc. *)
-val interpret_interface_type : string -> interface_typ
+val interpret_interface_type : Syntax.typ -> interface_typ
 
 type function_signature =
   { return : interface_typ list
