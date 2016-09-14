@@ -7,7 +7,10 @@ type interface_arg = string * interface_typ
 val interpret_interface_type : string -> interface_typ
 
 type function_signature =
-  { return : interface_typ
+  { return : interface_typ list
   ; name : string
-  ; args : interface_arg list
+  ; args : interface_typ list
   }
+
+val get_interface_typs :
+  Syntax.arg list -> interface_typ list
