@@ -35,7 +35,7 @@
 %token EOF
 
 
-%start <Contract.contract list> file
+%start <Syntax.contract list> file
 %%
 
 file:
@@ -57,7 +57,7 @@ rev_contracts:
     LBRACE;
     css = cases;
     RBRACE;
-    { { Contract.contract_cases = css; } :: cs }
+    { { Syntax.contract_cases = css; } :: cs }
   ;
 
 cases:
@@ -70,8 +70,8 @@ rev_cases:
     ch  = case_header;
     cb  = block;
     {
-      { Contract.case_header = ch
-      ; Contract.case_body = cb
+      { Syntax.case_header = ch
+      ; Syntax.case_body = cb
       }
       :: css }
   ;
@@ -114,21 +114,21 @@ non_empty_rev_argument_list:
 arg:
   | t = typ;
     i = IDENT
-    { { Contract.arg_typ = t
-      ; Contract.arg_ident = i
+    { { Syntax.arg_typ = t
+      ; Syntax.arg_ident = i
       }
     }
 
 typ:
-  | UINT { Contract.UintType }
-  | ADDRESS { Contract.AddressType }
-  | BOOL { Contract.BoolType }
+  | UINT { Syntax.UintType }
+  | ADDRESS { Syntax.AddressType }
+  | BOOL { Syntax.BoolType }
   | value = typ;
     LSQBR;
     key = typ;
     RSQBR;
-    { Contract.MappingType (key, value) }
-  | s = IDENT { Contract.IdentType s }
+    { Syntax.MappingType (key, value) }
+  | s = IDENT { Syntax.IdentType s }
 
 sentences:
   | scs = rev_sentences { List.rev scs }
@@ -142,63 +142,63 @@ rev_sentences:
   ;
 
 sentence :
-  | ABORT; SEMICOLON { Contract.AbortSentence }
+  | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; cont = exp; SEMICOLON
-    { Contract.ReturnSentence { return_value = value; return_cont = cont} }
+    { Syntax.ReturnSentence { return_value = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
-    { Contract.AssignmentSentence (lhs, rhs) }
+    { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;
     name = IDENT;
     SINGLE_EQ;
     value = exp;
-    SEMICOLON { Contract.VariableInitSentence
+    SEMICOLON { Syntax.VariableInitSentence
                 { variable_init_type = t
                 ; variable_init_name = name
                 ; variable_init_value = value
                 }
               }
-  | IF; LPAR; cond = exp; RPAR; body =sentence { Contract.IfSingleSentence (cond, body) }
-  | SELFDESTRUCT; e = exp; SEMICOLON { Contract.SelfdestructSentence e }
+  | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfSingleSentence (cond, body) }
+  | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 
 exp:
-  | TRUE { Contract.TrueExp }
-  | FALSE { Contract.FalseExp }
-  | lhs = exp; LT; rhs = exp { Contract.LtExp (lhs, rhs) }
-  | lhs = exp; GT; rhs = exp { Contract.GtExp (lhs, rhs) }
-  | lhs = exp; NEQ; rhs = exp { Contract.NeqExp (lhs, rhs) }
-  | lhs = exp; EQUALITY; rhs = exp { Contract.EqualityExp (lhs, rhs) }
+  | TRUE { Syntax.TrueExp }
+  | FALSE { Syntax.FalseExp }
+  | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs) }
+  | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs) }
+  | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs) }
+  | lhs = exp; EQUALITY; rhs = exp { Syntax.EqualityExp (lhs, rhs) }
   | s = IDENT
-    { Contract.IdentifierExp s }
+    { Syntax.IdentifierExp s }
   | LPAR;
     e = exp;
     RPAR
-    { Contract.ParenthExp e }
-  | s = IDENT; LPAR; RPAR { Contract.CallExp { call_head = s; call_args = [] } }
+    { Syntax.ParenthExp e }
+  | s = IDENT; LPAR; RPAR { Syntax.CallExp { call_head = s; call_args = [] } }
   | s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR { Contract.CallExp { call_head = s; call_args = fst :: lst } }
-  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = []; new_msg_info = m } }
+    lst = comma_exp_list; RPAR { Syntax.CallExp { call_head = s; call_args = fst :: lst } }
+  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { new_head = s; new_args = []; new_msg_info = m } }
   | NEW; s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
+    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
-    { Contract.SendExp { send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { send_head_contract = contr; send_head_method = mtd
                        ; send_args = []; send_msg_info = m } }
   | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info
-    { Contract.SendExp { send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { send_head_contract = contr; send_head_method = mtd
                        ; send_args = (fst :: lst); send_msg_info = m } }
-  | ADDRESS; e = exp { Contract.AddressExp e }
-  | NOT; e = exp { Contract.NotExp e }
+  | ADDRESS; e = exp { Syntax.AddressExp e }
+  | NOT; e = exp { Syntax.NotExp e }
   | s = IDENT;
     LSQBR;
     idx = exp;
     RSQBR
-    { Contract.ArrayAccessExp {array_access_array = s; array_access_index = idx} }
+    { Syntax.ArrayAccessExp {array_access_array = s; array_access_index = idx} }
   ;
 
 msg_info:
-  | v = value_info; r = reentrance_info { { Contract.message_value_info = v;
+  | v = value_info; r = reentrance_info { { Syntax.message_value_info = v;
                                             message_reentrance_info = r } }
   ;
 
@@ -212,12 +212,12 @@ reentrance_info:
   ;
 
 lexp:
-  | s = IDENT { Contract.IdentifierLExp s }
+  | s = IDENT { Syntax.IdentifierLExp s }
   | s = IDENT;
     LSQBR;
     idx = exp;
     RSQBR
-    { Contract.ArrayAccessLExp {array_access_array = s; array_access_index = idx} }
+    { Syntax.ArrayAccessLExp {array_access_array = s; array_access_index = idx} }
   ;
 
 comma_exp_list:
