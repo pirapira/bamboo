@@ -98,3 +98,9 @@ let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with
   | CallExp c -> Some c.call_head
   | _ -> None
+
+let case_header_arg_list (c : case_header) : arg list =
+  match c with
+  | UsualCaseHeader uch ->
+     uch.case_arguments
+  | DefaultCaseHeader -> []
