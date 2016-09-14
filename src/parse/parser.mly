@@ -208,7 +208,7 @@ value_info:
   ;
 
 reentrance_info:
-  | WITH; REENTRANCE; b = block { b }
+  | REENTRANCE; b = block { b }
   ;
 
 lexp:

@@ -12,7 +12,7 @@ contract auction
 			abort;
 		bid new_bid =
 			new bid(sender(msg), value(msg), this) along value(msg)
-				with reentrance { abort; }; // failure throws.
+				reentrance { abort; }; // failure throws.
 		_bids[address(new_bid)] = true;
 		return (true) then
 			auction(_beneficiary, _biddingTime, _bids, value(msg));
@@ -46,15 +46,15 @@ contract bid
 	{
 		if (sender(msg) != _bidder)
 			abort;
-		if (_auction.bid_is_highest(_value) with reentrance { abort; })
+		if (_auction.bid_is_highest(_value) reentrance { abort; })
 			abort;
 		selfdestruct(_bidder);
 	}
 	case (bool pay_beneficiary())
 	{
-		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
+		if (not _auction.bid_is_highest(_value) reentrance { abort; })
 			abort;
-		address beneficiary = _auction.beneficiary() with reentrance { abort; };
+		address beneficiary = _auction.beneficiary() reentrance { abort; };
 		selfdestruct(_beneficiary);
 	}
 	default

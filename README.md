@@ -116,15 +116,15 @@ contract bid
 	{
 		if (sender(msg) != _bidder)
 			abort;
-		if (_auction.bid_is_highest(_value))
+		if (_auction.bid_is_highest(_value) reentrance { abort; })
 			abort;
 		selfdestruct(_bidder);
 	}
 	case (bool pay_beneficiary())
 	{
-		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
+		if (not _auction.bid_is_highest(_value) reentrance { abort; })
 			abort;
-		address beneficiary = _auction.beneficiary();
+		address beneficiary = _auction.beneficiary() reentrance { abort; };
 		selfdestruct(_beneficiary);
 	}
 	default
