@@ -139,7 +139,7 @@ contract bid
 Currently,
 ```
 cd src
-sh build_parser.sh
+sh run_parser.sh
 ```
 builds a parser and tests it against the example files
 `src/parse/examples/*.sol`

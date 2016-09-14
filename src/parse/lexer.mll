@@ -46,7 +46,6 @@ rule read =
   | "="  { SINGLE_EQ }
   | "new" { NEW }
   | "along" { ALONG }
-  | "with" { WITH }
   | "reentrance" { REENTRANCE }
   | "selfdestruct" { SELFDESTRUCT }
   | "." { DOT }

@@ -1,86 +1,84 @@
-type call =
+type 'exp_annot call =
   {  call_head : string
-  ;  call_args : exp list
+  ;  call_args : ('exp_annot exp) list
   }
-and message_info =
-  { message_value_info : exp option
-  ; message_reentrance_info : sentence list
+and 'exp_annot message_info =
+  { message_value_info : 'exp_annot exp option
+  ; message_reentrance_info : 'exp_annot sentence list
   }
-and new_exp =
+and 'exp_annot new_exp =
   { new_head : string
-  ; new_args : exp list
-  ; new_msg_info : message_info
+  ; new_args : 'exp_annot exp list
+  ; new_msg_info : 'exp_annot message_info
   }
-and send_exp =
-  { send_head_contract : exp
+and 'exp_annot send_exp =
+  { send_head_contract : 'exp_annot exp
   ; send_head_method : string
-  ; send_args : exp list
-  ; send_msg_info : message_info
+  ; send_args : 'exp_annot exp list
+  ; send_msg_info : 'exp_annot message_info
   }
-and exp =
+and 'exp_annot exp =
   | TrueExp
   | FalseExp
-  | CallExp of call
+  | CallExp of 'exp_annot call
   | IdentifierExp of string
-  | ParenthExp of exp
-  | NewExp of new_exp
-  | SendExp of send_exp
-  | LtExp of exp * exp
-  | GtExp of exp * exp
-  | NeqExp of exp * exp
-  | EqualityExp of exp * exp
-  | AddressExp of exp
-  | NotExp of exp
-  | ArrayAccessExp of array_access
-and lexp =
+  | ParenthExp of 'exp_annot exp
+  | NewExp of 'exp_annot new_exp
+  | SendExp of 'exp_annot send_exp
+  | LtExp of 'exp_annot exp * 'exp_annot exp
+  | GtExp of 'exp_annot exp * 'exp_annot exp
+  | NeqExp of 'exp_annot exp * 'exp_annot exp
+  | EqualityExp of 'exp_annot exp * 'exp_annot exp
+  | AddressExp of 'exp_annot exp
+  | NotExp of 'exp_annot exp
+  | ArrayAccessExp of 'exp_annot array_access
+and 'exp_annot lexp =
   | IdentifierLExp of string
-  | ArrayAccessLExp of array_access
-and array_access =
+  | ArrayAccessLExp of 'exp_annot array_access
+and 'exp_annot array_access =
   { array_access_array : string
-  ; array_access_index : exp
+  ; array_access_index : 'exp_annot exp
   }
-and variable_init =
-  { variable_init_type : typ
+and 'exp_annot variable_init =
+  { variable_init_type : 'exp_annot typ
   ; variable_init_name : string
-  ; variable_init_value : exp
+  ; variable_init_value : 'exp_annot exp
   }
-and typ =
+and 'exp_annot typ =
   | UintType
   | AddressType
   | BoolType
-  | MappingType of typ * typ
+  | MappingType of 'exp_annot typ * 'exp_annot typ
   | IdentType of string
-and sentence =
+and 'exp_annot sentence =
   | AbortSentence
-  | ReturnSentence of return
-  | AssignmentSentence of lexp * exp
-  | VariableInitSentence of variable_init
-  | IfSingleSentence of exp * sentence
-  | SelfdestructSentence of exp
-and return =
-  { return_value : exp
-  ; return_cont : exp
+  | ReturnSentence of 'exp_annot return
+  | AssignmentSentence of 'exp_annot lexp * 'exp_annot exp
+  | VariableInitSentence of 'exp_annot variable_init
+  | IfSingleSentence of 'exp_annot exp * 'exp_annot sentence
+  | SelfdestructSentence of 'exp_annot exp
+and 'exp_annot return =
+  { return_value : 'exp_annot exp
+  ; return_cont : 'exp_annot exp
   }
 
-type arg =
-  { arg_typ : typ
+type 'exp_annot arg =
+  { arg_typ : 'exp_annot typ
   ; arg_ident : string
   }
 
-
-
-type case_body =
-  sentence list
+type 'exp_annot case_body =
+  'exp_annot sentence list
 
 type case_header =
   | UsualCaseHeader
   | DefaultCaseHeader
 
-type case =
+type 'exp_annot case =
   { case_header : case_header
-  ; case_body : case_body
+  ; case_body : 'exp_annot case_body
   }
 
-type contract =
-  { contract_cases : case list
+type 'exp_annot contract =
+  { contract_cases : 'exp_annot case list
   }

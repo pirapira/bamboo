@@ -26,16 +26,14 @@
 %token SINGLE_EQ
 %token NEW
 %token ALONG
-%token WITH
 %token REENTRANCE
 %token ABORT
-%token HEIR
 %token SELFDESTRUCT
 %token NOT
 %token EOF
 
 
-%start <Syntax.contract list> file
+%start <unit Syntax.contract list> file
 %%
 
 file:
@@ -84,14 +82,14 @@ block:
   ;
 
 case_header:
-  | DEFAULT { DefaultCaseHeader }
+  | DEFAULT { Syntax.DefaultCaseHeader }
   | CASE; LPAR;
     typ;
     IDENT; (* function name *)
     LPAR;
     args = argument_list;
     RPAR;
-    RPAR { UsualCaseHeader }
+    RPAR { Syntax.UsualCaseHeader }
   ;
 
 argument_list:
@@ -144,7 +142,7 @@ rev_sentences:
 sentence :
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { return_value = value; return_cont = cont} }
+    { Syntax.ReturnSentence { Syntax. return_value = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;
@@ -152,7 +150,7 @@ sentence :
     SINGLE_EQ;
     value = exp;
     SEMICOLON { Syntax.VariableInitSentence
-                { variable_init_type = t
+                { Syntax.variable_init_type = t
                 ; variable_init_name = name
                 ; variable_init_value = value
                 }
@@ -174,19 +172,20 @@ exp:
     e = exp;
     RPAR
     { Syntax.ParenthExp e }
-  | s = IDENT; LPAR; RPAR { Syntax.CallExp { call_head = s; call_args = [] } }
+  | s = IDENT; LPAR; RPAR { Syntax.CallExp { Syntax.call_head = s; call_args = [] } }
   | s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR { Syntax.CallExp { call_head = s; call_args = fst :: lst } }
-  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { new_head = s; new_args = []; new_msg_info = m } }
+    lst = comma_exp_list; RPAR { Syntax.CallExp {
+                                   Syntax.call_head = s; call_args = fst :: lst } }
+  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m } }
   | NEW; s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
+    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m } }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
-    { Syntax.SendExp { send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
                        ; send_args = []; send_msg_info = m } }
   | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info
-    { Syntax.SendExp { send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
                        ; send_args = (fst :: lst); send_msg_info = m } }
   | ADDRESS; e = exp { Syntax.AddressExp e }
   | NOT; e = exp { Syntax.NotExp e }
@@ -194,7 +193,8 @@ exp:
     LSQBR;
     idx = exp;
     RSQBR
-    { Syntax.ArrayAccessExp {array_access_array = s; array_access_index = idx} }
+    { Syntax.ArrayAccessExp {
+        Syntax.array_access_array = s; array_access_index = idx} }
   ;
 
 msg_info:
@@ -217,7 +217,8 @@ lexp:
     LSQBR;
     idx = exp;
     RSQBR
-    { Syntax.ArrayAccessLExp {array_access_array = s; array_access_index = idx} }
+    { Syntax.ArrayAccessLExp {
+       Syntax.array_access_array = s; array_access_index = idx} }
   ;
 
 comma_exp_list:
