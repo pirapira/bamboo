@@ -1,3 +1,10 @@
+type typ =
+  | UintType
+  | AddressType
+  | BoolType
+  | MappingType of typ * typ
+  | IdentType of string
+
 type 'exp_annot call =
   {  call_head : string
   ;  call_args : ('exp_annot exp) list
@@ -41,16 +48,10 @@ and 'exp_annot array_access =
   ; array_access_index : 'exp_annot exp
   }
 and 'exp_annot variable_init =
-  { variable_init_type : 'exp_annot typ
+  { variable_init_type : typ
   ; variable_init_name : string
   ; variable_init_value : 'exp_annot exp
   }
-and 'exp_annot typ =
-  | UintType
-  | AddressType
-  | BoolType
-  | MappingType of 'exp_annot typ * 'exp_annot typ
-  | IdentType of string
 and 'exp_annot sentence =
   | AbortSentence
   | ReturnSentence of 'exp_annot return
@@ -63,8 +64,8 @@ and 'exp_annot return =
   ; return_cont : 'exp_annot exp
   }
 
-type 'exp_annot arg =
-  { arg_typ : 'exp_annot typ
+type arg =
+  { arg_typ : typ
   ; arg_ident : string
   }
 
