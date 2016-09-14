@@ -40,40 +40,24 @@ contract auction
 contract bid
 	(address _bidder
 	,uint _value
-	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
+	,auction _auction)
 {
 	case (bool refund())
 	{
+	    uint x = a.b() with reentrance { abort; };
+
 		if (sender(msg) != _bidder)
 			abort;
-		if (_auction.bid_is_highest(_value) with reentrance { abort; })
+        if (_auction.bid_is_highest(_value) with reentrance { abort; })
 			abort;
 		selfdestruct(_bidder);
 	}
 	case (bool pay_beneficiary())
 	{
-		if (not _auction.bid_is_highest(_value) with reentrance { abort; })
+if (not _auction.bid_is_highest(_value) with reentrance { abort; })
 			abort;
-		address beneficiary = _auction.beneficiary() with reentrance { abort; };
+address beneficiary = _auction.beneficiary() with reentrance { abort; };
 		selfdestruct(_beneficiary);
-	}
-	default
-	{
-		abort;
-	}
-}
-
-contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
-{
-	case (bool bid_is_highest(uint _cand))
-	{
-		if (not _bids[sender(msg)]) abort;
-		return (highest_bid == _cand) then auction_done(_beneficiary, _bids, _highest_bid);
-	}
-	case (address beneficiary())
-	{
-		if (not _bids[sender(msg)]) abort;
-		return (_beneficiary) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
 	default
 	{

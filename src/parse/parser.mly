@@ -10,6 +10,7 @@
 %token RSQBR
 %token LBRACE
 %token RBRACE
+%token DOT
 %token CASE
 %token DEFAULT
 %token IF
@@ -30,6 +31,7 @@
 %token ABORT
 %token HEIR
 %token SELFDESTRUCT
+%token NOT
 %token EOF
 
 
@@ -156,6 +158,7 @@ sentence :
                 }
               }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Contract.IfSingleSentence (cond, body) }
+  | SELFDESTRUCT; e = exp; SEMICOLON { Contract.SelfdestructSentence e }
   ;
 
 exp:
@@ -163,6 +166,8 @@ exp:
   | FALSE { Contract.FalseExp }
   | lhs = exp; LT; rhs = exp { Contract.LtExp (lhs, rhs) }
   | lhs = exp; GT; rhs = exp { Contract.GtExp (lhs, rhs) }
+  | lhs = exp; NEQ; rhs = exp { Contract.NeqExp (lhs, rhs) }
+  | lhs = exp; EQUALITY; rhs = exp { Contract.EqualityExp (lhs, rhs) }
   | s = IDENT
     { Contract.IdentifierExp s }
   | LPAR;
@@ -175,7 +180,21 @@ exp:
   | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = []; new_msg_info = m } }
   | NEW; s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info { Contract.NewExp { new_head = s; new_args = fst :: lst; new_msg_info = m } }
+  | contr = exp; DOT; mtd = IDENT;
+    LPAR; RPAR; m = msg_info
+    { Contract.SendExp { send_head_contract = contr; send_head_method = mtd
+                       ; send_args = []; send_msg_info = m } }
+  | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
+    lst = comma_exp_list; RPAR; m = msg_info
+    { Contract.SendExp { send_head_contract = contr; send_head_method = mtd
+                       ; send_args = (fst :: lst); send_msg_info = m } }
   | ADDRESS; e = exp { Contract.AddressExp e }
+  | NOT; e = exp { Contract.NotExp e }
+  | s = IDENT;
+    LSQBR;
+    idx = exp;
+    RSQBR
+    { Contract.ArrayAccessExp {array_access_array = s; array_access_index = idx} }
   ;
 
 msg_info:

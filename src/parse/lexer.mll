@@ -6,13 +6,6 @@
   open Lexing
   open Parser
   exception SyntaxError of string
-
-  let next_line lexbuf =
-    let pos = lexbuf.lex_curr_p in
-      lexbuf.lex_curr_p <-
-          { pos with pos_bol = lexbuf.lex_curr_pos;
-            pos_lnum = pos.pos_lnum + 1
-    }
 }
 
 let white = [' ' '\t']+
@@ -24,8 +17,8 @@ let comment = "//" (_ # ['\r' '\n'])* newline
 rule read =
   parse
   | white    { read lexbuf }
-  | comment  { next_line lexbuf; read lexbuf }
-  | newline  { next_line lexbuf; read lexbuf }
+  | comment  { new_line lexbuf; read lexbuf }
+  | newline  { new_line lexbuf; read lexbuf }
   | "contract" { CONTRACT }
   | "default"  { DEFAULT }
   | "case"     { CASE }
@@ -47,6 +40,7 @@ rule read =
   | "}" { RBRACE }
   | "," { COMMA }
   | "==" { EQUALITY }
+  | "!=" { NEQ }
   | "<" { LT }
   | ">" { GT }
   | "="  { SINGLE_EQ }
@@ -55,5 +49,7 @@ rule read =
   | "with" { WITH }
   | "reentrance" { REENTRANCE }
   | "selfdestruct" { SELFDESTRUCT }
+  | "." { DOT }
+  | "not" { NOT }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

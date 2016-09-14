@@ -11,6 +11,12 @@ and new_exp =
   ; new_args : exp list
   ; new_msg_info : message_info
   }
+and send_exp =
+  { send_head_contract : exp
+  ; send_head_method : string
+  ; send_args : exp list
+  ; send_msg_info : message_info
+  }
 and exp =
   | TrueExp
   | FalseExp
@@ -18,9 +24,14 @@ and exp =
   | IdentifierExp of string
   | ParenthExp of exp
   | NewExp of new_exp
+  | SendExp of send_exp
   | LtExp of exp * exp
   | GtExp of exp * exp
+  | NeqExp of exp * exp
+  | EqualityExp of exp * exp
   | AddressExp of exp
+  | NotExp of exp
+  | ArrayAccessExp of array_access
 and lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of array_access
@@ -45,6 +56,7 @@ and sentence =
   | AssignmentSentence of lexp * exp
   | VariableInitSentence of variable_init
   | IfSingleSentence of exp * sentence
+  | SelfdestructSentence of exp
 and return =
   { return_value : exp
   ; return_cont : exp
