@@ -3,6 +3,7 @@ type interface_typ =
 
 type interface_arg = string * interface_typ
 
+(** [interpret_interface_type] parses "uint" into InterfaceUint 256, etc. *)
 val interpret_interface_type : string -> interface_typ
 
 type function_signature =
