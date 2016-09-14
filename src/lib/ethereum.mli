@@ -9,9 +9,9 @@ type interface_arg = string * interface_typ
 val interpret_interface_type : Syntax.typ -> interface_typ
 
 type function_signature =
-  { return : interface_typ list
-  ; name : string
-  ; args : interface_typ list
+  { sig_return : interface_typ list
+  ; sig_name : string
+  ; sig_args : interface_typ list
   }
 
 val get_interface_typs :

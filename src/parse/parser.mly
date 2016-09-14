@@ -86,12 +86,17 @@ block:
 case_header:
   | DEFAULT { Syntax.DefaultCaseHeader }
   | CASE; LPAR;
-    typ;
-    IDENT; (* function name *)
+    return_typ = typ;
+    name = IDENT;
     LPAR;
     args = argument_list;
     RPAR;
-    RPAR { Syntax.UsualCaseHeader }
+    RPAR { Syntax.UsualCaseHeader
+      { case_return_typ = [return_typ] (* multi returns not supported *)
+      ; Syntax.case_name = name
+      ; case_arguments = args
+      }
+    }
   ;
 
 argument_list:

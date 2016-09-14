@@ -17,13 +17,13 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   )
 
 type function_signature =
-  { return : interface_typ list
-  ; name : string
-  ; args : interface_typ list
+  { sig_return : interface_typ list
+  ; sig_name : string
+  ; sig_args : interface_typ list
   }
 
 let get_interface_typ (raw : Syntax.arg) : interface_typ =
-  interpret_interface_type raw.arg_typ
+  interpret_interface_type Syntax.(raw.arg_typ)
 
 let get_interface_typs : Syntax.arg list -> interface_typ list =
   List.map get_interface_typ

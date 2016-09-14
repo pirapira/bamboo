@@ -72,8 +72,14 @@ type arg =
 type 'exp_annot case_body =
   'exp_annot sentence list
 
+type usual_case_header =
+  { case_return_typ : typ list
+  ; case_name : string
+  ; case_arguments : arg list
+  }
+
 type case_header =
-  | UsualCaseHeader
+  | UsualCaseHeader of usual_case_header
   | DefaultCaseHeader
 
 type 'exp_annot case =
