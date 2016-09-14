@@ -13,8 +13,14 @@ type contract_interface =
         this one can continue into *)
   }
 
+let collect_continuation_in_sentence (raw : unit Syntax.sentence) : string list =
+  failwith "collect_continuation_in_sentence"
+
+let collect_continuation_in_case (raw : unit Syntax.case) : string list =
+  List.concat (List.map collect_continuation_in_sentence raw.case_body)
+
 let collect_continuation_in_contract (raw : unit Syntax.contract) : string list =
-  failwith "colelct_cont not implemented"
+  List.concat (List.map collect_continuation_in_case raw.contract_cases)
 
 let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
   Syntax.
