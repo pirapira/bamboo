@@ -25,5 +25,7 @@ let parse_with_error lexbuf =
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let _ = parse_with_error lexbuf in
+  let contracts : unit Syntax.contract list = parse_with_error lexbuf in
+  let interfaces : Contract.contract_interface list =
+    List.map Contract.contract_interface_of contracts in
   Printf.printf "Finished parsing.\n"

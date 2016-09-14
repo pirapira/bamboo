@@ -82,5 +82,6 @@ type 'exp_annot case =
   }
 
 type 'exp_annot contract =
-  { contract_cases : 'exp_annot case list
+  {
+    contract_cases : 'exp_annot case list
   }
