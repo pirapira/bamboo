@@ -22,6 +22,8 @@ type function_signature =
   ; args : interface_typ list
   }
 
-let get_interface_typs :
-  Syntax.arg list -> interface_typ list = failwith
-  "get_interface_typs not implemented"
+let get_interface_typ (raw : Syntax.arg) : interface_typ =
+  interpret_interface_type raw.arg_typ
+
+let get_interface_typs : Syntax.arg list -> interface_typ list =
+  List.map get_interface_typ
