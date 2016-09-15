@@ -1,5 +1,11 @@
 open Syntax
 
+let assign_type_new_exp
+      contract_interfaces
+      venv
+      e : (typ new_exp * string (* name of the contract just created *)) =
+  failwith "atne"
+
 let ident_lookup_type contract_interfaces s =
   failwith "ilt"
 
@@ -34,6 +40,9 @@ let rec assign_type_exp
   | ParenthExp e ->
      let (e', typ) = assign_type_exp contract_interfaces venv e in
      ((ParenthExp (e', typ)), typ) (* with parentheses, or without, they receive the same type *)
+  | NewExp n ->
+     let (n', contract_name) = assign_type_new_exp contract_interfaces venv n in
+     (NewExp n', ContractType contract_name)
 
 let assign_type_return
       contract_interfaces

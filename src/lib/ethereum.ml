@@ -14,6 +14,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | BoolType -> InterfaceBool
   | MappingType (_, _) -> failwith "interpret_interface_type: mapping type not supported"
   | IdentType _ -> failwith "interpret_interface_type: custom type not supported in ABI"
+  | ContractType _ -> failwith "contract type does not appear in the ABI"
   )
 
 type function_signature =

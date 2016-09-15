@@ -4,6 +4,7 @@ type typ =
   | BoolType
   | MappingType of typ * typ
   | IdentType of string
+  | ContractType of string (* type of [bid(...)] where bid is a contract *)
 
 type 'exp_annot call =
   {  call_head : string
