@@ -62,8 +62,13 @@ let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
   ; contract_interface_continuations = collect_continuation_in_contract raw
   }
 
+let find_method_sig_in_contract
+      (method_name : string) (i : contract_interface)
+    : case_interface option =
+  failwith "fmsic"
 
-let find_method_signature :
-  contract_interface list ->
-  string (* contract name *) -> string (* method name *) -> case_interface option =
-  failwith "find_method_signature"
+let find_method_signature
+  (interfaces : contract_interface list)
+  (contract_name : string)
+  (method_name : string) : case_interface option =
+  Misc.first_some (find_method_sig_in_contract method_name) interfaces
