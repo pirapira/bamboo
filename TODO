@@ -1,0 +1,2 @@
+check for duplication of variable names
+check for duplication of contract interface function names (even in different contracts)
