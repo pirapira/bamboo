@@ -1,5 +1,10 @@
 open Syntax
 
+let type_variable_init
+      contract_interfaces venv (vi : unit variable_init) :
+      (typ variable_init * arg list) =
+  failwith "tvi"
+
 let assign_type_lexp
       venv (src : unit lexp) : typ lexp =
   failwith "atl"
@@ -39,6 +44,12 @@ let rec assign_type_sentence
            contract_arguments
            venv s in
      (IfSingleSentence (cond', s'), venv)
+  | SelfdestructSentence e ->
+     let e' = assign_type_exp venv e in
+     (SelfdestructSentence e', venv)
+  | VariableInitSentence vi ->
+     let (vi', venv') =  type_variable_init contract_interfaces venv vi in
+     (VariableInitSentence vi', venv')
 
 let rec assign_type_sentences
           contract_interfaces
