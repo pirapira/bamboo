@@ -61,3 +61,9 @@ let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
   ; contract_interface_cases = List.map case_interface_of raw.contract_cases
   ; contract_interface_continuations = collect_continuation_in_contract raw
   }
+
+
+let find_method_signature :
+  contract_interface list ->
+  string (* contract name *) -> string (* method name *) -> case_interface option =
+  failwith "find_method_signature"

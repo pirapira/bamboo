@@ -13,3 +13,7 @@ type contract_interface =
   }
 
 val contract_interface_of : unit Syntax.contract -> contract_interface
+
+val find_method_signature :
+  contract_interface list ->
+  string (* contract name *) -> string (* method name *) -> case_interface option

@@ -105,3 +105,8 @@ let case_header_arg_list (c : case_header) : arg list =
   | UsualCaseHeader uch ->
      uch.case_arguments
   | DefaultCaseHeader -> []
+
+let contract_name_of ((_, t) : typ exp) =
+  match t with
+  | ContractType s -> s
+  | _ -> failwith "seeking contract_name_of non-contract"

@@ -24,8 +24,12 @@ let assign_type_call
       venv (src : unit call) : (typ call * typ) =
   failwith "atc"
 
+let assign_type_message_info contract_interfaces tenv :
+      unit message_info -> typ message_info =
+  failwith "not implemented"
+
 let rec assign_type_exp
-      contract_interfaces
+      (contract_interfaces : Contract.contract_interface list)
       (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : typ exp =
   match exp_inner with
   | TrueExp -> (TrueExp, BoolType)
@@ -67,7 +71,7 @@ let rec assign_type_exp
      (AddressExp inner', AddressType)
   | ArrayAccessExp aa ->
      let atyp = TypeEnv.lookup venv aa.array_access_array in
-     match atyp with
+     begin match atyp with
      | Some (MappingType (key_type, value_type)) ->
         let (idx', idx_typ') = assign_type_exp contract_interfaces venv aa.array_access_index in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
@@ -76,9 +80,31 @@ let rec assign_type_exp
            ; array_access_index = (idx', idx_typ')
            }, value_type)
      | _ -> failwith "index access haa to be on mappings"
+     end
+  | SendExp send ->
+     let msg_info' = assign_type_message_info contract_interfaces venv
+                                           send.send_msg_info in
+     let contract' = assign_type_exp contract_interfaces venv send.send_head_contract in
+     let contract_name = Syntax.contract_name_of contract' in
+     let method_sig : Ethereum.function_signature = begin
+         match Contract.find_method_signature
+                 contract_interfaces contract_name send.send_head_method with
+         | Some x -> x
+         | None -> failwith "method not found"
+       end
+     in
+     ( SendExp
+         { send_head_contract = contract'
+         ; send_head_method = send.send_head_method
+         ; send_args = List.map (assign_type_exp contract_interfaces venv)
+                              send.send_args
+         ; send_msg_info = msg_info'
+         },
+       Ethereum.to_typ (List.hd method_sig.Ethereum.sig_return)
+     )
 
 let assign_type_return
-      contract_interfaces
+      (contract_interfaces : Contract.contract_interface list)
       (venv : TypeEnv.type_env)
       (src : unit return) : typ return =
   { return_value = assign_type_exp contract_interfaces venv src.return_value
@@ -86,7 +112,7 @@ let assign_type_return
   }
 
 let rec assign_type_sentence
-      contract_interfaces
+      (contract_interfaces : Contract.contract_interface list)
       (venv : TypeEnv.type_env)
       (src : unit sentence) :
       (typ sentence * TypeEnv.type_env (* updated environment *)) =
@@ -115,7 +141,7 @@ let rec assign_type_sentence
      (VariableInitSentence vi', venv')
 
 let rec assign_type_sentences
-          contract_interfaces
+          (contract_interfaces : Contract.contract_interface list)
           (variable_environment : TypeEnv.type_env)
           (ss : unit sentence list) : typ sentence list =
   match ss with
@@ -129,7 +155,7 @@ let rec assign_type_sentences
                                        rest_ss
 
 
-let assign_type_case contract_interfaces
+let assign_type_case (contract_interfaces : Contract.contract_interface list)
                      (venv : TypeEnv.type_env)
                      (case : unit case) =
   let case_arguments = case_header_arg_list case.case_header in

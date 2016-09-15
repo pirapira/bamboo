@@ -17,6 +17,17 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | ContractType _ -> failwith "contract type does not appear in the ABI"
   )
 
+let to_typ (ityp : interface_typ) =
+  Syntax.
+  ( match ityp with
+    | InterfaceUint x ->
+       let () = if (x < 0 || x > 256) then
+                  failwith "too small or too big integer" in
+       UintType
+    | InterfaceBool -> BoolType
+    | InterfaceAddress -> AddressType
+  )
+
 type function_signature =
   { sig_return : interface_typ list
   ; sig_name : string

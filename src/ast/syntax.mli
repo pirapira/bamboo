@@ -98,3 +98,5 @@ type 'exp_annot contract =
 val contract_name_of_return_cont : 'exp exp -> string option
 
 val case_header_arg_list : case_header -> arg list
+
+val contract_name_of : typ exp -> string
