@@ -62,6 +62,20 @@ let rec assign_type_exp
   | NotExp negated ->
      let negated' = assign_type_exp contract_interfaces venv negated in
      (NotExp negated', BoolType)
+  | AddressExp inner ->
+     let inner' = assign_type_exp contract_interfaces venv inner in
+     (AddressExp inner', AddressType)
+  | ArrayAccessExp aa ->
+     let atyp = TypeEnv.lookup venv aa.array_access_array in
+     match atyp with
+     | Some (MappingType (key_type, value_type)) ->
+        let (idx', idx_typ') = assign_type_exp contract_interfaces venv aa.array_access_index in
+        (* TODO Check idx_typ' and key_type are somehow compatible *)
+        (ArrayAccessExp
+           { array_access_array = aa.array_access_array
+           ; array_access_index = (idx', idx_typ')
+           }, value_type)
+     | _ -> failwith "index access haa to be on mappings"
 
 let assign_type_return
       contract_interfaces

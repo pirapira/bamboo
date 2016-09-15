@@ -2,6 +2,7 @@
 add [msg] as a special token
 
 # todo for later
+think what to do with balance checks, block numbers and so on.  block()?
 check for duplication of variable names
 check for duplication of contract interface function names (even in different contracts)
 add a placeholder for arrays in the contract creation e.g. new auction(x, y, empty_array, z)...
