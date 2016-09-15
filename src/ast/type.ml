@@ -1,24 +1,48 @@
 open Syntax
 
+let ident_lookup_type contract_interfaces s =
+  failwith "ilt"
+
 let type_variable_init
       contract_interfaces venv (vi : unit variable_init) :
       (typ variable_init * arg list) =
   failwith "tvi"
 
 let assign_type_lexp
+      contract_interfaces
       venv (src : unit lexp) : typ lexp =
   failwith "atl"
 
-let assign_type_exp
-      venv (src : unit exp) : typ exp =
-  failwith "atl"
+let assign_type_call
+      contract_interfaces
+      venv (src : unit call) : (typ call * typ) =
+  failwith "atc"
+
+let rec assign_type_exp
+      contract_interfaces
+      venv ((exp_inner, ()) : unit exp) : typ exp =
+  match exp_inner with
+  | TrueExp -> (TrueExp, BoolType)
+  | FalseExp -> (FalseExp, BoolType)
+  | CallExp c ->
+     let (c', typ) = assign_type_call venv contract_interfaces c in
+     (CallExp c', typ)
+  | IdentifierExp s ->
+     (* Now something is strange. This might not need a type anyway. *)
+     (* Maybe introduce a type called CallableType *)
+     ident_lookup_type contract_interfaces venv s
+  | ParenthExp e ->
+     let (e', typ) = assign_type_exp contract_interfaces venv e in
+     ((ParenthExp (e', typ)), typ) (* with parentheses, or without, they receive the same type *)
 
 let assign_type_return
       contract_interfaces
       contract_arguments
       venv
       (src : unit return) : typ return =
-  failwith "assign_type_return"
+  { return_value = assign_type_exp contract_interfaces venv src.return_value
+  ; return_cont =  assign_type_exp contract_interfaces venv src.return_cont
+  }
 
 let rec assign_type_sentence
       contract_interfaces
@@ -33,11 +57,11 @@ let rec assign_type_sentence
        assign_type_return contract_interfaces contract_arguments venv r in
      (ReturnSentence r', venv)
   | AssignmentSentence (l, r) ->
-     let l' = assign_type_lexp venv l in
-     let r' = assign_type_exp venv r in
+     let l' = assign_type_lexp contract_interfaces venv l in
+     let r' = assign_type_exp contract_interfaces venv r in
      (AssignmentSentence (l', r'), venv)
   | IfSingleSentence (cond, s) ->
-     let cond' = assign_type_exp venv cond in
+     let cond' = assign_type_exp contract_interfaces venv cond in
      let (s', _ (* new variable in the if-body does not affect the context*) )
        = assign_type_sentence
            contract_interfaces
@@ -45,7 +69,7 @@ let rec assign_type_sentence
            venv s in
      (IfSingleSentence (cond', s'), venv)
   | SelfdestructSentence e ->
-     let e' = assign_type_exp venv e in
+     let e' = assign_type_exp contract_interfaces venv e in
      (SelfdestructSentence e', venv)
   | VariableInitSentence vi ->
      let (vi', venv') =  type_variable_init contract_interfaces venv vi in
