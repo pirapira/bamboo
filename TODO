@@ -1,2 +1,7 @@
+# todo for the first example
+add [msg] as a special token
+
+# todo for later
 check for duplication of variable names
 check for duplication of contract interface function names (even in different contracts)
+add a placeholder for arrays in the contract creation e.g. new auction(x, y, empty_array, z)...

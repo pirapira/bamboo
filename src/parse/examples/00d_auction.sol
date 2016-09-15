@@ -1,7 +1,11 @@
+// The contract signature auction(address,uint,bool[address],uint) can be used as a continuation
+// of a contract.  When the auction contract is created, bool[address] cannot be passed,
+// so the array is initizilly zeroed out.
+
 contract auction
 	(address _beneficiary
 	,uint _bidding_time
-	,bool[address] _bids
+	,bool[address] _bids /// When the contract is created, this must be empty.
 	,uint _highest_bid)
 {
 	case (bool bid())
