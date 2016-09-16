@@ -1,0 +1,18 @@
+Storage:
+000: program counter (which contract is it running now?)
+001: n = number of words used in ABI arguments
+002 - 002+n-1: ABI arguments
+
+The array elements are stored at
+ sha3(array_id, idx)
+For the nesting arrays,
+ sha3(sha3(array_id, first_idx), second_idx)
+and so on.
+
+Memory
+0-63 bytes are used for sha3 argument.
+The rest is currently unusued.
+
+Stack:
+usual.  The location of the currently active variables are stored in
+locationEnv.

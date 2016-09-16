@@ -124,3 +124,7 @@ let contract_name_of_instance ((_, t) : typ exp) =
   | ContractInstanceType s -> s
   | typ -> failwith
              ("seeking contract_name_of non-contract "^(string_of_typ typ))
+
+let string_of_exp_inner e =
+  match e with
+  | FalseExp -> "false"

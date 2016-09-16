@@ -3,6 +3,8 @@
    accumulated instructions. *)
 type codegenEnv
 
+val empty_env : codegenEnv
+
 val codeLength : codegenEnv -> int
 
 (* for each instruction,
@@ -10,4 +12,5 @@ val codeLength : codegenEnv -> int
  * This allows keeping track of stack size...
  *)
 
-val push : PseudoImm.pseudo_imm -> codegenEnv -> codegenEnv
+val append_instruction :
+  codegenEnv -> PseudoImm.pseudo_imm Evm.instruction -> codegenEnv
