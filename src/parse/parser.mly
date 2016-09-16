@@ -33,6 +33,7 @@
 %token VALUE
 %token SENDER
 %token MSG
+%token THIS
 %token EOF
 
 
@@ -201,6 +202,7 @@ exp:
                        ; send_args = (fst :: lst); send_msg_info = m }, () }
   | ADDRESS; e = exp { Syntax.AddressExp e, () }
   | NOT; e = exp { Syntax.NotExp e, () }
+  | THIS; e = exp { Syntax.ThisExp, () }
   | s = IDENT;
     LSQBR;
     idx = exp;

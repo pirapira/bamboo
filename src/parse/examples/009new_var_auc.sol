@@ -9,7 +9,7 @@ contract auction
    default
    {
 bid new_bid =
-new bid(sender(msg), value(msg), this) along value(msg)
+new bid(sender(msg), value(msg), address(this)) along value(msg)
 reentrance { abort; }; // failure throws.
      _bids[sender(msg)] = true;
      return (true) then

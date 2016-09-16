@@ -53,5 +53,6 @@ rule read =
   | "msg" { MSG }
   | "value" { VALUE }
   | "sender" { SENDER }
+  | "this" { THIS }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

@@ -1,7 +1,8 @@
 # todo for the first example
-add [msg] as a special token
+parentheses node should be removed early, at typing perhaps
 
 # todo for later
+add [msg] as a special token
 think what to do with balance checks, block numbers and so on.  block()?
 check for duplication of variable names
 check for duplication of contract interface function names (even in different contracts)
