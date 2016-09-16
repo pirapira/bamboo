@@ -4,6 +4,7 @@ type typ =
   | BoolType
   | ReferenceType of
       typ list (** pointer to [typ list] on memory *)
+  | TupleType of typ list
   | MappingType of typ * typ
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
@@ -17,6 +18,7 @@ let rec string_of_typ t =
   | ContractArchType s -> "ContractArchType "^s
   | ContractInstanceType s -> "ContractInstanceType "^s
   | ReferenceType _ -> "pointer to ..."
+  | TupleType _ -> "tuple"
 
 type 'exp_annot function_call =
   { call_head : string
@@ -57,6 +59,8 @@ and 'exp_annot exp_inner =
   | ValueExp
   | SenderExp
   | ThisExp
+  | SingleDereferenceExp of 'exp_annot exp
+  | TupleDereferenceExp of 'exp_annot exp
 and 'exp_annot lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of 'exp_annot array_access
@@ -148,3 +152,5 @@ let string_of_exp_inner e =
   | ValueExp -> "value"
   | EqualityExp _ -> "equality"
   | AddressExp _ -> "address"
+  | SingleDereferenceExp _ -> "dereference of ..."
+  | TupleDereferenceExp _ -> "dereference of tuple..."

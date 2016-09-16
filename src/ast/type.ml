@@ -103,18 +103,25 @@ and assign_type_exp
          | None -> failwith ("method "^send.send_head_method^" not found")
        end
      in
-     ( SendExp
-         { send_head_contract = contract'
-         ; send_head_method = send.send_head_method
-         ; send_args = List.map (assign_type_exp contract_interfaces cname venv)
-                              send.send_args
-         ; send_msg_info = msg_info'
-         },
-       ReferenceType
-         Ethereum.(List.map to_typ (method_sig.sig_return))
-     )
+     let types = Ethereum.(List.map to_typ (method_sig.sig_return)) in
+     let reference =
+       ( SendExp
+           { send_head_contract = contract'
+           ; send_head_method = send.send_head_method
+           ; send_args = List.map (assign_type_exp contract_interfaces cname venv)
+                                  send.send_args
+           ; send_msg_info = msg_info'
+           },
+         ReferenceType types
+       ) in
+     (match types with
+     | [single] -> (SingleDereferenceExp reference, single)
+     | _ -> reference)
   | ValueExp ->
      (ValueExp, UintType)
+  | SingleDereferenceExp _
+  | TupleDereferenceExp _ ->
+     failwith "DereferenceExp not supposed to appear in the raw tree for now"
 and assign_type_new_exp
       contract_interfaces
       (cname : string)

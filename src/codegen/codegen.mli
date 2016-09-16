@@ -15,6 +15,8 @@ val codegen_sentence :
                    *)
   CodegenEnv.codegen_env
 
+val size_of_typ : Syntax.typ -> int
+
 val move_info_around :
   (* assumption *) CodegenEnv.codegen_env ->
   (* goal *)       LocationEnv.location_env ->

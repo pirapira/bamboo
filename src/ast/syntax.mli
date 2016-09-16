@@ -3,6 +3,7 @@ type typ =
   | AddressType
   | BoolType
   | ReferenceType of typ list (** pointer to [typ list] on memory *)
+  | TupleType of typ list
   | MappingType of typ * typ
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
@@ -46,6 +47,8 @@ and 'exp_annot exp_inner =
   | ValueExp
   | SenderExp
   | ThisExp
+  | SingleDereferenceExp of 'exp_annot exp
+  | TupleDereferenceExp of 'exp_annot exp
 and 'exp_annot lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of 'exp_annot array_access
