@@ -14,15 +14,6 @@ let ident_lookup_type
   | None -> failwith ("unknown identifier "^id)
   (* what should it return when it is a method name? *)
 
-let type_variable_init
-      contract_interfaces venv (vi : unit variable_init) :
-      (typ variable_init * TypeEnv.type_env) =
-  failwith "tvi"
-
-let assign_type_lexp
-      contract_interfaces
-      venv (src : unit lexp) : typ lexp =
-  failwith "atl"
 
 let assign_type_message_info contract_interfaces tenv :
       unit message_info -> typ message_info =
@@ -120,6 +111,24 @@ and assign_type_exp
      )
   | ValueExp ->
      (ValueExp, UintType)
+and assign_type_lexp
+      contract_interfaces
+      venv (src : unit lexp) : typ lexp =
+  (* no need to type the left hand side? *)
+  match src with
+  | IdentifierLExp s -> IdentifierLExp s
+  | ArrayAccessLExp aa ->
+     let atyp = TypeEnv.lookup venv aa.array_access_array in
+     begin match atyp with
+     | Some (MappingType (key_type, value_type)) ->
+        let (idx', idx_typ') = assign_type_exp contract_interfaces venv aa.array_access_index in
+        (* TODO Check idx_typ' and key_type are somehow compatible *)
+        (ArrayAccessLExp
+           { array_access_array = aa.array_access_array
+           ; array_access_index = (idx', idx_typ')})
+     | _ -> failwith ("unknown array"^aa.array_access_array)
+     end
+
 
 let assign_type_return
       (contract_interfaces : Contract.contract_interface list)
@@ -128,6 +137,20 @@ let assign_type_return
   { return_value = assign_type_exp contract_interfaces venv src.return_value
   ; return_cont =  assign_type_exp contract_interfaces venv src.return_cont
   }
+and type_variable_init
+      contract_interfaces tenv (vi : unit variable_init) :
+      (typ variable_init * TypeEnv.type_env) =
+  (* This function has to enlarge the type environment *)
+  let value' = assign_type_exp contract_interfaces tenv vi.variable_init_value in
+  let added_name = vi.variable_init_name in
+  let added_typ = vi.variable_init_type in
+  let new_env = TypeEnv.add_pair tenv added_name added_typ in
+  let new_init =
+    { variable_init_type = added_typ
+    ; variable_init_name = added_name
+    ; variable_init_value = value'
+    } in
+  (new_init, new_env)
 
 let rec assign_type_sentence
       (contract_interfaces : Contract.contract_interface list)
