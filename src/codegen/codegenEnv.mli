@@ -1,12 +1,12 @@
 (* codegenEnv remembers the current stack size,
    initial storage assumtion, and
    accumulated instructions. *)
-type codegenEnv
+type codegen_env
 
-val empty_env : codegenEnv
+val empty_env : codegen_env
 
-val code_length : codegenEnv -> int
-val stack_size : codegenEnv -> int
+val code_length : codegen_env -> int
+val stack_size : codegen_env -> int
 
 (* for each instruction,
  * create an interface function.
@@ -14,4 +14,4 @@ val stack_size : codegenEnv -> int
  *)
 
 val append_instruction :
-  codegenEnv -> PseudoImm.pseudo_imm Evm.instruction -> codegenEnv
+  codegen_env -> PseudoImm.pseudo_imm Evm.instruction -> codegen_env

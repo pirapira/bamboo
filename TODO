@@ -1,5 +1,5 @@
 # todo for the first example
-parentheses node should be removed early, at typing perhaps
+CallExp is too ambiguous
 annotate unique ids to sentences
 generate a JUMPDEST for each sentence
 
@@ -17,3 +17,6 @@ think what to do with balance checks, block numbers and so on.  block()?
 check for duplication of variable names
 check for duplication of contract interface function names (even in different contracts)
 add a placeholder for arrays in the contract creation e.g. new auction(x, y, empty_array, z)...
+
+# done
+parentheses node should be removed early, at typing perhaps

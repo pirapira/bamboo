@@ -3,18 +3,19 @@
  * is a new codegenEnv where a stack element is pushed, whose
  * value is the evaluation of exp *)
 val codegen_exp :
-  CodegenEnv.codegenEnv ->
+  LocationEnv.location_env ->
+  CodegenEnv.codegen_env ->
   Syntax.typ Syntax.exp ->
-  CodegenEnv.codegenEnv
+  CodegenEnv.codegen_env
 
 val codegen_sentence :
-  CodegenEnv.codegenEnv ->
+  CodegenEnv.codegen_env ->
   Syntax.typ Syntax.sentence -> (* is this enough? also add sentence Id's around?
                    * I think this is enough.
                    *)
-  CodegenEnv.codegenEnv
+  CodegenEnv.codegen_env
 
 val move_info_around :
-  (* assumption *) CodegenEnv.codegenEnv ->
+  (* assumption *) CodegenEnv.codegen_env ->
   (* goal *)       LocationEnv.location_env ->
-                   CodegenEnv.codegenEnv
+                   CodegenEnv.codegen_env

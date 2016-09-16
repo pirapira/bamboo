@@ -11,6 +11,7 @@ type 'imm instruction =
   | NOT
   | TIMESTAMP
   | NEQ
+  | EQ
   | LT
   | GT
   | BALANCE

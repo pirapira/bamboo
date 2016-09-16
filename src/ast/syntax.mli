@@ -6,7 +6,7 @@ type typ =
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
 
-type 'exp_annot call =
+type 'exp_annot function_call =
   {  call_head : string
   ;  call_args : ('exp_annot exp) list
   }
@@ -30,7 +30,7 @@ and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
   | NowExp
-  | CallExp of 'exp_annot call
+  | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string
   | ParenthExp of 'exp_annot exp
   | NewExp of 'exp_annot new_exp

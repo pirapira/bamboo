@@ -15,9 +15,9 @@ let rec string_of_typ t =
   | ContractArchType s -> "ContractArchType "^s
   | ContractInstanceType s -> "ContractInstanceType "^s
 
-type 'exp_annot call =
-  {  call_head : string
-  ;  call_args : ('exp_annot exp) list
+type 'exp_annot function_call =
+  { call_head : string
+  ; call_args : ('exp_annot exp) list
   }
 and 'exp_annot message_info =
   { message_value_info : 'exp_annot exp option
@@ -39,7 +39,7 @@ and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
   | NowExp
-  | CallExp of 'exp_annot call
+  | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string
   | ParenthExp of 'exp_annot exp
   | NewExp of 'exp_annot new_exp
@@ -110,7 +110,7 @@ type 'exp_annot contract =
 
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with
-  | CallExp c -> Some c.call_head
+  | FunctionCallExp c -> Some c.call_head
   | _ -> None
 
 let case_header_arg_list (c : case_header) : arg list =
@@ -133,7 +133,7 @@ let string_of_exp_inner e =
   | NewExp _ -> "new"
   | ParenthExp _ -> "()"
   | IdentifierExp str -> "ident "^str
-  | CallExp _ -> "call"
+  | FunctionCallExp _ -> "call"
   | NowExp -> "now"
   | FalseExp -> "false"
   | SenderExp -> "sender"

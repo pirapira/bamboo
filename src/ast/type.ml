@@ -13,7 +13,7 @@ let ident_lookup_type
 let rec assign_type_call
       contract_interfaces
       cname
-      venv (src : unit call) : (typ call * typ) =
+      venv (src : unit function_call) : (typ function_call * typ) =
   let args' = List.map (assign_type_exp contract_interfaces cname venv)
                        src.call_args in
   let ret_typ =
@@ -44,9 +44,9 @@ and assign_type_exp
   | FalseExp -> (FalseExp, BoolType)
   | SenderExp -> (SenderExp, AddressType)
   | NowExp -> (NowExp, UintType)
-  | CallExp c ->
+  | FunctionCallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
-     (CallExp c', typ)
+     (FunctionCallExp c', typ)
   | IdentifierExp s ->
      (* Now something is strange. This might not need a type anyway. *)
      (* Maybe introduce a type called CallableType *)

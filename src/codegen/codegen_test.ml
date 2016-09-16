@@ -7,8 +7,9 @@ open Codegen
  *)
 let _ =
   let dummy_env = CodegenEnv.empty_env in
-  let _ = codegen_exp dummy_env (FalseExp, BoolType) in
-  let _ = codegen_exp dummy_env (TrueExp, BoolType) in
-  let _ = codegen_exp dummy_env (NotExp (TrueExp, BoolType), BoolType) in
-  let _ = codegen_exp dummy_env (NowExp, UintType) in
+  let dummy_l = LocationEnv.empty_location_env in
+  let _ = codegen_exp dummy_l dummy_env (FalseExp, BoolType) in
+  let _ = codegen_exp dummy_l dummy_env (TrueExp, BoolType) in
+  let _ = codegen_exp dummy_l dummy_env (NotExp (TrueExp, BoolType), BoolType) in
+  let _ = codegen_exp dummy_l dummy_env (NowExp, UintType) in
   Printf.printf "Finished codgen_test.\n"

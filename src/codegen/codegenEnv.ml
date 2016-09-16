@@ -1,4 +1,4 @@
-type codegenEnv =
+type codegen_env =
   { ce_stack_size: int
   ; ce_program: PseudoImm.pseudo_imm Evm.program
   }
@@ -14,7 +14,7 @@ let code_length ce =
 let stack_size ce = ce.ce_stack_size
 
 let append_instruction
-  (orig : codegenEnv) (i : PseudoImm.pseudo_imm Evm.instruction) : codegenEnv =
+  (orig : codegen_env) (i : PseudoImm.pseudo_imm Evm.instruction) : codegen_env =
   if orig.ce_stack_size < Evm.stack_eaten i then
     failwith "stack underflow"
   else

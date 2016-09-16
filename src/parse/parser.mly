@@ -188,9 +188,9 @@ exp:
     e = exp;
     RPAR
     { Syntax.ParenthExp e, () }
-  | s = IDENT; LPAR; RPAR { Syntax.CallExp { Syntax.call_head = s; call_args = [] }, () }
+  | s = IDENT; LPAR; RPAR { Syntax.FunctionCallExp { Syntax.call_head = s; call_args = [] }, () }
   | s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR { Syntax.CallExp {
+    lst = comma_exp_list; RPAR { Syntax.FunctionCallExp {
                                    Syntax.call_head = s; call_args = fst :: lst }, () }
   | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m }, () }
   | NEW; s = IDENT; LPAR; fst = exp;
