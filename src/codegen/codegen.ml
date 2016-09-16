@@ -2,7 +2,7 @@ open PseudoImm
 open CodegenEnv
 open Evm
 
-let codegen_exp
+let rec codegen_exp
       (ce : CodegenEnv.codegenEnv)
       ((e,t) : Syntax.typ Syntax.exp) :
       CodegenEnv.codegenEnv =
@@ -16,7 +16,29 @@ let codegen_exp
   | TrueExp ->
      let ce = append_instruction ce (PUSH1 (Concrete Big_int.unit_big_int)) in
      ce
-  | _ -> failwith ("codegen_exp "^Syntax.string_of_exp_inner e^": "^Syntax.string_of_typ t)) in
+  | NotExp sub ->
+     let ce = codegen_exp ce sub in
+     let ce = append_instruction ce NOT in
+     ce
+  | NowExp ->
+     append_instruction ce TIMESTAMP
+  | NeqExp (l, r)->
+     let ce = codegen_exp ce r in
+     let ce = codegen_exp ce l in (* l later because it should come at the top *)
+     let ce = append_instruction ce NEQ in
+     ce
+  | LtExp (l, r) ->
+     let ce = codegen_exp ce r in
+     let ce = codegen_exp ce l in
+     let ce = append_instruction ce LT in
+     ce
+  | SendExp s ->
+     (* argument order, gas, to, value, in offset in size out offset, out size *)
+     failwith "exp code gen for sendexp"
+  | CallExp _ ->
+     (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
+     failwith "exp code gen for callexp"
+  ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
 

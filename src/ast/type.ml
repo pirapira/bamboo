@@ -52,8 +52,8 @@ and assign_type_exp
      (* Maybe introduce a type called CallableType *)
      ident_lookup_type contract_interfaces venv s
   | ParenthExp e ->
-     let (e', typ) = assign_type_exp contract_interfaces cname venv e in
-     ((ParenthExp (e', typ)), typ) (* with parentheses, or without, they receive the same type *)
+     (* omit the parenthesis at this place, the tree already contains the structure *)
+     assign_type_exp contract_interfaces cname venv e
   | NewExp n ->
      let (n', contract_name) = assign_type_new_exp contract_interfaces cname venv n in
      (NewExp n', ContractInstanceType contract_name)

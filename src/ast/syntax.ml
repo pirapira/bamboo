@@ -127,5 +127,21 @@ let contract_name_of_instance ((_, t) : typ exp) =
 
 let string_of_exp_inner e =
   match e with
+  | ThisExp -> "this"
+  | ArrayAccessExp _ -> "a[idx]"
+  | SendExp _ -> "send"
+  | NewExp _ -> "new"
+  | ParenthExp _ -> "()"
+  | IdentifierExp str -> "ident "^str
+  | CallExp _ -> "call"
+  | NowExp -> "now"
   | FalseExp -> "false"
+  | SenderExp -> "sender"
   | TrueExp -> "true"
+  | NotExp _ -> "not"
+  | NeqExp _ -> "neq"
+  | LtExp _ -> "lt"
+  | GtExp _ -> "lt"
+  | ValueExp -> "value"
+  | EqualityExp _ -> "equality"
+  | AddressExp _ -> "address"
