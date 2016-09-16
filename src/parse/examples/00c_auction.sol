@@ -27,6 +27,11 @@ contract auction
 		return (_bidding_time) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
+	case (address beneficiary())
+    {
+		return (_beneficiary) then
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
+    }
 	default
 	{
 		abort; // cancels the call.
@@ -46,16 +51,16 @@ contract bid
 	{
 		if (sender(msg) != _bidder)
 			abort;
-        if (_auction.bid_is_highest(_value) reentrance { abort; })
+        if (_auction.highest_bid() reentrance { abort; } == _value)
 			abort;
 		selfdestruct(_bidder);
 	}
 	case (bool pay_beneficiary())
 	{
-if (not _auction.bid_is_highest(_value) reentrance { abort; })
+if (not _auction.highest_bid() reentrance { abort; })
 			abort;
 address beneficiary = _auction.beneficiary() reentrance { abort; };
-		selfdestruct(_beneficiary);
+		selfdestruct(beneficiary);
 	}
 	default
 	{

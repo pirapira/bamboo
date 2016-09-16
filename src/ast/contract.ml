@@ -65,7 +65,11 @@ let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
 let find_method_sig_in_contract
       (method_name : string) (i : contract_interface)
     : case_interface option =
-  failwith "fmsic"
+  Misc.first_some (fun case_inter ->
+      if case_inter.Ethereum.sig_name = method_name then
+        Some case_inter
+      else None
+    ) i.contract_interface_cases
 
 let find_method_signature
   (interfaces : contract_interface list)

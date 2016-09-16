@@ -27,4 +27,4 @@ let _ =
   let lexbuf = Lexing.from_channel stdin in
   let contracts : unit Syntax.contract list = parse_with_error lexbuf in
   let _ = Type.assign_types contracts in
-  Printf.printf "Finished parsing.\n"
+  Printf.printf "Finished typing.\n"

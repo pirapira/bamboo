@@ -100,7 +100,7 @@ and assign_type_exp
          match Contract.find_method_signature
                  contract_interfaces contract_name send.send_head_method with
          | Some x -> x
-         | None -> failwith "method not found"
+         | None -> failwith ("method "^send.send_head_method^" not found")
        end
      in
      ( SendExp
