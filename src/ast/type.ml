@@ -6,8 +6,13 @@ let assign_type_new_exp
       e : (typ new_exp * string (* name of the contract just created *)) =
   failwith "atne"
 
-let ident_lookup_type contract_interfaces s =
-  failwith "ilt"
+let ident_lookup_type
+      (contract_interfaces : Contract.contract_interface list)
+      (tenv : TypeEnv.type_env) id : typ exp =
+  match TypeEnv.lookup tenv id with
+  | Some typ -> (IdentifierExp id, typ)
+  | None -> failwith ("unknown identifier "^id)
+  (* what should it return when it is a method name? *)
 
 let type_variable_init
       contract_interfaces venv (vi : unit variable_init) :
@@ -19,23 +24,33 @@ let assign_type_lexp
       venv (src : unit lexp) : typ lexp =
   failwith "atl"
 
-let assign_type_call
-      contract_interfaces
-      venv (src : unit call) : (typ call * typ) =
-  failwith "atc"
-
 let assign_type_message_info contract_interfaces tenv :
       unit message_info -> typ message_info =
   failwith "not implemented"
 
-let rec assign_type_exp
+let rec assign_type_call
+      contract_interfaces
+      venv (src : unit call) : (typ call * typ) =
+  let args' = List.map (assign_type_exp contract_interfaces venv)
+                       src.call_args in
+  let ret_typ =
+    match src.call_head with
+    | "value" when true (* check the argument is 'msg' *) -> UintType
+    | contract_name
+      when true (* check the contract exists*) -> ContractType contract_name
+    | _ -> failwith "assign_type_call: should not happen"
+    in
+  ({ call_head = src.call_head
+     ; call_args = args' },
+   ret_typ)
+and assign_type_exp
       (contract_interfaces : Contract.contract_interface list)
       (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : typ exp =
   match exp_inner with
   | TrueExp -> (TrueExp, BoolType)
   | FalseExp -> (FalseExp, BoolType)
   | CallExp c ->
-     let (c', typ) = assign_type_call venv contract_interfaces c in
+     let (c', typ) = assign_type_call contract_interfaces venv c in
      (CallExp c', typ)
   | IdentifierExp s ->
      (* Now something is strange. This might not need a type anyway. *)

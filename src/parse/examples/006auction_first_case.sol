@@ -9,6 +9,6 @@ contract auction
    default
    {
      return (true) then
-     auction(_beneficiary, _biddingTime, _bids, value(msg));
+     auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }

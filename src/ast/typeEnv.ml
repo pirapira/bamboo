@@ -12,7 +12,11 @@ let add_pair (orig : type_env) (ident : string) (typ : Syntax.typ) : type_env =
   | h :: t -> (Syntax.{ arg_ident = ident; arg_typ = typ} :: h) :: t
   | _ -> failwith "no current scope in type env"
 
-let lookup_block (name : string) (block : Syntax.arg list) = failwith "lb"
+let lookup_block (name : string) (block : Syntax.arg list) =
+  Misc.first_some
+    (fun (a : Syntax.arg) ->
+      if a.Syntax.arg_ident = name then Some a.Syntax.arg_typ else None)
+    block
 
 let lookup (env : type_env) (name : string) : Syntax.typ option =
   Misc.first_some (lookup_block name) env

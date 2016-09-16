@@ -10,6 +10,6 @@ contract auction
    {
      _bids[sender(msg)] = true;
      return (true) then
-         auction(_beneficiary, _biddingTime, _bids, value(msg));
+         auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }

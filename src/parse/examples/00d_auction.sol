@@ -19,17 +19,17 @@ contract auction
 				reentrance { abort; }; // failure throws.
 		_bids[address(new_bid)] = true;
 		return (true) then
-			auction(_beneficiary, _biddingTime, _bids, value(msg));
+			auction(_beneficiary, _bidding_itme, _bids, value(msg));
 	}
 	case (uint highest_bid())
 	{
 		return (_highest_bid) then
-			auction(_beneficiary, _biddingTime, _bids, _highest_bid);
+			auction(_beneficiary, _bidding_itme, _bids, _highest_bid);
 	}
 	case (uint bidding_time())
 	{
 		return (_bidding_time) then
-			auction(_beneficiary, _biddingTime, _bids, _highest_bid);
+			auction(_beneficiary, _bidding_itme, _bids, _highest_bid);
 	}
 	default
 	{
