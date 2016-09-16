@@ -1,5 +1,5 @@
-ocamlbuild -Is ast,parse,lib -use-menhir parse/parser_test.native && \
-ocamlbuild -Is ast,parse,lib -use-menhir ast/ast_test.native && \
+ocamlbuild -Is ast,parse,lib,codegen -use-menhir parse/parser_test.native && \
+ocamlbuild -Is ast,parse,lib,codegen -use-menhir ast/ast_test.native && \
 for f in `ls parse/examples/*.sol`
 do
   echo "trying" $f
