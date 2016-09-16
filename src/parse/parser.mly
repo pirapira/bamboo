@@ -30,6 +30,9 @@
 %token ABORT
 %token SELFDESTRUCT
 %token NOT
+%token VALUE
+%token SENDER
+%token MSG
 %token EOF
 
 
@@ -169,6 +172,8 @@ sentence :
 exp:
   | TRUE { Syntax.TrueExp, () }
   | FALSE { Syntax.FalseExp, () }
+  | VALUE LPAR MSG RPAR { Syntax.ValueExp, () }
+  | SENDER LPAR MSG RPAR { Syntax.SenderExp, () }
   | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs), () }
   | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs), () }
   | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs), () }

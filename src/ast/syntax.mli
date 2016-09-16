@@ -41,6 +41,8 @@ and 'exp_annot exp_inner =
   | AddressExp of 'exp_annot exp
   | NotExp of 'exp_annot exp
   | ArrayAccessExp of 'exp_annot array_access
+  | ValueExp
+  | SenderExp
 and 'exp_annot lexp =
   | IdentifierLExp of string
   | ArrayAccessLExp of 'exp_annot array_access

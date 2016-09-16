@@ -50,5 +50,8 @@ rule read =
   | "selfdestruct" { SELFDESTRUCT }
   | "." { DOT }
   | "not" { NOT }
+  | "msg" { MSG }
+  | "value" { VALUE }
+  | "sender" { SENDER }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

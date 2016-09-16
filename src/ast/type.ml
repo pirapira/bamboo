@@ -49,6 +49,7 @@ and assign_type_exp
   match exp_inner with
   | TrueExp -> (TrueExp, BoolType)
   | FalseExp -> (FalseExp, BoolType)
+  | SenderExp -> (SenderExp, AddressType)
   | CallExp c ->
      let (c', typ) = assign_type_call contract_interfaces venv c in
      (CallExp c', typ)
@@ -117,6 +118,8 @@ and assign_type_exp
          },
        Ethereum.to_typ (List.hd method_sig.Ethereum.sig_return)
      )
+  | ValueExp ->
+     (ValueExp, UintType)
 
 let assign_type_return
       (contract_interfaces : Contract.contract_interface list)
