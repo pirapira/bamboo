@@ -1,4 +1,10 @@
 # todo for the first example
+change the type of SendExpression to a pointer.  The result is on the memory.
+evaluating an exp should always result in an element on the stack
+
+how does solc set up the create arguments
+update the layout.txt so that many functions returning tuples can be called
+
 CallExp is too ambiguous
 annotate unique ids to sentences
 generate a JUMPDEST for each sentence
