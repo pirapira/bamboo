@@ -3,6 +3,14 @@ parentheses node should be removed early, at typing perhaps
 annotate unique ids to sentences
 generate a JUMPDEST for each sentence
 
+runtime code generation for auction_done()
+deployment code for auction_done()
+ABI JSON for auction_done()
+
+runtime code generation for auction() and auction_done()
+runtime code generation for bid()
+
+
 # todo for later
 add [msg] as a special token
 think what to do with balance checks, block numbers and so on.  block()?

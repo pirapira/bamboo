@@ -3,4 +3,11 @@
    accumulated instructions. *)
 type codegenEnv
 
-val push : pseudo_imm -> codegenEnv -> codegenEnv
+val codeLength : codegenEnv -> int
+
+(* for each instruction,
+ * create an interface function.
+ * This allows keeping track of stack size...
+ *)
+
+val push : PseudoImm.pseudo_imm -> codegenEnv -> codegenEnv
