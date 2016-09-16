@@ -8,8 +8,10 @@ let empty_env =
   ; ce_program = Evm.empty_program
   }
 
-let codeLength ce =
+let code_length ce =
   Evm.program_length ce.ce_program
+
+let stack_size ce = ce.ce_stack_size
 
 let append_instruction
   (orig : codegenEnv) (i : PseudoImm.pseudo_imm Evm.instruction) : codegenEnv =

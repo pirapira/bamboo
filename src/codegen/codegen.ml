@@ -6,6 +6,7 @@ let codegen_exp
       (ce : CodegenEnv.codegenEnv)
       ((e,t) : Syntax.typ Syntax.exp) :
       CodegenEnv.codegenEnv =
+  let ret =
   Syntax.
   (match e with
   | FalseExp ->
@@ -15,7 +16,9 @@ let codegen_exp
   | TrueExp ->
      let ce = append_instruction ce (PUSH1 (Concrete Big_int.unit_big_int)) in
      ce
-  | _ -> failwith ("codegen_exp "^Syntax.string_of_exp_inner e^": "^Syntax.string_of_typ t))
+  | _ -> failwith ("codegen_exp "^Syntax.string_of_exp_inner e^": "^Syntax.string_of_typ t)) in
+  let () = assert (stack_size ret = stack_size ce + 1) in
+  ret
 
 let codegen_sentence
   (orig : CodegenEnv.codegenEnv)
