@@ -1,4 +1,6 @@
 open PseudoImm
+open CodegenEnv
+open Evm
 
 let codegen_exp
       (ce : CodegenEnv.codegenEnv)
@@ -9,6 +11,9 @@ let codegen_exp
   | FalseExp ->
      let ce = CodegenEnv.append_instruction
                 ce (Evm.PUSH1 (Concrete Big_int.zero_big_int)) in
+     ce
+  | TrueExp ->
+     let ce = append_instruction ce (PUSH1 (Concrete Big_int.unit_big_int)) in
      ce
   | _ -> failwith ("codegen_exp "^Syntax.string_of_exp_inner e^": "^Syntax.string_of_typ t))
 

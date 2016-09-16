@@ -128,3 +128,4 @@ let contract_name_of_instance ((_, t) : typ exp) =
 let string_of_exp_inner e =
   match e with
   | FalseExp -> "false"
+  | TrueExp -> "true"

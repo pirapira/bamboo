@@ -8,5 +8,5 @@ open Codegen
 let _ =
   let dummy_env = CodegenEnv.empty_env in
   let _ = codegen_exp dummy_env (FalseExp, BoolType) in
-  let _ = codegen_exp dummy_env (FalseExp, BoolType) in
+  let _ = codegen_exp dummy_env (TrueExp, BoolType) in
   Printf.printf "Finished codgen_test.\n"
