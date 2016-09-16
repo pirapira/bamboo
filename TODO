@@ -1,4 +1,9 @@
 # todo for the first example
+observe what solidity deploy bytecode does OK.
+runtime_codegen
+deploy_codegen
+
+
 change the type of SendExpression to a pointer.  The result is on the memory.
 evaluating an exp should always result in an element on the stack
 

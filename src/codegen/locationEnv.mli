@@ -11,7 +11,7 @@ val lookup : location_env -> string -> Location.location option
 (** [last_stack_element_recorded = 3] means the third deepest element of the
  * stack is kept track in the location_env structure.
  * The caller is free to pop anything shallower *)
-val last_stack_element_recorded : int
+val last_stack_element_recorded : location_env -> int
 
 (** [update] returns [None] when the string is not in the environment. *)
 val update : location_env -> string -> Location.location -> location_env option
