@@ -6,7 +6,7 @@ contract auction
 {
 	case (bool bid())
 	{
-		if (now > _bidding_time)
+		if (now(block) > _bidding_time)
 			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
 		if (value(msg) < _highest_bid)
 			abort;
@@ -15,17 +15,17 @@ contract auction
 				reentrance { abort; }; // failure throws.
 		_bids[address(new_bid)] = true;
 		return (true) then
-			auction(_beneficiary, _bidding_itme, _bids, value(msg));
+			auction(_beneficiary, _bidding_time, _bids, value(msg));
 	}
 	case (uint highest_bid())
 	{
 		return (_highest_bid) then
-			auction(_beneficiary, _bidding_itme, _bids, _highest_bid);
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
 	case (uint bidding_time())
 	{
 		return (_bidding_time) then
-			auction(_beneficiary, _bidding_itme, _bids, _highest_bid);
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
 	default
 	{
@@ -44,8 +44,6 @@ contract bid
 {
 	case (bool refund())
 	{
-	    uint x = a.b() reentrance { abort; };
-
 		if (sender(msg) != _bidder)
 			abort;
         if (_auction.bid_is_highest(_value) reentrance { abort; })

@@ -6,7 +6,7 @@ contract auction
 {
 	case (bool bid())
 	{
-		if (now > _bidding_time)
+		if (now(block) > _bidding_time)
 			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
 		if (value(msg) < _highest_bid)
 			abort;

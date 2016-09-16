@@ -3,8 +3,8 @@ type typ =
   | AddressType
   | BoolType
   | MappingType of typ * typ
-  | IdentType of string
-  | ContractType of string (* name of contract *)
+  | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
+  | ContractInstanceType of string (* type of [b] declared as [bid b] *)
 
 type 'exp_annot call =
   {  call_head : string
@@ -29,6 +29,7 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
+  | NowExp
   | CallExp of 'exp_annot call
   | IdentifierExp of string
   | ParenthExp of 'exp_annot exp
@@ -102,4 +103,6 @@ val contract_name_of_return_cont : 'exp exp -> string option
 
 val case_header_arg_list : case_header -> arg list
 
-val contract_name_of : typ exp -> string
+val contract_name_of_instance : typ exp -> string
+
+val string_of_typ : typ -> string

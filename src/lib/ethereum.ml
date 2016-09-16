@@ -13,8 +13,8 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | AddressType -> InterfaceAddress
   | BoolType -> InterfaceBool
   | MappingType (_, _) -> failwith "interpret_interface_type: mapping type not supported"
-  | IdentType _ -> failwith "interpret_interface_type: custom type not supported in ABI"
-  | ContractType _ -> failwith "contract type does not appear in the ABI"
+  | ContractInstanceType _ -> failwith "contract instance type does not appear in the ABI"
+  | ContractArchType _ -> failwith "contract arch-type does not appear in the ABI"
   )
 
 let to_typ (ityp : interface_typ) =

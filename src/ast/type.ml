@@ -20,7 +20,7 @@ let rec assign_type_call
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
     | contract_name
-      when true (* check the contract exists*) -> ContractType contract_name
+      when true (* check the contract exists*) -> ContractArchType contract_name
     | _ -> failwith "assign_type_call: should not happen"
     in
   ({ call_head = src.call_head
@@ -39,10 +39,11 @@ and assign_type_exp
       (cname : string)
       (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : typ exp =
   match exp_inner with
-  | ThisExp -> (ThisExp, ContractType cname)
+  | ThisExp -> (ThisExp, ContractInstanceType cname)
   | TrueExp -> (TrueExp, BoolType)
   | FalseExp -> (FalseExp, BoolType)
   | SenderExp -> (SenderExp, AddressType)
+  | NowExp -> (NowExp, UintType)
   | CallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
      (CallExp c', typ)
@@ -55,7 +56,7 @@ and assign_type_exp
      ((ParenthExp (e', typ)), typ) (* with parentheses, or without, they receive the same type *)
   | NewExp n ->
      let (n', contract_name) = assign_type_new_exp contract_interfaces cname venv n in
-     (NewExp n', ContractType contract_name)
+     (NewExp n', ContractInstanceType contract_name)
   | LtExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
@@ -94,7 +95,7 @@ and assign_type_exp
      let msg_info' = assign_type_message_info contract_interfaces cname venv
                                            send.send_msg_info in
      let contract' = assign_type_exp contract_interfaces cname venv send.send_head_contract in
-     let contract_name = Syntax.contract_name_of contract' in
+     let contract_name = Syntax.contract_name_of_instance contract' in
      let method_sig : Ethereum.function_signature = begin
          match Contract.find_method_signature
                  contract_interfaces contract_name send.send_head_method with

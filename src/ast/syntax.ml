@@ -3,8 +3,17 @@ type typ =
   | AddressType
   | BoolType
   | MappingType of typ * typ
-  | IdentType of string
-  | ContractType of string (* type of [bid(...)] where bid is a contract *)
+  | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
+  | ContractInstanceType of string (* type of [b] declared as [bid b] *)
+
+let rec string_of_typ t =
+  match t with
+  | UintType -> "uint"
+  | AddressType -> "address"
+  | BoolType -> "bool"
+  | MappingType (a, b) -> "mapping ("^string_of_typ a^" => "^string_of_typ b^")"
+  | ContractArchType s -> "ContractArchType "^s
+  | ContractInstanceType s -> "ContractInstanceType "^s
 
 type 'exp_annot call =
   {  call_head : string
@@ -29,6 +38,7 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
+  | NowExp
   | CallExp of 'exp_annot call
   | IdentifierExp of string
   | ParenthExp of 'exp_annot exp
@@ -109,7 +119,8 @@ let case_header_arg_list (c : case_header) : arg list =
      uch.case_arguments
   | DefaultCaseHeader -> []
 
-let contract_name_of ((_, t) : typ exp) =
+let contract_name_of_instance ((_, t) : typ exp) =
   match t with
-  | ContractType s -> s
-  | _ -> failwith "seeking contract_name_of non-contract"
+  | ContractInstanceType s -> s
+  | typ -> failwith
+             ("seeking contract_name_of non-contract "^(string_of_typ typ))

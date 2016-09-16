@@ -54,5 +54,7 @@ rule read =
   | "value" { VALUE }
   | "sender" { SENDER }
   | "this" { THIS }
+  | "now"  { NOW }
+  | "block" { BLOCK }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

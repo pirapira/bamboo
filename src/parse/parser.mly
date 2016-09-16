@@ -34,6 +34,8 @@
 %token SENDER
 %token MSG
 %token THIS
+%token NOW
+%token BLOCK
 %token EOF
 
 
@@ -137,7 +139,7 @@ typ:
     key = typ;
     RSQBR;
     { Syntax.MappingType (key, value) }
-  | s = IDENT { Syntax.IdentType s }
+  | s = IDENT { Syntax.ContractInstanceType s }
 
 sentences:
   | scs = rev_sentences { List.rev scs }
@@ -175,6 +177,7 @@ exp:
   | FALSE { Syntax.FalseExp, () }
   | VALUE LPAR MSG RPAR { Syntax.ValueExp, () }
   | SENDER LPAR MSG RPAR { Syntax.SenderExp, () }
+  | NOW LPAR BLOCK RPAR { Syntax.NowExp, () }
   | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs), () }
   | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs), () }
   | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs), () }
