@@ -9,10 +9,14 @@ For the nesting arrays,
  sha3(sha3(array_id, first_idx), second_idx)
 and so on.
 
-Memory
+Memory:
 0-63 bytes are used for sha3 argument.
 The rest is currently unusued.
 
 Stack:
 usual.  The location of the currently active variables are stored in
 locationEnv.
+
+
+ContractCreation:
+as in solc, the inputs are suffixed afer the creation code.

@@ -15,6 +15,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | MappingType (_, _) -> failwith "interpret_interface_type: mapping type not supported"
   | ContractInstanceType _ -> failwith "contract instance type does not appear in the ABI"
   | ContractArchType _ -> failwith "contract arch-type does not appear in the ABI"
+  | ReferenceType _ -> failwith "reference type does not appear in the ABI"
   )
 
 let to_typ (ityp : interface_typ) =

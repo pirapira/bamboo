@@ -2,6 +2,8 @@ type typ =
   | UintType
   | AddressType
   | BoolType
+  | ReferenceType of
+      typ list (** pointer to [typ list] on memory *)
   | MappingType of typ * typ
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
@@ -14,6 +16,7 @@ let rec string_of_typ t =
   | MappingType (a, b) -> "mapping ("^string_of_typ a^" => "^string_of_typ b^")"
   | ContractArchType s -> "ContractArchType "^s
   | ContractInstanceType s -> "ContractInstanceType "^s
+  | ReferenceType _ -> "pointer to ..."
 
 type 'exp_annot function_call =
   { call_head : string

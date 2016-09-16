@@ -2,6 +2,7 @@ type typ =
   | UintType
   | AddressType
   | BoolType
+  | ReferenceType of typ list (** pointer to [typ list] on memory *)
   | MappingType of typ * typ
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
