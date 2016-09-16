@@ -110,7 +110,8 @@ and assign_type_exp
                               send.send_args
          ; send_msg_info = msg_info'
          },
-       Ethereum.to_typ (List.hd method_sig.Ethereum.sig_return)
+       ReferenceType
+         Ethereum.(List.map to_typ (method_sig.sig_return))
      )
   | ValueExp ->
      (ValueExp, UintType)
