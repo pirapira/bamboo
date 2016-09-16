@@ -1,5 +1,7 @@
 # todo for the first example
 parentheses node should be removed early, at typing perhaps
+annotate unique ids to sentences
+generate a JUMPDEST for each sentence
 
 # todo for later
 add [msg] as a special token
