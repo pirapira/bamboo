@@ -159,20 +159,25 @@ let move_info_around
   (goal : LocationEnv.location_env) :
       CodegenEnv.codegen_env = failwith "move_info_around"
 
-let codegen_bytecode :
-  Syntax.typ Syntax.contract ->
+let codegen_bytecode
+  (src : Syntax.typ Syntax.contract) :
   PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
 
-let codegen_constructor_bytecode :
-  Syntax.typ Syntax.contract ->
-  (CodegenEnv.codegen_env (* containing the program *)
-   * LocationEnv.location_env) = failwith "codegen_constructor_bytecode"
+let codegen_constructor_bytecode
+      (src : Syntax.typ Syntax.contract) :
+      (CodegenEnv.codegen_env (* containing the program *)
+       * LocationEnv.location_env) =
+  let le = constructor_initial_location_env src in
+  let ce = CodegenEnv.empty_env in
+  (* implement some kind of fold function over the argument list
+   * each step generates new (le,ce) *)
+  failwith "codegen_cb"
 
-let codegen_runtime_bytecode :
-  Syntax.typ Syntax.contract ->
-  (CodegenEnv.codegen_env (* containing the program *)
-   * LocationEnv.location_env) = failwith "codegen_runtime_bytecode"
+let codegen_runtime_bytecode
+      (src : Syntax.typ Syntax.contract) :
+        (CodegenEnv.codegen_env (* containing the program *)
+         * LocationEnv.location_env) = failwith "codegen_runtime_bytecode"
 
-let runtime_initial_location_env :
-  Syntax.typ Syntax.contract ->
-  LocationEnv.location_env = failwith "runtime_initial_location_env"
+let runtime_initial_location_env
+      (src : Syntax.typ Syntax.contract) :
+        LocationEnv.location_env = failwith "runtime_initial_location_env"
