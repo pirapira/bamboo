@@ -12,6 +12,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | UintType -> InterfaceUint 256
   | AddressType -> InterfaceAddress
   | BoolType -> InterfaceBool
+  | TupleType _ -> failwith "interpret_interface_type: tuple types are not supported yet"
   | MappingType (_, _) -> failwith "interpret_interface_type: mapping type not supported"
   | ContractInstanceType _ -> failwith "contract instance type does not appear in the ABI"
   | ContractArchType _ -> failwith "contract arch-type does not appear in the ABI"

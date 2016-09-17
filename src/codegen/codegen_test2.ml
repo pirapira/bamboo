@@ -29,5 +29,5 @@ let _ =
   let lexbuf = Lexing.from_channel stdin in
   let contracts : unit Syntax.contract list = parse_with_error lexbuf in
   let contracts = Type.assign_types contracts in
-  let deploy_codes = List.map codegen_deploy_bytecode contracts in
+  let _ = List.map codegen_constructor_bytecode contracts in
   Printf.printf "Finished codgen_test2.\n"

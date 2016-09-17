@@ -158,3 +158,21 @@ let move_info_around
   (assumption : CodegenEnv.codegen_env)
   (goal : LocationEnv.location_env) :
       CodegenEnv.codegen_env = failwith "move_info_around"
+
+let codegen_bytecode :
+  Syntax.typ Syntax.contract ->
+  PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
+
+let codegen_constructor_bytecode :
+  Syntax.typ Syntax.contract ->
+  (CodegenEnv.codegen_env (* containing the program *)
+   * LocationEnv.location_env) = failwith "codegen_constructor_bytecode"
+
+let codegen_runtime_bytecode :
+  Syntax.typ Syntax.contract ->
+  (CodegenEnv.codegen_env (* containing the program *)
+   * LocationEnv.location_env) = failwith "codegen_runtime_bytecode"
+
+let runtime_initial_location_env :
+  Syntax.typ Syntax.contract ->
+  LocationEnv.location_env = failwith "runtime_initial_location_env"

@@ -31,11 +31,12 @@ val codegen_runtime_bytecode :
   (CodegenEnv.codegen_env (* containing the program *)
    * LocationEnv.location_env)
 
-val codegen_deploy_bytecode :
+val codegen_constructor_bytecode :
   Syntax.typ Syntax.contract ->
   (CodegenEnv.codegen_env (* containing the program *)
    * LocationEnv.location_env)
 
+(** The combination of the constructor_bytecode and the runtime_bytecode **)
 val codegen_bytecode :
   Syntax.typ Syntax.contract ->
   PseudoImm.pseudo_imm Evm.program
