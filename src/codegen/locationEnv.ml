@@ -1,3 +1,5 @@
+open PseudoImm
+
 type location_env =
   (string * Location.location) list list
 
@@ -40,6 +42,21 @@ let last_stack_element_recorded (le : location_env) =
   | Some n -> n
   | None -> -1
 
-let constructor_initial_location_env :
-  Syntax.typ Syntax.contract -> location_env =
-  failwith "constructor_initial_location_env not implemented yet"
+let constructor_args_locations (args : Ethereum.interface_typ list)
+    : location_env
+  =
+  let total = Ethereum.total_size_of_interface_args args in
+  let one_arg ((name : string), (offset : int), (size : int)) :
+        string * Location.location
+    =
+    Location.(name,
+     Code
+      { code_start = PseudoImm.(Minus (CodeSize, (Int (total - offset))))
+      ; code_size =  Int size
+      }) in
+  failwith "constructor_args_locations"
+
+let constructor_initial_location_env (contract : Syntax.typ Syntax.contract) :
+  location_env =
+  let args = Ethereum.constructor_arguments contract in
+  constructor_args_locations args

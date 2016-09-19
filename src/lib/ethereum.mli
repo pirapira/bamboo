@@ -18,3 +18,9 @@ type function_signature =
 
 val get_interface_typs :
   Syntax.arg list -> interface_typ list
+
+val constructor_arguments :
+  Syntax.typ Syntax.contract -> interface_typ list
+
+val total_size_of_interface_args :
+  interface_typ list -> int

@@ -22,3 +22,9 @@ let rec change_first f lst =
                   (change_first f t)
      | Some n -> Some (n :: t)
      end
+
+let rec int_sum (lst : int list) =
+  match lst with
+  | [] -> 0
+  | h :: t ->
+     h + (int_sum t)

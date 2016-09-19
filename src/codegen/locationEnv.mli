@@ -5,8 +5,10 @@ val forget_innermost : location_env -> location_env
 val add_empty_block : location_env -> location_env
 
 (** should maintain the uniqueless of [string] in the environment. *)
-val add_pair : location_env -> string (* ?? *) -> Location.location -> location_env
-val lookup : location_env -> string -> Location.location option
+val add_pair : location_env -> string (* ?? *) ->
+               Location.location -> location_env
+val lookup : location_env -> string ->
+             Location.location option
 
 (** [last_stack_element_recorded = 3] means the third deepest element of the
  * stack is kept track in the location_env structure.
@@ -14,7 +16,8 @@ val lookup : location_env -> string -> Location.location option
 val last_stack_element_recorded : location_env -> int
 
 (** [update] returns [None] when the string is not in the environment. *)
-val update : location_env -> string -> Location.location -> location_env option
+val update : location_env -> string ->
+             Location.location -> location_env option
 
 (** Nothing similar to typeEnv.add_block.  Add elements one by one. *)
 
@@ -27,3 +30,10 @@ val update : location_env -> string -> Location.location -> location_env option
  *  bytecode *)
 val constructor_initial_location_env :
   Syntax.typ Syntax.contract -> location_env
+
+(** [constructor_args_locations constract] returns
+ *  a location environment that only contains
+ *  the constructor arguments appended at the end of
+ *  the code. *)
+val constructor_args_locations :
+  Ethereum.interface_typ list -> location_env

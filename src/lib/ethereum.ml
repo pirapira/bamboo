@@ -30,6 +30,13 @@ let to_typ (ityp : interface_typ) =
     | InterfaceAddress -> AddressType
   )
 
+(* in bytes *)
+let interface_typ_size (ityp : interface_typ) : int =
+  match ityp with
+  | InterfaceUint _ -> 32
+  | InterfaceAddress -> 32
+  | InterfaceBool -> 32
+
 type function_signature =
   { sig_return : interface_typ list
   ; sig_name : string
@@ -41,3 +48,10 @@ let get_interface_typ (raw : Syntax.arg) : interface_typ =
 
 let get_interface_typs : Syntax.arg list -> interface_typ list =
   List.map get_interface_typ
+
+let constructor_arguments :
+  Syntax.typ Syntax.contract -> interface_typ list
+  = failwith "constructor_arguments"
+
+let total_size_of_interface_args lst : int =
+  Misc.int_sum (List.map interface_typ_size lst)

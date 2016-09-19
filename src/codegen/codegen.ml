@@ -61,11 +61,11 @@ let rec codegen_exp
       end
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction
-                ce (Evm.PUSH1 (Concrete Big_int.zero_big_int)) in
+                ce (Evm.PUSH1 (Big Big_int.zero_big_int)) in
      ce
   | FalseExp, _ -> failwith "codegen_exp: FalseExp of unexpected type"
   | TrueExp,BoolType ->
-     let ce = append_instruction ce (PUSH1 (Concrete Big_int.unit_big_int)) in
+     let ce = append_instruction ce (PUSH1 (Big Big_int.unit_big_int)) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
   | NotExp sub,_ -> (* perhaps, better to check types *)
@@ -193,5 +193,7 @@ let codegen_runtime_bytecode
          * LocationEnv.location_env) = failwith "codegen_runtime_bytecode"
 
 let runtime_initial_location_env
-      (src : Syntax.typ Syntax.contract) :
-        LocationEnv.location_env = failwith "runtime_initial_location_env"
+      (contract : Syntax.typ Syntax.contract) :
+        LocationEnv.location_env =
+  let _ = Ethereum.constructor_arguments contract in
+  failwith "runtime_initial_location_env"
