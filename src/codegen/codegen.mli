@@ -33,8 +33,8 @@ val codegen_runtime_bytecode :
 
 val codegen_constructor_bytecode :
   Syntax.typ Syntax.contract ->
-  (CodegenEnv.codegen_env (* containing the program *)
-   * LocationEnv.location_env)
+  (LocationEnv.location_env *
+     CodegenEnv.codegen_env (* containing the program *))
 
 (** The combination of the constructor_bytecode and the runtime_bytecode **)
 val codegen_bytecode :

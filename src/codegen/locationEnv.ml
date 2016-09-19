@@ -39,3 +39,7 @@ let last_stack_element_recorded (le : location_env) =
   match Misc.first_some stack_story_block le with
   | Some n -> n
   | None -> -1
+
+let constructor_initial_location_env :
+  Syntax.typ Syntax.contract -> location_env =
+  failwith "constructor_initial_location_env not implemented yet"

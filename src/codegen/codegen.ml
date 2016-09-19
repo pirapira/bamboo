@@ -163,14 +163,28 @@ let codegen_bytecode
   (src : Syntax.typ Syntax.contract) :
   PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
 
+(** [copy_arguments_from_code_to_memory]
+ *  copies constructor arguments at the end of the
+ *  bytecode into the memory.  The number of bytes is
+ *  decided using the contract interface.
+ *  The memory usage counter at byte [0x40] is increased accordingly.
+ *)
+let copy_arguments_from_code_to_memory
+      (le : LocationEnv.location_env)
+      (ce : CodegenEnv.codegen_env)
+      (contract : Syntax.typ Syntax.contract) =
+  failwith "copy_arguments_from_code_to_memory"
+
 let codegen_constructor_bytecode
-      (src : Syntax.typ Syntax.contract) :
-      (CodegenEnv.codegen_env (* containing the program *)
-       * LocationEnv.location_env) =
-  let le = constructor_initial_location_env src in
+      (contract : Syntax.typ Syntax.contract) :
+      (LocationEnv.location_env *
+         CodegenEnv.codegen_env (* containing the program *)
+       ) =
+  let le = LocationEnv.constructor_initial_location_env contract in
   let ce = CodegenEnv.empty_env in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
+  let (le,ce) = copy_arguments_from_code_to_memory le ce contract in
   failwith "codegen_cb"
 
 let codegen_runtime_bytecode
