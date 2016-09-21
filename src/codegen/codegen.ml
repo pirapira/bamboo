@@ -246,7 +246,16 @@ let set_contract_id ce (id : Syntax.contract_id) =
  * Precondition: the stack has [..., size, memory_src_start, storage_target_start]
  * Postcondition: the stack has [...]
  *)
-let bulk_sstore_from_memory = failwith "bulk_store_from_m"
+let bulk_sstore_from_memory ce =
+  let jump_label_continue = Label.new_label () in
+  let jump_label_exit = Label.new_label () in
+  (* JUMPDEST continue *)
+  (* if size is zero, jump to exit *)
+  (* copy one element *)
+  (* decrease size *)
+  (* JUMP continue *)
+  (* JUMPDEST exit *)
+  failwith "bsfmc"
 
 (** [copy_arguments_from_memory_to_storage le ce]
  *  adds instructions to ce such that the constructor arguments
