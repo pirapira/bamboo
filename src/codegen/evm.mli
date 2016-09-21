@@ -49,7 +49,7 @@ type 'imm instruction =
   | PC
   | MSIZE
   | GAS
-  | JUMPDEST
+  | JUMPDEST of Label.label
   | LOG0
   | LOG1
   | LOG2

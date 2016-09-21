@@ -249,6 +249,7 @@ let set_contract_id ce (id : Syntax.contract_id) =
 let bulk_sstore_from_memory ce =
   let jump_label_continue = Label.new_label () in
   let jump_label_exit = Label.new_label () in
+  let ce = append_instruction ce (JUMPDEST jump_label_continue) in
   (* JUMPDEST continue *)
   (* if size is zero, jump to exit *)
   (* copy one element *)

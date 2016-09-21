@@ -42,7 +42,7 @@ type 'imm instruction =
   | PC
   | MSIZE
   | GAS
-  | JUMPDEST
+  | JUMPDEST of Label.label
   | LOG0
   | LOG1
   | LOG2
@@ -123,7 +123,7 @@ let stack_eaten = function
   | PC -> 0
   | MSIZE -> 0
   | GAS -> 0
-  | JUMPDEST -> 0
+  | JUMPDEST _ -> 0
   | SWAP1 -> 2
   | SWAP2 -> 3
   | SWAP3 -> 4
@@ -194,7 +194,7 @@ let stack_pushed = function
   | PC -> 1
   | MSIZE -> 1
   | GAS -> 1
-  | JUMPDEST -> 0
+  | JUMPDEST _ -> 0
   | SWAP1 -> 2
   | SWAP2 -> 3
   | SWAP3 -> 4
