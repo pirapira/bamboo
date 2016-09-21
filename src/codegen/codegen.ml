@@ -329,7 +329,9 @@ let codegen_constructor_bytecode
   (* stack: [arg_mem_size, arg_mem_begin] *)
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
   let ce = set_contract_id ce contract_id in
-  ce
+
+  (* TODO: return the code as a return value *)
+  failwith "still need to return the code to be deployed"
 
 let codegen_runtime_bytecode
       (src : Syntax.typ Syntax.contract) :
