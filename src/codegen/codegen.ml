@@ -271,8 +271,8 @@ let copy_arguments_from_memory_to_storage le ce (contract_id : Syntax.contract_i
   bulk_sstore_from_memory ce
 
 let codegen_constructor_bytecode
-      (contract : Syntax.typ Syntax.contract)
-      (contract_id : Syntax.contract_id)
+      ((contract : Syntax.typ Syntax.contract),
+       (contract_id : Syntax.contract_id))
     :
       (CodegenEnv.codegen_env (* containing the program *)
        ) =

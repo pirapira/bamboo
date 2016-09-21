@@ -155,3 +155,14 @@ let string_of_exp_inner e =
   | AddressExp _ -> "address"
   | SingleDereferenceExp _ -> "dereference of ..."
   | TupleDereferenceExp _ -> "dereference of tuple..."
+
+(* maybe limit the stack depths in OCaml by using accumulator... *)
+let rec annotate_with_contract_id_inner (next_id : int) (lst : 'exp contract list) =
+  match lst with
+  | [] -> []
+  | h :: t ->
+     (h, next_id) :: annotate_with_contract_id_inner (next_id + 1) t
+
+let annotate_with_contract_id (lst : 'exp contract list)
+    : ('exp contract * contract_id) list
+  = annotate_with_contract_id_inner 0 lst

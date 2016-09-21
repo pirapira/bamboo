@@ -112,3 +112,7 @@ val contract_name_of_instance : typ exp -> string
 
 val string_of_typ : typ -> string
 val string_of_exp_inner : 'a exp_inner -> string
+
+
+val annotate_with_contract_id :
+  'exp contract list -> ('exp contract * contract_id) list
