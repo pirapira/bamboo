@@ -5,6 +5,7 @@ type 'imm instruction =
   | TIMESTAMP
   | NEQ
   | EQ
+  | ISZERO
   | LT
   | GT
   | BALANCE
@@ -85,6 +86,7 @@ let stack_eaten = function
   | NOT -> 1
   | TIMESTAMP -> 0
   | EQ -> 2
+  | ISZERO -> 1
   | NEQ -> 2
   | LT -> 2
   | GT -> 2
@@ -157,6 +159,7 @@ let stack_pushed = function
   | TIMESTAMP -> 1
   | NEQ -> 1
   | EQ -> 1
+  | ISZERO -> 1
   | LT -> 1
   | GT -> 1
   | BALANCE -> 1

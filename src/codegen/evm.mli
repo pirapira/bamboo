@@ -12,6 +12,7 @@ type 'imm instruction =
   | TIMESTAMP
   | NEQ
   | EQ
+  | ISZERO
   | LT
   | GT
   | BALANCE

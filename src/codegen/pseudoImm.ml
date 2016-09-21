@@ -4,6 +4,7 @@ type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
   | CodePos
+  | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 
   | StorageStart

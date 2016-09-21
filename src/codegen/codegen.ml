@@ -247,15 +247,22 @@ let set_contract_id ce (id : Syntax.contract_id) =
  * Postcondition: the stack has [...]
  *)
 let bulk_sstore_from_memory ce =
+  (* TODO: check that size is a multiple of 32 *)
   let jump_label_continue = Label.new_label () in
   let jump_label_exit = Label.new_label () in
   let ce = append_instruction ce (JUMPDEST jump_label_continue) in
-  (* JUMPDEST continue *)
-  (* if size is zero, jump to exit *)
+  let ce = append_instruction ce DUP3 in
+  (* stack [..., size, memory_src_start, storage_target_start, size] *)
+  let ce = append_instruction ce ISZERO in
+  (* stack [..., size, memory_src_start, storage_target_start, size is zero] *)
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_exit)) in
+  let ce = append_instruction ce JUMPI in
+  (* stack [..., size, memory_src_start, storage_target_start] *)
+
   (* copy one element *)
   (* decrease size *)
   (* JUMP continue *)
-  (* JUMPDEST exit *)
+  let ce = append_instruction ce (JUMPDEST jump_label_exit) in
   failwith "bsfmc"
 
 (** [copy_arguments_from_memory_to_storage le ce]
