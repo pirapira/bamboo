@@ -231,7 +231,13 @@ let copy_arguments_from_code_to_memory
  * [set_contract_id ce id] puts the id in the storage at index
  * [StorageContractId]
  *)
-let set_contract_id = failwith "sci"
+let set_contract_id ce (id : Syntax.contract_id) =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH32 (ContractId id)) in
+  let ce = append_instruction ce (PUSH32 StorageContractId) in
+  let ce = append_instruction ce SSTORE in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
 
 (**
  * [bulk_store_from_memory ce]
@@ -259,8 +265,7 @@ let codegen_constructor_bytecode
       (contract : Syntax.typ Syntax.contract)
       (contract_id : Syntax.contract_id)
     :
-      (LocationEnv.location_env *
-         CodegenEnv.codegen_env (* containing the program *)
+      (CodegenEnv.codegen_env (* containing the program *)
        ) =
   let le = LocationEnv.constructor_initial_location_env contract in
   let ce = CodegenEnv.empty_env in
@@ -268,9 +273,9 @@ let codegen_constructor_bytecode
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce contract in
   (* stack: [arg_mem_size, arg_mem_begin] *)
-  let ce = copy_arguments_from_memory_to_storage le ce in
+  let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
   let ce = set_contract_id ce contract_id in
-  failwith "codegen_cb"
+  ce
 
 let codegen_runtime_bytecode
       (src : Syntax.typ Syntax.contract) :
