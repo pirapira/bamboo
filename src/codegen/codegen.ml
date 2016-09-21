@@ -239,6 +239,11 @@ let set_contract_id ce (id : Syntax.contract_id) =
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
+let increase_top ce (inc : int) =
+  let ce = append_instruction ce (PUSH32 (Int inc)) in
+  let ce = append_instruction ce ADD in
+  ce
+
 (**
  * [bulk_store_from_memory ce]
  * adds instructions to ce after which some memory contents are copied
@@ -247,6 +252,7 @@ let set_contract_id ce (id : Syntax.contract_id) =
  * Postcondition: the stack has [...]
  *)
 let bulk_sstore_from_memory ce =
+  let original_stack_size = stack_size ce in
   (* TODO: check that size is a multiple of 32 *)
   let jump_label_continue = Label.new_label () in
   let jump_label_exit = Label.new_label () in
@@ -256,14 +262,45 @@ let bulk_sstore_from_memory ce =
   let ce = append_instruction ce ISZERO in
   (* stack [..., size, memory_src_start, storage_target_start, size is zero] *)
   let ce = append_instruction ce (PUSH32 (DestLabel jump_label_exit)) in
+  (* stack [..., size, memory_src_start, storage_target_start, size is zero, jump_label_exit] *)
+  let () = assert (stack_size ce = original_stack_size + 2) in
   let ce = append_instruction ce JUMPI in
   (* stack [..., size, memory_src_start, storage_target_start] *)
-
-  (* copy one element *)
+  let ce = append_instruction ce DUP2 in
+  (* stack [..., size, memory_src_start, storage_target_start, memory_src_start] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack [..., size, memory_src_start, storage_target_start, memory_src_start, storage_target_start] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack [..., size, memory_src_start, storage_target_start] *)
   (* decrease size *)
-  (* JUMP continue *)
+  let ce = append_instruction ce (PUSH32 (Int 32)) in
+  (* stack [..., size, memory_src_start, storage_target_start, 32] *)
+  let ce = append_instruction ce SWAP3 in
+  (* stack [..., storage_target_start, memory_src_start, 32, size] *)
+  let ce = append_instruction ce SUB in
+  (* stack [..., storage_target_start, memory_src_start, new_size] *)
+  let ce = append_instruction ce SWAP2 in
+  (* stack [..., new_size, storage_target_start, memory_src_start] *)
+  (* increase memory_src_start *)
+  let ce = increase_top ce 32 in
+  (* stack [..., new_size, storage_target_start, new_memory_src_start] *)
+  (* increase storage_target_start *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack [..., new_size, new_memory_src_start, storage_target_start] *)
+  let ce = increase_top ce 32 in
+  (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
+  let () = assert (stack_size ce = original_stack_size) in
+  (** add create a combinatino of jump and reset_stack_size *)
+  let ce = append_instruction ce JUMP in
+  let ce = set_stack_size ce (original_stack_size) in
   let ce = append_instruction ce (JUMPDEST jump_label_exit) in
-  failwith "bsfmc"
+  (* stack [..., size, memory_src_start, storage_target_start] *)
+  let ce = append_instruction ce POP in
+  let ce = append_instruction ce POP in
+  let ce = append_instruction ce POP in
+  let () = assert (stack_size ce = original_stack_size - 3) in
+  (* stack [...] *)
+  ce
 
 (** [copy_arguments_from_memory_to_storage le ce]
  *  adds instructions to ce such that the constructor arguments

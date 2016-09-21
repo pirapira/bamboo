@@ -7,6 +7,7 @@ val empty_env : codegen_env
 
 val code_length : codegen_env -> int
 val stack_size : codegen_env -> int
+val set_stack_size : codegen_env -> int -> codegen_env
 
 (* for each instruction,
  * create an interface function.

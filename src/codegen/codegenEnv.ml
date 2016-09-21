@@ -13,6 +13,9 @@ let code_length ce =
 
 let stack_size ce = ce.ce_stack_size
 
+let set_stack_size ce i =
+  { ce with ce_stack_size = i }
+
 let append_instruction
   (orig : codegen_env) (i : PseudoImm.pseudo_imm Evm.instruction) : codegen_env =
   if orig.ce_stack_size < Evm.stack_eaten i then
