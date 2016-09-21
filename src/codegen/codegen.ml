@@ -201,7 +201,7 @@ let copy_arguments_from_code_to_memory
       (le : LocationEnv.location_env)
       (ce : CodegenEnv.codegen_env)
       (contract : Syntax.typ Syntax.contract) :
-      (LocationEnv.location_env * CodegenEnv.codegen_env) =
+      (CodegenEnv.codegen_env) =
   let total_size = Ethereum.total_size_of_interface_args
                        (List.map snd (Ethereum.constructor_arguments contract)) in
   let original_stack_size = stack_size ce in
@@ -225,10 +225,40 @@ let copy_arguments_from_code_to_memory
   let ce = append_instruction ce CODECOPY in
   (* [total size, memory_start] *)
   let () = assert (original_stack_size + 2 = stack_size ce) in
-  (le, ce)
+  ce
+
+(**
+ * [set_contract_id ce id] puts the id in the storage at index
+ * [StorageContractId]
+ *)
+let set_contract_id = failwith "sci"
+
+(**
+ * [bulk_store_from_memory ce]
+ * adds instructions to ce after which some memory contents are copied
+ * to the storage.
+ * Precondition: the stack has [..., size, memory_src_start, storage_target_start]
+ * Postcondition: the stack has [...]
+ *)
+let bulk_sstore_from_memory = failwith "bulk_store_from_m"
+
+(** [copy_arguments_from_memory_to_storage le ce]
+ *  adds instructions to ce such that the constructor arguments
+ *  stored in the memory are copied to the storage.
+ *  Precondition: the stack has [..., total, memory_start]
+ *  Final storage has the arguments in [ConstructorArgumentBegin...ConstructorArgumentBegin + ConstructorArgumentLength]
+ *  The final stack has [...] in the precondition.
+ *)
+let copy_arguments_from_memory_to_storage le ce (contract_id : Syntax.contract_id) =
+  let ce = append_instruction
+             ce (PUSH32 (StorageConstructorArgumentBegin contract_id)) in
+  (* stack, [..., size, memory_start, destination_storage_start] *)
+  bulk_sstore_from_memory ce
 
 let codegen_constructor_bytecode
-      (contract : Syntax.typ Syntax.contract) :
+      (contract : Syntax.typ Syntax.contract)
+      (contract_id : Syntax.contract_id)
+    :
       (LocationEnv.location_env *
          CodegenEnv.codegen_env (* containing the program *)
        ) =
@@ -236,7 +266,10 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.empty_env in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
-  let (le,ce) = copy_arguments_from_code_to_memory le ce contract in
+  let ce = copy_arguments_from_code_to_memory le ce contract in
+  (* stack: [arg_mem_size, arg_mem_begin] *)
+  let ce = copy_arguments_from_memory_to_storage le ce in
+  let ce = set_contract_id ce contract_id in
   failwith "codegen_cb"
 
 let codegen_runtime_bytecode

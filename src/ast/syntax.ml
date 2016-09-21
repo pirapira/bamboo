@@ -114,6 +114,7 @@ type 'exp_annot contract =
   ; contract_cases : 'exp_annot case list
   }
 
+type contract_id = int
 
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with

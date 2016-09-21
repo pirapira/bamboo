@@ -102,6 +102,7 @@ type 'exp_annot contract =
   ; contract_cases : 'exp_annot case list
   }
 
+type contract_id (* Currently, the location in [contracts] *)
 
 val contract_name_of_return_cont : 'exp exp -> string option
 
