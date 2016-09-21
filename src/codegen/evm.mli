@@ -62,6 +62,19 @@ type 'imm instruction =
   | DELEGATECALL
   | SUICIDE
   | SWAP1
+  | SWAP2
+  | SWAP3
+  | SWAP4
+  | SWAP5
+  | SWAP6
+  | DUP1
+  | DUP2
+  | DUP3
+  | DUP4
+  | DUP5
+  | DUP6
+  | DUP7
+
 
 val append_inst : 'imm program -> 'imm instruction -> 'imm program
 

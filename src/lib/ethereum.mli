@@ -3,6 +3,8 @@ type interface_typ =
   | InterfaceAddress
   | InterfaceBool
 
+val interface_typ_size : interface_typ -> int
+
 type interface_arg = string * interface_typ
 
 (** [interpret_interface_type] parses "uint" into InterfaceUint 256, etc. *)
@@ -17,10 +19,10 @@ type function_signature =
   }
 
 val get_interface_typs :
-  Syntax.arg list -> interface_typ list
+  Syntax.arg list -> (string * interface_typ) list
 
 val constructor_arguments :
-  Syntax.typ Syntax.contract -> interface_typ list
+  Syntax.typ Syntax.contract -> (string * interface_typ) list
 
 val total_size_of_interface_args :
   interface_typ list -> int

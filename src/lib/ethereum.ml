@@ -43,15 +43,15 @@ type function_signature =
   ; sig_args : interface_typ list
   }
 
-let get_interface_typ (raw : Syntax.arg) : interface_typ =
-  interpret_interface_type Syntax.(raw.arg_typ)
+let get_interface_typ (raw : Syntax.arg) : string * interface_typ =
+  (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
 
-let get_interface_typs : Syntax.arg list -> interface_typ list =
+let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
   List.map get_interface_typ
 
-let constructor_arguments :
-  Syntax.typ Syntax.contract -> interface_typ list
-  = failwith "constructor_arguments"
+let constructor_arguments (contract : Syntax.typ Syntax.contract)
+    : (string * interface_typ) list
+  = get_interface_typs (contract.Syntax.contract_arguments)
 
 let total_size_of_interface_args lst : int =
   Misc.int_sum (List.map interface_typ_size lst)

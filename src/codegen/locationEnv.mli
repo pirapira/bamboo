@@ -36,4 +36,4 @@ val constructor_initial_location_env :
  *  the constructor arguments appended at the end of
  *  the code. *)
 val constructor_args_locations :
-  Ethereum.interface_typ list -> location_env
+  (string * Ethereum.interface_typ) list -> location_env

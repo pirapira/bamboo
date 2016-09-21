@@ -163,17 +163,69 @@ let codegen_bytecode
   (src : Syntax.typ Syntax.contract) :
   PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
 
+(** [push_allocated_memory] behaves like an instruction
+ * that takes a desired memory size as an argument.
+ * This pushes the allocated address.
+ *)
+let push_allocated_memory (ce : CodegenEnv.codegen_env) =
+  let original_stack_size = stack_size ce in
+  (* [desired_length] *)
+  let ce = append_instruction ce (PUSH32 (Int 64)) in
+  let ce = append_instruction ce DUP1 in
+  (* [desired_length, 64, 64] *)
+  let ce = append_instruction ce MLOAD in
+  (* [desired_length, 64, memory[64]] *)
+  let ce = append_instruction ce DUP1 in
+  (* [desired_length, 64, memory[64], memory[64]] *)
+  let ce = append_instruction ce SWAP3 in
+  (* [memory[64], 64, memory[64], desired_length] *)
+  let ce = append_instruction ce ADD in
+  (* [memory[64], 64, new_head] *)
+  let ce = append_instruction ce SWAP1 in
+  (* [memory[64], new_head, 64] *)
+  let ce = append_instruction ce MSTORE in
+  (* [memory[64]] *)
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
 (** [copy_arguments_from_code_to_memory]
  *  copies constructor arguments at the end of the
  *  bytecode into the memory.  The number of bytes is
  *  decided using the contract interface.
  *  The memory usage counter at byte [0x40] is increased accordingly.
+ *  After this, the stack contains the size and the beginning of the memory
+ *  piece that contains the arguments.
+ *  Output [rest of the stack, mem_size, mem_begin].
  *)
 let copy_arguments_from_code_to_memory
       (le : LocationEnv.location_env)
       (ce : CodegenEnv.codegen_env)
-      (contract : Syntax.typ Syntax.contract) =
-  failwith "copy_arguments_from_code_to_memory"
+      (contract : Syntax.typ Syntax.contract) :
+      (LocationEnv.location_env * CodegenEnv.codegen_env) =
+  let total_size = Ethereum.total_size_of_interface_args
+                       (List.map snd (Ethereum.constructor_arguments contract)) in
+  let original_stack_size = stack_size ce in
+  (* [] *)
+  let ce = append_instruction ce (PUSH32 (Int total_size)) in
+  (* [total_size] *)
+  let ce = append_instruction ce DUP1 in
+  (* [total_size, total_size] *)
+  let ce = push_allocated_memory ce in
+  (* [total_size, memory_start] *)
+  let ce = append_instruction ce DUP2 in
+  (* [total_size, memory_start, total_size] *)
+  let ce = append_instruction ce DUP1 in
+  (* [total_size, memory_start, total_size, total_size] *)
+  let ce = append_instruction ce CODESIZE in
+  (* [total_size, memory_start, total_size, total_size, code size] *)
+  let ce = append_instruction ce SUB in
+  (* [total_size, memory_start, total_size, code_begin] *)
+  let ce = append_instruction ce DUP3 in
+  (* [total size, memory_start, total_size, code_begin, memory_start *)
+  let ce = append_instruction ce CODECOPY in
+  (* [total size, memory_start] *)
+  let () = assert (original_stack_size + 2 = stack_size ce) in
+  (le, ce)
 
 let codegen_constructor_bytecode
       (contract : Syntax.typ Syntax.contract) :

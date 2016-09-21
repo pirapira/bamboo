@@ -55,6 +55,18 @@ type 'imm instruction =
   | DELEGATECALL
   | SUICIDE
   | SWAP1
+  | SWAP2
+  | SWAP3
+  | SWAP4
+  | SWAP5
+  | SWAP6
+  | DUP1
+  | DUP2
+  | DUP3
+  | DUP4
+  | DUP5
+  | DUP6
+  | DUP7
 
 type 'imm program = 'imm instruction list
 let program_length = List.length
@@ -113,6 +125,11 @@ let stack_eaten = function
   | GAS -> 0
   | JUMPDEST -> 0
   | SWAP1 -> 2
+  | SWAP2 -> 3
+  | SWAP3 -> 4
+  | SWAP4 -> 5
+  | SWAP5 -> 6
+  | SWAP6 -> 7
   | LOG0 -> 2
   | LOG1 -> 3
   | LOG2 -> 4
@@ -124,6 +141,13 @@ let stack_eaten = function
   | RETURN -> 2
   | DELEGATECALL -> 7
   | SUICIDE -> 1
+  | DUP1 -> 1
+  | DUP2 -> 2
+  | DUP3 -> 3
+  | DUP4 -> 4
+  | DUP5 -> 5
+  | DUP6 -> 6
+  | DUP7 -> 7
 
 
 let stack_pushed = function
@@ -172,6 +196,18 @@ let stack_pushed = function
   | GAS -> 1
   | JUMPDEST -> 0
   | SWAP1 -> 2
+  | SWAP2 -> 3
+  | SWAP3 -> 4
+  | SWAP4 -> 5
+  | SWAP5 -> 6
+  | SWAP6 -> 7
+  | DUP1 -> 2
+  | DUP2 -> 3
+  | DUP3 -> 4
+  | DUP4 -> 5
+  | DUP5 -> 6
+  | DUP6 -> 7
+  | DUP7 -> 8
   | LOG0 -> 0
   | LOG1 -> 0
   | LOG2 -> 0

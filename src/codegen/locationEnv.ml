@@ -42,10 +42,10 @@ let last_stack_element_recorded (le : location_env) =
   | Some n -> n
   | None -> -1
 
-let constructor_args_locations (args : Ethereum.interface_typ list)
+let constructor_args_locations (args : (string * Ethereum.interface_typ) list)
     : location_env
   =
-  let total = Ethereum.total_size_of_interface_args args in
+  let total = Ethereum.total_size_of_interface_args (List.map snd args) in
   let one_arg ((name : string), (offset : int), (size : int)) :
         string * Location.location
     =
@@ -54,7 +54,14 @@ let constructor_args_locations (args : Ethereum.interface_typ list)
       { code_start = PseudoImm.(Minus (CodeSize, (Int (total - offset))))
       ; code_size =  Int size
       }) in
-  failwith "constructor_args_locations"
+  let rec name_offset_size_list rev_acc offset (args : (string * Ethereum.interface_typ) list) =
+    match args with
+    | [] -> List.rev rev_acc
+    | (h_name, h_typ) :: t ->
+       name_offset_size_list ((h_name, offset, Ethereum.interface_typ_size h_typ) :: rev_acc)
+                             (offset + Ethereum.interface_typ_size h_typ) t
+  in
+  [List.map one_arg (name_offset_size_list [] 0 args)]
 
 let constructor_initial_location_env (contract : Syntax.typ Syntax.contract) :
   location_env =
