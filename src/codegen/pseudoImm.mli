@@ -9,12 +9,13 @@ type pseudo_imm =
 
   | StorageStart
   | StorageSize
-  | StorageContractId
+  | StorageContractOffset
   | StorageConstructorArgumentBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id
   | MemoryStart
   | MemorySize
   | CodeSize
+  | ContractOffsetInRuntimeCode of Syntax.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | RuntimeCodeOffset
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm

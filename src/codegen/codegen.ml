@@ -233,8 +233,8 @@ let copy_arguments_from_code_to_memory
  *)
 let set_contract_id ce (id : Syntax.contract_id) =
   let original_stack_size = stack_size ce in
-  let ce = append_instruction ce (PUSH32 (ContractId id)) in
-  let ce = append_instruction ce (PUSH32 StorageContractId) in
+  let ce = append_instruction ce (PUSH32 (ContractOffsetInRuntimeCode id)) in
+  let ce = append_instruction ce (PUSH32 StorageContractOffset) in
   let ce = append_instruction ce SSTORE in
   let () = assert (stack_size ce = original_stack_size) in
   ce
