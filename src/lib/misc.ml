@@ -28,3 +28,11 @@ let rec int_sum (lst : int list) =
   | [] -> 0
   | h :: t ->
      h + (int_sum t)
+
+let rec filter_map f lst =
+  match lst with
+  | [] -> []
+  | h :: t ->
+     match f h with
+     | Some h' -> h' :: (filter_map f t)
+     | None -> filter_map f t

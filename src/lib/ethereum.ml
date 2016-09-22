@@ -43,11 +43,13 @@ type function_signature =
   ; sig_args : interface_typ list
   }
 
-let get_interface_typ (raw : Syntax.arg) : string * interface_typ =
-  (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
+let get_interface_typ (raw : Syntax.arg) : (string * interface_typ) option =
+  match Syntax.(raw.arg_typ) with
+  | Syntax.MappingType (_,_) -> None
+  | _ -> Some (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
 
 let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
-  List.map get_interface_typ
+    Misc.filter_map get_interface_typ
 
 let constructor_arguments (contract : Syntax.typ Syntax.contract)
     : (string * interface_typ) list
