@@ -228,15 +228,25 @@ let copy_arguments_from_code_to_memory
   ce
 
 (**
- * [set_contract_id ce id] puts the id in the storage at index
- * [StorageContractId]
+ * [set_contract_pc ce id] puts the program counter for the contract specified by
+   [id] in the storage at index [StorageContractId]
  *)
-let set_contract_id ce (id : Syntax.contract_id) =
+let set_contract_pc ce (id : Syntax.contract_id) =
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH32 (ContractOffsetInRuntimeCode id)) in
   let ce = append_instruction ce (PUSH32 StorageContractOffset) in
   let ce = append_instruction ce SSTORE in
   let () = assert (stack_size ce = original_stack_size) in
+  ce
+
+(**
+ * [get_contract_pc ce] pushes the value at [StorageContractId] in storage.
+ *)
+let get_contract_pc ce =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH32 StorageContractOffset) in
+  let ce = append_instruction ce SLOAD in
+  let () = assert (stack_size ce = original_stack_size + 1) in
   ce
 
 let increase_top ce (inc : int) =
@@ -359,7 +369,7 @@ let codegen_constructor_bytecode
              (Syntax.choose_contract contract_id contracts) in
   (* stack: [arg_mem_size, arg_mem_begin] *)
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
-  let ce = set_contract_id ce contract_id in
+  let ce = set_contract_pc ce contract_id in
   (* stack: [] *)
   (* TODO: return the code as a return value *)
   let ce = copy_runtime_code_to_memory ce contracts contract_id in
@@ -367,10 +377,29 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.append_instruction ce RETURN in
   ce
 
+let codegen_append_contract_bytecode le ce (contract : Syntax.typ Syntax.contract * Syntax.contract_id) =
+  (* jump destination for the contract *)
+  (* update the database with (id, pc) pair *)
+  (* I think I want to have [le] for this.  Think about having that.
+   * The locationEnvironment should be an argument to this contract actually.
+   *)
+  failwith "codegen_append_contract_bytecode"
+
 let codegen_runtime_bytecode
-      (src : Syntax.typ Syntax.contract) :
+      (src : (Syntax.typ Syntax.contract * Syntax.contract_id) list) :
         (CodegenEnv.codegen_env (* containing the program *)
-         * LocationEnv.location_env) = failwith "codegen_runtime_bytecode"
+        (* * LocationEnv.location_env*))
+  =
+  let ce = CodegenEnv.empty_env in
+  let ce = get_contract_pc ce in
+  let ce = append_instruction ce JUMP in
+  let ce =
+    List.fold_left
+      (fun ce contract ->
+        let le = LocationEnv.runtime_initial_location_env (fst contract) in
+        codegen_append_contract_bytecode le ce contract)
+      ce src in
+  ce
 
 let runtime_initial_location_env
       (contract : Syntax.typ Syntax.contract) :

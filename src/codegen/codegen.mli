@@ -27,9 +27,9 @@ val runtime_initial_location_env :
   LocationEnv.location_env
 
 val codegen_runtime_bytecode :
-  Syntax.typ Syntax.contract ->
+  (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
   (CodegenEnv.codegen_env (* containing the program *)
-   * LocationEnv.location_env)
+  (* * LocationEnv.location_env *))
 
 val codegen_constructor_bytecode :
   (Syntax.typ Syntax.contract list *

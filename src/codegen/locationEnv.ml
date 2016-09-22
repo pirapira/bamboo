@@ -67,3 +67,9 @@ let constructor_initial_location_env (contract : Syntax.typ Syntax.contract) :
   location_env =
   let args = Ethereum.constructor_arguments contract in
   constructor_args_locations args
+
+(** [runtime_initial_location_env contract]
+ *  returns the location environment that contains
+ *  the expected contract parameters in the storage *)
+let runtime_initial_location_env :
+  Syntax.typ Syntax.contract -> location_env = failwith "runtime_initial_location_env"

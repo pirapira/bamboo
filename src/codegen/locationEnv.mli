@@ -31,6 +31,12 @@ val update : location_env -> string ->
 val constructor_initial_location_env :
   Syntax.typ Syntax.contract -> location_env
 
+(** [runtime_initial_location_env contract]
+ *  returns the location environment that contains
+ *  the expected contract parameters in the storage *)
+val runtime_initial_location_env :
+  Syntax.typ Syntax.contract -> location_env
+
 (** [constructor_args_locations constract] returns
  *  a location environment that only contains
  *  the constructor arguments appended at the end of
