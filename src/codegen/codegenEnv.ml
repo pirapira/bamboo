@@ -3,6 +3,8 @@ type codegen_env =
   ; ce_program: PseudoImm.pseudo_imm Evm.program
   }
 
+let ce_program m = m.ce_program
+
 let empty_env =
   { ce_stack_size = 0
   ; ce_program = Evm.empty_program

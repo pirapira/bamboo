@@ -81,3 +81,8 @@ val append_inst : 'imm program -> 'imm instruction -> 'imm program
 
 val stack_eaten : 'imm instruction -> int
 val stack_pushed : 'imm instruction -> int
+
+val string_of_pseudo_opcode : PseudoImm.pseudo_imm instruction -> string
+
+val string_of_pseudo_program : PseudoImm.pseudo_imm program -> string
+val print_pseudo_program : PseudoImm.pseudo_imm program -> unit

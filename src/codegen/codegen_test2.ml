@@ -33,6 +33,9 @@ let _ =
   let () = match contracts with
   | [] -> ()
   | _ ->
-     let (_ : CodegenEnv.codegen_env)
-       = codegen_constructor_bytecode (contracts', snd (List.hd contracts)) in () in
+     let (env : CodegenEnv.codegen_env)
+       = codegen_constructor_bytecode (contracts', snd (List.hd contracts)) in
+     let program = CodegenEnv.ce_program env in
+     let () = Evm.print_pseudo_program program in
+     () in
   Printf.printf "Finished codgen_test2.\n"

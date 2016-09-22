@@ -222,3 +222,9 @@ let stack_pushed = function
   | RETURN -> 0
   | DELEGATECALL -> 1
   | SUICIDE -> 0
+
+let string_of_pseudo_opcode = failwith "sopo"
+
+let string_of_pseudo_program = failwith "sopp"
+
+let print_pseudo_program = failwith "ppp"
