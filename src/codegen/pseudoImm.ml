@@ -15,4 +15,6 @@ type pseudo_imm =
   | MemoryStart
   | MemorySize
   | CodeSize
+  | RuntimeCodeOffset
+  | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm

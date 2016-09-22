@@ -28,8 +28,11 @@ let parse_with_error lexbuf =
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let contracts : unit Syntax.contract list = parse_with_error lexbuf in
-  let contracts = Type.assign_types contracts in
-  let contracts = Syntax.annotate_with_contract_id contracts in
-  let (_ : CodegenEnv.codegen_env list)
-    = List.map codegen_constructor_bytecode contracts in
+  let contracts' = Type.assign_types contracts in
+  let contracts = Syntax.annotate_with_contract_id contracts' in
+  let () = match contracts with
+  | [] -> ()
+  | _ ->
+     let (_ : CodegenEnv.codegen_env)
+       = codegen_constructor_bytecode (contracts', snd (List.hd contracts)) in () in
   Printf.printf "Finished codgen_test2.\n"

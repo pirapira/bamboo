@@ -116,6 +116,9 @@ type 'exp_annot contract =
 
 type contract_id = int
 
+let choose_contract (id : contract_id) lst =
+  List.nth lst id
+
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with
   | FunctionCallExp c -> Some c.call_head

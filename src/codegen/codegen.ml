@@ -315,23 +315,57 @@ let copy_arguments_from_memory_to_storage le ce (contract_id : Syntax.contract_i
   (* stack, [..., size, memory_start, destination_storage_start] *)
   bulk_sstore_from_memory ce
 
+(** [copy_runtime_code_to_memory ce contracts contract_id]
+ * adds instructions to [ce] so that in the final
+ * state the memory contains the runtime code
+ * for all contracts that are reachable from [contract_id] in the
+ * list [contracts] in the
+ * addresses [code_start, code_start + code_size).
+ * This adds two elements to the stack, resulting in
+ * [..., code_length, code_start) *)
+let copy_runtime_code_to_memory ce contracts contract_id =
+  let original_stack_size = stack_size ce in
+  (* stack: [...] *)
+  let ce = append_instruction ce (PUSH32 (RuntimeCodeSize)) in
+  (* stack: [run_code_size] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [run_code_size, run_code_size] *)
+  let ce = push_allocated_memory ce in
+  (* stack: [run_code_size, run_code_address] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack: [run_code_size, run_code_address, run_code_size] *)
+  let ce = append_instruction ce (PUSH32 (RuntimeCodeOffset)) in
+  (* stack: [run_code_size, run_code_address, run_code_size, RuntimeCodeOffset] *)
+  let ce = append_instruction ce DUP3 in
+  (* stack: [run_code_size, run_code_address, run_code_size, run_code_in_code, run_code_address] *)
+  let ce = append_instruction ce CODECOPY in
+  (* stack: [run_code_size, run_code_address] *)
+  let () = assert (stack_size ce = original_stack_size + 2) in
+  ce
+
+
 let codegen_constructor_bytecode
-      ((contract : Syntax.typ Syntax.contract),
+      ((contracts : Syntax.typ Syntax.contract list),
        (contract_id : Syntax.contract_id))
     :
       (CodegenEnv.codegen_env (* containing the program *)
        ) =
-  let le = LocationEnv.constructor_initial_location_env contract in
+  let le = LocationEnv.constructor_initial_location_env
+             (Syntax.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
-  let ce = copy_arguments_from_code_to_memory le ce contract in
+  let ce = copy_arguments_from_code_to_memory le ce
+             (Syntax.choose_contract contract_id contracts) in
   (* stack: [arg_mem_size, arg_mem_begin] *)
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
   let ce = set_contract_id ce contract_id in
-
+  (* stack: [] *)
   (* TODO: return the code as a return value *)
-  failwith "still need to return the code to be deployed"
+  let ce = copy_runtime_code_to_memory ce contracts contract_id in
+  (* stack: [code_length, code_start_on_memory] *)
+  let ce = CodegenEnv.append_instruction ce RETURN in
+  ce
 
 let codegen_runtime_bytecode
       (src : Syntax.typ Syntax.contract) :
