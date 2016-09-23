@@ -69,7 +69,15 @@ let constructor_initial_location_env (contract : Syntax.typ Syntax.contract) :
   constructor_args_locations args
 
 (** [runtime_initial_location_env contract]
- *  returns the location environment that contains
- *  the expected contract parameters in the storage *)
-let runtime_initial_location_env :
-  Syntax.typ Syntax.contract -> location_env = failwith "runtime_initial_location_env"
+ * is a location environment that contains
+ * the constructor arguments (excluding arrays)
+ * after StorageConstrutorArgumentBegin *)
+let runtime_initial_location_env
+      (contract : Syntax.typ Syntax.contract) :
+        location_env =
+  let lst = Ethereum.constructor_arguments contract in
+  let init = empty_location_env in
+  let (le, _) = List.fold_left
+    (fun (lenv, word_idx) (name, typ) ->
+      failwith "update function not implemented") (init, 1) lst in
+  le

@@ -31,9 +31,14 @@ val update : location_env -> string ->
 val constructor_initial_location_env :
   Syntax.typ Syntax.contract -> location_env
 
-(** [runtime_initial_location_env contract]
- *  returns the location environment that contains
- *  the expected contract parameters in the storage *)
+(** [runtime_initial_location_env specifies
+ * where the state variables should be found
+ * when the runtie code starts.
+ * The deployment bytecode must establish this.
+ * Storage index 0 is used for contract dispatching.
+ * The following indices are used to store the
+ * state variables.
+ *)
 val runtime_initial_location_env :
   Syntax.typ Syntax.contract -> location_env
 

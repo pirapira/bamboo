@@ -14,18 +14,6 @@ val codegen_sentence :
                    *)
   CodegenEnv.codegen_env
 
-(** [runtime_initial_location_env specifies
- * where the state variables should be found
- * when the runtie code starts.
- * The deployment bytecode must establish this.
- * Storage index 0 is used for contract dispatching.
- * The following indices are used to store the
- * state variables.
- *)
-val runtime_initial_location_env :
-  Syntax.typ Syntax.contract ->
-  LocationEnv.location_env
-
 val codegen_runtime_bytecode :
   (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
   (CodegenEnv.codegen_env (* containing the program *)

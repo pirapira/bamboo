@@ -401,8 +401,4 @@ let codegen_runtime_bytecode
       ce src in
   ce
 
-let runtime_initial_location_env
-      (contract : Syntax.typ Syntax.contract) :
-        LocationEnv.location_env =
-  let _ = Ethereum.constructor_arguments contract in
-  failwith "runtime_initial_location_env"
+
