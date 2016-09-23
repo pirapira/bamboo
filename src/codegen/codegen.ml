@@ -379,7 +379,7 @@ let codegen_constructor_bytecode
 
 let codegen_append_contract_bytecode le ce (contract : Syntax.typ Syntax.contract * Syntax.contract_id) =
   (* jump destination for the contract *)
-  (* update the database with (id, pc) pair *)
+  (* update the entrypoint database with (id, pc) pair *)
   (* I think I want to have [le] for this.  Think about having that.
    * The locationEnvironment should be an argument to this contract actually.
    *)
@@ -400,5 +400,3 @@ let codegen_runtime_bytecode
         codegen_append_contract_bytecode le ce contract)
       ce src in
   ce
-
-
