@@ -76,8 +76,15 @@ let runtime_initial_location_env
       (contract : Syntax.typ Syntax.contract) :
         location_env =
   let lst = Ethereum.constructor_arguments contract in
-  let init = empty_location_env in
-  let (le, _) = List.fold_left
-    (fun (lenv, word_idx) (name, typ) ->
-      failwith "update function not implemented") (init, 1) lst in
+  let init = add_empty_block empty_location_env in
+  let f (lenv, word_idx) (name, typ) =
+    let size_in_word = Ethereum.interface_typ_size typ / 32 in
+    let loc = Location.(Storage {
+                  storage_start = Int word_idx;
+                  storage_size = Int size_in_word
+                }) in
+    let new_lenv = add_pair lenv name loc in
+    (new_lenv, word_idx + size_in_word)
+  in
+  let (le, _) = List.fold_left f (init, 1) lst in
   le
