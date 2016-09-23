@@ -377,12 +377,26 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.append_instruction ce RETURN in
   ce
 
-let codegen_append_contract_bytecode le ce (contract : Syntax.typ Syntax.contract * Syntax.contract_id) =
+let add_dispatcher le ce = failwith "add_dispatcher"
+
+let codegen_append_contract_bytecode
+      le ce
+      ((contract, cid) : Syntax.typ Syntax.contract * Syntax.contract_id) =
   (* jump destination for the contract *)
+  let entry_label = Label.new_label () in
+  let ce = append_instruction ce (JUMPDEST entry_label) in
   (* update the entrypoint database with (id, pc) pair *)
-  (* I think I want to have [le] for this.  Think about having that.
-   * The locationEnvironment should be an argument to this contract actually.
-   *)
+  let () = EntrypointDatabase.register_entrypoint cid entry_label in
+
+  (* add jumps to the cases *)
+  let (le, ce) = add_dispatcher le ce contract in
+
+  (* add the cases *)
+  let cases = contract.Syntax.contract_cases in
+  let (le, ce) = List.fold_left
+                   (fun (le,ce) case -> failwith "add_case")
+                   (le, ce) cases in
+
   failwith "codegen_append_contract_bytecode"
 
 let codegen_runtime_bytecode
