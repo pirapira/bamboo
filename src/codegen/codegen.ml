@@ -377,7 +377,26 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.append_instruction ce RETURN in
   ce
 
-let add_dispatcher le ce = failwith "add_dispatcher"
+(*
+ * precondition: the stack has [signature_code]
+ * postcondition: the stack has [signature_code]
+ *)
+let add_dispatcher_for_a_case le ce contract case_signature
+  =
+  let original_stack_size = stack_size ce in
+  let ce = insert_signature_code ce case_signature in
+  let ce = append_instruction ce EQ in
+  let ce = append_destination_for ce case_signature in
+  let ce = append_instruction ce JUMPI in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
+let add_dispatcher le ce contract =
+  (* load the first four bytes of the input data *)
+
+  (* repeat add_dispatcher_for_a_case *)
+
+  failwith "add_dispatcher"
 
 let codegen_append_contract_bytecode
       le ce
@@ -386,7 +405,8 @@ let codegen_append_contract_bytecode
   let entry_label = Label.new_label () in
   let ce = append_instruction ce (JUMPDEST entry_label) in
   (* update the entrypoint database with (id, pc) pair *)
-  let () = EntrypointDatabase.register_entrypoint cid entry_label in
+  let () = EntrypointDatabase.(register_entrypoint
+             (Contract cid) entry_label) in
 
   (* add jumps to the cases *)
   let (le, ce) = add_dispatcher le ce contract in
