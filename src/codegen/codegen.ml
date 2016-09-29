@@ -377,6 +377,10 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.append_instruction ce RETURN in
   ce
 
+
+let push_signature_code = failwith "push_signature_code"
+let push_destination_for = failwith "push_destination_for"
+
 (*
  * precondition: the stack has [signature_code]
  * postcondition: the stack has [signature_code]
@@ -384,9 +388,9 @@ let codegen_constructor_bytecode
 let add_dispatcher_for_a_case le ce contract case_signature
   =
   let original_stack_size = stack_size ce in
-  let ce = insert_signature_code ce case_signature in
+  let ce = push_signature_code ce case_signature in
   let ce = append_instruction ce EQ in
-  let ce = append_destination_for ce case_signature in
+  let ce = push_destination_for ce case_signature in
   let ce = append_instruction ce JUMPI in
   let () = assert (stack_size ce = original_stack_size) in
   ce
