@@ -378,7 +378,9 @@ let codegen_constructor_bytecode
   ce
 
 
-let push_signature_code = failwith "push_signature_code"
+let push_signature_code (ce : CodegenEnv.codegen_env)
+                        (case_signature : case_header)
+  = failwith "push_signature_code"
 let push_destination_for = failwith "push_destination_for"
 
 (*
