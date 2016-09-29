@@ -16,6 +16,7 @@ type pseudo_imm =
   | MemorySize
   | CodeSize
   | ContractOffsetInRuntimeCode of Syntax.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
+  | CaseOffsetInRuntimeCode of Syntax.contract_id * Syntax.case_header
   | RuntimeCodeOffset
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm

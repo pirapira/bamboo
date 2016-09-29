@@ -381,18 +381,23 @@ let codegen_constructor_bytecode
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
   = failwith "push_signature_code"
-let push_destination_for = failwith "push_destination_for"
+
+let push_destination_for (ce : CodegenEnv.codegen_env)
+                         (cid : Syntax.contract_id)
+                         (case_signature : case_header) =
+  append_instruction ce
+  (PUSH32 (CaseOffsetInRuntimeCode (cid, case_signature)))
 
 (*
  * precondition: the stack has [signature_code]
  * postcondition: the stack has [signature_code]
  *)
-let add_dispatcher_for_a_case le ce contract case_signature
+let add_dispatcher_for_a_case le ce contract_id case_signature
   =
   let original_stack_size = stack_size ce in
   let ce = push_signature_code ce case_signature in
   let ce = append_instruction ce EQ in
-  let ce = push_destination_for ce case_signature in
+  let ce = push_destination_for ce contract_id case_signature in
   let ce = append_instruction ce JUMPI in
   let () = assert (stack_size ce = original_stack_size) in
   ce
