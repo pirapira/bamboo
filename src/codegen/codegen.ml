@@ -402,7 +402,7 @@ let add_dispatcher_for_a_case le ce contract_id case_signature
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
-let add_dispatcher le ce contract =
+let add_dispatcher le ce contract_id contract =
   (* load the first four bytes of the input data *)
 
   (* repeat add_dispatcher_for_a_case *)
@@ -420,7 +420,7 @@ let codegen_append_contract_bytecode
              (Contract cid) entry_label) in
 
   (* add jumps to the cases *)
-  let (le, ce) = add_dispatcher le ce contract in
+  let (le, ce) = add_dispatcher le ce cid contract in
 
   (* add the cases *)
   let cases = contract.Syntax.contract_cases in
