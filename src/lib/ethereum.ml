@@ -1,3 +1,6 @@
+let word_bits = 256
+let signature_bits = 32
+
 type interface_typ =
   | InterfaceUint of int
   | InterfaceAddress

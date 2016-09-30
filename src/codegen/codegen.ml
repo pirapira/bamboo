@@ -402,8 +402,30 @@ let add_dispatcher_for_a_case le ce contract_id case_signature
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
+let push_word_from_input_data_at_byte ce b =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH32 b) in
+  let ce = append_instruction ce CALLDATALOAD in
+  let () = assert (stack_size ce = original_stack_size + 1) in
+  ce
+
+let stack_top_shift_right ce amount =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH1 (Int amount)) in
+  let ce = append_instruction ce (PUSH1 (Int 2)) in
+  let ce = append_instruction ce EXP in
+  let ce = append_instruction ce SWAP1 in
+  let ce = append_instruction ce DIV in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
 let add_dispatcher le ce contract_id contract =
+  let original_stack_size = stack_size ce in
+
   (* load the first four bytes of the input data *)
+  let ce = push_word_from_input_data_at_byte ce (Int 0) in
+  let ce = stack_top_shift_right ce Ethereum.(word_bits - signature_bits) in
+  let () = assert (stack_size ce = original_stack_size + 1) in
 
   (* repeat add_dispatcher_for_a_case *)
 

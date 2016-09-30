@@ -1,3 +1,6 @@
+val word_bits : int
+val signature_bits : int
+
 type interface_typ =
   | InterfaceUint of int
   | InterfaceAddress
