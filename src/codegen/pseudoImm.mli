@@ -12,8 +12,11 @@ type pseudo_imm =
    * an account can become different contracts after stages. *)
   | StorageConstructorArgumentBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id
-  | CodeSize
-  (** TODO: is this the size of everything containing the constructor or just runtime code *)
+  | BytecodeSize
+  (** [BytecodeSize] represents the size of the data sent to create the transaction.
+   *  This data contains the initializing code plus runtime code plus the constructor
+   *  argument data.
+   *)
   | ContractOffsetInRuntimeCode of Syntax.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | CaseOffsetInRuntimeCode of Syntax.contract_id * Syntax.case_header
   | RuntimeCodeOffset
