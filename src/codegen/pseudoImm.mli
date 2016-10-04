@@ -3,8 +3,6 @@
 type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
-  | CodePos
-  (** TODO: try to remove this.  I don't remember the intention of this one *)
   | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 

@@ -3,7 +3,6 @@
 type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
-  | CodePos
   | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 
@@ -25,7 +24,6 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   match p with
   | Big b -> "(Big "^(Big_int.string_of_big_int b)^")"
   | Int i -> "(Int "^(string_of_int i)^")"
-  | CodePos -> "CodePos"
   | DestLabel _ -> "DestLabel (print label here)"
   | ContractId _ -> "ContractId (print id here)"
   | StorageStart -> "StorageStart"
