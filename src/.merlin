@@ -6,3 +6,5 @@ B _build/lib
 B _build/ast
 B _build/parse
 B _build/codegen
+PKG sha
+PKG batteries

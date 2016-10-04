@@ -142,11 +142,12 @@ the code generation is still in development.
 As preparattion,
 * install [opam](http://opam.ocaml.org/doc/Install.html)
 * and then use `opam install menhir` to install `menhir`.
+* `opam install sha batteries`
 
 Then,
 ```
 cd src
-sh run_tests.sh
+sh run\_tests.sh
 ```
 builds a compiler in development and tests it against the example files
 `src/parse/examples/*.sol`
