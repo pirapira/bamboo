@@ -30,4 +30,11 @@ val constructor_arguments :
 val total_size_of_interface_args :
   interface_typ list -> int
 
+(** [string_keccak] returns the Keccak-256 hash of a string in
+ * hex, without the prefix [0x]. *)
 val string_keccak : string -> string
+
+(** [keccak_short "pay(address)"] returns the
+ * method signature code (which is commonly used in the ABI.
+ *)
+val keccak_signature : string -> string

@@ -61,5 +61,18 @@ let constructor_arguments (contract : Syntax.typ Syntax.contract)
 let total_size_of_interface_args lst : int =
   Misc.int_sum (List.map interface_typ_size lst)
 
+module Hash = Cryptokit.Hash
+
 let string_keccak str : string =
-  failwith "string_keccak"
+  let sha3_256 = Hash.sha3 256 in
+  let () = sha3_256#add_string str in
+  let ret = sha3_256#result in
+  let tr = Cryptokit.Hexa.encode () in
+  let () = tr#put_string ret in
+  let () = tr#finish in
+  let ret = tr#get_string in
+  (* need to convert ret into hex *)
+  ret
+
+let keccak_signature (str : string) : string =
+  String.sub (string_keccak str) 0 8
