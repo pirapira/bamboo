@@ -321,7 +321,7 @@ let bulk_sstore_from_memory ce =
  *)
 let copy_arguments_from_memory_to_storage le ce (contract_id : Syntax.contract_id) =
   let ce = append_instruction
-             ce (PUSH32 (StorageConstructorArgumentBegin contract_id)) in
+             ce (PUSH32 (StorageConstructorArgumentsBegin contract_id)) in
   (* stack, [..., size, memory_start, destination_storage_start] *)
   bulk_sstore_from_memory ce
 

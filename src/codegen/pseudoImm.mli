@@ -10,7 +10,7 @@ type pseudo_imm =
   (** [StorageContractSwitcherIndex] is the index of the storage that contains the
    * program counter of the contract entry point.  This is unique to bamboo where
    * an account can become different contracts after stages. *)
-  | StorageConstructorArgumentBegin of Syntax.contract_id
+  | StorageConstructorArgumentsBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id
   | InitDataSize
   (** [InitDataSize] represents the size of the data sent to create the transaction.
