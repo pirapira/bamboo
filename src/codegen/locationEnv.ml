@@ -42,7 +42,7 @@ let last_stack_element_recorded (le : location_env) =
   | Some n -> n
   | None -> -1
 
-let constructor_args_locations (args : (string * Ethereum.interface_typ) list)
+let constructor_args_locations (cid : Syntax.contract_id) (args : (string * Ethereum.interface_typ) list)
     : location_env
   =
   let total = Ethereum.total_size_of_interface_args (List.map snd args) in
@@ -51,7 +51,7 @@ let constructor_args_locations (args : (string * Ethereum.interface_typ) list)
     =
     Location.(name,
      Code
-      { code_start = PseudoImm.(Minus (InitDataSize, (Int (total - offset))))
+      { code_start = PseudoImm.(Minus (InitDataSize cid, (Int (total - offset))))
       ; code_size =  Int size
       }) in
   let rec name_offset_size_list rev_acc offset (args : (string * Ethereum.interface_typ) list) =
@@ -63,10 +63,11 @@ let constructor_args_locations (args : (string * Ethereum.interface_typ) list)
   in
   [List.map one_arg (name_offset_size_list [] 0 args)]
 
-let constructor_initial_location_env (contract : Syntax.typ Syntax.contract) :
+let constructor_initial_location_env (cid : Syntax.contract_id)
+                                     (contract : Syntax.typ Syntax.contract) :
   location_env =
   let args = Ethereum.constructor_arguments contract in
-  constructor_args_locations args
+  constructor_args_locations cid args
 
 (** [runtime_initial_location_env contract]
  * is a location environment that contains

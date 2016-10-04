@@ -360,7 +360,7 @@ let codegen_constructor_bytecode
     :
       (CodegenEnv.codegen_env (* containing the program *)
        ) =
-  let le = LocationEnv.constructor_initial_location_env
+  let le = LocationEnv.constructor_initial_location_env contract_id
              (Syntax.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env in
   (* implement some kind of fold function over the argument list

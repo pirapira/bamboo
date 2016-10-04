@@ -9,7 +9,7 @@ type pseudo_imm =
   | StorageContractSwitcherIndex
   | StorageConstructorArgumentsBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id (* the size is dependent on the contract id *)
-  | InitDataSize
+  | InitDataSize of Syntax.contract_id
   | ContractOffsetInRuntimeCode of Syntax.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | CaseOffsetInRuntimeCode of Syntax.contract_id * Syntax.case_header
   | RuntimeCodeOffset
@@ -25,9 +25,20 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | StorageContractSwitcherIndex -> "StorageContractSwitcherIndex"
   | StorageConstructorArgumentsBegin _ -> "StorageConstructorArgumentBegin (print contract id)"
   | StorageConstructorArgumentsSize _ -> "StorageConstructorArgumentsSize (print contract id)"
-  | InitDataSize -> "InitDataSize"
+  | InitDataSize cid -> "InitDataSize (print contract id here)"
   | ContractOffsetInRuntimeCode _ -> "ContractOffsetInRuntimeCode (print contact id)"
   | CaseOffsetInRuntimeCode (cid, header) -> "CaseOffsetInRuntimeCode (print contract id, case header)"
   | RuntimeCodeOffset -> "RuntimeCodeOffset"
   | RuntimeCodeSize -> "RuntimeCodeSize"
   | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"
+
+
+type layout_info =
+  { (* numbers about the code *)
+    (* nubers about the storage *)
+    storage_contract_switcher_index : int
+  ; storage_constructor_arguments_begin : Syntax.contract_id -> int
+  ; storage_constructor_arguments_size : Syntax.contract_id -> int
+  }
+
+let realize_pseudo_imm = failwith "realize_pseudo_imm"
