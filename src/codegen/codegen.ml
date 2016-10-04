@@ -426,8 +426,12 @@ let add_dispatcher le ce contract_id contract =
   let ce = push_word_from_input_data_at_byte ce (Int 0) in
   let ce = stack_top_shift_right ce Ethereum.(word_bits - signature_bits) in
   let () = assert (stack_size ce = original_stack_size + 1) in
+  let case_signatures = failwith "case_signatures" in
 
   (* repeat add_dispatcher_for_a_case *)
+  let ce = List.fold_left
+             (fun ce case_signature -> add_dispatcher_for_a_case le ce contract_id case_signature)
+             ce case_signatures in
 
   failwith "add_dispatcher"
 
