@@ -2,8 +2,9 @@ ocamlbuild -Is ast,parse,lib,codegen -use-menhir parse/parser_test.native && \
 ocamlbuild -Is ast,parse,lib,codegen -use-menhir ast/ast_test.native && \
 ocamlbuild -Is ast,parse,lib,codegen -package batteries -package sha -use-menhir codegen/codegen_test.native && \
 ocamlbuild -Is ast,parse,lib,codegen -package batteries -package sha -use-menhir codegen/codegen_test2.native && \
-./codegen_test.native || \
-exit 1
+ocamlbuild -Is ast,parse,lib,codegen -package batteries -package sha -use-menhir lib/lib_test.native && \
+./codegen_test.native || exit 1
+./lib_test.native || exit 1
 for f in `ls parse/examples/*.sol`
 do
   echo "trying" $f
