@@ -20,3 +20,24 @@ type pseudo_imm =
   | RuntimeCodeOffset
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm
+
+let rec string_of_pseudo_imm (p : pseudo_imm) : string =
+  match p with
+  | Big b -> "(Big "^(Big_int.string_of_big_int b)^")"
+  | Int i -> "(Int "^(string_of_int i)^")"
+  | CodePos -> "CodePos"
+  | DestLabel _ -> "DestLabel (print label here)"
+  | ContractId _ -> "ContractId (print id here)"
+  | StorageStart -> "StorageStart"
+  | StorageSize -> "StorageSize"
+  | StorageContractOffset -> "StorageContractOffset"
+  | StorageConstructorArgumentBegin _ -> "StorageConstructorArgumentBegin (print contract id)"
+  | StorageConstructorArgumentsSize _ -> "StorageConstructorArgumentsSize (print contract id)"
+  | MemoryStart -> "MemoryStart"
+  | MemorySize -> "MemorySize"
+  | CodeSize -> "CodeSize"
+  | ContractOffsetInRuntimeCode _ -> "ContractOffsetInRuntimeCode (print contact id)"
+  | CaseOffsetInRuntimeCode (cid, header) -> "CaseOffsetInRuntimeCode (print contract id, case header)"
+  | RuntimeCodeOffset -> "RuntimeCodeOffset"
+  | RuntimeCodeSize -> "RuntimeCodeSize"
+  | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"

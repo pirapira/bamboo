@@ -225,8 +225,8 @@ let stack_pushed = function
 
 let string_of_pseudo_opcode op =
   match op with
-  | PUSH1 _ -> "PUSH1"
-  | PUSH32 _ -> "PUSH32"
+  | PUSH1 v -> "PUSH1 "^(PseudoImm.string_of_pseudo_imm v)
+  | PUSH32 v -> "PUSH32 "^(PseudoImm.string_of_pseudo_imm v)
   | NOT -> "NOT"
   | TIMESTAMP -> "TIMESTAMP"
   | NEQ -> "NEQ"
