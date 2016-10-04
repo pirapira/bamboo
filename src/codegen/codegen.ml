@@ -419,6 +419,12 @@ let stack_top_shift_right ce amount =
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
+let add_throw ce =
+  (* Just using the same method as solc. *)
+  let ce = append_instruction ce (PUSH1 (Int 2)) in
+  let ce = append_instruction ce JUMP in
+  ce
+
 let add_dispatcher le ce contract_id contract =
   let original_stack_size = stack_size ce in
 
@@ -431,6 +437,7 @@ let add_dispatcher le ce contract_id contract =
   let ce = List.fold_left
              (fun ce case_signature -> add_dispatcher_for_a_case le ce contract_id case_signature)
              ce case_signatures in
+  let ce = add_throw ce in
   (* does this really work...? *)
   (le, ce)
 

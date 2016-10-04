@@ -269,7 +269,7 @@ let string_of_pseudo_opcode op =
   | PC -> "PC"
   | MSIZE -> "MSIZE"
   | GAS -> "GAS"
-  | JUMPDEST _ -> "JUMPDEST"
+  | JUMPDEST l -> "JUMPDEST (print label)"
   | SWAP1 -> "SWAP1"
   | SWAP2 -> "SWAP2"
   | SWAP3 -> "SWAP3"
