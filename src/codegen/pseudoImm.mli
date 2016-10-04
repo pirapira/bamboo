@@ -12,8 +12,8 @@ type pseudo_imm =
    * an account can become different contracts after stages. *)
   | StorageConstructorArgumentBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id
-  | BytecodeSize
-  (** [BytecodeSize] represents the size of the data sent to create the transaction.
+  | InitDataSize
+  (** [InitDataSize] represents the size of the data sent to create the transaction.
    *  This data contains the initializing code plus runtime code plus the constructor
    *  argument data.
    *)

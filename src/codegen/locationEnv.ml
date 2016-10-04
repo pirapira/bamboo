@@ -51,7 +51,7 @@ let constructor_args_locations (args : (string * Ethereum.interface_typ) list)
     =
     Location.(name,
      Code
-      { code_start = PseudoImm.(Minus (BytecodeSize, (Int (total - offset))))
+      { code_start = PseudoImm.(Minus (InitDataSize, (Int (total - offset))))
       ; code_size =  Int size
       }) in
   let rec name_offset_size_list rev_acc offset (args : (string * Ethereum.interface_typ) list) =
