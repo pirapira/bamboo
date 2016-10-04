@@ -15,6 +15,10 @@ val interpret_interface_type : Syntax.typ -> interface_typ
 
 val to_typ : interface_typ -> Syntax.typ
 
+(** [string_of_interface_type t] is a string that is used to compute the
+ * method signatures.  Addresses are "address", uint is "uint256". *)
+val string_of_interface_type : interface_typ -> string
+
 type function_signature =
   { sig_return : interface_typ list
   ; sig_name : string
@@ -38,3 +42,15 @@ val string_keccak : string -> string
  * method signature code (which is commonly used in the ABI.
  *)
 val keccak_signature : string -> string
+
+(** [case_heaer_signature_string h] returns the
+ * signature of a fucntion as used for creating the
+ * function hash.  Like "pay(address)"
+ * TODO: cite some document here.
+ *)
+val case_header_signature_string : Syntax.usual_case_header -> string
+
+(** [case_header_signature_hash h] returns the
+ * method signature used in the common ABI *)
+val case_header_signature_hash :
+  Syntax.usual_case_header -> string

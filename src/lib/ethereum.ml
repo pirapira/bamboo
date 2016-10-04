@@ -76,3 +76,21 @@ let string_keccak str : string =
 
 let keccak_signature (str : string) : string =
   String.sub (string_keccak str) 0 8
+
+let string_of_interface_type (i : interface_typ) : string =
+  match i with
+  | InterfaceUint x ->
+     "uint"^(string_of_int x)
+  | InterfaceAddress -> "address"
+  | InterfaceBool -> "bool"
+
+let case_header_signature_string (h : Syntax.usual_case_header) : string =
+  let name_of_case = h.Syntax.case_name in
+  let arguments = get_interface_typs h.Syntax.case_arguments in
+  let arg_typs = List.map snd arguments in
+  let list_of_types = List.map string_of_interface_type arg_typs in
+  let args = String.concat "," list_of_types in
+  name_of_case ^ "(" ^ args ^ ")"
+
+let case_header_signature_hash (h : Syntax.usual_case_header) : string =
+  keccak_signature (case_header_signature_string h)
