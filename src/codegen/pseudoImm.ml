@@ -34,7 +34,15 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
 
 
 type layout_info =
-  { (* numbers about the code *)
+  { (* The initial data is organized like this: *)
+    (* |constructor|runtime code|constructor arguments|  *)
+
+    (* And then, the runtime code is organized like this: *)
+    (* |dispatcher that jumps into a contract|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
+
+    (* And then, the runtime code for a particular contract is organized like this: *)
+    (* |dispatcher that jumps into somewhere|runtime code for case f|runtime code for case g| *)
+
     (* nubers about the storage *)
     storage_contract_switcher_index : int
   ; storage_constructor_arguments_begin : Syntax.contract_id -> int
