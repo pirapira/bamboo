@@ -29,3 +29,5 @@ val constructor_arguments :
 
 val total_size_of_interface_args :
   interface_typ list -> int
+
+val string_keccak : string -> string

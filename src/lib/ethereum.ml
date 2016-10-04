@@ -60,3 +60,6 @@ let constructor_arguments (contract : Syntax.typ Syntax.contract)
 
 let total_size_of_interface_args lst : int =
   Misc.int_sum (List.map interface_typ_size lst)
+
+let string_keccak str : string =
+  failwith "string_keccak"
