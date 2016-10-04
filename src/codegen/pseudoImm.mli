@@ -6,10 +6,6 @@ type pseudo_imm =
   | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 
-  | StorageStart
-  (** TODO: what is the intention of this one? *)
-  | StorageSize
-  (** TODO: what is the intention of this one? *)
   | StorageContractOffset
   (** TODO: what is the intention of this one? *)
   | StorageConstructorArgumentBegin of Syntax.contract_id

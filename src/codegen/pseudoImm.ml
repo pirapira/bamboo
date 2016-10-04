@@ -6,8 +6,6 @@ type pseudo_imm =
   | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 
-  | StorageStart
-  | StorageSize
   | StorageContractOffset
   | StorageConstructorArgumentBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id (* the size is dependent on the contract id *)
@@ -26,8 +24,6 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | Int i -> "(Int "^(string_of_int i)^")"
   | DestLabel _ -> "DestLabel (print label here)"
   | ContractId _ -> "ContractId (print id here)"
-  | StorageStart -> "StorageStart"
-  | StorageSize -> "StorageSize"
   | StorageContractOffset -> "StorageContractOffset"
   | StorageConstructorArgumentBegin _ -> "StorageConstructorArgumentBegin (print contract id)"
   | StorageConstructorArgumentsSize _ -> "StorageConstructorArgumentsSize (print contract id)"
