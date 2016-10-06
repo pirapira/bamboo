@@ -86,3 +86,10 @@ val string_of_pseudo_opcode : PseudoImm.pseudo_imm instruction -> string
 
 val string_of_pseudo_program : PseudoImm.pseudo_imm program -> string
 val print_pseudo_program : PseudoImm.pseudo_imm program -> unit
+
+
+val realize_pseudo_instruction :
+  PseudoImm.layout_info -> PseudoImm.pseudo_imm instruction -> Big_int.big_int instruction
+
+val realize_pseudo_program :
+  PseudoImm.layout_info -> PseudoImm.pseudo_imm program -> Big_int.big_int program
