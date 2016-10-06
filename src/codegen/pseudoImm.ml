@@ -43,7 +43,11 @@ type layout_info =
     (* And then, the runtime code for a particular contract is organized like this: *)
     (* |dispatcher that jumps into somewhere|runtime code for case f|runtime code for case g| *)
 
-    (* nubers about the storage *)
+    (* numbers about the storage *)
+    (* The storage during the runtime looks like this: *)
+    (* |pc of the current contract|pod contract argument0|pod contract argument1| *)
+    (* In addition, array elements are placed at the same location as in Solidity *)
+
     storage_contract_switcher_index : int
   ; storage_constructor_arguments_begin : Syntax.contract_id -> int
   ; storage_constructor_arguments_size : Syntax.contract_id -> int
