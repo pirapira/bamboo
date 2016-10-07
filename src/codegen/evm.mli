@@ -10,7 +10,6 @@ type 'imm instruction =
   | PUSH32 of 'imm
   | NOT
   | TIMESTAMP
-  | NEQ
   | EQ
   | ISZERO
   | LT

@@ -3,7 +3,6 @@ type 'imm instruction =
   | PUSH32 of 'imm
   | NOT
   | TIMESTAMP
-  | NEQ
   | EQ
   | ISZERO
   | LT
@@ -87,7 +86,6 @@ let stack_eaten = function
   | TIMESTAMP -> 0
   | EQ -> 2
   | ISZERO -> 1
-  | NEQ -> 2
   | LT -> 2
   | GT -> 2
   | BALANCE -> 1
@@ -157,7 +155,6 @@ let stack_pushed = function
   | PUSH32 _ -> 1
   | NOT -> 1
   | TIMESTAMP -> 1
-  | NEQ -> 1
   | EQ -> 1
   | ISZERO -> 1
   | LT -> 1
@@ -229,7 +226,6 @@ let string_of_pseudo_opcode op =
   | PUSH32 v -> "PUSH32 "^(PseudoImm.string_of_pseudo_imm v)
   | NOT -> "NOT"
   | TIMESTAMP -> "TIMESTAMP"
-  | NEQ -> "NEQ"
   | EQ -> "EQ"
   | ISZERO -> "ISZERO"
   | LT -> "LT"
@@ -309,7 +305,6 @@ let realize_pseudo_instruction (l : PseudoImm.layout_info) (i : PseudoImm.pseudo
   | PUSH32 imm -> PUSH32 (PseudoImm.realize_pseudo_imm l imm)
   | NOT -> NOT
   | TIMESTAMP -> TIMESTAMP
-  | NEQ -> NEQ
   | EQ -> EQ
   | ISZERO -> ISZERO
   | LT -> LT

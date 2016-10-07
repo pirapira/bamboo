@@ -78,7 +78,8 @@ let rec codegen_exp
   | NeqExp (l, r), BoolType ->
      let ce = codegen_exp le ce r in
      let ce = codegen_exp le ce l in (* l later because it should come at the top *)
-     let ce = append_instruction ce NEQ in
+     let ce = append_instruction ce EQ in
+     let ce = append_instruction ce ISZERO in
      ce
   | NeqExp _, _ ->
      failwith "codegen_exp: NeqExp of unexpected type"
