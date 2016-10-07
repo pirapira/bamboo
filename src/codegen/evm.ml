@@ -455,3 +455,6 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
 
 let append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
   Hex.concat_hex h (hex_of_instruction i)
+
+let hex_of_program (p : Big_int.big_int program) : Hex.hex =
+  List.fold_left append_op Hex.empty_hex p

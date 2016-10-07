@@ -1,10 +1,3 @@
-(** ['imm program] is a sequence of EVM instructions
- * where immediate values are expressed with type 'imm *)
-type 'imm program
-val empty_program : 'imm program
-
-val program_length : 'imm program -> int
-
 type 'imm instruction =
   | PUSH1 of 'imm
   | PUSH32 of 'imm
@@ -77,6 +70,13 @@ type 'imm instruction =
   | DUP7
 
 
+(** ['imm program] is a sequence of EVM instructions
+ * where immediate values are expressed with type 'imm *)
+type 'imm program = 'imm instruction list
+val empty_program : 'imm program
+
+val program_length : 'imm program -> int
+
 val append_inst : 'imm program -> 'imm instruction -> 'imm program
 
 val stack_eaten : 'imm instruction -> int
@@ -96,9 +96,9 @@ val realize_pseudo_program :
 
 val hex_of_instruction : Big_int.big_int instruction -> Hex.hex
 val append_op : Hex.hex -> Big_int.big_int instruction -> Hex.hex
-(*
 val hex_of_program : Big_int.big_int program -> Hex.hex
 
+(*
 val string_of_real_instruction :
   Big_int.big_int instruction -> string
 val string_of_real_program : Big_int.big_int program -> unit
