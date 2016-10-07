@@ -18,3 +18,7 @@ let string_of_hex ?prefix:(prefix : string = "") (h : hex) : string =
 
 let print_hex ?prefix:(prefix = "") h =
   Printf.printf "%s\n" (string_of_hex ~prefix h)
+
+let hex_of_string s =
+  (* TODO: check if the string contains only 0-9a-fA-F *)
+  Rope.of_string s

@@ -31,6 +31,7 @@ type 'imm instruction =
   | CODECOPY
   | GASPRICE
   | EXTCODESIZE
+  | EXTCODECOPY
   | POP
   | MLOAD
   | MSTORE
@@ -112,6 +113,7 @@ let stack_eaten = function
   | CODECOPY -> 3
   | GASPRICE -> 0
   | EXTCODESIZE -> 1
+  | EXTCODECOPY -> 4
   | POP -> 1
   | MLOAD -> 1
   | MSTORE -> 2
@@ -183,6 +185,7 @@ let stack_pushed = function
   | CODECOPY -> 0
   | GASPRICE -> 1
   | EXTCODESIZE -> 1
+  | EXTCODECOPY -> 0
   | POP -> 0
   | MLOAD -> 1
   | MSTORE -> 0
@@ -254,6 +257,7 @@ let string_of_pseudo_opcode op =
   | CODECOPY -> "CODECOPY"
   | GASPRICE -> "GASPRICE"
   | EXTCODESIZE -> "EXTCODESIZE"
+  | EXTCODECOPY -> "EXTCODECOPY"
   | POP -> "POP"
   | MLOAD -> "MLOAD"
   | MSTORE -> "MSTORE"
@@ -333,6 +337,7 @@ let realize_pseudo_instruction (l : PseudoImm.layout_info) (i : PseudoImm.pseudo
   | CODECOPY -> CODECOPY
   | GASPRICE -> GASPRICE
   | EXTCODESIZE -> EXTCODESIZE
+  | EXTCODECOPY -> EXTCODECOPY
   | POP -> POP
   | MLOAD -> MLOAD
   | MSTORE -> MSTORE
@@ -374,3 +379,76 @@ let realize_pseudo_instruction (l : PseudoImm.layout_info) (i : PseudoImm.pseudo
 let realize_pseudo_program (l : PseudoImm.layout_info) (p : PseudoImm.pseudo_imm program)
     : Big_int.big_int program
   = List.map (realize_pseudo_instruction l) p
+
+let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
+  let h = Hex.hex_of_string in
+  match i with
+  | PUSH1 i -> Hex.concat_hex (h "60") (Hex.hex_of_big_int i 1)
+  | PUSH32 i -> Hex.concat_hex (h "7f") (Hex.hex_of_big_int i 32)
+  | NOT -> h "19"
+  | TIMESTAMP -> h "42"
+  | EQ -> h "14"
+  | ISZERO -> h "15"
+  | LT -> h "10"
+  | GT -> h "11"
+  | BALANCE -> h "31"
+  | STOP -> h "00"
+  | ADD -> h "01"
+  | MUL -> h "02"
+  | SUB -> h "03"
+  | DIV -> h "04"
+  | SDIV -> h "05"
+  | MOD -> h "06"
+  | SMOD -> h "07"
+  | ADDMOD -> h "08"
+  | MULMOD -> h "09"
+  | EXP -> h "0a"
+  | SIGNEXTEND -> h "0b"
+  | ADDRESS -> h "30"
+  | ORIGIN -> h "32"
+  | CALLER -> h "33"
+  | CALLVALUE -> h "34"
+  | CALLDATALOAD -> h "35"
+  | CALLDATASIZE -> h "36"
+  | CALLDATACOPY -> h "37"
+  | CODESIZE -> h "38"
+  | CODECOPY -> h "39"
+  | GASPRICE -> h "3a"
+  | EXTCODESIZE -> h "3b"
+  | EXTCODECOPY -> h "3c"
+  | POP -> h "50"
+  | MLOAD -> h "51"
+  | MSTORE -> h "52"
+  | MSTORE8 -> h "53"
+  | SLOAD -> h "54"
+  | SSTORE -> h "55"
+  | JUMP -> h "56"
+  | JUMPI -> h "57"
+  | PC -> h "58"
+  | MSIZE -> h "59"
+  | GAS -> h "5a"
+  | JUMPDEST _ -> h "5b"
+  | LOG0 -> h "a0"
+  | LOG1 -> h "a1"
+  | LOG2 -> h "a2"
+  | LOG3 -> h "a3"
+  | LOG4 -> h "a4"
+  | CREATE -> h "f0"
+  | CALL -> h "f1"
+  | CALLCODE -> h "f2"
+  | RETURN -> h "f3"
+  | DELEGATECALL -> h "f4"
+  | SUICIDE -> h "ff"
+  | SWAP1 -> h "90"
+  | SWAP2 -> h "91"
+  | SWAP3 -> h "92"
+  | SWAP4 -> h "93"
+  | SWAP5 -> h "94"
+  | SWAP6 -> h "95"
+  | DUP1 -> h "80"
+  | DUP2 -> h "81"
+  | DUP3 -> h "82"
+  | DUP4 -> h "83"
+  | DUP5 -> h "84"
+  | DUP6 -> h "85"
+  | DUP7 -> h "86"
