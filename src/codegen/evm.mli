@@ -93,3 +93,13 @@ val realize_pseudo_instruction :
 
 val realize_pseudo_program :
   PseudoImm.layout_info -> PseudoImm.pseudo_imm program -> Big_int.big_int program
+
+(*
+val hex_of_instruction : Big_int.big_int instruction -> Hex.hex
+val append_op : Hex.hex -> Big_int.big_int instruction -> Hex.hex
+val hex_of_program : Big_int.big_int program -> Hex.hex
+
+val string_of_real_instruction :
+  Big_int.big_int instruction -> string
+val string_of_real_program : Big_int.big_int program -> unit
+*)
