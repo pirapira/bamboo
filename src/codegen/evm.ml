@@ -452,3 +452,6 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
   | DUP5 -> h "84"
   | DUP6 -> h "85"
   | DUP7 -> h "86"
+
+let append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
+  Hex.concat_hex h (hex_of_instruction i)
