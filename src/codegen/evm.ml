@@ -302,7 +302,7 @@ let string_of_pseudo_program prg =
 let print_pseudo_program prg =
   Printf.printf "%s" (string_of_pseudo_program prg)
 
-let realize_pseudo_instruction (l : PseudoImm.layout_info) (i : PseudoImm.pseudo_imm instruction)
+let realize_pseudo_instruction (l : LayoutInfo.layout_info) (i : PseudoImm.pseudo_imm instruction)
     : Big_int.big_int instruction =
   match i with
   | PUSH1 imm -> PUSH1 (PseudoImm.realize_pseudo_imm l imm)
@@ -376,7 +376,7 @@ let realize_pseudo_instruction (l : PseudoImm.layout_info) (i : PseudoImm.pseudo
   | DUP7 -> DUP7
 
 
-let realize_pseudo_program (l : PseudoImm.layout_info) (p : PseudoImm.pseudo_imm program)
+let realize_pseudo_program (l : LayoutInfo.layout_info) (p : PseudoImm.pseudo_imm program)
     : Big_int.big_int program
   = List.map (realize_pseudo_instruction l) p
 

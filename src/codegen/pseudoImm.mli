@@ -27,6 +27,4 @@ type pseudo_imm =
 
 val string_of_pseudo_imm : pseudo_imm -> string
 
-type layout_info
-
-val realize_pseudo_imm : layout_info -> pseudo_imm -> Big_int.big_int
+val realize_pseudo_imm : LayoutInfo.layout_info -> pseudo_imm -> Big_int.big_int
