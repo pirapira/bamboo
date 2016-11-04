@@ -6,10 +6,7 @@ type pseudo_imm =
   | DestLabel of Label.label
   | ContractId of Syntax.contract_id (* an immediate value *)
 
-  | StorageContractSwitcherIndex
-  (** [StorageContractSwitcherIndex] is the index of the storage that contains the
-   * program counter of the contract entry point.  This is unique to bamboo where
-   * an account can become different contracts after stages. *)
+  | StorageProgramCounterIndex
   | StorageConstructorArgumentsBegin of Syntax.contract_id
   | StorageConstructorArgumentsSize of Syntax.contract_id
   | InitDataSize of Syntax.contract_id

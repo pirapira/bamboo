@@ -19,7 +19,6 @@ type layout_info =
     (* In addition, array elements are placed at the same location as in Solidity *)
 
   ; storage_current_pc_index : int
-  ; storage_contract_switcher_index : int
   ; storage_constructor_arguments_begin : Syntax.contract_id -> int
   ; storage_constructor_arguments_size : Syntax.contract_id -> int
   }
@@ -48,8 +47,8 @@ let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Syntax.contract
      failwith "realize_pseudo_imm: destlabel"
   | ContractId cid ->
      failwith "realize_pseudo_imm: should be a pc or an id itself or a signature?"
-  | StorageContractSwitcherIndex ->
-     Big_int.big_int_of_int layout.storage_contract_switcher_index
+  | StorageProgramCounterIndex ->
+     Big_int.big_int_of_int (layout.storage_current_pc_index)
   | StorageConstructorArgumentsBegin cid ->
      Big_int.big_int_of_int (layout.storage_constructor_arguments_begin cid)
   | StorageConstructorArgumentsSize cid ->
