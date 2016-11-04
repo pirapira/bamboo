@@ -23,3 +23,21 @@ type layout_info =
   ; storage_constructor_arguments_size : Syntax.contract_id -> int
   }
 
+type contract_layout_info =
+  { contract_runtime_code_size : int
+  (** the number of bytes that the runtime code occupy *)
+  ; contract_argument_size : int
+  (** the number of words that the contract arguments occupy *)
+  }
+
+val realize_pseudo_instruction :
+  layout_info -> PseudoImm.pseudo_imm Evm.instruction -> Big_int.big_int Evm.instruction
+
+val realize_pseudo_program :
+  layout_info -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
+
+val layout_info_of_contract : 'exp_annot Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
+
+val realize_pseudo_imm : layout_info -> PseudoImm.pseudo_imm -> Big_int.big_int
+
+val construct_layout_info : contract_layout_info list -> layout_info
