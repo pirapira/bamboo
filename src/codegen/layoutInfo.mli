@@ -40,4 +40,4 @@ val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm
 
 val realize_pseudo_imm : layout_info -> PseudoImm.pseudo_imm -> Big_int.big_int
 
-val construct_layout_info : contract_layout_info list -> layout_info
+val construct_layout_info : (Syntax.contract_id * contract_layout_info) list -> layout_info

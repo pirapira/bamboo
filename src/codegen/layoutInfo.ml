@@ -1,7 +1,7 @@
 type layout_info =
-  { (* The initial data is organized like this: *)
+  { (* The initial calldata is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
-    init_data_size : Syntax.contract_id -> int
+    init_data_size : Syntax.contract_id (* Which contract is initially active *) -> int
   ; constructor_code_size : int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
@@ -30,8 +30,8 @@ type contract_layout_info =
   (** the number of words that the contract arguments occupy *)
   }
 
-let construct_layout_info : contract_layout_info list -> layout_info =
-  failwith "not implemented"
+let construct_layout_info (lst : (Syntax.contract_id * contract_layout_info) list) : layout_info =
+  failwith "construct_layout_info"
 
 (* Assuming the layout described above, this definition makes sense. *)
 let runtime_code_offset (layout : layout_info) :int =
