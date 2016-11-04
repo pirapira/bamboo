@@ -145,4 +145,6 @@ let realize_pseudo_program (l : layout_info) (p : PseudoImm.pseudo_imm Evm.progr
     : Big_int.big_int Evm.program
   = List.map (realize_pseudo_instruction l) p
 
-let layout_info_of_contract = failwith "unimplemented"
+let layout_info_of_contract (c : Syntax.typ Syntax.contract) (prg : PseudoImm.pseudo_imm Evm.program) =
+  { contract_runtime_code_size = Evm.size_of_program prg
+  ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c)) }

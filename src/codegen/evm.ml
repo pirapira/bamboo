@@ -380,3 +380,8 @@ let append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
 
 let hex_of_program (p : Big_int.big_int program) : Hex.hex =
   List.fold_left append_op Hex.empty_hex p
+
+let size_of_instruction = failwith "size_of_instruction"
+
+let size_of_program p =
+  List.fold_left (fun a i -> a + size_of_instruction i) 0 p

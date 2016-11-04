@@ -36,7 +36,7 @@ val realize_pseudo_instruction :
 val realize_pseudo_program :
   layout_info -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
 
-val layout_info_of_contract : 'exp_annot Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
+val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
 
 val realize_pseudo_imm : layout_info -> PseudoImm.pseudo_imm -> Big_int.big_int
 
