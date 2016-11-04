@@ -2,7 +2,7 @@ type layout_info =
   { (* The initial data is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
     init_data_size : Syntax.contract_id -> int
-  ; constructor_code_size : int
+  ; constructor_code_size : Syntax.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
   ; contract_offset_in_runtime_code : Syntax.contract_id -> int
@@ -31,13 +31,13 @@ type contract_layout_info =
   }
 
 val realize_pseudo_instruction :
-  layout_info -> PseudoImm.pseudo_imm Evm.instruction -> Big_int.big_int Evm.instruction
+  layout_info -> Syntax.contract_id -> PseudoImm.pseudo_imm Evm.instruction -> Big_int.big_int Evm.instruction
 
 val realize_pseudo_program :
-  layout_info -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
+  layout_info -> Syntax.contract_id -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
 
 val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
 
-val realize_pseudo_imm : layout_info -> PseudoImm.pseudo_imm -> Big_int.big_int
+val realize_pseudo_imm : layout_info -> Syntax.contract_id -> PseudoImm.pseudo_imm -> Big_int.big_int
 
 val construct_layout_info : (Syntax.contract_id * contract_layout_info) list -> layout_info

@@ -2,7 +2,7 @@ type layout_info =
   { (* The initial calldata is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
     init_data_size : Syntax.contract_id (* Which contract is initially active *) -> int
-  ; constructor_code_size : int
+  ; constructor_code_size : Syntax.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
   ; contract_offset_in_runtime_code : Syntax.contract_id -> int
@@ -34,10 +34,10 @@ let construct_layout_info (lst : (Syntax.contract_id * contract_layout_info) lis
   failwith "construct_layout_info"
 
 (* Assuming the layout described above, this definition makes sense. *)
-let runtime_code_offset (layout : layout_info) :int =
-  layout.constructor_code_size
+let runtime_code_offset (layout : layout_info) (cid : Syntax.contract_id) : int =
+  layout.constructor_code_size cid
 
-let rec realize_pseudo_imm (layout : layout_info) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
+let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Syntax.contract_id) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
   PseudoImm.(
   match p with
   | Big b -> b
@@ -55,7 +55,7 @@ let rec realize_pseudo_imm (layout : layout_info) (p : PseudoImm.pseudo_imm) : B
   | InitDataSize cid ->
      Big_int.big_int_of_int (layout.init_data_size cid)
   | RuntimeCodeOffset ->
-     Big_int.big_int_of_int (runtime_code_offset layout)
+     Big_int.big_int_of_int (runtime_code_offset layout initial_cid)
   | RuntimeCodeSize ->
      Big_int.big_int_of_int (layout.runtime_code_size)
   | ContractOffsetInRuntimeCode cid ->
@@ -63,15 +63,15 @@ let rec realize_pseudo_imm (layout : layout_info) (p : PseudoImm.pseudo_imm) : B
   | CaseOffsetInRuntimeCode (cid, case_header) ->
      failwith "realize_pseudo_imm caseoffset"
   | Minus (a, b) ->
-     Big_int.sub_big_int (realize_pseudo_imm layout a) (realize_pseudo_imm layout b)
+     Big_int.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
   )
 
-let realize_pseudo_instruction (l : layout_info) (i : PseudoImm.pseudo_imm Evm.instruction)
+let realize_pseudo_instruction (l : layout_info) (initial_cid : Syntax.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)
     : Big_int.big_int Evm.instruction =
   Evm.(
   match i with
-  | PUSH1 imm -> PUSH1 (realize_pseudo_imm l imm)
-  | PUSH32 imm -> PUSH32 (realize_pseudo_imm l imm)
+  | PUSH1 imm -> PUSH1 (realize_pseudo_imm l initial_cid imm)
+  | PUSH32 imm -> PUSH32 (realize_pseudo_imm l initial_cid imm)
   | NOT -> NOT
   | TIMESTAMP -> TIMESTAMP
   | EQ -> EQ
@@ -141,9 +141,9 @@ let realize_pseudo_instruction (l : layout_info) (i : PseudoImm.pseudo_imm Evm.i
   | DUP7 -> DUP7
   )
 
-let realize_pseudo_program (l : layout_info) (p : PseudoImm.pseudo_imm Evm.program)
+let realize_pseudo_program (l : layout_info) (initial_cid : Syntax.contract_id) (p : PseudoImm.pseudo_imm Evm.program)
     : Big_int.big_int Evm.program
-  = List.map (realize_pseudo_instruction l) p
+  = List.map (realize_pseudo_instruction l initial_cid) p
 
 let layout_info_of_contract (c : Syntax.typ Syntax.contract) (prg : PseudoImm.pseudo_imm Evm.program) =
   { contract_runtime_code_size = Evm.size_of_program prg
