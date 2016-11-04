@@ -24,8 +24,10 @@ type layout_info =
   }
 
 type contract_layout_info =
-  { contract_runtime_code_size : int
-  (** the number of bytes that the runtime code occupy *)
+  { contract_constructor_code_size : int
+  (** the number of bytes that the constructor code occupies *)
+  ; contract_runtime_code_size : int
+  (** the number of bytes that the runtime code occupies *)
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
   }
@@ -36,7 +38,7 @@ val realize_pseudo_instruction :
 val realize_pseudo_program :
   layout_info -> Syntax.contract_id -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
 
-val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
+val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm Evm.program -> PseudoImm.pseudo_imm Evm.program -> contract_layout_info
 
 val realize_pseudo_imm : layout_info -> Syntax.contract_id -> PseudoImm.pseudo_imm -> Big_int.big_int
 
