@@ -378,6 +378,18 @@ let codegen_constructor_bytecode
   let ce = CodegenEnv.append_instruction ce RETURN in
   ce
 
+type constructor_compiled =
+  { constructor_codegen_env : CodegenEnv.codegen_env
+  ; constructor_interface : Contract.contract_interface
+  }
+
+let compile_constructor :
+  (Syntax.typ Syntax.contract list *
+   Syntax.contract_id) -> constructor_compiled = failwith "compile_constructor"
+
+let compile_constructors :
+  (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
+  (Syntax.contract_id * constructor_compiled) list = failwith "compile_constructors"
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
@@ -478,3 +490,5 @@ let codegen_runtime_bytecode
         codegen_append_contract_bytecode le ce contract)
       ce src in
   ce
+
+let layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info = failwith "lifcc"

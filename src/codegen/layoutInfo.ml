@@ -25,8 +25,6 @@ type layout_info =
 
 type contract_layout_info =
   { contract_constructor_code_size : int
-  ; contract_runtime_code_size : int
-  (** the number of bytes that the runtime code occupy *)
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
   }
@@ -153,7 +151,6 @@ let realize_pseudo_program (l : layout_info) (initial_cid : Syntax.contract_id) 
     : Big_int.big_int Evm.program
   = List.map (realize_pseudo_instruction l initial_cid) p
 
-let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code : PseudoImm.pseudo_imm Evm.program) (runtime_code : PseudoImm.pseudo_imm Evm.program) =
+let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code : PseudoImm.pseudo_imm Evm.program) =
   { contract_constructor_code_size = Evm.size_of_program constructor_code
-  ; contract_runtime_code_size = Evm.size_of_program runtime_code
   ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c)) }

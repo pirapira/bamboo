@@ -40,7 +40,9 @@ let _ =
      let () = Evm.print_pseudo_program constructor_program in
      let () = Printf.printf "=====runtime code (common to all contracts)=====\n" in
      let env = codegen_runtime_bytecode contracts in
-     let contracts_layout_info : (Syntax.contract_id * LayoutInfo.contract_layout_info) list = failwith "unimplemented" in
+     let constructors : (Syntax.contract_id * constructor_compiled) list = compile_constructors contracts in
+     let contracts_layout_info : (Syntax.contract_id * LayoutInfo.contract_layout_info) list =
+       List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
      let _ = LayoutInfo.construct_layout_info contracts_layout_info in
      let runtime_program = CodegenEnv.ce_program env in
      let () = Evm.print_pseudo_program runtime_program in

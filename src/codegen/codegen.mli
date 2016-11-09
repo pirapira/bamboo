@@ -19,11 +19,28 @@ val codegen_runtime_bytecode :
   (CodegenEnv.codegen_env (* containing the program *)
   (* * LocationEnv.location_env *))
 
+type constructor_compiled =
+  { constructor_codegen_env : CodegenEnv.codegen_env
+  ; constructor_interface : Contract.contract_interface
+  }
+
+val compile_constructor :
+  (Syntax.typ Syntax.contract list *
+   Syntax.contract_id) -> constructor_compiled
+
+(* TODO: remove from the interface.
+ * Use instead compile_constructor *)
 val codegen_constructor_bytecode :
   (Syntax.typ Syntax.contract list *
    Syntax.contract_id) ->
   ((* LocationEnv.location_env * *)
      CodegenEnv.codegen_env (* containing the program *))
+
+val compile_constructors :
+  (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
+  (Syntax.contract_id * constructor_compiled) list
+
+val layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info
 
 (** The combination of the constructor_bytecode and the runtime_bytecode **)
 val codegen_bytecode :
