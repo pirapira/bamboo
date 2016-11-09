@@ -32,7 +32,14 @@ type contract_layout_info =
   }
 
 let construct_layout_info (lst : (Syntax.contract_id * contract_layout_info) list) : layout_info =
-  failwith "construct_layout_info"
+  { init_data_size = failwith "init_data_size"
+  ; constructor_code_size = failwith "constructor_code_size"
+  ; runtime_code_size = failwith "runtime_code_size"
+  ; contract_offset_in_runtime_code = failwith "contract_offset_in_runtime_code"
+  ; storage_current_pc_index = failwith "storage_current_pc_index"
+  ; storage_constructor_arguments_begin = failwith "storage_constructor_arguments_begin"
+  ; storage_constructor_arguments_size = failwith "storage_constructor_arguments_size"
+  }
 
 (* Assuming the layout described above, this definition makes sense. *)
 let runtime_code_offset (layout : layout_info) (cid : Syntax.contract_id) : int =
