@@ -22,6 +22,7 @@ val codegen_runtime_bytecode :
 type constructor_compiled =
   { constructor_codegen_env : CodegenEnv.codegen_env
   ; constructor_interface : Contract.contract_interface
+  ; constructor_contract : Syntax.typ Syntax.contract
   }
 
 val compile_constructor :

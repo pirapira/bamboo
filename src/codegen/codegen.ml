@@ -381,6 +381,7 @@ let codegen_constructor_bytecode
 type constructor_compiled =
   { constructor_codegen_env : CodegenEnv.codegen_env
   ; constructor_interface : Contract.contract_interface
+  ; constructor_contract : Syntax.typ Syntax.contract
   }
 
 let compile_constructor :
@@ -491,4 +492,5 @@ let codegen_runtime_bytecode
       ce src in
   ce
 
-let layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info = failwith "lifcc"
+let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
+  LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
