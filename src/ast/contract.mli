@@ -1,6 +1,6 @@
 type case_interface = Ethereum.function_signature
 
-val case_interface_of : unit Syntax.case -> case_interface
+val case_interface_of : 'exp Syntax.case -> case_interface
 
 type contract_interface =
   { contract_interface_name : string
@@ -12,7 +12,7 @@ type contract_interface =
         this one can continue into *)
   }
 
-val contract_interface_of : unit Syntax.contract -> contract_interface
+val contract_interface_of : 'exp Syntax.contract -> contract_interface
 
 val find_method_signature :
   contract_interface Syntax.contract_id_assoc ->

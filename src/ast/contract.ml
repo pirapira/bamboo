@@ -1,6 +1,6 @@
 type case_interface = Ethereum.function_signature
 
-let case_interface_of (raw : unit Syntax.case) : case_interface =
+let case_interface_of (raw : 'exp Syntax.case) : case_interface =
   match Syntax.(raw.case_header) with
   | Syntax.UsualCaseHeader header ->
      { Ethereum.sig_return =
@@ -31,7 +31,7 @@ type contract_interface =
         this one can continue into *)
   }
 
-let rec collect_continuation_in_sentence (raw : unit Syntax.sentence) : string list =
+let rec collect_continuation_in_sentence (raw : 'exp Syntax.sentence) : string list =
   Syntax.(
     match raw with
     | AbortSentence -> []
@@ -48,13 +48,13 @@ let rec collect_continuation_in_sentence (raw : unit Syntax.sentence) : string l
        collect_continuation_in_sentence s
   )
 
-let collect_continuation_in_case (raw : unit Syntax.case) : string list =
+let collect_continuation_in_case (raw : 'exp Syntax.case) : string list =
   List.concat Syntax.(List.map collect_continuation_in_sentence raw.case_body)
 
-let collect_continuation_in_contract (raw : unit Syntax.contract) : string list =
+let collect_continuation_in_contract (raw : 'exp Syntax.contract) : string list =
   List.concat Syntax.(List.map collect_continuation_in_case raw.contract_cases)
 
-let contract_interface_of (raw : unit Syntax.contract) : contract_interface =
+let contract_interface_of (raw : 'exp Syntax.contract) : contract_interface =
   Syntax.
   { contract_interface_name = raw.contract_name
   ; contract_interface_args = List.map (fun x -> x.arg_typ) raw.contract_arguments

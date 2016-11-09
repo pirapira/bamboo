@@ -386,7 +386,7 @@ type constructor_compiled =
 
 let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Syntax.contract_id_assoc * Syntax.contract_id)) : constructor_compiled =
   { constructor_codegen_env = codegen_constructor_bytecode (lst, cid)
-  ; constructor_interface = failwith "interface??"
+  ; constructor_interface = Contract.contract_interface_of (List.assoc cid lst)
   ; constructor_contract = List.assoc cid lst
   }
 
