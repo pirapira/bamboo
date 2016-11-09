@@ -1,2 +1,2 @@
 val assign_types :
-  unit Syntax.contract list -> Syntax.typ Syntax.contract list
+  unit Syntax.contract Syntax.contract_id_assoc -> Syntax.typ Syntax.contract Syntax.contract_id_assoc

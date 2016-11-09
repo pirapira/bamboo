@@ -72,7 +72,7 @@ let find_method_sig_in_contract
     ) i.contract_interface_cases
 
 let find_method_signature
-  (interfaces : contract_interface list)
+  (interfaces : contract_interface Syntax.contract_id_assoc)
   (contract_name : string)
   (method_name : string) : case_interface option =
-  Misc.first_some (find_method_sig_in_contract method_name) interfaces
+  Misc.first_some (find_method_sig_in_contract method_name) (List.map snd interfaces)

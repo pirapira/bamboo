@@ -356,7 +356,7 @@ let copy_runtime_code_to_memory ce contracts contract_id =
 
 
 let codegen_constructor_bytecode
-      ((contracts : Syntax.typ Syntax.contract list),
+      ((contracts : Syntax.typ Syntax.contract Syntax.contract_id_assoc),
        (contract_id : Syntax.contract_id))
     :
       (CodegenEnv.codegen_env (* containing the program *)
@@ -384,12 +384,14 @@ type constructor_compiled =
   ; constructor_contract : Syntax.typ Syntax.contract
   }
 
-let compile_constructor :
-  (Syntax.typ Syntax.contract list *
-   Syntax.contract_id) -> constructor_compiled = failwith "compile_constructor"
+let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Syntax.contract_id_assoc * Syntax.contract_id)) : constructor_compiled =
+  { constructor_codegen_env = codegen_constructor_bytecode (lst, cid)
+  ; constructor_interface = failwith "interface??"
+  ; constructor_contract = List.assoc cid lst
+  }
 
 let compile_constructors :
-  (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
+  Syntax.typ Syntax.contract Syntax.contract_id_assoc ->
   constructor_compiled Syntax.contract_id_assoc = failwith "compile_constructors"
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
@@ -457,7 +459,7 @@ let add_dispatcher le ce contract_id contract =
 
 let codegen_append_contract_bytecode
       le ce
-      ((contract, cid) : Syntax.typ Syntax.contract * Syntax.contract_id) =
+      ((cid, contract) : Syntax.contract_id * Syntax.typ Syntax.contract) =
   (* jump destination for the contract *)
   let entry_label = Label.new_label () in
   let ce = append_instruction ce (JUMPDEST entry_label) in
@@ -477,7 +479,7 @@ let codegen_append_contract_bytecode
   ce
 
 let codegen_runtime_bytecode
-      (src : (Syntax.typ Syntax.contract * Syntax.contract_id) list) :
+      (src : Syntax.typ Syntax.contract Syntax.contract_id_assoc) :
         (CodegenEnv.codegen_env (* containing the program *)
         (* * LocationEnv.location_env*))
   =
@@ -487,7 +489,7 @@ let codegen_runtime_bytecode
   let ce =
     List.fold_left
       (fun ce contract ->
-        let le = LocationEnv.runtime_initial_location_env (fst contract) in
+        let le = LocationEnv.runtime_initial_location_env (snd contract) in
         codegen_append_contract_bytecode le ce contract)
       ce src in
   ce

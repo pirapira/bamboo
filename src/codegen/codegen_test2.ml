@@ -28,13 +28,13 @@ let parse_with_error lexbuf =
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let contracts : unit Syntax.contract list = parse_with_error lexbuf in
-  let contracts' = Type.assign_types contracts in
-  let contracts = Syntax.annotate_with_contract_id contracts' in
+  let contracts = Syntax.list_to_contract_id_assoc contracts in
+  let contracts : Syntax.typ Syntax.contract Syntax.contract_id_assoc = Type.assign_types contracts in
   let () = match contracts with
   | [] -> ()
   | _ ->
      let (env : CodegenEnv.codegen_env)
-       = codegen_constructor_bytecode (contracts', snd (List.hd contracts)) in
+       = codegen_constructor_bytecode (contracts, fst (List.hd contracts)) in
      let constructor_program = CodegenEnv.ce_program env in
      let () = Printf.printf "=====constructor for first contract=====\n" in
      let () = Evm.print_pseudo_program constructor_program in

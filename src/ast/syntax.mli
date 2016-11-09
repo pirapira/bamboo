@@ -106,7 +106,12 @@ type contract_id (* Currently, the location in [contracts] *)
 
 type 'a contract_id_assoc = (contract_id * 'a) list
 
-val choose_contract : contract_id -> 'exp contract list -> 'exp contract
+(** [list_to_contract_id_assoc] assignes a different  [contract_id] for each element of the list. *)
+val list_to_contract_id_assoc : 'a list -> 'a contract_id_assoc
+
+val assoc_map : ('a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc
+
+val choose_contract : contract_id -> 'exp contract contract_id_assoc -> 'exp contract
 
 val contract_name_of_return_cont : 'exp exp -> string option
 
@@ -116,7 +121,3 @@ val contract_name_of_instance : typ exp -> string
 
 val string_of_typ : typ -> string
 val string_of_exp_inner : 'a exp_inner -> string
-
-
-val annotate_with_contract_id :
-  'exp contract list -> ('exp contract * contract_id) list

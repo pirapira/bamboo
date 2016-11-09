@@ -2,7 +2,7 @@ open Syntax
 
 
 let ident_lookup_type
-      (contract_interfaces : Contract.contract_interface list)
+      (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
       (tenv : TypeEnv.type_env) id : typ exp =
   match TypeEnv.lookup tenv id with
   | Some typ -> (IdentifierExp id, typ)
@@ -35,7 +35,7 @@ and assign_type_message_info contract_interfaces cname tenv
   ; message_reentrance_info = block'
   }
 and assign_type_exp
-      (contract_interfaces : Contract.contract_interface list)
+      (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
       (cname : string)
       (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : typ exp =
   match exp_inner with
@@ -160,7 +160,7 @@ and assign_type_lexp
      | _ -> failwith ("unknown array"^aa.array_access_array)
      end
 and assign_type_return
-      (contract_interfaces : Contract.contract_interface list)
+      (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : typ return =
@@ -185,7 +185,7 @@ and type_variable_init
     } in
   (new_init, new_env)
 and assign_type_sentence
-      (contract_interfaces : Contract.contract_interface list)
+      (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
       (cname : string)
       (venv : TypeEnv.type_env)
       (src : unit sentence) :
@@ -213,7 +213,7 @@ and assign_type_sentence
      let (vi', venv') =  type_variable_init contract_interfaces cname venv vi in
      (VariableInitSentence vi', venv')
 and assign_type_sentences
-          (contract_interfaces : Contract.contract_interface list)
+          (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
           (cname : string)
           (type_environment : TypeEnv.type_env)
           (ss : unit sentence list) : typ sentence list =
@@ -229,7 +229,7 @@ and assign_type_sentences
                                        rest_ss
 
 
-let assign_type_case (contract_interfaces : Contract.contract_interface list)
+let assign_type_case (contract_interfaces : Contract.contract_interface Syntax.contract_id_assoc)
                      (contract_name : string)
                      (venv : TypeEnv.type_env)
                      (case : unit case) =
@@ -243,7 +243,7 @@ let assign_type_case (contract_interfaces : Contract.contract_interface list)
   }
 
 
-let assign_type_contract (env : Contract.contract_interface list)
+let assign_type_contract (env : Contract.contract_interface Syntax.contract_id_assoc)
       (raw : unit Syntax.contract) :
       Syntax.typ Syntax.contract =
   let tenv = TypeEnv.(add_block raw.contract_arguments empty_type_env) in
@@ -253,7 +253,7 @@ let assign_type_contract (env : Contract.contract_interface list)
       List.map (assign_type_case env raw.contract_name tenv) raw.contract_cases
   }
 
-let assign_types (raw : unit Syntax.contract list) :
-      Syntax.typ Syntax.contract list =
-  let interfaces = List.map Contract.contract_interface_of raw in
-  List.map (assign_type_contract interfaces) raw
+let assign_types (raw : unit Syntax.contract Syntax.contract_id_assoc) :
+      Syntax.typ Syntax.contract Syntax.contract_id_assoc =
+  let interfaces = Syntax.assoc_map Contract.contract_interface_of raw in
+  Syntax.assoc_map (assign_type_contract interfaces) raw

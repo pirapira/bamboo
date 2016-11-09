@@ -118,8 +118,19 @@ type contract_id = int
 
 type 'a contract_id_assoc = (contract_id * 'a) list
 
+let list_to_contract_id_assoc (lst : 'a list) =
+  let x = ref 0 in
+  let fresh_assoc () =
+    let ret = !x in
+    let () = x := ret + 1 in
+    ret in
+  List.map (fun x -> (fresh_assoc(), x)) lst
+
+let assoc_map f lst =
+  List.map (fun (id, x) -> (id, f x)) lst
+
 let choose_contract (id : contract_id) lst =
-  List.nth lst id
+  List.assoc id lst
 
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with
@@ -160,14 +171,3 @@ let string_of_exp_inner e =
   | AddressExp _ -> "address"
   | SingleDereferenceExp _ -> "dereference of ..."
   | TupleDereferenceExp _ -> "dereference of tuple..."
-
-(* maybe limit the stack depths in OCaml by using accumulator... *)
-let rec annotate_with_contract_id_inner (next_id : int) (lst : 'exp contract list) =
-  match lst with
-  | [] -> []
-  | h :: t ->
-     (h, next_id) :: annotate_with_contract_id_inner (next_id + 1) t
-
-let annotate_with_contract_id (lst : 'exp contract list)
-    : ('exp contract * contract_id) list
-  = annotate_with_contract_id_inner 0 lst
