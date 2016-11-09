@@ -389,7 +389,7 @@ let compile_constructor :
 
 let compile_constructors :
   (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
-  (Syntax.contract_id * constructor_compiled) list = failwith "compile_constructors"
+  constructor_compiled Syntax.contract_id_assoc = failwith "compile_constructors"
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)

@@ -116,6 +116,8 @@ type 'exp_annot contract =
 
 type contract_id = int
 
+type 'a contract_id_assoc = (contract_id * 'a) list
+
 let choose_contract (id : contract_id) lst =
   List.nth lst id
 

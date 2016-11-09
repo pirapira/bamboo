@@ -104,6 +104,8 @@ type 'exp_annot contract =
 
 type contract_id (* Currently, the location in [contracts] *)
 
+type 'a contract_id_assoc = (contract_id * 'a) list
+
 val choose_contract : contract_id -> 'exp contract list -> 'exp contract
 
 val contract_name_of_return_cont : 'exp exp -> string option

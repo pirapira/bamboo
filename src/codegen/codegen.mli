@@ -38,7 +38,7 @@ val codegen_constructor_bytecode :
 
 val compile_constructors :
   (Syntax.typ Syntax.contract * Syntax.contract_id) list ->
-  (Syntax.contract_id * constructor_compiled) list
+  constructor_compiled Syntax.contract_id_assoc
 
 val layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info
 
