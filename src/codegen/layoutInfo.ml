@@ -1,11 +1,11 @@
 type layout_info =
   { (* The initial calldata is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
-    init_data_size : Syntax.contract_id (* Which contract is initially active *) -> int
-  ; constructor_code_size : Syntax.contract_id -> int
+    init_data_size : Assoc.contract_id (* Which contract is initially active *) -> int
+  ; constructor_code_size : Assoc.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
-  ; contract_offset_in_runtime_code : Syntax.contract_id -> int
+  ; contract_offset_in_runtime_code : Assoc.contract_id -> int
 
     (* And then, the runtime code is organized like this: *)
     (* |dispatcher that jumps into the current pc|dispatcher that jumps into current contract|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
@@ -19,8 +19,8 @@ type layout_info =
     (* In addition, array elements are placed at the same location as in Solidity *)
 
   ; storage_current_pc_index : int
-  ; storage_constructor_arguments_begin : Syntax.contract_id -> int
-  ; storage_constructor_arguments_size : Syntax.contract_id -> int
+  ; storage_constructor_arguments_begin : Assoc.contract_id -> int
+  ; storage_constructor_arguments_size : Assoc.contract_id -> int
   }
 
 type contract_layout_info =
@@ -38,7 +38,7 @@ let compute_init_data_size lst cid =
     compute_runtime_code_size lst +
     compute_constructor_arguments_size lst cid
 
-let construct_layout_info (lst : (Syntax.contract_id * contract_layout_info) list) : layout_info =
+let construct_layout_info (lst : (Assoc.contract_id * contract_layout_info) list) : layout_info =
   { init_data_size = compute_init_data_size lst
   ; constructor_code_size = compute_constructor_code_size lst
   ; runtime_code_size = compute_runtime_code_size lst
@@ -49,10 +49,10 @@ let construct_layout_info (lst : (Syntax.contract_id * contract_layout_info) lis
   }
 
 (* Assuming the layout described above, this definition makes sense. *)
-let runtime_code_offset (layout : layout_info) (cid : Syntax.contract_id) : int =
+let runtime_code_offset (layout : layout_info) (cid : Assoc.contract_id) : int =
   layout.constructor_code_size cid
 
-let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Syntax.contract_id) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
+let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
   PseudoImm.(
   match p with
   | Big b -> b
@@ -81,7 +81,7 @@ let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Syntax.contract
      Big_int.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
   )
 
-let realize_pseudo_instruction (l : layout_info) (initial_cid : Syntax.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)
+let realize_pseudo_instruction (l : layout_info) (initial_cid : Assoc.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)
     : Big_int.big_int Evm.instruction =
   Evm.(
   match i with
@@ -156,7 +156,7 @@ let realize_pseudo_instruction (l : layout_info) (initial_cid : Syntax.contract_
   | DUP7 -> DUP7
   )
 
-let realize_pseudo_program (l : layout_info) (initial_cid : Syntax.contract_id) (p : PseudoImm.pseudo_imm Evm.program)
+let realize_pseudo_program (l : layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm Evm.program)
     : Big_int.big_int Evm.program
   = List.map (realize_pseudo_instruction l initial_cid) p
 

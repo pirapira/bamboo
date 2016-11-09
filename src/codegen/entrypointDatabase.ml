@@ -1,6 +1,6 @@
 type entrypoint =
-  | Contract of Syntax.contract_id
-  | Case of Syntax.contract_id * Ethereum.function_signature
+  | Contract of Assoc.contract_id
+  | Case of Assoc.contract_id * Ethereum.function_signature
 
 let store : (entrypoint * Label.label) list ref = ref []
 

@@ -28,8 +28,8 @@ let parse_with_error lexbuf =
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let contracts : unit Syntax.contract list = parse_with_error lexbuf in
-  let contracts = Syntax.list_to_contract_id_assoc contracts in
-  let contracts : Syntax.typ Syntax.contract Syntax.contract_id_assoc = Type.assign_types contracts in
+  let contracts = Assoc.list_to_contract_id_assoc contracts in
+  let contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc = Type.assign_types contracts in
   let () = match contracts with
   | [] -> ()
   | _ ->
@@ -40,8 +40,8 @@ let _ =
      let () = Evm.print_pseudo_program constructor_program in
      let () = Printf.printf "=====runtime code (common to all contracts)=====\n" in
      let env = codegen_runtime_bytecode contracts in
-     let constructors : constructor_compiled Syntax.contract_id_assoc = compile_constructors contracts in
-     let contracts_layout_info : (Syntax.contract_id * LayoutInfo.contract_layout_info) list =
+     let constructors : constructor_compiled Assoc.contract_id_assoc = compile_constructors contracts in
+     let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
        List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
      let _ = LayoutInfo.construct_layout_info contracts_layout_info in
      let runtime_program = CodegenEnv.ce_program env in

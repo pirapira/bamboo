@@ -42,7 +42,7 @@ let last_stack_element_recorded (le : location_env) =
   | Some n -> n
   | None -> -1
 
-let constructor_args_locations (cid : Syntax.contract_id) (args : (string * Ethereum.interface_typ) list)
+let constructor_args_locations (cid : Assoc.contract_id) (args : (string * Ethereum.interface_typ) list)
     : location_env
   =
   let total = Ethereum.total_size_of_interface_args (List.map snd args) in
@@ -63,7 +63,7 @@ let constructor_args_locations (cid : Syntax.contract_id) (args : (string * Ethe
   in
   [List.map one_arg (name_offset_size_list [] 0 args)]
 
-let constructor_initial_location_env (cid : Syntax.contract_id)
+let constructor_initial_location_env (cid : Assoc.contract_id)
                                      (contract : Syntax.typ Syntax.contract) :
   location_env =
   let args = Ethereum.constructor_arguments contract in

@@ -232,7 +232,7 @@ let copy_arguments_from_code_to_memory
  * [set_contract_pc ce id] puts the program counter for the contract specified by
    [id] in the storage at index [StorageProgramCounterIndex]
  *)
-let set_contract_pc ce (id : Syntax.contract_id) =
+let set_contract_pc ce (id : Assoc.contract_id) =
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH32 (ContractOffsetInRuntimeCode id)) in
   let ce = append_instruction ce (PUSH32 StorageProgramCounterIndex) in
@@ -320,7 +320,7 @@ let bulk_sstore_from_memory ce =
  *  Final storage has the arguments in [ConstructorArgumentBegin...ConstructorArgumentBegin + ConstructorArgumentLength]
  *  The final stack has [...] in the precondition.
  *)
-let copy_arguments_from_memory_to_storage le ce (contract_id : Syntax.contract_id) =
+let copy_arguments_from_memory_to_storage le ce (contract_id : Assoc.contract_id) =
   let ce = append_instruction
              ce (PUSH32 (StorageConstructorArgumentsBegin contract_id)) in
   (* stack, [..., size, memory_start, destination_storage_start] *)
@@ -356,18 +356,18 @@ let copy_runtime_code_to_memory ce contracts contract_id =
 
 
 let codegen_constructor_bytecode
-      ((contracts : Syntax.typ Syntax.contract Syntax.contract_id_assoc),
-       (contract_id : Syntax.contract_id))
+      ((contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc),
+       (contract_id : Assoc.contract_id))
     :
       (CodegenEnv.codegen_env (* containing the program *)
        ) =
   let le = LocationEnv.constructor_initial_location_env contract_id
-             (Syntax.choose_contract contract_id contracts) in
+             (Assoc.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce
-             (Syntax.choose_contract contract_id contracts) in
+             (Assoc.choose_contract contract_id contracts) in
   (* stack: [arg_mem_size, arg_mem_begin] *)
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
   let ce = set_contract_pc ce contract_id in
@@ -384,22 +384,22 @@ type constructor_compiled =
   ; constructor_contract : Syntax.typ Syntax.contract
   }
 
-let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Syntax.contract_id_assoc * Syntax.contract_id)) : constructor_compiled =
+let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract_id_assoc * Assoc.contract_id)) : constructor_compiled =
   { constructor_codegen_env = codegen_constructor_bytecode (lst, cid)
   ; constructor_interface = Contract.contract_interface_of (List.assoc cid lst)
   ; constructor_contract = List.assoc cid lst
   }
 
 let compile_constructors :
-  Syntax.typ Syntax.contract Syntax.contract_id_assoc ->
-  constructor_compiled Syntax.contract_id_assoc = failwith "compile_constructors"
+  Syntax.typ Syntax.contract Assoc.contract_id_assoc ->
+  constructor_compiled Assoc.contract_id_assoc = failwith "compile_constructors"
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
   = failwith "push_signature_code"
 
 let push_destination_for (ce : CodegenEnv.codegen_env)
-                         (cid : Syntax.contract_id)
+                         (cid : Assoc.contract_id)
                          (case_signature : case_header) =
   append_instruction ce
   (PUSH32 (CaseOffsetInRuntimeCode (cid, case_signature)))
@@ -459,7 +459,7 @@ let add_dispatcher le ce contract_id contract =
 
 let codegen_append_contract_bytecode
       le ce
-      ((cid, contract) : Syntax.contract_id * Syntax.typ Syntax.contract) =
+      ((cid, contract) : Assoc.contract_id * Syntax.typ Syntax.contract) =
   (* jump destination for the contract *)
   let entry_label = Label.new_label () in
   let ce = append_instruction ce (JUMPDEST entry_label) in
@@ -479,7 +479,7 @@ let codegen_append_contract_bytecode
   ce
 
 let codegen_runtime_bytecode
-      (src : Syntax.typ Syntax.contract Syntax.contract_id_assoc) :
+      (src : Syntax.typ Syntax.contract Assoc.contract_id_assoc) :
         (CodegenEnv.codegen_env (* containing the program *)
         (* * LocationEnv.location_env*))
   =

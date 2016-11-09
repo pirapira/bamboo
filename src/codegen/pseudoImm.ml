@@ -4,14 +4,14 @@ type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
   | DestLabel of Label.label
-  | ContractId of Syntax.contract_id (* an immediate value *)
+  | ContractId of Assoc.contract_id (* an immediate value *)
 
   | StorageProgramCounterIndex
-  | StorageConstructorArgumentsBegin of Syntax.contract_id
-  | StorageConstructorArgumentsSize of Syntax.contract_id (* the size is dependent on the contract id *)
-  | InitDataSize of Syntax.contract_id
-  | ContractOffsetInRuntimeCode of Syntax.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
-  | CaseOffsetInRuntimeCode of Syntax.contract_id * Syntax.case_header
+  | StorageConstructorArgumentsBegin of Assoc.contract_id
+  | StorageConstructorArgumentsSize of Assoc.contract_id (* the size is dependent on the contract id *)
+  | InitDataSize of Assoc.contract_id
+  | ContractOffsetInRuntimeCode of Assoc.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
+  | CaseOffsetInRuntimeCode of Assoc.contract_id * Syntax.case_header
   | RuntimeCodeOffset
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm
@@ -31,5 +31,3 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | RuntimeCodeOffset -> "RuntimeCodeOffset"
   | RuntimeCodeSize -> "RuntimeCodeSize"
   | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"
-
-

@@ -15,5 +15,5 @@ type contract_interface =
 val contract_interface_of : 'exp Syntax.contract -> contract_interface
 
 val find_method_signature :
-  contract_interface Syntax.contract_id_assoc ->
+  contract_interface Assoc.contract_id_assoc ->
   string (* contract name *) -> string (* method name *) -> case_interface option

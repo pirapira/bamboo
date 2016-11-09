@@ -29,7 +29,7 @@ val update : location_env -> string ->
  *  the expected input arguments at the end of the
  *  bytecode *)
 val constructor_initial_location_env :
-  Syntax.contract_id -> Syntax.typ Syntax.contract -> location_env
+  Assoc.contract_id -> Syntax.typ Syntax.contract -> location_env
 
 (** [runtime_initial_location_env specifies
  * where the state variables should be found
@@ -47,4 +47,4 @@ val runtime_initial_location_env :
  *  the constructor arguments appended at the end of
  *  the code. *)
 val constructor_args_locations :
-  Syntax.contract_id -> (string * Ethereum.interface_typ) list -> location_env
+  Assoc.contract_id -> (string * Ethereum.interface_typ) list -> location_env
