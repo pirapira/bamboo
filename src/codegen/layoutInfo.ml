@@ -29,7 +29,10 @@ type contract_layout_info =
   (** the number of words that the contract arguments occupy *)
   }
 
-let compute_constructor_code_size lst cide = failwith "constructor_code_size"
+let compute_constructor_code_size lst cid =
+  let c : contract_layout_info = Assoc.choose_contract cid lst in
+  c.contract_constructor_code_size
+
 let compute_runtime_code_size lst = failwith "runtime_code_size"
 let compute_constructor_arguments_size lst cid = failwith "constructor_arguments_size"
 
