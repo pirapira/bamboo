@@ -6,7 +6,7 @@ type layout_info =
   ; constructor_code_size : Assoc.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
-  ; contract_offset_in_runtime_code : Assoc.contract_id -> int
+  ; contract_offset_in_runtime_code : int Assoc.contract_id_assoc
 
     (* And then, the runtime code is organized like this: *)
     (* |dispatcher that jumps into the current pc|dispatcher that jumps into current contract|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
@@ -39,7 +39,7 @@ type contract_layout_info =
 
 type runtime_layout_info =
   { runtime_code_size : int
-  ; runtime_offset_of_contract_id : Assoc.contract_id -> int
+  ; runtime_offset_of_contract_id : int Assoc.contract_id_assoc
   }
 
 let compute_constructor_code_size lst cid =
@@ -97,7 +97,7 @@ let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Assoc.contract_
   | RuntimeCodeSize ->
      Big_int.big_int_of_int (layout.runtime_code_size)
   | ContractOffsetInRuntimeCode cid ->
-     Big_int.big_int_of_int (layout.contract_offset_in_runtime_code cid)
+     Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->
      failwith "realize_pseudo_imm caseoffset"
   | Minus (a, b) ->

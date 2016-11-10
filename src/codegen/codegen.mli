@@ -29,6 +29,13 @@ val compile_constructor :
   (Syntax.typ Syntax.contract Assoc.contract_id_assoc *
    Assoc.contract_id) -> constructor_compiled
 
+type runtime_compiled =
+  { runtime_codegen_env : CodegenEnv.codegen_env
+  }
+
+val compile_runtime :
+  Syntax.typ Syntax.contract Assoc.contract_id_assoc -> runtime_compiled
+
 (* TODO: remove from the interface.
  * Use instead compile_constructor *)
 val codegen_constructor_bytecode :
@@ -42,6 +49,8 @@ val compile_constructors :
   constructor_compiled Assoc.contract_id_assoc
 
 val layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info
+
+val layout_info_from_runtime_compiled : runtime_compiled -> LayoutInfo.runtime_layout_info
 
 (** The combination of the constructor_bytecode and the runtime_bytecode **)
 val codegen_bytecode :

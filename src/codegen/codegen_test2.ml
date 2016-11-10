@@ -47,7 +47,7 @@ let _ =
      let runtime_program = CodegenEnv.ce_program env in
      let () = Evm.print_pseudo_program runtime_program in
      let () = Printf.printf "=====layout_info (common to all contracts)=====\n" in
-     let runtime_layout = failwith "runtime_layout" in
+     let runtime_layout = layout_info_from_runtime_compiled (compile_runtime contracts) in
      let layout = LayoutInfo.construct_layout_info contracts_layout_info runtime_layout in
      let () = LayoutInfo.print_layout_info layout in
      () in

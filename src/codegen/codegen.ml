@@ -384,6 +384,10 @@ type constructor_compiled =
   ; constructor_contract : Syntax.typ Syntax.contract
   }
 
+type runtime_compiled =
+  { runtime_codegen_env : CodegenEnv.codegen_env
+  }
+
 let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract_id_assoc * Assoc.contract_id)) : constructor_compiled =
   { constructor_codegen_env = codegen_constructor_bytecode (lst, cid)
   ; constructor_interface = Contract.contract_interface_of (List.assoc cid lst)
@@ -393,6 +397,8 @@ let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract
 let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : constructor_compiled Assoc.contract_id_assoc =
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
+
+let compile_runtime = failwith "compile_runtime"
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
@@ -496,3 +502,8 @@ let codegen_runtime_bytecode
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
+
+let layout_info_from_runtime_compiled (rc : runtime_compiled) : LayoutInfo.runtime_layout_info =
+  { LayoutInfo.runtime_code_size = CodegenEnv.code_length rc.runtime_codegen_env
+  ; LayoutInfo.runtime_offset_of_contract_id = failwith "runtime offsets; needs designing the codeenv somehow"
+  }
