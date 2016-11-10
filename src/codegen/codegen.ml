@@ -390,9 +390,9 @@ let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract
   ; constructor_contract = List.assoc cid lst
   }
 
-let compile_constructors :
-  Syntax.typ Syntax.contract Assoc.contract_id_assoc ->
-  constructor_compiled Assoc.contract_id_assoc = failwith "compile_constructors"
+let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
+    : constructor_compiled Assoc.contract_id_assoc =
+  Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)

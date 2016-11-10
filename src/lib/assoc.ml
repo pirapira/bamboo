@@ -13,6 +13,9 @@ let list_to_contract_id_assoc (lst : 'a list) =
 let assoc_map f lst =
   List.map (fun (id, x) -> (id, f x)) lst
 
+let assoc_pair_map f lst =
+  List.map (fun (id, x) -> (id, f id x)) lst
+
 let choose_contract (id : contract_id) lst =
   List.assoc id lst
 
