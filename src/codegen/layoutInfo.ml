@@ -1,7 +1,8 @@
 type layout_info =
-  { (* The initial calldata is organized like this: *)
+  { contract_ids : Assoc.contract_id list
+    (* The initial calldata is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
-    init_data_size : Assoc.contract_id (* Which contract is initially active *) -> int
+  ; init_data_size : Assoc.contract_id (* Which contract is initially active *) -> int
   ; constructor_code_size : Assoc.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
@@ -23,31 +24,50 @@ type layout_info =
   ; storage_constructor_arguments_size : Assoc.contract_id -> int
   }
 
+let print_layout_info l =
+  let () = Printf.printf "layout_info\n" in
+  let () = Printf.printf "  init_data_size:" in
+  let () = Assoc.print_int_for_cids l.init_data_size l.contract_ids in
+  let () = Printf.printf "\n" in
+  ()
+
 type contract_layout_info =
   { contract_constructor_code_size : int
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
   }
 
+type runtime_layout_info =
+  { runtime_code_size : int
+  ; runtime_offset_of_contract_id : Assoc.contract_id -> int
+  }
+
 let compute_constructor_code_size lst cid =
   let c : contract_layout_info = Assoc.choose_contract cid lst in
   c.contract_constructor_code_size
 
-let compute_runtime_code_size lst = failwith "runtime_code_size"
-let compute_constructor_arguments_size lst cid = failwith "constructor_arguments_size"
+let compute_constructor_arguments_size lst cid =
+  let c : contract_layout_info = Assoc.choose_contract cid lst in
+  c.contract_argument_size
 
-let compute_init_data_size lst cid =
+let compute_constructor_arguments_begin lst runtime cid =
   compute_constructor_code_size lst cid +
-    compute_runtime_code_size lst +
+    runtime.runtime_code_size
+
+let compute_init_data_size lst runtime cid =
+  compute_constructor_arguments_begin lst runtime cid +
     compute_constructor_arguments_size lst cid
 
-let construct_layout_info (lst : (Assoc.contract_id * contract_layout_info) list) : layout_info =
-  { init_data_size = compute_init_data_size lst
+let construct_layout_info
+      (lst : (Assoc.contract_id * contract_layout_info) list)
+      (runtime : runtime_layout_info) : layout_info =
+  { contract_ids = List.map fst lst
+  ; init_data_size = compute_init_data_size lst runtime
   ; constructor_code_size = compute_constructor_code_size lst
-  ; runtime_code_size = compute_runtime_code_size lst
-  ; contract_offset_in_runtime_code = failwith "contract_offset_in_runtime_code"
-  ; storage_current_pc_index = failwith "storage_current_pc_index"
-  ; storage_constructor_arguments_begin = failwith "storage_constructor_arguments_begin"
+  ; runtime_code_size = runtime.runtime_code_size
+  ; contract_offset_in_runtime_code = runtime.runtime_offset_of_contract_id
+  ; storage_current_pc_index = 0 (* This is a magic constant. *)
+  ; storage_constructor_arguments_begin = compute_constructor_arguments_begin lst runtime
   ; storage_constructor_arguments_size = compute_constructor_arguments_size lst
   }
 

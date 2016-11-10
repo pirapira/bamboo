@@ -1,17 +1,18 @@
 type layout_info =
-  { (* The initial data is organized like this: *)
+  { contract_ids : Assoc.contract_id list
+    (* The initial data is organized like this: *)
     (* |constructor code|runtime code|constructor arguments|  *)
-    init_data_size : Assoc.contract_id -> int
+  ; init_data_size : Assoc.contract_id -> int
   ; constructor_code_size : Assoc.contract_id -> int
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
   ; contract_offset_in_runtime_code : Assoc.contract_id -> int
 
     (* And then, the runtime code is organized like this: *)
-    (* |dispatcher that jumps into a contract|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
+    (* |dispatcher that jumps into the stored pc|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
 
     (* And then, the runtime code for a particular contract is organized like this: *)
-    (* |dispatcher that jumps into somewhere|runtime code for case f|runtime code for case g| *)
+    (* |dispatcher that jumps into a case|runtime code for case f|runtime code for case g| *)
 
     (* numbers about the storage *)
     (* The storage during the runtime looks like this: *)
@@ -22,6 +23,8 @@ type layout_info =
   ; storage_constructor_arguments_begin : Assoc.contract_id -> int
   ; storage_constructor_arguments_size : Assoc.contract_id -> int
   }
+
+val print_layout_info : layout_info -> unit
 
 type contract_layout_info =
   { contract_constructor_code_size : int
@@ -40,4 +43,9 @@ val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm
 
 val realize_pseudo_imm : layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm -> Big_int.big_int
 
-val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> layout_info
+type runtime_layout_info =
+  { runtime_code_size : int
+  ; runtime_offset_of_contract_id : Assoc.contract_id -> int
+  }
+
+val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> layout_info
