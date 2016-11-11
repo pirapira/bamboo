@@ -389,6 +389,11 @@ type runtime_compiled =
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
+let empty_runtime_compiled =
+  { runtime_codegen_env = CodegenEnv.empty_env
+  ; runtime_contract_offsets = []
+  }
+
 let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract_id_assoc * Assoc.contract_id)) : constructor_compiled =
   { constructor_codegen_env = codegen_constructor_bytecode (lst, cid)
   ; constructor_interface = Contract.contract_interface_of (List.assoc cid lst)
@@ -401,7 +406,7 @@ let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  List.fold_left (fun prev (cid, contract) -> failwith "how to update it" ) (failwith "empty") contracts
+  List.fold_left (fun prev (cid, contract) -> failwith "how to update it" ) empty_runtime_compiled contracts
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
