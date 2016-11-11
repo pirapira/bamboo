@@ -4,7 +4,7 @@ type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
   | DestLabel of Label.label
-  | ContractId of Assoc.contract_id (* an immediate value *)
+  | ContractRuntimeOffset of Assoc.contract_id
 
   | StorageProgramCounterIndex
   | StorageConstructorArgumentsBegin of Assoc.contract_id
@@ -21,7 +21,7 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | Big b -> "(Big "^(Big_int.string_of_big_int b)^")"
   | Int i -> "(Int "^(string_of_int i)^")"
   | DestLabel _ -> "DestLabel (print label here)"
-  | ContractId _ -> "ContractId (print id here)"
+  | ContractRuntimeOffset _ -> "ContractRuntimeOffset (print id here)"
   | StorageProgramCounterIndex -> "StorageProgramCounterIndex"
   | StorageConstructorArgumentsBegin _ -> "StorageConstructorArgumentBegin (print contract id)"
   | StorageConstructorArgumentsSize _ -> "StorageConstructorArgumentsSize (print contract id)"

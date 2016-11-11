@@ -4,7 +4,7 @@ type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
   | DestLabel of Label.label
-  | ContractId of Assoc.contract_id (* an immediate value *)
+  | ContractRuntimeOffset of Assoc.contract_id
 
   | StorageProgramCounterIndex
   | StorageConstructorArgumentsBegin of Assoc.contract_id
