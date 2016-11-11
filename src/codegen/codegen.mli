@@ -31,6 +31,7 @@ val compile_constructor :
 
 type runtime_compiled =
   { runtime_codegen_env : CodegenEnv.codegen_env
+  ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
 val compile_runtime :

@@ -386,6 +386,7 @@ type constructor_compiled =
 
 type runtime_compiled =
   { runtime_codegen_env : CodegenEnv.codegen_env
+  ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
 let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract_id_assoc * Assoc.contract_id)) : constructor_compiled =
@@ -506,5 +507,5 @@ let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutIn
 
 let layout_info_from_runtime_compiled (rc : runtime_compiled) : LayoutInfo.runtime_layout_info =
   { LayoutInfo.runtime_code_size = CodegenEnv.code_length rc.runtime_codegen_env
-  ; LayoutInfo.runtime_offset_of_contract_id = failwith "runtime offsets; needs designing the codeenv somehow"
+  ; LayoutInfo.runtime_offset_of_contract_id = rc.runtime_contract_offsets
   }
