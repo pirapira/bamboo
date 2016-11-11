@@ -83,7 +83,7 @@ let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Assoc.contract_
   | DestLabel l ->
      failwith "realize_pseudo_imm: destlabel"
   | ContractRuntimeOffset cid ->
-     failwith "realize_pseudo_imm: runtime offset"
+     Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | StorageProgramCounterIndex ->
      Big_int.big_int_of_int (layout.storage_current_pc_index)
   | StorageConstructorArgumentsBegin cid ->
