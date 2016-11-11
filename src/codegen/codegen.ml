@@ -400,7 +400,8 @@ let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
-    : runtime_compiled = failwith "compile_runtime"
+    : runtime_compiled =
+  List.fold_left (fun prev (cid, contract) -> failwith "how to update it" ) (failwith "empty") contracts
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
