@@ -400,13 +400,18 @@ let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract
   ; constructor_contract = List.assoc cid lst
   }
 
+let append_runtime (prev : runtime_compiled)
+                   ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
+                   : runtime_compiled
+  = failwith "how to update it"
+
 let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : constructor_compiled Assoc.contract_id_assoc =
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  List.fold_left (fun prev (cid, contract) -> failwith "how to update it" ) empty_runtime_compiled contracts
+  List.fold_left append_runtime empty_runtime_compiled contracts
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
