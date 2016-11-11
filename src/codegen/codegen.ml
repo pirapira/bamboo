@@ -400,18 +400,17 @@ let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract
   ; constructor_contract = List.assoc cid lst
   }
 
-let append_runtime (prev : runtime_compiled)
-                   ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
-                   : runtime_compiled
-  = failwith "how to update it"
-
 let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : constructor_compiled Assoc.contract_id_assoc =
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
-let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
-    : runtime_compiled =
-  List.fold_left append_runtime empty_runtime_compiled contracts
+let initial_runtime_compiled : runtime_compiled =
+  let ce = CodegenEnv.empty_env in
+  let ce = get_contract_pc ce in
+  let ce = append_instruction ce JUMP in
+  { runtime_codegen_env = ce
+  ; runtime_contract_offsets = []
+  }
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : case_header)
@@ -497,21 +496,16 @@ let codegen_append_contract_bytecode
 
   ce
 
-let codegen_runtime_bytecode
-      (src : Syntax.typ Syntax.contract Assoc.contract_id_assoc) :
-        (CodegenEnv.codegen_env (* containing the program *)
-        (* * LocationEnv.location_env*))
-  =
-  let ce = CodegenEnv.empty_env in
-  let ce = get_contract_pc ce in
-  let ce = append_instruction ce JUMP in
-  let ce =
-    List.fold_left
-      (fun ce contract ->
-        let le = LocationEnv.runtime_initial_location_env (snd contract) in
-        codegen_append_contract_bytecode le ce contract)
-      ce src in
-  ce
+let append_runtime (prev : runtime_compiled)
+                   ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
+                   : runtime_compiled =
+  { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env (cid, contract)
+  ; runtime_contract_offsets = Assoc.insert cid (CodegenEnv.code_length prev.runtime_codegen_env) prev.runtime_contract_offsets
+  }
+
+let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
+    : runtime_compiled =
+  List.fold_left append_runtime initial_runtime_compiled contracts
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)

@@ -21,3 +21,6 @@ let choose_contract (id : contract_id) lst =
 
 let print_int_for_cids (f : contract_id -> int) (cids : contract_id list) : unit =
   List.iter (fun cid -> Printf.printf "%d |-> %d, " cid (f cid)) cids
+
+let insert (id : contract_id) (a : 'x) (orig : 'x contract_id_assoc) : 'x contract_id_assoc =
+  (id, a)::orig (* shall I sort it?  Maybe later at once. *)

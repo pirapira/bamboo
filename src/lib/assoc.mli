@@ -11,3 +11,5 @@ val assoc_pair_map : (contract_id -> 'a -> 'b) -> 'a contract_id_assoc -> 'b con
 val choose_contract : contract_id -> 'x contract_id_assoc -> 'x
 
 val print_int_for_cids : (contract_id -> int) -> contract_id list -> unit
+
+val insert : contract_id -> 'x -> 'x contract_id_assoc -> 'x contract_id_assoc

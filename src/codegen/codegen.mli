@@ -14,11 +14,6 @@ val codegen_sentence :
                    *)
   CodegenEnv.codegen_env
 
-val codegen_runtime_bytecode :
-  Syntax.typ Syntax.contract Assoc.contract_id_assoc ->
-  (CodegenEnv.codegen_env (* containing the program *)
-  (* * LocationEnv.location_env *))
-
 type constructor_compiled =
   { constructor_codegen_env : CodegenEnv.codegen_env
   ; constructor_interface : Contract.contract_interface
