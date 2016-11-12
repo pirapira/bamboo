@@ -518,5 +518,12 @@ let layout_info_from_runtime_compiled (rc : runtime_compiled) : LayoutInfo.runti
 
 let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
                      (runtime : runtime_compiled) (cid : Assoc.contract_id)
-    : Big_int.big_int Evm.program
-  = failwith "compose_bytecode"
+    : Big_int.big_int Evm.program =
+  let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
+    List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
+  let runtime_layout = layout_info_from_runtime_compiled runtime in
+  let layout = LayoutInfo.construct_layout_info contracts_layout_info runtime_layout in
+  let pseudo_constructor = Assoc.choose_contract cid constructors in
+  let imm_constructor = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program pseudo_constructor.constructor_codegen_env) in
+  let imm_runtime = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program runtime.runtime_codegen_env) in
+  imm_constructor@imm_runtime
