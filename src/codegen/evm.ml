@@ -381,6 +381,9 @@ let append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
 let hex_of_program (p : Big_int.big_int program) : Hex.hex =
   List.fold_left append_op Hex.empty_hex p
 
+let print_imm_program (p : Big_int.big_int program) : unit =
+  failwith "print_imm_program"
+
 let size_of_instruction i =
   match i with
   | PUSH1 _ -> 2

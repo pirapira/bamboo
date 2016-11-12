@@ -514,3 +514,9 @@ let layout_info_from_runtime_compiled (rc : runtime_compiled) : LayoutInfo.runti
   { LayoutInfo.runtime_code_size = CodegenEnv.code_length rc.runtime_codegen_env
   ; LayoutInfo.runtime_offset_of_contract_id = rc.runtime_contract_offsets
   }
+
+
+let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
+                     (runtime : runtime_compiled) (cid : Assoc.contract_id)
+    : Big_int.big_int Evm.program
+  = failwith "compose_bytecode"

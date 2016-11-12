@@ -59,3 +59,8 @@ val move_info_around :
   (* assumption *) CodegenEnv.codegen_env ->
   (* goal *)       LocationEnv.location_env ->
                    CodegenEnv.codegen_env
+
+
+val compose_bytecode : constructor_compiled Assoc.contract_id_assoc ->
+                       runtime_compiled -> Assoc.contract_id ->
+                       Big_int.big_int Evm.program

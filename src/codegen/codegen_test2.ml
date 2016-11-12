@@ -50,5 +50,9 @@ let _ =
      let runtime_layout = layout_info_from_runtime_compiled (compile_runtime contracts) in
      let layout = LayoutInfo.construct_layout_info contracts_layout_info runtime_layout in
      let () = LayoutInfo.print_layout_info layout in
+     let () = Printf.printf "=====bytecode (with the constructor for first contract)=====\n" in
+     let bytecode : Big_int.big_int Evm.program =
+       compose_bytecode constructors runtime_compiled (fst (List.hd contracts)) in
+     let () = Evm.print_imm_program bytecode in
      () in
   Printf.printf "Finished codgen_test2.\n"

@@ -91,6 +91,8 @@ val hex_of_instruction : Big_int.big_int instruction -> Hex.hex
 val append_op : Hex.hex -> Big_int.big_int instruction -> Hex.hex
 val hex_of_program : Big_int.big_int program -> Hex.hex
 
+val print_imm_program : Big_int.big_int program -> unit
+
 val size_of_instruction : 'exp instruction -> int
 val size_of_program : 'exp program -> int
 
