@@ -21,4 +21,5 @@ let _ =
   let () = assert (Ethereum.keccak_signature (fst case0) = (snd case0)) in
   let () = assert (Ethereum.case_header_signature_hash case1_case = (snd case0)) in
   let () = assert ((Ethereum.case_header_signature_hash case2_case) = case2_hash) in
+  let () = assert (Big_int.eq_big_int (Ethereum.hex_to_big_int "01") Big_int.unit_big_int) in
   Printf.printf "lib_test: success\n"

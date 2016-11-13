@@ -109,6 +109,7 @@ let realize_pseudo_instruction (l : layout_info) (initial_cid : Assoc.contract_i
   Evm.(
   match i with
   | PUSH1 imm -> PUSH1 (realize_pseudo_imm l initial_cid imm)
+  | PUSH4 imm -> PUSH4 (realize_pseudo_imm l initial_cid imm)
   | PUSH32 imm -> PUSH32 (realize_pseudo_imm l initial_cid imm)
   | NOT -> NOT
   | TIMESTAMP -> TIMESTAMP

@@ -51,6 +51,10 @@ val keccak_signature : string -> string
 val case_header_signature_string : Syntax.usual_case_header -> string
 
 (** [case_header_signature_hash h] returns the
- * method signature used in the common ABI *)
+ * method signature used in the common ABI.
+ * The hex hash comes without 0x
+ *)
 val case_header_signature_hash :
   Syntax.usual_case_header -> string
+
+val hex_to_big_int : string -> Big_int.big_int

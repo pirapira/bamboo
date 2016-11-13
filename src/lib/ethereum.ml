@@ -94,3 +94,6 @@ let case_header_signature_string (h : Syntax.usual_case_header) : string =
 
 let case_header_signature_hash (h : Syntax.usual_case_header) : string =
   keccak_signature (case_header_signature_string h)
+
+let hex_to_big_int h =
+  Big_int.big_int_of_string ("0x"^h)

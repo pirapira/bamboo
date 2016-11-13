@@ -1,5 +1,6 @@
 type 'imm instruction =
   | PUSH1 of 'imm
+  | PUSH4 of 'imm
   | PUSH32 of 'imm
   | NOT
   | TIMESTAMP

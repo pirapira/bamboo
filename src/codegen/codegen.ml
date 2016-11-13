@@ -413,8 +413,11 @@ let initial_runtime_compiled : runtime_compiled =
   }
 
 let push_signature_code (ce : CodegenEnv.codegen_env)
-                        (case_signature : case_header)
-  = failwith "push_signature_code"
+                        (case_signature : usual_case_header)
+  =
+  let hash = Ethereum.case_header_signature_hash case_signature in
+  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
+  ce
 
 let push_destination_for (ce : CodegenEnv.codegen_env)
                          (cid : Assoc.contract_id)
@@ -422,16 +425,12 @@ let push_destination_for (ce : CodegenEnv.codegen_env)
   append_instruction ce
   (PUSH32 (CaseOffsetInRuntimeCode (cid, case_signature)))
 
-(*
- * precondition: the stack has [signature_code]
- * postcondition: the stack has [signature_code]
- *)
-let add_dispatcher_for_a_case le ce contract_id case_signature
+let add_dispatcher_for_a_usual_case le ce contract_id case_signature
   =
   let original_stack_size = stack_size ce in
   let ce = push_signature_code ce case_signature in
   let ce = append_instruction ce EQ in
-  let ce = push_destination_for ce contract_id case_signature in
+  let ce = push_destination_for ce contract_id (UsualCaseHeader case_signature) in
   let ce = append_instruction ce JUMPI in
   let () = assert (stack_size ce = original_stack_size) in
   ce
@@ -468,11 +467,16 @@ let add_dispatcher le ce contract_id contract =
   let () = assert (stack_size ce = original_stack_size + 1) in
   let case_signatures = List.map (fun x -> x.Syntax.case_header) contract.contract_cases in
 
+  let usual_case_headers = BatList.filter_map
+                             (fun h -> match h with DefaultCaseHeader -> None |
+                                                    UsualCaseHeader u -> Some u
+                             ) case_signatures in
   let ce = List.fold_left
-             (fun ce case_signature -> add_dispatcher_for_a_case le ce contract_id case_signature)
-             ce case_signatures in
+             (fun ce case_signature ->
+               add_dispatcher_for_a_usual_case le ce contract_id case_signature)
+             ce usual_case_headers in
+  (* TODO: add a jump to the default case *)
   let ce = add_throw ce in
-  (* does this really work...? *)
   (le, ce)
 
 let codegen_append_contract_bytecode
