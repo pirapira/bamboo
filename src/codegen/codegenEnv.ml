@@ -23,6 +23,15 @@ let append_instruction
   if orig.ce_stack_size < Evm.stack_eaten i then
     failwith "stack underflow"
   else
+    let () = (match i with
+                Evm.JUMPDEST l ->
+                begin
+                  try ignore (Label.lookup_value l)
+                  with Not_found ->
+                       Label.register_value l (code_length orig)
+                end
+              | _ -> ()
+             ) in
     let new_stack_size = orig.ce_stack_size - Evm.stack_eaten i + Evm.stack_pushed i in
     { ce_stack_size = new_stack_size
     ; ce_program = Evm.append_inst orig.ce_program i

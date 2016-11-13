@@ -17,7 +17,11 @@ let assoc_pair_map f lst =
   List.map (fun (id, x) -> (id, f id x)) lst
 
 let choose_contract (id : contract_id) lst =
-  List.assoc id lst
+  try
+    List.assoc id lst
+  with Not_found ->
+       let () = Printf.printf "not_found\n%!" in
+       raise Not_found
 
 let print_int_for_cids (f : contract_id -> int) (cids : contract_id list) : unit =
   List.iter (fun cid -> Printf.printf "%d |-> %d, " cid (f cid)) cids
