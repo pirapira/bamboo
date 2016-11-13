@@ -382,7 +382,8 @@ let hex_of_program (p : Big_int.big_int program) : Hex.hex =
   List.fold_left append_op Hex.empty_hex p
 
 let print_imm_program (p : Big_int.big_int program) : unit =
-  failwith "print_imm_program"
+  let hex = hex_of_program p in
+  Hex.print_hex ~prefix:"0x" hex
 
 let size_of_instruction i =
   match i with
