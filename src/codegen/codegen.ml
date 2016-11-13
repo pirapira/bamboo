@@ -475,8 +475,11 @@ let add_dispatcher le ce contract_id contract =
              (fun ce case_signature ->
                add_dispatcher_for_a_usual_case le ce contract_id case_signature)
              ce usual_case_headers in
-  (* TODO: add a jump to the default case *)
-  let ce = add_throw ce in
+  let ce =
+    if List.exists (fun h -> match h with DefaultCaseHeader -> true | _ -> false) case_signatures then
+      failwith "need to push a dispatcher for the default case"
+    else add_throw ce
+  in
   (le, ce)
 
 let codegen_append_contract_bytecode

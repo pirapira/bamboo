@@ -83,6 +83,7 @@ let to_list (p : 'imm program) =
 
 let stack_eaten = function
   | PUSH1 _ -> 0
+  | PUSH4 _ -> 0
   | PUSH32 _ -> 0
   | NOT -> 1
   | TIMESTAMP -> 0
@@ -155,6 +156,7 @@ let stack_eaten = function
 
 let stack_pushed = function
   | PUSH1 _ -> 1
+  | PUSH4 _ -> 1
   | PUSH32 _ -> 1
   | NOT -> 1
   | TIMESTAMP -> 1
@@ -227,6 +229,7 @@ let stack_pushed = function
 let string_of_pseudo_opcode op =
   match op with
   | PUSH1 v -> "PUSH1 "^(PseudoImm.string_of_pseudo_imm v)
+  | PUSH4 v -> "PUSH4 "^(PseudoImm.string_of_pseudo_imm v)
   | PUSH32 v -> "PUSH32 "^(PseudoImm.string_of_pseudo_imm v)
   | NOT -> "NOT"
   | TIMESTAMP -> "TIMESTAMP"
@@ -307,6 +310,7 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
   let h = Hex.hex_of_string in
   match i with
   | PUSH1 i -> Hex.concat_hex (h "60") (Hex.hex_of_big_int i 1)
+  | PUSH4 i -> Hex.concat_hex (h "63") (Hex.hex_of_big_int i 4)
   | PUSH32 i -> Hex.concat_hex (h "7f") (Hex.hex_of_big_int i 32)
   | NOT -> h "19"
   | TIMESTAMP -> h "42"
@@ -389,6 +393,7 @@ let print_imm_program (p : Big_int.big_int program) : unit =
 let size_of_instruction i =
   match i with
   | PUSH1 _ -> 2
+  | PUSH4 _ -> 5
   | PUSH32 _ -> 33
   | _ -> 1
 
