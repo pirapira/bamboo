@@ -526,4 +526,5 @@ let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_asso
   let pseudo_constructor = Assoc.choose_contract cid constructors in
   let imm_constructor = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program pseudo_constructor.constructor_codegen_env) in
   let imm_runtime = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program runtime.runtime_codegen_env) in
-  imm_constructor@imm_runtime
+  (* the code is stored in the reverse order *)
+  imm_runtime@imm_constructor

@@ -9,5 +9,5 @@ let _ =
   let () = assert (string_of_hex (concat_hex one_hex one_hex) = "0101") in
   let () = assert (length_of_hex one_hex = 1) in
   let () = assert (string_of_hex (hex_of_instruction STOP) = "00") in
-  let () = assert (string_of_hex (hex_of_program [STOP; RETURN]) = "00f3") in
+  let () = assert (string_of_hex (hex_of_program [STOP; RETURN]) = "f300") in
   ()

@@ -70,7 +70,7 @@ type 'imm instruction =
   | DUP7
 
 type 'imm program = 'imm instruction list
-let program_length = List.length
+let num_instructions = List.length
 
 let empty_program = []
 
@@ -375,11 +375,11 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
   | DUP6 -> h "85"
   | DUP7 -> h "86"
 
-let append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
-  Hex.concat_hex h (hex_of_instruction i)
+let rev_append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
+  Hex.concat_hex (hex_of_instruction i) h
 
 let hex_of_program (p : Big_int.big_int program) : Hex.hex =
-  List.fold_left append_op Hex.empty_hex p
+  List.fold_left rev_append_op Hex.empty_hex p
 
 let print_imm_program (p : Big_int.big_int program) : unit =
   let hex = hex_of_program p in

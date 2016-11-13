@@ -11,7 +11,7 @@ let empty_env =
   }
 
 let code_length ce =
-  Evm.program_length ce.ce_program
+  Evm.size_of_program ce.ce_program
 
 let stack_size ce = ce.ce_stack_size
 

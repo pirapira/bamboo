@@ -75,7 +75,7 @@ type 'imm instruction =
 type 'imm program = 'imm instruction list
 val empty_program : 'imm program
 
-val program_length : 'imm program -> int
+val num_instructions : 'imm program -> int
 
 val append_inst : 'imm program -> 'imm instruction -> 'imm program
 
@@ -88,7 +88,6 @@ val string_of_pseudo_program : PseudoImm.pseudo_imm program -> string
 val print_pseudo_program : PseudoImm.pseudo_imm program -> unit
 
 val hex_of_instruction : Big_int.big_int instruction -> Hex.hex
-val append_op : Hex.hex -> Big_int.big_int instruction -> Hex.hex
 val hex_of_program : Big_int.big_int program -> Hex.hex
 
 val print_imm_program : Big_int.big_int program -> unit
