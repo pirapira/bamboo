@@ -475,6 +475,7 @@ let add_dispatcher le ce contract_id contract =
              (fun ce case_signature ->
                add_dispatcher_for_a_usual_case le ce contract_id case_signature)
              ce usual_case_headers in
+  let ce = append_instruction ce POP in (* the signature in input is not necessary anymore *)
   let ce =
     if List.exists (fun h -> match h with DefaultCaseHeader -> true | _ -> false) case_signatures then
       failwith "need to push a dispatcher for the default case"
