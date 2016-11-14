@@ -21,8 +21,11 @@ type layout_info =
     (* In addition, array elements are placed at the same location as in Solidity *)
 
   ; storage_current_pc_index : int
+  ; storage_array_counter_index : int
   ; storage_constructor_arguments_begin : Assoc.contract_id -> int
   ; storage_constructor_arguments_size : Assoc.contract_id -> int
+  ; storage_array_seeds_begin : Assoc.contract_id -> int
+  ; storage_array_seeds_size : Assoc.contract_id -> int
   }
 
 

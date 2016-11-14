@@ -20,8 +20,11 @@ type layout_info =
     (* In addition, array elements are placed at the same location as in Solidity *)
 
   ; storage_current_pc_index : int
+  ; storage_array_counter_index : int
   ; storage_constructor_arguments_begin : Assoc.contract_id -> int
   ; storage_constructor_arguments_size : Assoc.contract_id -> int
+  ; storage_array_seeds_begin : Assoc.contract_id -> int
+  ; storage_array_seeds_size : Assoc.contract_id -> int
   }
 
 let print_layout_info l =
@@ -58,6 +61,13 @@ let compute_init_data_size lst runtime cid =
   compute_constructor_arguments_begin lst runtime cid +
     compute_constructor_arguments_size lst cid
 
+let compute_storage_constructor_arguments_begin lst runtime cid =
+  2
+
+let compute_storage_array_seeds_begin = failwith "array_seeds_begin"
+
+let compute_storage_array_seeds_size = failwith "array_seeds_size"
+
 let construct_layout_info
       (lst : (Assoc.contract_id * contract_layout_info) list)
       (runtime : runtime_layout_info) : layout_info =
@@ -67,8 +77,11 @@ let construct_layout_info
   ; runtime_code_size = runtime.runtime_code_size
   ; contract_offset_in_runtime_code = runtime.runtime_offset_of_contract_id
   ; storage_current_pc_index = 0 (* This is a magic constant. *)
-  ; storage_constructor_arguments_begin = compute_constructor_arguments_begin lst runtime
+  ; storage_array_counter_index = 1 (* This is also a magic constant. *)
+  ; storage_constructor_arguments_begin = compute_storage_constructor_arguments_begin lst runtime
   ; storage_constructor_arguments_size = compute_constructor_arguments_size lst
+  ; storage_array_seeds_begin = compute_storage_array_seeds_begin lst runtime
+  ; storage_array_seeds_size = compute_storage_array_seeds_size lst
   }
 
 (* Assuming the layout described above, this definition makes sense. *)
