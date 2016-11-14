@@ -147,7 +147,7 @@ As preparattion,
 Then,
 ```
 cd src
-sh run\_tests.sh
+sh run_tests.sh
 ```
 builds a compiler in development and tests it against the example files
 `src/parse/examples/*.sol`
