@@ -16,13 +16,22 @@ type layout_info =
 
     (* numbers about the storage *)
     (* The storage during the runtime looks like this: *)
-    (* |current pc (might be entry_pc_of_current_contract)|pod contract argument0|pod contract argument1| *)
+    (* |current pc (might be entry_pc_of_current_contract)|array seed counter|pod contract argument0|pod contract argument1|...
+       |array0's seed|array1's seed| *)
     (* In addition, array elements are placed at the same location as in Solidity *)
 
   ; storage_current_pc_index : int
   ; storage_constructor_arguments_begin : Assoc.contract_id -> int
   ; storage_constructor_arguments_size : Assoc.contract_id -> int
   }
+
+
+(* [Storage layout for arrays]
+ * For each array argument of a contract, the storage contains a seed.
+ * array[x][y] would be stored at the location sha3(sha3(seed_of(array), x), y).
+ * There needs to be utility funcitons for computing this hash value and using it.
+ * I think this comment should split out into its own module.
+ *)
 
 val print_layout_info : layout_info -> unit
 
