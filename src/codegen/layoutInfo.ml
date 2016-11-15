@@ -64,7 +64,9 @@ let compute_init_data_size lst runtime cid =
 let compute_storage_constructor_arguments_begin lst runtime cid =
   2
 
-let compute_storage_array_seeds_begin = failwith "array_seeds_begin"
+let compute_storage_array_seeds_begin lst runtime cid =
+  compute_storage_constructor_arguments_begin lst runtime cid +
+    compute_constructor_arguments_size lst cid
 
 let compute_storage_array_seeds_size = failwith "array_seeds_size"
 
