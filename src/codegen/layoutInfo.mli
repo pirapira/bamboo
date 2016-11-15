@@ -43,6 +43,8 @@ type contract_layout_info =
   (** the number of bytes that the constructor code occupies *)
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
+  ; contract_num_array_seeds : int
+  (** the number of arguments that arrays *)
   }
 
 val realize_pseudo_instruction :

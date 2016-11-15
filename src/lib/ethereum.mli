@@ -31,6 +31,9 @@ val get_interface_typs :
 val constructor_arguments :
   Syntax.typ Syntax.contract -> (string * interface_typ) list
 
+val arrays_in_contract :
+  Syntax.typ Syntax.contract -> (string * Syntax.typ * Syntax.typ) list
+
 val total_size_of_interface_args :
   interface_typ list -> int
 

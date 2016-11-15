@@ -38,6 +38,8 @@ type contract_layout_info =
   { contract_constructor_code_size : int
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
+  ; contract_num_array_seeds : int
+  (** the number of arguments that arrays *)
   }
 
 type runtime_layout_info =
@@ -68,7 +70,9 @@ let compute_storage_array_seeds_begin lst runtime cid =
   compute_storage_constructor_arguments_begin lst runtime cid +
     compute_constructor_arguments_size lst cid
 
-let compute_storage_array_seeds_size = failwith "array_seeds_size"
+let compute_storage_array_seeds_size lst cid =
+  let c = Assoc.choose_contract cid lst in
+  c.contract_num_array_seeds
 
 let construct_layout_info
       (lst : (Assoc.contract_id * contract_layout_info) list)
@@ -201,4 +205,6 @@ let realize_pseudo_program (l : layout_info) (initial_cid : Assoc.contract_id) (
 
 let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code : PseudoImm.pseudo_imm Evm.program) =
   { contract_constructor_code_size = Evm.size_of_program constructor_code
-  ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c)) }
+  ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c))
+  ; contract_num_array_seeds = List.length (Ethereum.arrays_in_contract c)
+  }

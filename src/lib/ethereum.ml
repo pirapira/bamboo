@@ -54,6 +54,14 @@ let get_interface_typ (raw : Syntax.arg) : (string * interface_typ) option =
 let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
     Misc.filter_map get_interface_typ
 
+let get_array (raw : Syntax.arg) : (string * Syntax.typ * Syntax.typ) option =
+  match Syntax.(raw.arg_typ) with
+  | Syntax.MappingType (k, v) -> Some (raw.Syntax.arg_ident, k, v)
+  | _ -> None
+
+let arrays_in_contract c : (string * Syntax.typ * Syntax.typ) list =
+  Misc.filter_map get_array (c.Syntax.contract_arguments)
+
 let constructor_arguments (contract : Syntax.typ Syntax.contract)
     : (string * interface_typ) list
   = get_interface_typs (contract.Syntax.contract_arguments)
