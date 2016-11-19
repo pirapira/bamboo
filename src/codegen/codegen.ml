@@ -490,6 +490,16 @@ let add_dispatcher le ce contract_id contract =
   in
   (le, ce)
 
+let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
+  let new_label = Label.new_label () in
+  let ce = append_instruction ce (JUMPDEST new_label) in
+  let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
+  ce
+
+let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
+  let ce = add_case_destination ce cid case.case_header in
+  failwith "add_case"
+
 let codegen_append_contract_bytecode
       le ce
       ((cid, contract) : Assoc.contract_id * Syntax.typ Syntax.contract) =
@@ -506,7 +516,7 @@ let codegen_append_contract_bytecode
   (* add the cases *)
   let cases = contract.Syntax.contract_cases in
   let (le, ce) = List.fold_left
-                   (fun (le,ce) case -> failwith "add_case")
+                   (fun (le,ce) case -> add_case le ce cid case)
                    (le, ce) cases in
 
   ce
