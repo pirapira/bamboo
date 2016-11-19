@@ -496,7 +496,14 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
   ce
 
-let add_sentence le ce sent = failwith "add_sentence"
+let add_sentence le ce sent =
+  match sent with
+  | AbortSentence -> failwith "abort setence"
+  | ReturnSentence _ -> failwith "return sentence"
+  | AssignmentSentence _ -> failwith "assignment"
+  | VariableInitSentence _ -> failwith "init"
+  | IfSingleSentence _ -> failwith "ifsingle"
+  | SelfdestructSentence _ -> failwith "destruct"
 
 let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
