@@ -498,7 +498,7 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
 
 let add_sentence le ce sent =
   match sent with
-  | AbortSentence -> failwith "abort setence"
+  | AbortSentence -> (le, add_throw ce)
   | ReturnSentence _ -> failwith "return sentence"
   | AssignmentSentence _ -> failwith "assignment"
   | VariableInitSentence _ -> failwith "init"
