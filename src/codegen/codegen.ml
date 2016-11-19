@@ -428,6 +428,7 @@ let push_destination_for (ce : CodegenEnv.codegen_env)
 let add_dispatcher_for_a_usual_case le ce contract_id case_signature
   =
   let original_stack_size = stack_size ce in
+  let ce = append_instruction ce DUP1 in
   let ce = push_signature_code ce case_signature in
   let ce = append_instruction ce EQ in
   let ce = push_destination_for ce contract_id (UsualCaseHeader case_signature) in

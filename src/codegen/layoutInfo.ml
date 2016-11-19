@@ -118,7 +118,9 @@ let rec realize_pseudo_imm (layout : layout_info) (initial_cid : Assoc.contract_
   | ContractOffsetInRuntimeCode cid ->
      Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->
-     failwith "realize_pseudo_imm caseoffset"
+     let label = EntrypointDatabase.(lookup_entrypoint (Case (cid, case_header))) in
+     let v = Label.lookup_value label in
+     Big_int.big_int_of_int v
   | Minus (a, b) ->
      Big_int.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
   )
