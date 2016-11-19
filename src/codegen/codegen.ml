@@ -435,6 +435,13 @@ let add_dispatcher_for_a_usual_case le ce contract_id case_signature
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
+let add_dispatcher_for_default_case le ce contract_id =
+  let original_stack_size = stack_size ce in
+  let ce = push_destination_for ce contract_id DefaultCaseHeader in
+  let ce = append_instruction ce JUMP in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
 let push_word_from_input_data_at_byte ce b =
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH32 b) in
@@ -478,7 +485,7 @@ let add_dispatcher le ce contract_id contract =
   let ce = append_instruction ce POP in (* the signature in input is not necessary anymore *)
   let ce =
     if List.exists (fun h -> match h with DefaultCaseHeader -> true | _ -> false) case_signatures then
-      failwith "need to push a dispatcher for the default case"
+      add_dispatcher_for_default_case le ce contract_id
     else add_throw ce
   in
   (le, ce)
