@@ -497,10 +497,45 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
   ce
 
+let set_continuation_to_function_call le ce (fcall, typ_exp) =
+  failwith "set_continuation_to_function_call"
+
+(*
+ * set_continuation sets the storage contents.
+ * So that the next message call would start from the continuation.
+ *)
+let set_continuation le ce (cont_exp, typ_exp) =
+  match cont_exp with
+  | FunctionCallExp fcall -> set_continuation_to_function_call le ce (fcall, typ_exp)
+  | _ -> failwith "strange_continuation"
+
+(*
+ * after this, the stack contains
+ * ..., size, offset_in_memory
+ *)
+let place_value_in_memory le ce v =
+  failwith "place_value_in_memory"
+
+(*
+ * return_mem_content assumes the stack left after place_value_in_memory
+ *)
+let return_mem_content le ce v =
+  failwith "return_mem_content"
+
+let add_return le ce ret =
+  let original_stack_size = stack_size ce in
+  let v = ret.return_value in
+  let c = ret.return_cont in
+  let ce = set_continuation le ce c in
+  let (le, ce) = place_value_in_memory le ce v in
+  let ce = return_mem_content le ce v in
+  let () = assert (stack_size ce = original_stack_size) in
+  (le, ce)
+
 let add_sentence le ce sent =
   match sent with
   | AbortSentence -> (le, add_throw ce)
-  | ReturnSentence _ -> failwith "return sentence"
+  | ReturnSentence ret -> add_return le ce ret
   | AssignmentSentence _ -> failwith "assignment"
   | VariableInitSentence _ -> failwith "init"
   | IfSingleSentence _ -> failwith "ifsingle"
