@@ -497,8 +497,15 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
   ce
 
-let set_continuation_to_function_call le ce (fcall, typ_exp) =
-  failwith "set_continuation_to_function_call"
+let set_contract_arguments = failwith "set_contract_arguments"
+
+let set_continuation_to_function_call le ce (fcall, typ_exp) cid_lookup =
+  let head : string = fcall.call_head in
+  let args : (typ exp) list = fcall.call_args in
+  let cid = cid_lookup head in
+  let ce = set_contract_pc ce cid in
+  let (le, ce) = set_contract_arguments le ce cid args in
+  (le, ce)
 
 (*
  * set_continuation sets the storage contents.
