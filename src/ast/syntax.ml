@@ -81,7 +81,7 @@ and 'exp_annot sentence =
   | IfSingleSentence of 'exp_annot exp * 'exp_annot sentence
   | SelfdestructSentence of 'exp_annot exp
 and 'exp_annot return =
-  { return_value : 'exp_annot exp
+  { return_exp : 'exp_annot exp
   ; return_cont : 'exp_annot exp
   }
 

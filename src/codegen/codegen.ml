@@ -503,10 +503,12 @@ let set_contract_arguments le ce cid args = failwith "set_contract_arguments"
 (* and then, the argument list should be filtered. *)
 (* also, for each argument, the storage index should be determined. *)
 
-let set_continuation_to_function_call le ce (fcall, typ_exp) cid_lookup =
+let cid_lookup = failwith "cid_lookup, maybe to be defined in codegen_env"
+
+let set_continuation_to_function_call le ce (fcall, typ_exp) =
   let head : string = fcall.call_head in
   let args : (typ exp) list = fcall.call_args in
-  let cid = cid_lookup head in
+  let cid = cid_lookup ce head in
   let ce = set_contract_pc ce cid in
   let (le, ce) = set_contract_arguments le ce cid args in
   (le, ce)
@@ -521,25 +523,38 @@ let set_continuation le ce (cont_exp, typ_exp) =
   | _ -> failwith "strange_continuation"
 
 (*
+ * Before this, the stack contains
+ * ..., value (depends on typ).
+ * The value would be stored in memory
+ * After this, the stack contains
+ * ..., size_in_bytes, offset_in_memory
+ *)
+let move_stack_top_to_memory typ le ce =
+  failwith "move_stack_top_to_memory"
+
+(*
  * after this, the stack contains
  * ..., size, offset_in_memory
  *)
-let place_value_in_memory le ce v =
-  failwith "place_value_in_memory"
+let place_exp_in_memory le ce ((typ, e) : typ exp) =
+  let ce = codegen_exp le ce (typ, e) in
+  (* the stack layout depends on typ *)
+  let le, ce = move_stack_top_to_memory typ le ce in
+  le, ce
 
 (*
- * return_mem_content assumes the stack left after place_value_in_memory
+ * return_mem_content assumes the stack left after place_exp_in_memory
  *)
-let return_mem_content le ce v =
+let return_mem_content le ce =
   failwith "return_mem_content"
 
 let add_return le ce ret =
   let original_stack_size = stack_size ce in
-  let v = ret.return_value in
+  let e = ret.return_exp in
   let c = ret.return_cont in
-  let ce = set_continuation le ce c in
-  let (le, ce) = place_value_in_memory le ce v in
-  let ce = return_mem_content le ce v in
+  let (le, ce) = set_continuation le ce c in
+  let (le, ce) = place_exp_in_memory le ce e in
+  let ce = return_mem_content le ce in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 

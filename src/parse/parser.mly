@@ -155,7 +155,7 @@ rev_sentences:
 sentence :
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_value = value; return_cont = cont} }
+    { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;

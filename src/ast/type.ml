@@ -164,8 +164,8 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : typ return =
-  { return_value = assign_type_exp contract_interfaces
-                                   cname tenv src.return_value
+  { return_exp = assign_type_exp contract_interfaces
+                                   cname tenv src.return_exp
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
