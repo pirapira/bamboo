@@ -36,3 +36,5 @@ let append_instruction
     { ce_stack_size = new_stack_size
     ; ce_program = Evm.append_inst orig.ce_program i
     }
+
+let cid_lookup = failwith "cid_lookup"

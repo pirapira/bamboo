@@ -503,8 +503,6 @@ let set_contract_arguments le ce cid args = failwith "set_contract_arguments"
 (* and then, the argument list should be filtered. *)
 (* also, for each argument, the storage index should be determined. *)
 
-let cid_lookup = failwith "cid_lookup, maybe to be defined in codegen_env"
-
 let set_continuation_to_function_call le ce (fcall, typ_exp) =
   let head : string = fcall.call_head in
   let args : (typ exp) list = fcall.call_args in

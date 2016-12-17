@@ -18,3 +18,5 @@ val set_stack_size : codegen_env -> int -> codegen_env
 
 val append_instruction :
   codegen_env -> PseudoImm.pseudo_imm Evm.instruction -> codegen_env
+
+val cid_lookup : codegen_env -> string -> Assoc.contract_id
