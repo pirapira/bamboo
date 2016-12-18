@@ -1,4 +1,5 @@
-type contract_id (* Currently, the location in [contracts] *)
+type contract_id = int
+(* Currently, the location in [contracts] *)
 
 type 'a contract_id_assoc = (contract_id * 'a) list
 

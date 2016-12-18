@@ -354,6 +354,9 @@ let copy_runtime_code_to_memory ce contracts contract_id =
   let () = assert (stack_size ce = original_stack_size + 2) in
   ce
 
+let cid_lookup_in_assoc (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
+                        (name : string) : Assoc.contract_id = failwith "cid_lookup_in_assoc"
+
 
 let codegen_constructor_bytecode
       ((contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc),
@@ -363,7 +366,7 @@ let codegen_constructor_bytecode
        ) =
   let le = LocationEnv.constructor_initial_location_env contract_id
              (Assoc.choose_contract contract_id contracts) in
-  let ce = CodegenEnv.empty_env in
+  let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce
@@ -389,8 +392,8 @@ type runtime_compiled =
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
-let empty_runtime_compiled =
-  { runtime_codegen_env = CodegenEnv.empty_env
+let empty_runtime_compiled cid_lookup =
+  { runtime_codegen_env = (CodegenEnv.empty_env cid_lookup)
   ; runtime_contract_offsets = []
   }
 
@@ -404,8 +407,8 @@ let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_
     : constructor_compiled Assoc.contract_id_assoc =
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
-let initial_runtime_compiled : runtime_compiled =
-  let ce = CodegenEnv.empty_env in
+let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) : runtime_compiled =
+  let ce = CodegenEnv.empty_env cid_lookup in
   let ce = get_contract_pc ce in
   let ce = append_instruction ce JUMP in
   { runtime_codegen_env = ce
@@ -603,7 +606,7 @@ let append_runtime (prev : runtime_compiled)
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  List.fold_left append_runtime initial_runtime_compiled contracts
+  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts)) contracts
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)

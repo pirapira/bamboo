@@ -1,13 +1,15 @@
 type codegen_env =
   { ce_stack_size: int
   ; ce_program: PseudoImm.pseudo_imm Evm.program
+  ; ce_cid_lookup : string -> Assoc.contract_id
   }
 
 let ce_program m = m.ce_program
 
-let empty_env =
+let empty_env cid_lookup =
   { ce_stack_size = 0
   ; ce_program = Evm.empty_program
+  ; ce_cid_lookup = cid_lookup
   }
 
 let code_length ce =
@@ -35,6 +37,7 @@ let append_instruction
     let new_stack_size = orig.ce_stack_size - Evm.stack_eaten i + Evm.stack_pushed i in
     { ce_stack_size = new_stack_size
     ; ce_program = Evm.append_inst orig.ce_program i
+    ; ce_cid_lookup = orig.ce_cid_lookup
     }
 
-let cid_lookup = failwith "cid_lookup"
+let cid_lookup ce = ce.ce_cid_lookup
