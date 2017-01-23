@@ -142,7 +142,7 @@ the code generation is still in development.
 As preparattion,
 * install [opam](http://opam.ocaml.org/doc/Install.html)
 * and then use `opam install menhir` to install `menhir`.
-* `opam install batteries cryptokits rope`
+* `opam install batteries cryptokit rope`
 
 Then,
 ```
