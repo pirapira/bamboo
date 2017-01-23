@@ -1,5 +1,5 @@
 ocamlbuild -Is ast,parse,lib,codegen -package cryptokit -use-menhir parse/parser_test.native && \
-ocamlbuild -Is ast,parse,lib,codegen -package cryptokit -use-menhir ast/ast_test.native && \
+ocamlbuild -Is ast,parse,lib,codegen -package cryptokit -package batteries -use-menhir ast/ast_test.native && \
 ocamlbuild -Is ast,parse,lib,codegen -package batteries -package cryptokit -package rope -use-menhir codegen/codegen_test.native && \
 ocamlbuild -Is ast,parse,lib,codegen -package batteries -package cryptokit -package rope -use-menhir codegen/codegen_test2.native && \
 ocamlbuild -Is ast,parse,lib,codegen -package batteries -package cryptokit -package rope -use-menhir codegen/hex_test.native && \
