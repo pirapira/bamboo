@@ -355,8 +355,8 @@ let copy_runtime_code_to_memory ce contracts contract_id =
   ce
 
 let cid_lookup_in_assoc (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
-                        (name : string) : Assoc.contract_id = failwith "cid_lookup_in_assoc"
-
+                        (name : string) : Assoc.contract_id =
+  Assoc.lookup_id (fun c -> c.contract_name = name) contracts
 
 let codegen_constructor_bytecode
       ((contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc),

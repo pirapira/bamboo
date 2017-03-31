@@ -14,3 +14,5 @@ val choose_contract : contract_id -> 'x contract_id_assoc -> 'x
 val print_int_for_cids : (contract_id -> int) -> contract_id list -> unit
 
 val insert : contract_id -> 'x -> 'x contract_id_assoc -> 'x contract_id_assoc
+
+val lookup_id : ('x -> bool) -> 'x contract_id_assoc -> contract_id

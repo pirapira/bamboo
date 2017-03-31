@@ -28,3 +28,7 @@ let print_int_for_cids (f : contract_id -> int) (cids : contract_id list) : unit
 
 let insert (id : contract_id) (a : 'x) (orig : 'x contract_id_assoc) : 'x contract_id_assoc =
   (id, a)::orig (* shall I sort it?  Maybe later at once. *)
+
+let lookup_id (f : 'x -> bool) (lst : 'x contract_id_assoc) : contract_id =
+  let (id, _) = List.find (fun (_, x) -> f x) lst in
+  id
