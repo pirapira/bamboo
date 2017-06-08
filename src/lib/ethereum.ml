@@ -72,7 +72,7 @@ let total_size_of_interface_args lst : int =
 module Hash = Cryptokit.Hash
 
 let string_keccak str : string =
-  let sha3_256 = Hash.sha3 256 in
+  let sha3_256 = Hash.keccak 256 in
   let () = sha3_256#add_string str in
   let ret = sha3_256#result in
   let tr = Cryptokit.Hexa.encode () in
