@@ -41,3 +41,5 @@ let append_instruction
     }
 
 let cid_lookup ce = ce.ce_cid_lookup
+
+let layout_lookup = failwith "codegenEnv.layout_lookup"

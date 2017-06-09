@@ -20,3 +20,5 @@ val append_instruction :
   codegen_env -> PseudoImm.pseudo_imm Evm.instruction -> codegen_env
 
 val cid_lookup : codegen_env -> string -> Assoc.contract_id
+
+val layout_lookup : codegen_env -> Assoc.contract_id -> LayoutInfo.contract_layout_info

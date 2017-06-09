@@ -63,3 +63,5 @@ type runtime_layout_info =
   }
 
 val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> layout_info
+
+val arg_locations : contract_layout_info -> Storage.storage_location list

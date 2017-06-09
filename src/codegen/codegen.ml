@@ -500,7 +500,10 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
   ce
 
-let set_contract_arguments le ce cid args = failwith "set_contract_arguments"
+let set_contract_arguments le ce cid args =
+  let layout = layout_lookup ce cid in
+  let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations layout in
+  failwith "set_contract_arguments"
 (* somehow need to get the list of contract arguments. *)
 (* which one is array, and which one is a word? *)
 (* and then, the argument list should be filtered. *)

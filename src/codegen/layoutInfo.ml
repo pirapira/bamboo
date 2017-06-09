@@ -210,3 +210,5 @@ let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code :
   ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c))
   ; contract_num_array_seeds = List.length (Ethereum.arrays_in_contract c)
   }
+
+let arg_locations : contract_layout_info -> Storage.storage_location list = failwith "LayoutInfo.arg_locations"
