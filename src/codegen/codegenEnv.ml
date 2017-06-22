@@ -2,6 +2,7 @@ type codegen_env =
   { ce_stack_size: int
   ; ce_program: PseudoImm.pseudo_imm Evm.program
   ; ce_cid_lookup : string -> Assoc.contract_id
+  ; ce_layout : LayoutInfo.contract_layout_info Assoc.contract_id_assoc
   }
 
 let ce_program m = m.ce_program
@@ -10,6 +11,7 @@ let empty_env cid_lookup =
   { ce_stack_size = 0
   ; ce_program = Evm.empty_program
   ; ce_cid_lookup = cid_lookup
+  ; ce_layout = Assoc.empty
   }
 
 let code_length ce =
@@ -38,8 +40,10 @@ let append_instruction
     { ce_stack_size = new_stack_size
     ; ce_program = Evm.append_inst orig.ce_program i
     ; ce_cid_lookup = orig.ce_cid_lookup
+    ; ce_layout = orig.ce_layout
     }
 
 let cid_lookup ce = ce.ce_cid_lookup
 
-let layout_lookup = failwith "codegenEnv.layout_lookup"
+let layout_lookup (ce : codegen_env) (cid : Assoc.contract_id) : LayoutInfo.contract_layout_info
+  = Assoc.choose_contract cid ce.ce_layout
