@@ -16,3 +16,5 @@ val print_int_for_cids : (contract_id -> int) -> contract_id list -> unit
 val insert : contract_id -> 'x -> 'x contract_id_assoc -> 'x contract_id_assoc
 
 val lookup_id : ('x -> bool) -> 'x contract_id_assoc -> contract_id
+
+val empty : 'x contract_id_assoc
