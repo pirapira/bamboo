@@ -1,1 +1,1 @@
-type storage_location
+type storage_location = int
