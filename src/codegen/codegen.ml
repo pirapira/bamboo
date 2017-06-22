@@ -365,8 +365,10 @@ let codegen_constructor_bytecode
       (CodegenEnv.codegen_env (* containing the program *)
        ) =
   let le = LocationEnv.constructor_initial_location_env contract_id
-             (Assoc.choose_contract contract_id contracts) in
-  let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) in
+                                                        (Assoc.choose_contract contract_id contracts) in
+  let contract_layouts : LayoutInfo.contract_layout_info Assoc.contract_id_assoc =
+    failwith "contract_layouts not compted yet" in
+  let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contract_layouts in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce
@@ -392,8 +394,8 @@ type runtime_compiled =
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
-let empty_runtime_compiled cid_lookup =
-  { runtime_codegen_env = (CodegenEnv.empty_env cid_lookup)
+let empty_runtime_compiled cid_lookup layouts =
+  { runtime_codegen_env = (CodegenEnv.empty_env cid_lookup layouts)
   ; runtime_contract_offsets = []
   }
 
@@ -407,8 +409,8 @@ let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_
     : constructor_compiled Assoc.contract_id_assoc =
   Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
-let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) : runtime_compiled =
-  let ce = CodegenEnv.empty_env cid_lookup in
+let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) layouts : runtime_compiled =
+  let ce = CodegenEnv.empty_env cid_lookup layouts in
   let ce = get_contract_pc ce in
   let ce = append_instruction ce JUMP in
   { runtime_codegen_env = ce
@@ -609,7 +611,8 @@ let append_runtime (prev : runtime_compiled)
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts)) contracts
+  let layouts = failwith "layouts not computed yet" in
+  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts) layouts) contracts
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)

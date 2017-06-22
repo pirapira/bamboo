@@ -7,7 +7,7 @@ open Codegen
  *)
 let _ =
   let dummy_cid_lookup (_ : string) = 3 in
-  let dummy_env = CodegenEnv.empty_env dummy_cid_lookup in
+  let dummy_env = CodegenEnv.empty_env dummy_cid_lookup [] in
   let dummy_l = LocationEnv.empty_location_env in
   let _ = codegen_exp dummy_l dummy_env (FalseExp, BoolType) in
   let _ = codegen_exp dummy_l dummy_env (TrueExp, BoolType) in

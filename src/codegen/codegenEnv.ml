@@ -7,11 +7,11 @@ type codegen_env =
 
 let ce_program m = m.ce_program
 
-let empty_env cid_lookup =
+let empty_env cid_lookup ce_layout =
   { ce_stack_size = 0
   ; ce_program = Evm.empty_program
   ; ce_cid_lookup = cid_lookup
-  ; ce_layout = Assoc.empty
+  ; ce_layout = ce_layout
   }
 
 let code_length ce =

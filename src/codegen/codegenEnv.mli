@@ -3,7 +3,7 @@
    accumulated instructions. *)
 type codegen_env
 
-val empty_env : (string -> Assoc.contract_id) -> codegen_env
+val empty_env : (string -> Assoc.contract_id) -> (LayoutInfo.contract_layout_info Assoc.contract_id_assoc) -> codegen_env
 
 val ce_program : codegen_env -> PseudoImm.pseudo_imm Evm.program
 val code_length : codegen_env -> int
