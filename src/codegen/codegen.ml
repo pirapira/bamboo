@@ -500,18 +500,34 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   let () = EntrypointDatabase.(register_entrypoint (Case (cid, h)) new_label) in
   ce
 
-let set_contract_arguments le ce cid args =
+(** [prepare_words_on_stack le ce [arg0 arg1]] evaluates
+ * [arg1] and then [arg0] and puts them onto the stack.
+ * [arg0] will be the topmost element of the stack.
+ *)
+let prepare_words_on_stack le ce (args : typ exp list) =
+  failwith "prepare_words_on_stack"
+
+(** [store_words_into_storage_locations le ce arg_locations] moves the topmost stack element to the
+ *  location indicated by [arg_locations] and the next element to the next location and so on.
+ *  The stack elements will disappear.
+ *)
+let store_words_into_storage_locations le ce arg_locations =
+  failwith "store_words_into_storage_locations"
+
+let set_contract_arguments le ce cid (args : typ exp list) =
   let contract = contract_lookup ce cid in
   let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations contract in
-  failwith "set_contract_arguments"
-(* somehow need to get the list of contract arguments. *)
-(* which one is array, and which one is a word? *)
-(* and then, the argument list should be filtered. *)
-(* also, for each argument, the storage index should be determined. *)
+  let () = assert (List.length arg_locations = List.length args) in
+  let (le, ce) = prepare_words_on_stack le ce args in
+  let (le, ce) = store_words_into_storage_locations le ce arg_locations in
+  (* TODO
+   * In a special case where no movements are necessary, we can then skip these arguments.
+   *)
+  (le, ce)
 
 let set_continuation_to_function_call le ce (fcall, typ_exp) =
   let head : string = fcall.call_head in
-  let args : (typ exp) list = fcall.call_args in
+  let args : typ exp list = fcall.call_args in
   let cid = cid_lookup ce head in
   let ce = set_contract_pc ce cid in
   let (le, ce) = set_contract_arguments le ce cid args in
