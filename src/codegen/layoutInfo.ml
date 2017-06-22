@@ -40,6 +40,8 @@ type contract_layout_info =
   (** the number of words that the contract arguments occupy *)
   ; contract_num_array_seeds : int
   (** the number of arguments that arrays *)
+  ; contract_args : Syntax.typ list
+  (** the list of argument types *)
   }
 
 type runtime_layout_info =
@@ -209,6 +211,7 @@ let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code :
   { contract_constructor_code_size = Evm.size_of_program constructor_code
   ; contract_argument_size  = Ethereum.total_size_of_interface_args (List.map snd (Ethereum.constructor_arguments c))
   ; contract_num_array_seeds = List.length (Ethereum.arrays_in_contract c)
+  ; contract_args = List.map (fun a -> a.Syntax.arg_typ) (c.Syntax.contract_arguments)
   }
 
 let arg_locations : contract_layout_info -> Storage.storage_location list = failwith "LayoutInfo.arg_locations"

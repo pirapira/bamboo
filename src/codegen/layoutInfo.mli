@@ -44,7 +44,9 @@ type contract_layout_info =
   ; contract_argument_size : int
   (** the number of words that the contract arguments occupy *)
   ; contract_num_array_seeds : int
-  (** the number of arguments that arrays *)
+  (** the number of arguments that are arrays; todo: remove and create a function if needed *)
+  ; contract_args : Syntax.typ list
+  (** the list of argument types *)
   }
 
 val realize_pseudo_instruction :
@@ -64,4 +66,5 @@ type runtime_layout_info =
 
 val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> layout_info
 
+(** [arg_locations cl] returns the list of storage locations where the arguments are stored. *)
 val arg_locations : contract_layout_info -> Storage.storage_location list
