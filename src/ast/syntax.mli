@@ -111,4 +111,5 @@ val contract_name_of_instance : typ exp -> string
 val string_of_typ : typ -> string
 val string_of_exp_inner : 'a exp_inner -> string
 
+val is_mapping : typ -> bool
 val count_plain_args : typ list -> int

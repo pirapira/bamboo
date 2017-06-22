@@ -220,7 +220,12 @@ let rec arg_locations_inner (used_plain_args : int) (used_mapping_seeds : int)
   match args with
   | [] -> []
   | h :: t ->
-     failwith "arg_locations_inner"
+     if Syntax.is_mapping h then
+       (num_of_plains + used_mapping_seeds) ::
+         arg_locations_inner used_plain_args (used_mapping_seeds + 1) num_of_plains t
+     else
+       used_plain_args ::
+         arg_locations_inner (used_plain_args + 1) used_mapping_seeds num_of_plains t
 
 let arg_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
   let argument_types = List.map (fun a -> a.Syntax.arg_typ) cntr.Syntax.contract_arguments in
