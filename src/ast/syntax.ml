@@ -154,5 +154,17 @@ let string_of_exp_inner e =
   | SingleDereferenceExp _ -> "dereference of ..."
   | TupleDereferenceExp _ -> "dereference of tuple..."
 
-let count_arrays (typs : typ list) =
-  failwith "count_arrays"
+let is_mapping (typ : typ) =
+  match typ with
+  | UintType
+  | AddressType
+  | BoolType
+  | ReferenceType _
+  | TupleType _
+  | ContractArchType _
+  | ContractInstanceType _
+    -> false
+  | MappingType _ -> true
+
+let count_mappings (typs : typ list) =
+  List.length (List.filter is_mapping typs)
