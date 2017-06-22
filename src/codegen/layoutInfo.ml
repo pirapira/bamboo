@@ -215,8 +215,11 @@ let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code :
   }
 
 let rec arg_locations_inner (used_plain_args : int) (used_array_seeds : int)
+                            (num_of_arrays : int)
                             (args : Syntax.typ list) : Storage.storage_location list
   = failwith "arg_locations_inner"
 
-let arg_locations (cli : contract_layout_info) : Storage.storage_location list =
-  arg_locations_inner 0 0 cli.contract_args
+let arg_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
+  let argument_types = List.map (fun a -> a.Syntax.arg_typ) cntr.Syntax.contract_arguments in
+  let num_of_arrays = Syntax.count_arrays argument_types in
+  arg_locations_inner 0 0 num_of_arrays argument_types

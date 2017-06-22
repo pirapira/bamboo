@@ -366,9 +366,7 @@ let codegen_constructor_bytecode
        ) =
   let le = LocationEnv.constructor_initial_location_env contract_id
                                                         (Assoc.choose_contract contract_id contracts) in
-  let contract_layouts : LayoutInfo.contract_layout_info Assoc.contract_id_assoc =
-    failwith "contract_layouts not compted yet" in
-  let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contract_layouts in
+  let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contracts in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce
@@ -503,8 +501,8 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
   ce
 
 let set_contract_arguments le ce cid args =
-  let layout = layout_lookup ce cid in
-  let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations layout in
+  let contract = contract_lookup ce cid in
+  let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations contract in
   failwith "set_contract_arguments"
 (* somehow need to get the list of contract arguments. *)
 (* which one is array, and which one is a word? *)

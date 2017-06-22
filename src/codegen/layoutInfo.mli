@@ -67,4 +67,4 @@ type runtime_layout_info =
 val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> layout_info
 
 (** [arg_locations cl] returns the list of storage locations where the arguments are stored. *)
-val arg_locations : contract_layout_info -> Storage.storage_location list
+val arg_locations : Syntax.typ Syntax.contract -> Storage.storage_location list

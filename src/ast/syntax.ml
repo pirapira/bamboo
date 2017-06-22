@@ -153,3 +153,6 @@ let string_of_exp_inner e =
   | AddressExp _ -> "address"
   | SingleDereferenceExp _ -> "dereference of ..."
   | TupleDereferenceExp _ -> "dereference of tuple..."
+
+let count_arrays (typs : typ list) =
+  failwith "count_arrays"
