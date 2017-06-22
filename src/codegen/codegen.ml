@@ -505,7 +505,7 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
  * [arg0] will be the topmost element of the stack.
  *)
 let prepare_words_on_stack le ce (args : typ exp list) =
-  failwith "prepare_words_on_stack"
+  (le, List.fold_right (fun arg ce' -> codegen_exp le ce' arg) args ce)
 
 (** [store_words_into_storage_locations le ce arg_locations] moves the topmost stack element to the
  *  location indicated by [arg_locations] and the next element to the next location and so on.
