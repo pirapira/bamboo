@@ -609,8 +609,7 @@ let append_runtime (prev : runtime_compiled)
 
 let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  let layouts = failwith "layouts not computed yet" in
-  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts) layouts) contracts
+  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts) contracts) contracts
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
