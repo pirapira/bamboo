@@ -166,5 +166,5 @@ let is_mapping (typ : typ) =
     -> false
   | MappingType _ -> true
 
-let count_mappings (typs : typ list) =
-  List.length (List.filter is_mapping typs)
+let count_plain_args (typs : typ list) =
+  List.length (List.filter (fun t -> not (is_mapping t)) typs)
