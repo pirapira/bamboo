@@ -514,8 +514,13 @@ let prepare_words_on_stack le ce (args : typ exp list) =
 let store_words_into_storage_locations le ce arg_locations =
   failwith "store_words_into_storage_locations"
 
-let set_contract_arguments le ce cid offset (args : typ exp list) =
-  let contract = contract_lookup ce cid in
+let set_contract_arguments le ce offset cid (args : typ exp list) =
+  let contract =
+    try contract_lookup ce cid
+    with e ->
+      let () = Printf.eprintf "set_contract_arguments: looking up %d\n" cid in
+      raise e
+  in
   let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations offset contract in
   let () = assert (List.length arg_locations = List.length args) in
   let (le, ce) = prepare_words_on_stack le ce args in
@@ -531,7 +536,14 @@ let set_continuation_to_function_call le ce layout (fcall, typ_exp) =
   let cid = cid_lookup ce head in
   let ce = set_contract_pc ce cid in
   let offset = layout.LayoutInfo.storage_constructor_arguments_begin cid in
-  let (le, ce) = set_contract_arguments le ce offset cid args in
+  let (le, ce) =
+    try
+      set_contract_arguments le ce offset cid args
+    with e ->
+      let () = Printf.eprintf "name of contract: %s\n" head in
+      let () = Printf.eprintf "set_continuation_to_function_call cid: %d\n" cid in
+      raise e
+  in
   (le, ce)
 
 (*

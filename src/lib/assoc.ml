@@ -34,3 +34,5 @@ let lookup_id (f : 'x -> bool) (lst : 'x contract_id_assoc) : contract_id =
   id
 
 let empty = []
+
+let cids lst = List.map fst lst

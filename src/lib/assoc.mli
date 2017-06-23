@@ -18,3 +18,5 @@ val insert : contract_id -> 'x -> 'x contract_id_assoc -> 'x contract_id_assoc
 val lookup_id : ('x -> bool) -> 'x contract_id_assoc -> contract_id
 
 val empty : 'x contract_id_assoc
+
+val cids : 'x contract_id_assoc -> contract_id list

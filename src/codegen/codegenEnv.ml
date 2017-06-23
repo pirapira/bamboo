@@ -46,4 +46,9 @@ let append_instruction
 let cid_lookup ce = ce.ce_cid_lookup
 
 let contract_lookup (ce : codegen_env) (cid : Assoc.contract_id) : Syntax.typ Syntax.contract
-  = Assoc.choose_contract cid ce.ce_contracts
+  =
+  try Assoc.choose_contract cid ce.ce_contracts
+  with e ->
+    let () = Printf.eprintf "contract_lookup failed on %d\n%!" cid in
+    let () = (Assoc.print_int_for_cids (fun x -> x) (Assoc.cids ce.ce_contracts)) in
+    raise e
