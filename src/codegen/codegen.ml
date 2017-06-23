@@ -14,13 +14,10 @@ let size_of_typ (* in bytes *) = function
   | ContractArchType _ -> failwith "size_of_typ ContractArchType"
   | ContractInstanceType _ -> 32 (* address as word *)
 
-let realize_pseudo_imm_on_stack le ce (p : PseudoImm.pseudo_imm) =
-  failwith "realize_pseudo_imm_on_stack"
-
 let copy_storage_range_to_stack_top le ce (range : PseudoImm.pseudo_imm Location.storage_range) =
   let () = assert (PseudoImm.is_constant_int 1 range.Location.storage_size) in
   let offset : PseudoImm.pseudo_imm = range.Location.storage_start in
-  let (le, ce) = realize_pseudo_imm_on_stack le ce offset in
+  let ce = append_instruction ce (PUSH32 offset) in
   let ce = append_instruction ce SLOAD in
   (le, ce)
 
@@ -526,12 +523,19 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
 let prepare_words_on_stack le ce (args : typ exp list) =
   (le, List.fold_right (fun arg ce' -> codegen_exp le ce' arg) args ce)
 
+let store_word_into_storage_location (le, ce) (arg_location : Storage.storage_location) =
+  let ce = append_instruction ce (PUSH32 (PseudoImm.Int arg_location)) in
+  let ce = append_instruction ce SSTORE in
+  (le, ce)
+
 (** [store_words_into_storage_locations le ce arg_locations] moves the topmost stack element to the
  *  location indicated by [arg_locations] and the next element to the next location and so on.
  *  The stack elements will disappear.
  *)
 let store_words_into_storage_locations le ce arg_locations =
-  failwith "store_words_into_storage_locations"
+  List.fold_left
+    store_word_into_storage_location
+    (le, ce) arg_locations
 
 let set_contract_arguments le ce offset cid (args : typ exp list) =
   let contract =
