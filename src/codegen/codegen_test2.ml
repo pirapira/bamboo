@@ -47,8 +47,7 @@ let _ =
      let runtime_ce = runtime_compiled.runtime_codegen_env in
      let () = Evm.print_pseudo_program (CodegenEnv.ce_program runtime_ce) in
      let () = Printf.printf "=====layout_info (common to all contracts)=====\n" in
-     let runtime_layout = layout_info_from_runtime_compiled (compile_runtime contracts) in
-     let layout = LayoutInfo.construct_layout_info contracts_layout_info runtime_layout in
+     let layout = LayoutInfo.construct_layout_info contracts_layout_info in
      let () = LayoutInfo.print_layout_info layout in
      let () = Printf.printf "=====bytecode (with the constructor for first contract)=====\n" in
      let bytecode : Big_int.big_int Evm.program =

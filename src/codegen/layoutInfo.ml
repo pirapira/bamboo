@@ -70,11 +70,11 @@ let compute_init_data_size lst runtime cid =
   compute_constructor_arguments_begin lst runtime cid +
     compute_constructor_arguments_size lst cid
 
-let compute_storage_constructor_arguments_begin lst runtime cid =
+let compute_storage_constructor_arguments_begin lst cid =
   2
 
-let compute_storage_array_seeds_begin lst runtime cid =
-  compute_storage_constructor_arguments_begin lst runtime cid +
+let compute_storage_array_seeds_begin lst cid =
+  compute_storage_constructor_arguments_begin lst cid +
     compute_constructor_arguments_size lst cid
 
 let compute_storage_array_seeds_size lst cid =
@@ -82,15 +82,14 @@ let compute_storage_array_seeds_size lst cid =
   c.contract_num_array_seeds
 
 let construct_layout_info
-      (lst : (Assoc.contract_id * contract_layout_info) list)
-      (runtime : runtime_layout_info) : layout_info =
+      (lst : (Assoc.contract_id * contract_layout_info) list) : layout_info =
   { contract_ids = List.map fst lst
   ; constructor_code_size = compute_constructor_code_size lst
   ; storage_current_pc_index = 0 (* This is a magic constant. *)
   ; storage_array_counter_index = 1 (* This is also a magic constant. *)
-  ; storage_constructor_arguments_begin = compute_storage_constructor_arguments_begin lst runtime
+  ; storage_constructor_arguments_begin = compute_storage_constructor_arguments_begin lst
   ; storage_constructor_arguments_size = compute_constructor_arguments_size lst
-  ; storage_array_seeds_begin = compute_storage_array_seeds_begin lst runtime
+  ; storage_array_seeds_begin = compute_storage_array_seeds_begin lst
   ; storage_array_seeds_size = compute_storage_array_seeds_size lst
   }
 
@@ -99,7 +98,7 @@ let construct_post_layout_info (lst : (Assoc.contract_id * contract_layout_info)
   { init_data_size = compute_init_data_size lst runtime
   ; runtime_code_size = runtime.runtime_code_size
   ; contract_offset_in_runtime_code = runtime.runtime_offset_of_contract_id
-  ; l = construct_layout_info lst runtime
+  ; l = construct_layout_info lst
   }
 
 (* Assuming the layout described above, this definition makes sense. *)

@@ -68,7 +68,7 @@ type runtime_layout_info =
   ; runtime_offset_of_contract_id : int Assoc.contract_id_assoc
   }
 
-val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> layout_info
+val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> layout_info
 
 val construct_post_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> post_layout_info
 
