@@ -168,3 +168,14 @@ let is_mapping (typ : typ) =
 
 let count_plain_args (typs : typ list) =
   List.length (List.filter (fun t -> not (is_mapping t)) typs)
+
+let fits_in_one_storage_slot (typ : typ) =
+  match typ with
+  | UintType
+  | AddressType
+  | BoolType
+  | ContractInstanceType _
+  | MappingType _ -> true
+  | ReferenceType _ -> false
+  | TupleType _ -> false
+  | ContractArchType _ -> false

@@ -113,3 +113,5 @@ val string_of_exp_inner : 'a exp_inner -> string
 
 val is_mapping : typ -> bool
 val count_plain_args : typ list -> int
+
+val fits_in_one_storage_slot : typ -> bool
