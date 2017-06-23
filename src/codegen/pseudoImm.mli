@@ -23,3 +23,6 @@ type pseudo_imm =
 
 
 val string_of_pseudo_imm : pseudo_imm -> string
+
+val is_constant_big : Big_int.big_int -> pseudo_imm -> bool
+val is_constant_int : int -> pseudo_imm -> bool

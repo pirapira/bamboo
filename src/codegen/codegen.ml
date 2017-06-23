@@ -14,8 +14,27 @@ let size_of_typ (* in bytes *) = function
   | ContractArchType _ -> failwith "size_of_typ ContractArchType"
   | ContractInstanceType _ -> 32 (* address as word *)
 
-let copy_to_stack_top (l : Location.location) =
-  failwith "copy_to_stack_top"
+let realize_pseudo_imm_on_stack le ce (p : PseudoImm.pseudo_imm) =
+  failwith "realize_pseudo_imm_on_stack"
+
+let copy_storage_range_to_stack_top le ce (range : PseudoImm.pseudo_imm Location.storage_range) =
+  let () = assert (PseudoImm.is_constant_int 1 range.Location.storage_size) in
+  let offset : PseudoImm.pseudo_imm = range.Location.storage_start in
+  let (le, ce) = realize_pseudo_imm_on_stack le ce offset in
+  let ce = append_instruction ce SLOAD in
+  (le, ce)
+
+let copy_to_stack_top le ce (l : Location.location) =
+  Location.(
+    match l with
+    | Storage range ->
+       copy_storage_range_to_stack_top le ce range
+    | CachedStorage _ -> failwith "copy_to_stack_top: CachedStorage"
+    | Volatile _ -> failwith "copy_to_stack_top: Volatile"
+    | Code _ -> failwith "copy_to_stack_top: Code"
+    | Calldata _ -> failwith "copy_to_stack_top: Calldata"
+  )
+
 
 (* le is not updated here.  It can be only updated in
  * a variable initialization *)
@@ -55,7 +74,7 @@ let rec codegen_exp
        * updated.  If they are SLOADED, the location env should be
        * updated. *)
       | Some location ->
-         let (le, ce) = copy_to_stack_top location in
+         let (le, ce) = copy_to_stack_top le ce location in
          ce
       | None -> failwith ("identifier's location not found: "^id)
       end

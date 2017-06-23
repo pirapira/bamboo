@@ -31,3 +31,12 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | RuntimeCodeOffset -> "RuntimeCodeOffset"
   | RuntimeCodeSize -> "RuntimeCodeSize"
   | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"
+
+let is_constant_big (b : Big_int.big_int) (p : pseudo_imm) : bool =
+  match p with
+  | Big b' -> Big_int.eq_big_int b b'
+  | Int i  -> Big_int.(eq_big_int (big_int_of_int i) b)
+  | _ -> false (* XXX: very rough approximation *)
+
+let is_constant_int (i : int) =
+  is_constant_big (Big_int.big_int_of_int i)
