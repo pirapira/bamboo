@@ -574,9 +574,13 @@ let set_continuation_to_function_call le ce layout (fcall, typ_exp) =
  * So that the next message call would start from the continuation.
  *)
 let set_continuation le ce (layout : LayoutInfo.layout_info) (cont_exp, typ_exp) =
-  match cont_exp with
-  | FunctionCallExp fcall -> set_continuation_to_function_call le ce layout (fcall, typ_exp)
-  | _ -> failwith "strange_continuation"
+  let original_stack_size = stack_size ce in
+  let (le, ce) =
+    match cont_exp with
+    | FunctionCallExp fcall -> set_continuation_to_function_call le ce layout (fcall, typ_exp)
+    | _ -> failwith "strange_continuation" in
+  let () = assert (stack_size ce = original_stack_size) in
+  (le, ce)
 
 (*
  * Before this, the stack contains
@@ -586,23 +590,41 @@ let set_continuation le ce (layout : LayoutInfo.layout_info) (cont_exp, typ_exp)
  * ..., size_in_bytes, offset_in_memory
  *)
 let move_stack_top_to_memory typ le ce =
-  failwith "move_stack_top_to_memory"
+  let () = assert (size_of_typ typ = 32) in
+  (* ..., value *)
+  let ce = append_instruction ce (PUSH1 (PseudoImm.Int 32)) in
+  (* ..., value, 32 *)
+  let ce = append_instruction ce DUP1 in
+  (* ..., value, 32, 32 *)
+  let ce = push_allocated_memory ce in
+  (* ..., value, 32, addr *)
+  let ce = append_instruction ce SWAP2 in
+  (* ..., 32, addr, value *)
+  let ce = append_instruction ce DUP2 in
+  (* ..., 32, addr, value, addr *)
+  let ce = append_instruction ce MSTORE in
+  (* ..., 32, addr *)
+  ce
 
 (*
  * after this, the stack contains
  * ..., size, offset_in_memory
  *)
-let place_exp_in_memory le ce ((typ, e) : typ exp) =
-  let ce = codegen_exp le ce (typ, e) in
+let place_exp_in_memory le ce ((e, typ) : typ exp) =
+  let original_stack_size = stack_size ce in
+  let ce = codegen_exp le ce (e, typ) in
+  let () = assert (stack_size ce = 1 + original_stack_size) in
   (* the stack layout depends on typ *)
-  let le, ce = move_stack_top_to_memory typ le ce in
+  let ce = move_stack_top_to_memory typ le ce in
+  let () = assert (stack_size ce = 2 + original_stack_size) in
   le, ce
 
 (*
  * return_mem_content assumes the stack left after place_exp_in_memory
+ * ..., size, offset_in_memory
  *)
 let return_mem_content le ce =
-  failwith "return_mem_content"
+  append_instruction ce RETURN
 
 let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let original_stack_size = stack_size ce in
