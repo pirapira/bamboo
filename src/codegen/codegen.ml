@@ -600,8 +600,14 @@ let add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | IfSingleSentence _ -> failwith "ifsingle"
   | SelfdestructSentence _ -> failwith "destruct"
 
+let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
+  let additions : (string * Location.location) list = Ethereum.arguments_with_locations case in
+  LocationEnv.add_pairs le additions
+
 let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
+  let le = LocationEnv.add_empty_block le in
+  let le = add_case_argument_locations le case in
   let ((le : LocationEnv.location_env), ce) =
     List.fold_left
       (fun ((le : LocationEnv.location_env), ce) sent -> add_sentence le ce layout sent)

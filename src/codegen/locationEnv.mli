@@ -7,6 +7,7 @@ val add_empty_block : location_env -> location_env
 (** should maintain the uniqueless of [string] in the environment. *)
 val add_pair : location_env -> string (* ?? *) ->
                Location.location -> location_env
+val add_pairs : location_env -> (string * Location.location) list -> location_env
 val lookup : location_env -> string ->
              Location.location option
 

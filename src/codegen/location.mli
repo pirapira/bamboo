@@ -29,8 +29,14 @@ type 'imm cached_storage =
   ; cache : 'imm volatile_location
   }
 
+type calldata_range =
+  { calldata_offset : int
+  ; calldata_size : int
+  }
+
 type location =
   | Storage of PseudoImm.pseudo_imm storage_range
   | CachedStorage of PseudoImm.pseudo_imm cached_storage
   | Volatile of PseudoImm.pseudo_imm volatile_location
   | Code of PseudoImm.pseudo_imm code_range
+  | Calldata of calldata_range

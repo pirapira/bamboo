@@ -52,7 +52,30 @@ let get_interface_typ (raw : Syntax.arg) : (string * interface_typ) option =
   | _ -> Some (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
 
 let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
-    Misc.filter_map get_interface_typ
+  Misc.filter_map get_interface_typ
+
+let rec argument_sizes_to_positions_inner ret used sizes =
+  match sizes with
+  | [] -> ret
+  | h :: t ->
+     argument_sizes_to_positions_inner
+       (used :: ret) (used + h) t
+
+let argument_sizes_to_positions sizes =
+  argument_sizes_to_positions_inner [] 0 sizes
+
+let arguments_with_locations (c : Syntax.typ Syntax.case) : (string * Location.location) list =
+  Syntax.(
+    match c.case_header with
+    | DefaultCaseHeader -> []
+    | UsualCaseHeader h ->
+       let sizes : int list = List.map calldata_size_of_arg h.Syntax.case_arguments in
+       let positions : int list = argument_sizes_to_positions sizes in
+       let size_pos : (int * int) list = List.combine positions sizes in
+       let locations : Location.location list = List.map (fun (o, s) -> Location.(Calldata {calldata_offset = o; calldata_size = s})) size_pos in
+       let names : string list = List.map (fun a -> a.Syntax.arg_ident) h.Syntax.case_arguments in
+       List.combine names locations
+  )
 
 let get_array (raw : Syntax.arg) : (string * Syntax.typ * Syntax.typ) option =
   match Syntax.(raw.arg_typ) with

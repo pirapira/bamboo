@@ -115,3 +115,4 @@ val is_mapping : typ -> bool
 val count_plain_args : typ list -> int
 
 val fits_in_one_storage_slot : typ -> bool
+val calldata_size_of_arg : arg -> int

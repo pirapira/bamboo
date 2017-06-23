@@ -36,6 +36,9 @@ let add_pair (le : location_env) (key : string) (loc : Location.location)
   | [] -> failwith "add_pair: no block"
   | h :: t -> ((key, loc) :: h) :: t
 
+let add_pairs (le : location_env) (lst : (string * Location.location) list) : location_env =
+  List.fold_left (fun le' (str, loc) -> add_pair le str loc) le lst
+
 let add_empty_block orig = [] :: orig
 
 let stack_story_block (block : (string * Location.location) list) : int option =

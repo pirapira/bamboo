@@ -28,6 +28,9 @@ type function_signature =
 val get_interface_typs :
   Syntax.arg list -> (string * interface_typ) list
 
+val arguments_with_locations :
+  Syntax.typ Syntax.case -> (string * Location.location) list
+
 val constructor_arguments :
   Syntax.typ Syntax.contract -> (string * interface_typ) list
 

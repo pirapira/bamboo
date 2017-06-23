@@ -179,3 +179,17 @@ let fits_in_one_storage_slot (typ : typ) =
   | ReferenceType _ -> false
   | TupleType _ -> false
   | ContractArchType _ -> false
+
+let calldata_size_of_typ (typ : typ) =
+  match typ with
+  | UintType -> 32
+  | AddressType -> 32
+  | BoolType -> 32
+  | ContractInstanceType _ -> 32
+  | MappingType _ -> failwith "mapping cannot be a case argument"
+  | ReferenceType _ -> failwith "reference type cannot be a case argument"
+  | TupleType _ -> failwith "tupletype not implemented"
+  | ContractArchType _ -> failwith "ContractArchType cannot be a case argument"
+
+let calldata_size_of_arg (arg : arg) =
+  calldata_size_of_typ arg.arg_typ
