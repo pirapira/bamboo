@@ -21,7 +21,11 @@ let update (orig : location_env) (str : string) (new_loc : Location.location)
   Misc.change_first (update_block str new_loc) orig
 
 let lookup_block (search : string) (lst : (string * Location.location) list)
-    : Location.location option = failwith "lookup_block"
+    : Location.location option =
+  try
+    Some (List.assoc search lst)
+  with
+    Not_found -> None
 
 let lookup (le : location_env) (search : string) : Location.location option =
   Misc.first_some (lookup_block search) le
