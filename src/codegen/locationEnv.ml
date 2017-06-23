@@ -78,12 +78,12 @@ let constructor_initial_location_env (cid : Assoc.contract_id)
 
 (** [runtime_initial_location_env contract]
  * is a location environment that contains
- * the constructor arguments (excluding arrays)
+ * the constructor arguments
  * after StorageConstrutorArgumentBegin *)
 let runtime_initial_location_env
       (contract : Syntax.typ Syntax.contract) :
         location_env =
-  let lst = Ethereum.constructor_arguments contract in
+  let plain = Ethereum.constructor_arguments contract in
   let init = add_empty_block empty_location_env in
   let f (lenv, word_idx) (name, typ) =
     let size_in_word = Ethereum.interface_typ_size typ / 32 in
@@ -94,5 +94,15 @@ let runtime_initial_location_env
     let new_lenv = add_pair lenv name loc in
     (new_lenv, word_idx + size_in_word)
   in
-  let (le, _) = List.fold_left f (init, 1) lst in
+  let (le, mid) = List.fold_left f (init, 1) plain in
+  let arrays = Ethereum.arrays_in_contract contract in (* XXX: refactor the repetition *)
+  let g (lenv, word_idx) (name, _, _) =
+    let size_in_word = 1 in
+    let loc = Location.(Storage {
+                            storage_start = Int word_idx;
+                            storage_size = Int size_in_word
+              }) in
+    let new_lenv = add_pair lenv name loc in
+    (new_lenv, word_idx + size_in_word) in
+  let (le, _) = List.fold_left g (le, mid) arrays in
   le

@@ -622,7 +622,7 @@ let codegen_append_contract_bytecode
   let ce = append_instruction ce (JUMPDEST entry_label) in
   (* update the entrypoint database with (id, pc) pair *)
   let () = EntrypointDatabase.(register_entrypoint
-             (Contract cid) entry_label) in
+                                 (Contract cid) entry_label) in
 
   (* add jumps to the cases *)
   let (le, ce) = add_dispatcher le ce cid contract in
