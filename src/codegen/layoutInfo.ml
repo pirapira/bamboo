@@ -223,22 +223,22 @@ let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code :
   ; contract_args = List.map (fun a -> a.Syntax.arg_typ) (c.Syntax.contract_arguments)
   }
 
-let rec arg_locations_inner (used_plain_args : int) (used_mapping_seeds : int)
+let rec arg_locations_inner (offset : int) (used_plain_args : int) (used_mapping_seeds : int)
                             (num_of_plains : int)
                             (args : Syntax.typ list) : Storage.storage_location list =
   match args with
   | [] -> []
   | h :: t ->
      if Syntax.is_mapping h then
-       (num_of_plains + used_mapping_seeds) ::
-         arg_locations_inner used_plain_args (used_mapping_seeds + 1) num_of_plains t
+       (offset + num_of_plains + used_mapping_seeds) ::
+         arg_locations_inner offset used_plain_args (used_mapping_seeds + 1) num_of_plains t
      else
-       used_plain_args ::
-         arg_locations_inner (used_plain_args + 1) used_mapping_seeds num_of_plains t
+       (offset + used_plain_args) ::
+         arg_locations_inner offset (used_plain_args + 1) used_mapping_seeds num_of_plains t
 
 (* this needs to take storage_constructor_arguments_begin *)
-let arg_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
+let arg_locations (offset : int) (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
   let argument_types = List.map (fun a -> a.Syntax.arg_typ) cntr.Syntax.contract_arguments in
   let () = assert (List.for_all Syntax.fits_in_one_storage_slot argument_types) in
   let num_of_arrays = Syntax.count_plain_args argument_types in
-  arg_locations_inner 0 0 num_of_arrays argument_types
+  arg_locations_inner offset 0 0 num_of_arrays argument_types

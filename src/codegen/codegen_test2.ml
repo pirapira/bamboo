@@ -42,8 +42,8 @@ let _ =
      let constructors : constructor_compiled Assoc.contract_id_assoc = compile_constructors contracts in
      let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
        List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
-     let _ = LayoutInfo.construct_layout_info contracts_layout_info in
-     let runtime_compiled = compile_runtime contracts in
+     let layout = LayoutInfo.construct_layout_info contracts_layout_info in
+     let runtime_compiled = compile_runtime layout contracts in
      let runtime_ce = runtime_compiled.runtime_codegen_env in
      let () = Evm.print_pseudo_program (CodegenEnv.ce_program runtime_ce) in
      let () = Printf.printf "=====layout_info (common to all contracts)=====\n" in

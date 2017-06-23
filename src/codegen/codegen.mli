@@ -30,6 +30,7 @@ type runtime_compiled =
   }
 
 val compile_runtime :
+  LayoutInfo.layout_info ->
   Syntax.typ Syntax.contract Assoc.contract_id_assoc -> runtime_compiled
 
 (* TODO: remove from the interface.

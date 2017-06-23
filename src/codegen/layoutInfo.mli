@@ -72,5 +72,7 @@ val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> l
 
 val construct_post_layout_info : (Assoc.contract_id * contract_layout_info) list -> runtime_layout_info -> post_layout_info
 
-(** [arg_locations cl] returns the list of storage locations where the arguments are stored. *)
-val arg_locations : Syntax.typ Syntax.contract -> Storage.storage_location list
+(** [arg_locations offset cl] returns the list of storage locations where the arguments are stored.
+ *  [offset] should be the index of the first argument
+ *)
+val arg_locations : int -> Syntax.typ Syntax.contract ->  Storage.storage_location list

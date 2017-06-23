@@ -514,9 +514,9 @@ let prepare_words_on_stack le ce (args : typ exp list) =
 let store_words_into_storage_locations le ce arg_locations =
   failwith "store_words_into_storage_locations"
 
-let set_contract_arguments le ce cid (args : typ exp list) =
+let set_contract_arguments le ce cid offset (args : typ exp list) =
   let contract = contract_lookup ce cid in
-  let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations contract in
+  let arg_locations : Storage.storage_location list = LayoutInfo.arg_locations offset contract in
   let () = assert (List.length arg_locations = List.length args) in
   let (le, ce) = prepare_words_on_stack le ce args in
   let (le, ce) = store_words_into_storage_locations le ce arg_locations in
@@ -525,21 +525,22 @@ let set_contract_arguments le ce cid (args : typ exp list) =
    *)
   (le, ce)
 
-let set_continuation_to_function_call le ce (fcall, typ_exp) =
+let set_continuation_to_function_call le ce layout (fcall, typ_exp) =
   let head : string = fcall.call_head in
   let args : typ exp list = fcall.call_args in
   let cid = cid_lookup ce head in
   let ce = set_contract_pc ce cid in
-  let (le, ce) = set_contract_arguments le ce cid args in
+  let offset = layout.LayoutInfo.storage_constructor_arguments_begin cid in
+  let (le, ce) = set_contract_arguments le ce offset cid args in
   (le, ce)
 
 (*
  * set_continuation sets the storage contents.
  * So that the next message call would start from the continuation.
  *)
-let set_continuation le ce (cont_exp, typ_exp) =
+let set_continuation le ce (layout : LayoutInfo.layout_info) (cont_exp, typ_exp) =
   match cont_exp with
-  | FunctionCallExp fcall -> set_continuation_to_function_call le ce (fcall, typ_exp)
+  | FunctionCallExp fcall -> set_continuation_to_function_call le ce layout (fcall, typ_exp)
   | _ -> failwith "strange_continuation"
 
 (*
@@ -568,35 +569,35 @@ let place_exp_in_memory le ce ((typ, e) : typ exp) =
 let return_mem_content le ce =
   failwith "return_mem_content"
 
-let add_return le ce ret =
+let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let original_stack_size = stack_size ce in
   let e = ret.return_exp in
   let c = ret.return_cont in
-  let (le, ce) = set_continuation le ce c in
+  let (le, ce) = set_continuation le ce layout c in
   let (le, ce) = place_exp_in_memory le ce e in
   let ce = return_mem_content le ce in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 
-let add_sentence le ce sent =
+let add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   match sent with
   | AbortSentence -> (le, add_throw ce)
-  | ReturnSentence ret -> add_return le ce ret
+  | ReturnSentence ret -> add_return le ce layout ret
   | AssignmentSentence _ -> failwith "assignment"
   | VariableInitSentence _ -> failwith "init"
   | IfSingleSentence _ -> failwith "ifsingle"
   | SelfdestructSentence _ -> failwith "destruct"
 
-let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
+let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
-  let (le, ce) =
+  let ((le : LocationEnv.location_env), ce) =
     List.fold_left
-      (fun (le, ce) sent -> add_sentence le ce sent)
+      (fun ((le : LocationEnv.location_env), ce) sent -> add_sentence le ce layout sent)
       (le, ce) case.case_body in
   (le, ce)
 
 let codegen_append_contract_bytecode
-      le ce
+      le ce layout
       ((cid, contract) : Assoc.contract_id * Syntax.typ Syntax.contract) =
   (* jump destination for the contract *)
   let entry_label = Label.new_label () in
@@ -611,21 +612,21 @@ let codegen_append_contract_bytecode
   (* add the cases *)
   let cases = contract.Syntax.contract_cases in
   let (le, ce) = List.fold_left
-                   (fun (le,ce) case -> add_case le ce cid case)
+                   (fun (le,ce) case -> add_case le ce layout cid case)
                    (le, ce) cases in
 
   ce
 
-let append_runtime (prev : runtime_compiled)
+let append_runtime layout (prev : runtime_compiled)
                    ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
                    : runtime_compiled =
-  { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env (cid, contract)
+  { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env layout (cid, contract)
   ; runtime_contract_offsets = Assoc.insert cid (CodegenEnv.code_length prev.runtime_codegen_env) prev.runtime_contract_offsets
   }
 
-let compile_runtime (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
+let compile_runtime layout (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : runtime_compiled =
-  List.fold_left append_runtime (initial_runtime_compiled (cid_lookup_in_assoc contracts) contracts) contracts
+  List.fold_left (append_runtime layout) (initial_runtime_compiled (cid_lookup_in_assoc contracts) contracts) contracts
 
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
