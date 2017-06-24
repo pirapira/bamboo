@@ -220,7 +220,8 @@ let copy_arguments_from_code_to_memory
       (contract : Syntax.typ Syntax.contract) :
       (CodegenEnv.codegen_env) =
   let total_size = Ethereum.total_size_of_interface_args
-                       (List.map snd (Ethereum.constructor_arguments contract)) in
+                     (List.map snd (Ethereum.constructor_arguments contract)) in
+  let () = Printf.printf "total size of constructor arguments: %d\n%!" total_size in
   let original_stack_size = stack_size ce in
   (* [] *)
   let ce = append_instruction ce (PUSH32 (Int total_size)) in
@@ -284,6 +285,7 @@ let bulk_sstore_from_memory ce =
   let jump_label_continue = Label.new_label () in
   let jump_label_exit = Label.new_label () in
   let ce = append_instruction ce (JUMPDEST jump_label_continue) in
+  (* stack [..., size, memory_src_start, storage_target_start] *)
   let ce = append_instruction ce DUP3 in
   (* stack [..., size, memory_src_start, storage_target_start, size] *)
   let ce = append_instruction ce ISZERO in
@@ -306,19 +308,18 @@ let bulk_sstore_from_memory ce =
   (* stack [..., size, memory_src_start, 32, storage_target_start] *)
   let ce = append_instruction ce SWAP3 in
   (* stack [..., storage_target_start, memory_src_start, 32, size] *)
-  let ce = append_instruction ce SWAP1 in
-  (* stack [..., storage_target_start, memory_src_start, size, 32] *)
   let ce = append_instruction ce SUB in
   (* stack [..., storage_target_start, memory_src_start, new_size] *)
   let ce = append_instruction ce SWAP2 in
-  (* stack [..., new_size, storage_target_start, memory_src_start] *)
+  (* stack [..., new_size, memory_src_start, storage_target_start] *)
+  let ce = increase_top ce 1 in (* 1 word is 32 bytes. *)
+  (* stack [..., new_size, memory_src_start, new_storage_target_start] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack [..., new_size, new_storage_target_start, memory_src_start] *)
   (* increase memory_src_start *)
   let ce = increase_top ce 32 in
-  (* stack [..., new_size, storage_target_start, new_memory_src_start] *)
-  (* increase storage_target_start *)
+  (* stack [..., new_size, new_storage_target_start, new_memory_src_start] *)
   let ce = append_instruction ce SWAP1 in
-  (* stack [..., new_size, new_memory_src_start, storage_target_start] *)
-  let ce = increase_top ce 32 in
   (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
   let () = assert (stack_size ce = original_stack_size) in
   (** add create a combinatino of jump and reset_stack_size *)
