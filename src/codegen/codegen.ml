@@ -178,7 +178,14 @@ let move_info_around
 
 let codegen_bytecode
   (src : Syntax.typ Syntax.contract) :
-  PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
+      PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
+
+(** [initialize_memory_allocator] initializes memory position 64 as 96 *)
+let initialize_memory_allocator (ce : CodegenEnv.codegen_env) =
+  let ce = append_instruction ce (PUSH1 (Int 96)) in
+  let ce = append_instruction ce (PUSH1 (Int 64)) in
+  let ce = append_instruction ce MSTORE in
+  ce
 
 (** [push_allocated_memory] behaves like an instruction
  * that takes a desired memory size as an argument.
@@ -297,8 +304,10 @@ let bulk_sstore_from_memory ce =
   (* stack [..., size, memory_src_start, storage_target_start] *)
   let ce = append_instruction ce DUP2 in
   (* stack [..., size, memory_src_start, storage_target_start, memory_src_start] *)
+  let ce = append_instruction ce MLOAD in
+  (* stack [..., size, memory_src_start, storage_target_start, stored] *)
   let ce = append_instruction ce DUP2 in
-  (* stack [..., size, memory_src_start, storage_target_start, memory_src_start, storage_target_start] *)
+  (* stack [..., size, memory_src_start, storage_target_start, stored, storage_target_start] *)
   let ce = append_instruction ce SSTORE in
   (* stack [..., size, memory_src_start, storage_target_start] *)
   (* decrease size *)
@@ -417,6 +426,7 @@ let codegen_constructor_bytecode
   let le = LocationEnv.constructor_initial_location_env contract_id
                                                         (Assoc.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contracts in
+  let ce = initialize_memory_allocator ce in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)
   let ce = copy_arguments_from_code_to_memory le ce
@@ -704,6 +714,8 @@ let codegen_append_contract_bytecode
   (* update the entrypoint database with (id, pc) pair *)
   let () = EntrypointDatabase.(register_entrypoint
                                  (Contract cid) entry_label) in
+
+  let ce = initialize_memory_allocator ce in
 
   (* add jumps to the cases *)
   let (le, ce) = add_dispatcher le ce cid contract in
