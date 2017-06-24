@@ -7,7 +7,7 @@ ocamlbuild -Is ast,parse,lib,codegen -package batteries -package cryptokit -pack
 ./codegen_test.native || exit 1
 ./lib_test.native || exit 1
 ./hex_test.native || exit 1
-for f in `ls parse/examples/*.sol`
+for f in `ls parse/examples/*.bbo`
 do
   echo "trying" $f
   cat $f | ./parser_test.native || \
