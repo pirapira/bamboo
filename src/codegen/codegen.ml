@@ -302,8 +302,12 @@ let bulk_sstore_from_memory ce =
   (* decrease size *)
   let ce = append_instruction ce (PUSH32 (Int 32)) in
   (* stack [..., size, memory_src_start, storage_target_start, 32] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack [..., size, memory_src_start, 32, storage_target_start] *)
   let ce = append_instruction ce SWAP3 in
   (* stack [..., storage_target_start, memory_src_start, 32, size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack [..., storage_target_start, memory_src_start, size, 32] *)
   let ce = append_instruction ce SUB in
   (* stack [..., storage_target_start, memory_src_start, new_size] *)
   let ce = append_instruction ce SWAP2 in
@@ -318,7 +322,9 @@ let bulk_sstore_from_memory ce =
   (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
   let () = assert (stack_size ce = original_stack_size) in
   (** add create a combinatino of jump and reset_stack_size *)
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_continue)) in
   let ce = append_instruction ce JUMP in
+  (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
   let ce = set_stack_size ce (original_stack_size) in
   let ce = append_instruction ce (JUMPDEST jump_label_exit) in
   (* stack [..., size, memory_src_start, storage_target_start] *)
@@ -391,7 +397,6 @@ let codegen_constructor_bytecode
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
   let ce = set_contract_pc ce contract_id in
   (* stack: [] *)
-  (* TODO: return the code as a return value *)
   let ce = copy_runtime_code_to_memory ce contracts contract_id in
   (* stack: [code_length, code_start_on_memory] *)
   let ce = CodegenEnv.append_instruction ce RETURN in
@@ -712,3 +717,14 @@ let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_asso
   let imm_runtime = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program runtime.runtime_codegen_env) in
   (* the code is stored in the reverse order *)
   imm_runtime@imm_constructor
+
+let compose_runtime_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
+                     (runtime : runtime_compiled)
+    : Big_int.big_int Evm.program =
+  let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
+    List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
+  let runtime_layout = layout_info_from_runtime_compiled runtime in
+  let layout = LayoutInfo.construct_post_layout_info contracts_layout_info runtime_layout in
+  (* TODO: 0 in the next line is a bit ugly. *)
+  let imm_runtime = LayoutInfo.realize_pseudo_program layout 0 (CodegenEnv.ce_program runtime.runtime_codegen_env) in
+  imm_runtime

@@ -53,5 +53,9 @@ let _ =
      let bytecode : Big_int.big_int Evm.program =
        compose_bytecode constructors runtime_compiled (fst (List.hd contracts)) in
      let () = Evm.print_imm_program bytecode in
+     let () = Printf.printf "=====runtime bytecode=====\n" in
+     let runtime_bytecode : Big_int.big_int Evm.program =
+       runtime_compiled in
+     let () = Evm.print_imm_program runtime_bytecode in
      () in
   Printf.printf "Finished codgen_test2.\n"
