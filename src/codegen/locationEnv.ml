@@ -94,7 +94,8 @@ let runtime_initial_location_env
     let new_lenv = add_pair lenv name loc in
     (new_lenv, word_idx + size_in_word)
   in
-  let (le, mid) = List.fold_left f (init, 1) plain in
+  (* XXX: remove the hard coded 2 *)
+  let (le, mid) = List.fold_left f (init, 2) plain in
   let arrays = Ethereum.arrays_in_contract contract in (* XXX: refactor the repetition *)
   let g (lenv, word_idx) (name, _, _) =
     let size_in_word = 1 in
