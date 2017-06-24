@@ -381,6 +381,33 @@ let cid_lookup_in_assoc (contracts : Syntax.typ Syntax.contract Assoc.contract_i
                         (name : string) : Assoc.contract_id =
   Assoc.lookup_id (fun c -> c.contract_name = name) contracts
 
+let setup_seed (le, ce) (loc : Storage.storage_location) =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
+  (* stack: [1] *)
+  let ce = append_instruction ce SLOAD in
+  (* stack: [orig_seed] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [orig_seed, orig_seed] *)
+  let ce = append_instruction ce (PUSH4 (PseudoImm.Int loc)) in
+  (* stack: [orig_seed, orig_seed, loc] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [orig_seed] *)
+  let ce = increase_top ce 1 in
+  (* stack: [orig_seed + 1] *)
+  let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
+  (* stack: [orig_seed + 1, 1] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [] *)
+  let () = assert (stack_size ce = original_stack_size) in
+  (le, ce)
+
+let setup_array_seeds le ce (contract: Syntax.typ Syntax.contract) : CodegenEnv.codegen_env =
+  let array_locations = LayoutInfo.array_locations contract in
+  let (_, ce) =
+    List.fold_left setup_seed (le, ce) array_locations in
+  ce
+
 let codegen_constructor_bytecode
       ((contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc),
        (contract_id : Assoc.contract_id))
@@ -396,6 +423,9 @@ let codegen_constructor_bytecode
              (Assoc.choose_contract contract_id contracts) in
   (* stack: [arg_mem_size, arg_mem_begin] *)
   let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
+  (* stack: [] *)
+  (* set up array seeds *)
+  let (ce :CodegenEnv.codegen_env) = setup_array_seeds le ce (Assoc.choose_contract contract_id contracts) in
   let ce = set_contract_pc ce contract_id in
   (* stack: [] *)
   let ce = copy_runtime_code_to_memory ce contracts contract_id in

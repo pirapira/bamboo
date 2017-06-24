@@ -240,5 +240,14 @@ let rec arg_locations_inner (offset : int) (used_plain_args : int) (used_mapping
 let arg_locations (offset : int) (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
   let argument_types = List.map (fun a -> a.Syntax.arg_typ) cntr.Syntax.contract_arguments in
   let () = assert (List.for_all Syntax.fits_in_one_storage_slot argument_types) in
-  let num_of_arrays = Syntax.count_plain_args argument_types in
-  arg_locations_inner offset 0 0 num_of_arrays argument_types
+  let num_of_plains = Syntax.count_plain_args argument_types in
+  arg_locations_inner offset 0 0 num_of_plains argument_types
+
+let array_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_location list =
+  let argument_types = List.map (fun a -> a.Syntax.arg_typ) cntr.Syntax.contract_arguments in
+  let () = assert (List.for_all Syntax.fits_in_one_storage_slot argument_types) in
+  let num_of_plains = Syntax.count_plain_args argument_types in
+  let total_num = List.length argument_types in
+  if total_num = num_of_plains then []
+  else
+  BatList.(range (2 + num_of_plains) `To (total_num + 1))
