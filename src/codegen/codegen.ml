@@ -33,13 +33,115 @@ let copy_to_stack_top le ce (l : Location.location) =
     | Stack _ -> failwith "copy_to_stack_top: Stack"
   )
 
-let swap_entrance_pc_with_zero = failwith "swap_entrance_pc_with_zero"
+let swap_entrance_pc_with_zero ce =
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce SLOAD in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce DUP1 in
+  let ce = append_instruction ce SSTORE in
+  ce
 
-let produce_init_code_in_memory = failwith "produce_init_code_in_memory"
+(** [restore_entrance_pc] moves the topmost stack element to the entrance pc *)
+let restore_entrance_pc ce =
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce SSTORE in
+  ce
 
-let restore_entrance_pc = failwith "restore_entrance_pc"
+(** [throw_if_zero] peeks the topmost stack element and throws if it's zero *)
+let throw_if_zero ce =
+  let ce = append_instruction ce DUP1 in
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce JUMPI in
+  ce
 
-let throw_if_zero = failwith "throw_if_zero"
+(** [push_allocated_memory] behaves like an instruction
+ * that takes a desired memory size as an argument.
+ * This pushes the allocated address.
+ *)
+let push_allocated_memory (ce : CodegenEnv.codegen_env) =
+  let original_stack_size = stack_size ce in
+  (* [desired_length] *)
+  let ce = append_instruction ce (PUSH32 (Int 64)) in
+  let ce = append_instruction ce DUP1 in
+  (* [desired_length, 64, 64] *)
+  let ce = append_instruction ce MLOAD in
+  (* [desired_length, 64, memory[64]] *)
+  let ce = append_instruction ce DUP1 in
+  (* [desired_length, 64, memory[64], memory[64]] *)
+  let ce = append_instruction ce SWAP3 in
+  (* [memory[64], 64, memory[64], desired_length] *)
+  let ce = append_instruction ce ADD in
+  (* [memory[64], 64, new_head] *)
+  let ce = append_instruction ce SWAP1 in
+  (* [memory[64], new_head, 64] *)
+  let ce = append_instruction ce MSTORE in
+  (* [memory[64]] *)
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
+let copy_from_code_to_memory ce =
+  (* stack: [codesize, codeoffset] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack: [codesize, codeoffset, codesize] *)
+  let ce = push_allocated_memory ce in
+  (* stack: [codesize, codeoffset, memory_address] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: [codesize, memory_address, codeoffset] *)
+  let ce = append_instruction ce DUP3 in
+  (* stack: [codesize, memory_address, codeoffset, codesize] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: [codesize, memory_address, codesize, codeoffset] *)
+  let ce = append_instruction ce DUP3 in
+  (* stack: [codesize, memory_address, codesize, codeoffset, memory_address] *)
+  let ce = append_instruction ce CODECOPY in
+  (* stack: [codesize, memory_address] *)
+  ce
+
+(** [copy_whole_current_code_to_memory] allocates enough memory to accomodate the
+ *  whole of the currently running code, and copies it there.
+ *  After this, [size, offset] of the memory region is left on the stack.
+ *)
+let copy_whole_current_code_to_memory ce =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce CODESIZE in
+  (* stack: [size] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [size, size] *)
+  let ce = push_allocated_memory ce in
+  (* stack: [size, offset] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack: [size, offset, codesize] *)
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  (* stack: [size, offset, codesize, 0] *)
+  let ce = append_instruction ce DUP3 in
+  (* stack: [size, offset, codesize, 0, offset] *)
+  let ce = append_instruction ce CODECOPY in
+  (* stack: [size, offset] *)
+  let () = assert(original_stack_size + 2 = stack_size ce) in
+  ce
+
+let produce_init_code_in_memory ce new_exp =
+  let name = new_exp.new_head in
+  let contract_id = CodegenEnv.cid_lookup ce name in
+  let ce = append_instruction ce (PUSH32 (ConstructorCodeSize contract_id)) in
+  let ce = append_instruction ce (PUSH32 (ConstructorInRuntimeCodeOffset contract_id)) in
+  (* stack: [codesize, codeoffset] *)
+  let ce = copy_from_code_to_memory ce in
+  (* stack: [memory_size, memory_offset] *)
+  let ce = copy_whole_current_code_to_memory ce in
+  (* stack: [memory_size, memory_offset, memory_second_size, memory_second_offset] *)
+  let ce = append_instruction ce POP in
+  (* stack: [memory_size, memory_offset, memory_second_size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: [memory_size, memory_second_size, memory_offset] *)
+  let ce = append_instruction ce SWAP2 in
+  (* stack: [memory_offset, memory_second_size, memory_size] *)
+  let ce = append_instruction ce ADD in
+  (* stack: [memory_offset, memory_total_size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: [memory_total_size, memory_offset] *)
+  ce
 
 let rec codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
@@ -48,7 +150,7 @@ let rec codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractnam
   (* set up the reentrance guard *)
   let ce = swap_entrance_pc_with_zero ce in
   (* stack : [entrance_pc_bkp] *)
-  let ce = produce_init_code_in_memory new_exp in
+  let ce = produce_init_code_in_memory ce new_exp in
   (* stack : [entrance_pc_bkp, size, offset] *)
   let ce =
     (match new_exp.new_msg_info.message_value_info with
@@ -224,30 +326,6 @@ let initialize_memory_allocator (ce : CodegenEnv.codegen_env) =
   let ce = append_instruction ce MSTORE in
   ce
 
-(** [push_allocated_memory] behaves like an instruction
- * that takes a desired memory size as an argument.
- * This pushes the allocated address.
- *)
-let push_allocated_memory (ce : CodegenEnv.codegen_env) =
-  let original_stack_size = stack_size ce in
-  (* [desired_length] *)
-  let ce = append_instruction ce (PUSH32 (Int 64)) in
-  let ce = append_instruction ce DUP1 in
-  (* [desired_length, 64, 64] *)
-  let ce = append_instruction ce MLOAD in
-  (* [desired_length, 64, memory[64]] *)
-  let ce = append_instruction ce DUP1 in
-  (* [desired_length, 64, memory[64], memory[64]] *)
-  let ce = append_instruction ce SWAP3 in
-  (* [memory[64], 64, memory[64], desired_length] *)
-  let ce = append_instruction ce ADD in
-  (* [memory[64], 64, new_head] *)
-  let ce = append_instruction ce SWAP1 in
-  (* [memory[64], new_head, 64] *)
-  let ce = append_instruction ce MSTORE in
-  (* [memory[64]] *)
-  let () = assert (stack_size ce = original_stack_size) in
-  ce
 
 (** [copy_arguments_from_code_to_memory]
  *  copies constructor arguments at the end of the

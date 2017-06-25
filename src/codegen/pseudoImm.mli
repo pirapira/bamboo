@@ -16,6 +16,11 @@ type pseudo_imm =
   | ContractOffsetInRuntimeCode of Assoc.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | CaseOffsetInRuntimeCode of Assoc.contract_id * Syntax.case_header
 
+  (* constructor code is the part of the init code before the runtime code as payload.  *)
+  | ConstructorCodeSize of Assoc.contract_id
+  (* for runtime code creation, the runtime code also contains the constructor code. *)
+  | ConstructorInRuntimeCodeOffset of Assoc.contract_id
+
   | RuntimeCodeOffset of Assoc.contract_id
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm

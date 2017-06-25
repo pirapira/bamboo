@@ -124,6 +124,10 @@ let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.cont
      Big_int.big_int_of_int (runtime_code_offset layout.l cid)
   | RuntimeCodeSize ->
      Big_int.big_int_of_int (layout.runtime_code_size)
+  | ConstructorCodeSize cid ->
+     failwith "realize constructor code size"
+  | ConstructorInRuntimeCodeOffset cid ->
+     failwith "realize constructor in runtime code offset"
   | ContractOffsetInRuntimeCode cid ->
      Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->
