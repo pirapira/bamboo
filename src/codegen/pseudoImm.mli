@@ -4,8 +4,6 @@ type pseudo_imm =
   | Big of Big_int.big_int
   | Int of int
   | DestLabel of Label.label
-  | ContractRuntimeOffset of Assoc.contract_id
-
   | StorageProgramCounterIndex
   | StorageConstructorArgumentsBegin of Assoc.contract_id
   | StorageConstructorArgumentsSize of Assoc.contract_id
@@ -17,7 +15,9 @@ type pseudo_imm =
    *)
   | ContractOffsetInRuntimeCode of Assoc.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | CaseOffsetInRuntimeCode of Assoc.contract_id * Syntax.case_header
-  | RuntimeCodeOffset
+
+  | RuntimeCodeOffset (* XXX what is the difference from ContractRuntimeOffset? *)
+  (* XXX this needs an Assoc.contract_id *)
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm
 

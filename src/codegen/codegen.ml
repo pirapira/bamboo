@@ -33,10 +33,44 @@ let copy_to_stack_top le ce (l : Location.location) =
     | Stack _ -> failwith "copy_to_stack_top: Stack"
   )
 
+let swap_entrance_pc_with_zero = failwith "swap_entrance_pc_with_zero"
+
+let produce_init_code_in_memory = failwith "produce_init_code_in_memory"
+
+let restore_entrance_pc = failwith "restore_entrance_pc"
+
+let throw_if_zero = failwith "throw_if_zero"
+
+let rec codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
+  let original_stack_size = stack_size ce in
+  (* assert that the reentrance info is throw *)
+  let () = failwith "check reentrance info" in
+  (* set up the reentrance guard *)
+  let ce = swap_entrance_pc_with_zero ce in
+  (* stack : [entrance_pc_bkp] *)
+  let ce = produce_init_code_in_memory new_exp in
+  (* stack : [entrance_pc_bkp, size, offset] *)
+  let ce =
+    (match new_exp.new_msg_info.message_value_info with
+     | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
+     | Some e -> codegen_exp le ce e) in
+  (* stack : [entrance_pc_bkp, size, offset, value] *)
+  let ce = append_instruction ce CREATE in
+  (* stack : [entrance_pc_bkp, create_result] *)
+  (* check the return value, if zero, throw *)
+  let ce = throw_if_zero ce in
+  (* stack : [entrance_pc_bkp, create_result] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack : [create_result, entrance_pc_bkp] *)
+  (* remove the reentrance guard *)
+  let ce = restore_entrance_pc ce in
+  (* stack : [create_result] *)
+  let () = assert (stack_size ce = original_stack_size + 1) in
+  ce
 
 (* le is not updated here.  It can be only updated in
  * a variable initialization *)
-let rec codegen_exp
+and codegen_exp
       (le : LocationEnv.location_env)
       (ce : CodegenEnv.codegen_env)
       ((e,t) : Syntax.typ Syntax.exp) :
@@ -144,8 +178,10 @@ let rec codegen_exp
      let ce = append_instruction ce JUMP in
      let ce = append_instruction ce (JUMPDEST success_label) in
      ce *)
+  | NewExp new_e, ContractInstanceType ctyp ->
+     codegen_new_exp le ce new_e ctyp
   | NewExp new_e, _ ->
-     failwith "exp code gen for new expression"
+     failwith "exp code gen for new expression with unexpected type"
   | FunctionCallExp _, _ ->
      (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
      failwith "exp code gen for callexp"

@@ -24,8 +24,11 @@ type post_layout_info =
     (* runtime_coode_offset is equal to constructor_code_size *)
   ; runtime_code_size : int
   ; contract_offset_in_runtime_code : int Assoc.contract_id_assoc
+
     (* And then, the runtime code is organized like this: *)
-    (* |dispatcher that jumps into the stored pc|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
+    (* |dispatcher that jumps into the stored pc|runtime code for contract A|runtime code for contract B|runtime code for contract C|
+       |constructor code for contract A|constructor code for contract B|constructor code for contract C|
+     *)
 
     (* And then, the runtime code for a particular contract is organized like this: *)
                                           (* |dispatcher that jumps into a case|runtime code for case f|runtime code for case g| *)
