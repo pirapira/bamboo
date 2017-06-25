@@ -682,11 +682,69 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 
+(* TODO: refactor with codegen_exp *)
+let codegen_array_seed le ce array =
+  begin match LocationEnv.lookup le array with
+  (** if things are just DUP'ed, location env should not be
+   * updated.  If they are SLOADED, the location env should be
+   * updated. *)
+  | Some location ->
+     let (le, ce) = copy_to_stack_top le ce location in
+     ce
+  | None -> failwith ("identifier's location not found: "^array)
+  end
+
+let keccak_cons le ce =
+  let original_stack_size = stack_size ce in
+  (* put the top into 0x00 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
+  let ce = append_instruction ce MSTORE in
+  (* put the top into 0x20 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
+  let ce = append_instruction ce MSTORE in
+  (* take the sah3 of 0x00--0x40 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
+  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
+  let ce = append_instruction ce SHA3 in
+  let () = assert (stack_size ce + 1 = original_stack_size) in
+  ce
+
+let put_stacktop_into_array_access le ce layout (aa : Syntax.typ Syntax.array_access) =
+  let array = aa.Syntax.array_access_array in
+  let index = aa.Syntax.array_access_index in
+  let ce = codegen_exp le ce index in
+  (* stack : [value, index] *)
+  let ce = codegen_array_seed le ce array in
+  (* stack : [value, index, array_seed] *)
+  let ce = keccak_cons le ce in
+  (* stack : [value, kec(array_seed ^ index)] *)
+  let ce = append_instruction ce SSTORE in
+  ce
+
+let put_stacktop_into_lexp le ce layout l =
+  let original_stack_size = stack_size ce in
+  let ce =
+    match l with
+    | IdentifierLExp ident -> failwith "put into identifier"
+    | ArrayAccessLExp aa -> put_stacktop_into_array_access le ce layout aa
+    in
+  let () = assert (original_stack_size = stack_size ce + 1) in
+  ce
+
+let add_assignment le ce layout l r =
+  let original_stack_size = stack_size ce in
+  (* produce r on the stack and then think about where to put that *)
+  let ce = codegen_exp le ce r in
+  let () = assert (1 + original_stack_size = stack_size ce) in
+  let ce = put_stacktop_into_lexp le ce layout l in
+  let () = assert (original_stack_size = stack_size ce) in
+  (le, ce)
+
 let add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   match sent with
   | AbortSentence -> (le, add_throw ce)
   | ReturnSentence ret -> add_return le ce layout ret
-  | AssignmentSentence _ -> failwith "assignment"
+  | AssignmentSentence (l, r) -> add_assignment le ce layout l r
   | VariableInitSentence _ -> failwith "init"
   | IfSingleSentence _ -> failwith "ifsingle"
   | SelfdestructSentence _ -> failwith "destruct"

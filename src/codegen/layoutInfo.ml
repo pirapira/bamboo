@@ -162,6 +162,7 @@ let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contr
   | MULMOD -> MULMOD
   | EXP -> EXP
   | SIGNEXTEND -> SIGNEXTEND
+  | SHA3 -> SHA3
   | ADDRESS -> ADDRESS
   | ORIGIN -> ORIGIN
   | CALLER -> CALLER

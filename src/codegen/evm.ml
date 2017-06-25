@@ -21,6 +21,7 @@ type 'imm instruction =
   | MULMOD
   | EXP
   | SIGNEXTEND
+  | SHA3
   | ADDRESS
   | ORIGIN
   | CALLER
@@ -104,6 +105,7 @@ let stack_eaten = function
   | MULMOD -> 3
   | EXP -> 2
   | SIGNEXTEND -> 2
+  | SHA3 -> 2
   | ADDRESS -> 0
   | ORIGIN -> 0
   | CALLER -> 0
@@ -177,6 +179,7 @@ let stack_pushed = function
   | ADDMOD -> 1
   | MULMOD -> 1
   | SIGNEXTEND -> 1
+  | SHA3 -> 1
   | ADDRESS -> 1
   | ORIGIN -> 1
   | CALLER -> 1
@@ -250,6 +253,7 @@ let string_of_pseudo_opcode op =
   | ADDMOD -> "ADDMOD"
   | MULMOD -> "MULMOD"
   | SIGNEXTEND -> "SIGNEXTEND"
+  | SHA3 -> "SHA3"
   | ADDRESS -> "ADDRESS"
   | ORIGIN -> "ORIGIN"
   | CALLER -> "CALLER"
@@ -331,6 +335,7 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
   | MULMOD -> h "09"
   | EXP -> h "0a"
   | SIGNEXTEND -> h "0b"
+  | SHA3 -> h "20"
   | ADDRESS -> h "30"
   | ORIGIN -> h "32"
   | CALLER -> h "33"

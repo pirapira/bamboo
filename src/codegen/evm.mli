@@ -21,6 +21,7 @@ type 'imm instruction =
   | MULMOD
   | EXP
   | SIGNEXTEND
+  | SHA3
   | ADDRESS
   | ORIGIN
   | CALLER
