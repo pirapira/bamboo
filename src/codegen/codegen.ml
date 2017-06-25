@@ -414,7 +414,7 @@ let copy_runtime_code_to_memory ce contracts contract_id =
   (* stack: [run_code_size, run_code_address] *)
   let ce = append_instruction ce DUP2 in
   (* stack: [run_code_size, run_code_address, run_code_size] *)
-  let ce = append_instruction ce (PUSH32 (RuntimeCodeOffset)) in
+  let ce = append_instruction ce (PUSH32 (RuntimeCodeOffset contract_id)) in
   (* stack: [run_code_size, run_code_address, run_code_size, RuntimeCodeOffset] *)
   let ce = append_instruction ce DUP3 in
   (* stack: [run_code_size, run_code_address, run_code_size, run_code_in_code, run_code_address] *)

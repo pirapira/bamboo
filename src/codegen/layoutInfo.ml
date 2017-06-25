@@ -120,8 +120,8 @@ let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.cont
      Big_int.big_int_of_int (layout.l.storage_constructor_arguments_size cid)
   | InitDataSize cid ->
      Big_int.big_int_of_int (layout.init_data_size cid)
-  | RuntimeCodeOffset ->
-     Big_int.big_int_of_int (runtime_code_offset layout.l initial_cid)
+  | RuntimeCodeOffset cid ->
+     Big_int.big_int_of_int (runtime_code_offset layout.l cid)
   | RuntimeCodeSize ->
      Big_int.big_int_of_int (layout.runtime_code_size)
   | ContractOffsetInRuntimeCode cid ->

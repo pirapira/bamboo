@@ -10,7 +10,7 @@ type pseudo_imm =
   | InitDataSize of Assoc.contract_id
   | ContractOffsetInRuntimeCode of Assoc.contract_id (* where in the runtime code does the contract start.  This index should be a JUMPDEST *)
   | CaseOffsetInRuntimeCode of Assoc.contract_id * Syntax.case_header
-  | RuntimeCodeOffset
+  | RuntimeCodeOffset of Assoc.contract_id
   | RuntimeCodeSize
   | Minus of pseudo_imm * pseudo_imm
 
@@ -25,7 +25,7 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | InitDataSize cid -> "InitDataSize (print contract id here)"
   | ContractOffsetInRuntimeCode _ -> "ContractOffsetInRuntimeCode (print contact id)"
   | CaseOffsetInRuntimeCode (cid, header) -> "CaseOffsetInRuntimeCode (print contract id, case header)"
-  | RuntimeCodeOffset -> "RuntimeCodeOffset"
+  | RuntimeCodeOffset cid -> "RuntimeCodeOffset (print contract id)"
   | RuntimeCodeSize -> "RuntimeCodeSize"
   | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"
 
