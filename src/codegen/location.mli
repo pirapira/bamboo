@@ -40,3 +40,4 @@ type location =
   | Volatile of PseudoImm.pseudo_imm volatile_location
   | Code of PseudoImm.pseudo_imm code_range
   | Calldata of calldata_range
+  | Stack of int

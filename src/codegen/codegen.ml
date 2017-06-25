@@ -30,6 +30,7 @@ let copy_to_stack_top le ce (l : Location.location) =
     | Volatile _ -> failwith "copy_to_stack_top: Volatile"
     | Code _ -> failwith "copy_to_stack_top: Code"
     | Calldata _ -> failwith "copy_to_stack_top: Calldata"
+    | Stack _ -> failwith "copy_to_stack_top: Stack"
   )
 
 
@@ -740,12 +741,20 @@ let add_assignment le ce layout l r =
   let () = assert (original_stack_size = stack_size ce) in
   (le, ce)
 
+let add_variable_init le ce layout i =
+  let position = stack_size ce in
+  let ce = codegen_exp le ce i.Syntax.variable_init_value in
+  let name = i.Syntax.variable_init_name in
+  let loc = Location.Stack position in
+  let le = LocationEnv.add_pair le name loc in
+  (le, ce)
+
 let add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   match sent with
   | AbortSentence -> (le, add_throw ce)
   | ReturnSentence ret -> add_return le ce layout ret
   | AssignmentSentence (l, r) -> add_assignment le ce layout l r
-  | VariableInitSentence _ -> failwith "init"
+  | VariableInitSentence i -> add_variable_init le ce layout i
   | IfSingleSentence _ -> failwith "ifsingle"
   | SelfdestructSentence _ -> failwith "destruct"
 
