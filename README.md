@@ -151,7 +151,7 @@ cd src
 sh run_tests.sh
 ```
 builds a compiler in development and tests it against the example files
-`src/parse/examples/*.sol`
+`src/parse/examples/*.bbo`
 
 ### Implementation
 
