@@ -193,3 +193,9 @@ let calldata_size_of_typ (typ : typ) =
 
 let calldata_size_of_arg (arg : arg) =
   calldata_size_of_typ arg.arg_typ
+
+let is_throw_only (ss : typ sentence list) : bool =
+  match ss with
+  | [] -> false
+  | [AbortSentence] -> true
+  | _ -> false

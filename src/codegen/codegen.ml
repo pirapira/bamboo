@@ -146,7 +146,7 @@ let produce_init_code_in_memory ce new_exp =
 let rec codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
-  let () = failwith "check reentrance info" in
+  let () = assert(is_throw_only new_exp.new_msg_info.message_reentrance_info)  in
   (* set up the reentrance guard *)
   let ce = swap_entrance_pc_with_zero ce in
   (* stack : [entrance_pc_bkp] *)
