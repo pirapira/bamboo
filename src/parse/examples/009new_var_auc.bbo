@@ -16,3 +16,10 @@ reentrance { abort; }; // failure throws.
          auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }
+contract bid
+  (address _sender
+  ,uint _value
+  ,address _auction
+  )
+{
+}

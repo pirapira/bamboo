@@ -123,7 +123,12 @@ let copy_whole_current_code_to_memory ce =
 
 let produce_init_code_in_memory ce new_exp =
   let name = new_exp.new_head in
-  let contract_id = CodegenEnv.cid_lookup ce name in
+  let contract_id =
+    try CodegenEnv.cid_lookup ce name
+    with Not_found ->
+      let () = Printf.eprintf "A contract of name %s is unknown.\n%!" name in
+      raise Not_found
+  in
   let ce = append_instruction ce (PUSH32 (ConstructorCodeSize contract_id)) in
   let ce = append_instruction ce (PUSH32 (ConstructorInRuntimeCodeOffset contract_id)) in
   (* stack: [codesize, codeoffset] *)
