@@ -197,7 +197,7 @@ let calldata_size_of_typ (typ : typ) =
   | ReferenceType _ -> failwith "reference type cannot be a case argument"
   | TupleType _ -> failwith "tupletype not implemented"
   | ContractArchType _ -> failwith "ContractArchType cannot be a case argument"
-  | _ -> size_of_typ
+  | _ -> size_of_typ typ
 
 let calldata_size_of_arg (arg : arg) =
   calldata_size_of_typ arg.arg_typ
