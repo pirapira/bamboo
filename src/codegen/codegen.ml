@@ -920,13 +920,24 @@ let add_variable_init le ce layout i =
   let le = LocationEnv.add_pair le name loc in
   (le, ce)
 
-let add_sentence le ce (layout : LayoutInfo.layout_info) sent =
+let rec add_if_single le ce (layout : LayoutInfo.layout_info) cond body =
+  let jump_label_skip = Label.new_label () in
+  let original_stack_size = stack_size ce in
+  let ce = codegen_exp le ce cond in
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_instruction ce JUMPI in
+  let le, ce = add_sentence le ce layout body in
+  let ce = append_instruction ce (JUMPDEST jump_label_skip) in
+  let () = assert (original_stack_size = stack_size ce) in
+  (le, ce)
+and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   match sent with
   | AbortSentence -> (le, add_throw ce)
   | ReturnSentence ret -> add_return le ce layout ret
   | AssignmentSentence (l, r) -> add_assignment le ce layout l r
   | VariableInitSentence i -> add_variable_init le ce layout i
-  | IfSingleSentence _ -> failwith "ifsingle"
+  | IfSingleSentence (cond, body) -> add_if_single le ce layout cond body
   | SelfdestructSentence _ -> failwith "destruct"
 
 let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
