@@ -72,6 +72,8 @@ type 'imm instruction =
   | DUP7
 
 
+val dup_suc_n : int -> 'imm instruction
+
 (** ['imm program] is a sequence of EVM instructions
  * where immediate values are expressed with type 'imm *)
 type 'imm program = 'imm instruction list

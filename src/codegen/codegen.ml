@@ -10,6 +10,14 @@ let copy_storage_range_to_stack_top le ce (range : PseudoImm.pseudo_imm Location
   let ce = append_instruction ce SLOAD in
   (le, ce)
 
+let copy_stack_to_stack_top le ce (s : int) =
+  let original_stack_size = stack_size ce in
+  let diff = original_stack_size - s in
+  let () = assert (diff >= 0) in
+  let ce = append_instruction ce (Evm.dup_suc_n diff) in
+  let () = assert (stack_size ce = original_stack_size + 1) in
+  le, ce
+
 let copy_to_stack_top le ce (l : Location.location) =
   Location.(
     match l with
@@ -19,7 +27,8 @@ let copy_to_stack_top le ce (l : Location.location) =
     | Volatile _ -> failwith "copy_to_stack_top: Volatile"
     | Code _ -> failwith "copy_to_stack_top: Code"
     | Calldata _ -> failwith "copy_to_stack_top: Calldata"
-    | Stack _ -> failwith "copy_to_stack_top: Stack"
+    | Stack s ->
+       copy_stack_to_stack_top le ce s
   )
 
 let swap_entrance_pc_with_zero ce =

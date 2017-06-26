@@ -404,3 +404,14 @@ let size_of_instruction i =
 
 let size_of_program p =
   List.fold_left (fun a i -> a + size_of_instruction i) 0 p
+
+let dup_suc_n (n : int) =
+  match n with
+  | 0 -> DUP1
+  | 1 -> DUP2
+  | 2 -> DUP3
+  | 3 -> DUP4
+  | 4 -> DUP5
+  | 5 -> DUP6
+  | 6 -> DUP7
+  | _ -> failwith "more DUP instructions needed"
