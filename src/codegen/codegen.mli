@@ -47,7 +47,7 @@ val compile_constructors :
 
 val layout_info_from_constructor_compiled : constructor_compiled -> LayoutInfo.contract_layout_info
 
-val layout_info_from_runtime_compiled : runtime_compiled -> LayoutInfo.runtime_layout_info
+val layout_info_from_runtime_compiled : runtime_compiled -> constructor_compiled Assoc.contract_id_assoc -> LayoutInfo.runtime_layout_info
 
 (** The combination of the constructor_bytecode and the runtime_bytecode **)
 val codegen_bytecode :

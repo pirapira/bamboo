@@ -3,7 +3,9 @@ type contract_id = int
 
 type 'a contract_id_assoc = (contract_id * 'a) list
 
-(** [list_to_contract_id_assoc] assignes a different  [contract_id] for each element of the list. *)
+(** [list_to_contract_id_assoc] assignes a different contract_id for each element of the list.
+ *  It starts with 0 until (length of list - 1).
+ *)
 val list_to_contract_id_assoc : 'a list -> 'a contract_id_assoc
 
 val assoc_map : ('a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc

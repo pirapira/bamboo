@@ -30,6 +30,8 @@ type post_layout_info =
        |constructor code for contract A|constructor code for contract B|constructor code for contract C|
      *)
 
+  ; constructor_in_runtime_code_offset : int Assoc.contract_id_assoc
+
     (* And then, the runtime code for a particular contract is organized like this: *)
                                           (* |dispatcher that jumps into a case|runtime code for case f|runtime code for case g| *)
   ; l : layout_info
@@ -69,6 +71,8 @@ val realize_pseudo_imm : post_layout_info -> Assoc.contract_id -> PseudoImm.pseu
 type runtime_layout_info =
   { runtime_code_size : int
   ; runtime_offset_of_contract_id : int Assoc.contract_id_assoc
+  ; runtime_offset_of_constructor : int Assoc.contract_id_assoc
+  ; runtime_size_of_constructor : int Assoc.contract_id_assoc
   }
 
 val construct_layout_info : (Assoc.contract_id * contract_layout_info) list -> layout_info

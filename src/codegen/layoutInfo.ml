@@ -27,6 +27,8 @@ type post_layout_info =
   (* And then, the runtime code is organized like this: *)
   (* |dispatcher that jumps into the stored pc|runtime code for contract A|runtime code for contract B|runtime code for contract C| *)
 
+  ; constructor_in_runtime_code_offset : int Assoc.contract_id_assoc
+
   (* And then, the runtime code for a particular contract is organized like this: *)
   (* |dispatcher that jumps into a case|runtime code for case f|runtime code for case g| *)
   ; l : layout_info
@@ -52,6 +54,8 @@ type contract_layout_info =
 type runtime_layout_info =
   { runtime_code_size : int
   ; runtime_offset_of_contract_id : int Assoc.contract_id_assoc
+  ; runtime_offset_of_constructor : int Assoc.contract_id_assoc
+  ; runtime_size_of_constructor : int Assoc.contract_id_assoc
   }
 
 let compute_constructor_code_size lst cid =
@@ -99,6 +103,7 @@ let construct_post_layout_info (lst : (Assoc.contract_id * contract_layout_info)
   ; runtime_code_size = runtime.runtime_code_size
   ; contract_offset_in_runtime_code = runtime.runtime_offset_of_contract_id
   ; l = construct_layout_info lst
+  ; constructor_in_runtime_code_offset = runtime.runtime_offset_of_constructor
   }
 
 (* Assuming the layout described above, this definition makes sense. *)
@@ -125,9 +130,9 @@ let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.cont
   | RuntimeCodeSize ->
      Big_int.big_int_of_int (layout.runtime_code_size)
   | ConstructorCodeSize cid ->
-     failwith "realize constructor code size"
+     Big_int.big_int_of_int (layout.l.constructor_code_size cid)
   | ConstructorInRuntimeCodeOffset cid ->
-     failwith "realize constructor in runtime code offset"
+     Big_int.big_int_of_int (Assoc.choose_contract cid layout.constructor_in_runtime_code_offset)
   | ContractOffsetInRuntimeCode cid ->
      Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->

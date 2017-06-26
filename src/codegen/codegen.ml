@@ -572,6 +572,10 @@ type constructor_compiled =
 type runtime_compiled =
   { runtime_codegen_env : CodegenEnv.codegen_env
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
+  (* what form should the constructor code be encoded?
+     1. pseudo program.  easy
+     2. pseudo codegen_env.  maybe uniform
+   *)
   }
 
 let empty_runtime_compiled cid_lookup layouts =
@@ -928,22 +932,58 @@ let compile_runtime layout (contracts : Syntax.typ Syntax.contract Assoc.contrac
 let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutInfo.contract_layout_info =
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
 
-let layout_info_from_runtime_compiled (rc : runtime_compiled) : LayoutInfo.runtime_layout_info =
-  { LayoutInfo.runtime_code_size = CodegenEnv.code_length rc.runtime_codegen_env
-  ; LayoutInfo.runtime_offset_of_contract_id = rc.runtime_contract_offsets
-  }
+let sizes_of_constructors (constructors : constructor_compiled Assoc.contract_id_assoc) : int list =
+  let lengths = Assoc.assoc_map (fun cc -> CodegenEnv.code_length cc.constructor_codegen_env) constructors in
+  let lengths = List.sort (fun a b -> compare (fst a) (fst b)) lengths in
+  List.map snd lengths
 
+let rec calculate_offsets_inner ret current lst =
+  match lst with
+  | [] -> List.rev ret
+  | hd::tl ->
+     (* XXX: fix the append *)
+     calculate_offsets_inner (current :: ret) (current + hd) tl
+
+let calculate_offsets initial lst =
+  calculate_offsets_inner [] initial lst
+
+let layout_info_from_runtime_compiled (rc : runtime_compiled) (constructors : constructor_compiled Assoc.contract_id_assoc) : LayoutInfo.runtime_layout_info =
+  let sizes_of_constructors = sizes_of_constructors constructors in
+  let offsets_of_constructors = calculate_offsets (CodegenEnv.code_length rc.runtime_codegen_env) sizes_of_constructors in
+  let sum_of_constructor_sizes = BatList.sum sizes_of_constructors in
+  LayoutInfo.(
+    { runtime_code_size = sum_of_constructor_sizes + CodegenEnv.code_length rc.runtime_codegen_env
+    ; runtime_offset_of_contract_id = rc.runtime_contract_offsets
+    ; runtime_size_of_constructor = Assoc.list_to_contract_id_assoc sizes_of_constructors
+    ; runtime_offset_of_constructor = Assoc.list_to_contract_id_assoc offsets_of_constructors
+    })
+
+let programs_concat_reverse_order (programs : 'imm Evm.program list) =
+  let rev_programs = List.rev programs in
+  List.concat rev_programs
+
+(** constructors_packed concatenates constructor code.
+ *  Since the code is stored in the reverse order, the concatenation is also reversed.
+ *)
+let constructors_packed layout (constructors : constructor_compiled Assoc.contract_id_assoc) =
+  let programs = Assoc.assoc_map (fun cc -> CodegenEnv.ce_program cc.constructor_codegen_env) constructors in
+  let programs = List.sort (fun a b -> compare (fst a) (fst b)) programs in
+  let programs = List.map snd programs in
+  programs_concat_reverse_order programs
 
 let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
                      (runtime : runtime_compiled) (cid : Assoc.contract_id)
     : Big_int.big_int Evm.program =
   let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
     List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
-  let runtime_layout = layout_info_from_runtime_compiled runtime in
+  let runtime_layout = layout_info_from_runtime_compiled runtime constructors in
   let layout = LayoutInfo.construct_post_layout_info contracts_layout_info runtime_layout in
   let pseudo_constructor = Assoc.choose_contract cid constructors in
   let imm_constructor = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program pseudo_constructor.constructor_codegen_env) in
-  let imm_runtime = LayoutInfo.realize_pseudo_program layout cid (CodegenEnv.ce_program runtime.runtime_codegen_env) in
+  let pseudo_runtime_core = CodegenEnv.ce_program runtime.runtime_codegen_env in
+  (* XXX: This part is somehow not modular. *)
+  (* Sicne the code is stored in the reverse order, the concatenation is also reversed. *)
+  let imm_runtime = LayoutInfo.realize_pseudo_program layout cid ((constructors_packed layout constructors)@pseudo_runtime_core) in
   (* the code is stored in the reverse order *)
   imm_runtime@imm_constructor
 
@@ -952,8 +992,8 @@ let compose_runtime_bytecode (constructors : constructor_compiled Assoc.contract
     : Big_int.big_int Evm.program =
   let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
     List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
-  let runtime_layout = layout_info_from_runtime_compiled runtime in
+  let runtime_layout = layout_info_from_runtime_compiled runtime constructors in
   let layout = LayoutInfo.construct_post_layout_info contracts_layout_info runtime_layout in
   (* TODO: 0 in the next line is a bit ugly. *)
-  let imm_runtime = LayoutInfo.realize_pseudo_program layout 0 (CodegenEnv.ce_program runtime.runtime_codegen_env) in
+  let imm_runtime = LayoutInfo.realize_pseudo_program layout 0 ((constructors_packed layout constructors)@(CodegenEnv.ce_program runtime.runtime_codegen_env)) in
   imm_runtime
