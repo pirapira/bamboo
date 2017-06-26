@@ -568,7 +568,6 @@ let setup_array_seed_counter_to_one_if_not_initialized ce =
   let jump_label_skip = Label.new_label () in
   let ce = append_instruction ce (PUSH1 (Int 1)) in
   let ce = append_instruction ce SLOAD in
-  let ce = append_instruction ce ISZERO in
   let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
   let ce = append_instruction ce JUMPI in
   (* the case where it has to be changed *)
