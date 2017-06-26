@@ -4,7 +4,7 @@ contract auction
 	,bool[address] _bids
 	,uint _highest_bid)
 {
-	bool case (bool bid())
+	case (bool bid())
 	{
 		if (now(block) > _bidding_time)
 			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
@@ -17,17 +17,17 @@ contract auction
 		return (true) then
 			auction(_beneficiary, _bidding_time, _bids, value(msg));
 	}
-	uint case (uint highest_bid())
+	case (uint highest_bid())
 	{
 		return (_highest_bid) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
-	uint case (uint bidding_time())
+	case (uint bidding_time())
 	{
 		return (_bidding_time) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
-	address case (address beneficiary())
+	case (address beneficiary())
     {
 		return (_beneficiary) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
