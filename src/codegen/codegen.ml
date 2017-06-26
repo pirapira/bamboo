@@ -931,7 +931,7 @@ let add_variable_init le ce layout i =
   let position = stack_size ce in
   let ce = codegen_exp le ce i.Syntax.variable_init_value in
   let name = i.Syntax.variable_init_name in
-  let loc = Location.Stack position in
+  let loc = Location.Stack (position + 1) in
   let le = LocationEnv.add_pair le name loc in
   (le, ce)
 
