@@ -301,7 +301,45 @@ and codegen_exp
   | EqualityExp _, _ ->
      failwith "codegen_exp EqualityExp of unexpected type"
   | SendExp s, _ ->
-     failwith "codegen for SendExp"
+     codegen_send_exp le ce s
+  | NewExp new_e, ContractInstanceType ctyp ->
+     codegen_new_exp le ce new_e ctyp
+  | NewExp new_e, _ ->
+     failwith "exp code gen for new expression with unexpected type"
+  | FunctionCallExp _, _ ->
+     (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
+     failwith "exp code gen for callexp"
+  | ParenthExp _, _ ->
+     failwith "ParenthExp not expected."
+  | SingleDereferenceExp (reference, ref_typ), value_typ ->
+     let () = assert (ref_typ = ReferenceType [value_typ]) in
+     let size = Syntax.size_of_typ value_typ in
+     let () = assert (size mod 32 = 0) in (* assuming word-size *)
+     let ce = codegen_exp le ce (reference, ref_typ) in (* pushes the pointer *)
+     let ce = append_instruction ce MLOAD in
+     ce
+  | TupleDereferenceExp _, _ ->
+     failwith "code generation for TupleDereferenceExp should not happen.  Instead, try to decompose it into several assignments."
+  ) in
+  let () = assert (stack_size ret = stack_size ce + 1) in
+  ret
+and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
+  let original_stack_size = stack_size ce in
+  (* ?? how to obtain the return type? *)
+  (* out size *)
+  (* out offset *)
+
+
+  (*   let ce = prepare_arguments_in_memory s.Syntax.send_args in *)
+  (* stack: [in size, in offset]
+  (* in size *)
+  (* in offset *)
+  (* value *)
+  (* to *)
+  (* gas *)
+
+  let () = assert (stack_size ce = original_stack_size) in
+  le, ce
      (* argument order, gas, to, value, in offset in size out offset, out size *)
 (*     let out_size = send_out_size t s in
      let out_offset = usual_memory_offset in (* new location should be allocated *)
@@ -324,29 +362,8 @@ and codegen_exp
      let ce = append_instruction ce (PUSH1 0) in
      let ce = append_instruction ce JUMP in
      let ce = append_instruction ce (JUMPDEST success_label) in
-     ce *)
-  | NewExp new_e, ContractInstanceType ctyp ->
-     codegen_new_exp le ce new_e ctyp
-  | NewExp new_e, _ ->
-     failwith "exp code gen for new expression with unexpected type"
-  | FunctionCallExp _, _ ->
-     (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
-     failwith "exp code gen for callexp"
-  | ParenthExp _, _ ->
-     failwith "ParenthExp not expected."
-  | SingleDereferenceExp (reference, ref_typ), value_typ ->
-     let () = assert (ref_typ = ReferenceType [value_typ]) in
-     let size = Syntax.size_of_typ value_typ in
-     let () = assert (size mod 32 = 0) in (* assuming word-size *)
-     let ce = codegen_exp le ce (reference, ref_typ) in (* pushes the pointer *)
-     let ce = append_instruction ce MLOAD in
-     ce
-  | TupleDereferenceExp _, _ ->
-     failwith "code generation for TupleDereferenceExp should not happen.  Instead, try to decompose it into several assignments."
-  ) in
-  let () = assert (stack_size ret = stack_size ce + 1) in
-  ret
-
+     ce *) *)
+  failwith "waiting for the return type in cases"
 
 let codegen_sentence
   (orig : CodegenEnv.codegen_env)
