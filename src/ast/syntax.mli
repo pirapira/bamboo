@@ -120,4 +120,9 @@ val calldata_size_of_arg : arg -> int
 (** [size_of_typ typ] is the number of bytes that a value of [typ] occupies *)
 val size_of_typ : typ -> int
 
+(** [size_of_typs typs] is the sum of [size_of_typ]s *)
+val size_of_typs : typ list -> int
+
 val is_throw_only : typ sentence list -> bool
+
+val lookup_case_header : 'annot contract -> string -> case_header
