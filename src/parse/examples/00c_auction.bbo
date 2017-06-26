@@ -67,3 +67,16 @@ address beneficiary = _auction.beneficiary() reentrance { abort; };
 		abort;
 	}
 }
+contract auction_done
+(address _bene,
+ bool[address] _bids,
+ uint _highest_bid)
+{
+}
+contract bid
+  (address _sender
+  ,uint _value
+  ,address _auction
+  )
+{
+}
