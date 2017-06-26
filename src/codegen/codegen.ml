@@ -574,7 +574,24 @@ let setup_seed (le, ce) (loc : Storage.storage_location) =
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 
+let setup_array_seed_counter_to_one_if_not_initialized ce =
+  let original_stack_size = stack_size ce in
+  let jump_label_skip = Label.new_label () in
+  let ce = append_instruction ce (PUSH1 (Int 1)) in
+  let ce = append_instruction ce SLOAD in
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_instruction ce JUMPI in
+  (* the case where it has to be changed *)
+  let ce = append_instruction ce (PUSH1 (Int 1)) in
+  let ce = append_instruction ce DUP1 in
+  let ce = append_instruction ce SSTORE in
+  let ce = append_instruction ce (JUMPDEST jump_label_skip) in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+
 let setup_array_seeds le ce (contract: Syntax.typ Syntax.contract) : CodegenEnv.codegen_env =
+  let ce = setup_array_seed_counter_to_one_if_not_initialized ce in
   let array_locations = LayoutInfo.array_locations contract in
   let (_, ce) =
     List.fold_left setup_seed (le, ce) array_locations in
