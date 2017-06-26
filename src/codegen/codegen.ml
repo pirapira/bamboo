@@ -774,7 +774,13 @@ let set_contract_arguments le ce offset cid (args : typ exp list) =
 let set_continuation_to_function_call le ce layout (fcall, typ_exp) =
   let head : string = fcall.call_head in
   let args : typ exp list = fcall.call_args in
-  let cid = cid_lookup ce head in
+  let cid =
+    try
+      cid_lookup ce head
+    with Not_found ->
+      let () = Printf.eprintf "contract of name %s not found\n%!" head in
+      raise Not_found
+  in
   let ce = set_contract_pc ce cid in
   let offset = layout.LayoutInfo.storage_constructor_arguments_begin cid in
   let (le, ce) =

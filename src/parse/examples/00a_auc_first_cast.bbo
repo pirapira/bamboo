@@ -20,3 +20,16 @@ new bid(sender(msg), value(msg), this) along value(msg)
          auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }
+contract auction_done
+(address _bene,
+ bool[address] _bids,
+ uint _highest_bid)
+{
+}
+contract bid
+  (address _sender
+  ,uint _value
+  ,address _auction
+  )
+{
+}
