@@ -6,7 +6,7 @@ contract auction
 ,bool[address] _bids
 	,uint _highest_bid)
 {
-   default
+   bool default
    {
 if (now(block) > _bidding_time)
 return (false) then auction_done(_beneficiary, _bids, _highest_bid);

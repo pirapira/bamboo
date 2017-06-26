@@ -6,7 +6,7 @@ contract auction
 ,bool[address] _bids
 	,uint _highest_bid)
 {
-   default
+   bool default
    {
      _bids[sender(msg)] = true;
      return (true) then

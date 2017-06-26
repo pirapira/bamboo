@@ -8,7 +8,7 @@ contract auction
 	,bool[address] _bids /// When the contract is created, this must be empty.
 	,uint _highest_bid)
 {
-	case (bool bid())
+	bool case (bool bid())
 	{
 		if (now(block) > _bidding_time)
 			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
@@ -21,12 +21,12 @@ contract auction
 		return (true) then
 			auction(_beneficiary, _bidding_time, _bids, value(msg));
 	}
-	case (uint highest_bid())
+	uint case (uint highest_bid())
 	{
 		return (_highest_bid) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
-	case (uint bidding_time())
+	uint case (uint bidding_time())
 	{
 		return (_bidding_time) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
@@ -69,12 +69,12 @@ contract bid
 
 contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
 {
-	case (bool bid_is_highest(uint _cand))
+	bool case (bool bid_is_highest(uint _cand))
 	{
 		if (not _bids[sender(msg)]) abort;
 		return (_highest_bid == _cand) then auction_done(_beneficiary, _bids, _highest_bid);
 	}
-	case (address beneficiary())
+	address case (address beneficiary())
 	{
 		if (not _bids[sender(msg)]) abort;
 		return (_beneficiary) then auction_done(_beneficiary, _bids, _highest_bid);
