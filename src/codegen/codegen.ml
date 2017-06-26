@@ -121,7 +121,42 @@ let copy_whole_current_code_to_memory ce =
   let () = assert(original_stack_size + 2 = stack_size ce) in
   ce
 
-let produce_init_code_in_memory ce new_exp =
+(** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
+ *  according to the ABI.  This increases the stack top element by the size of the
+ *  new allocation. *)
+let rec add_constructor_argument_to_memory le ce (arg : Syntax.typ exp) =
+  let original_stack_size = stack_size ce in
+  let typ = snd arg in
+  let () = assert (Syntax.fits_in_one_storage_slot typ) in
+  (* stack : [acc] *)
+  let ce = append_instruction ce (PUSH1 (Int 32)) in
+  (* stack : [acc, 32] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack : [acc, 32, 32] *)
+  let ce = push_allocated_memory ce in
+  (* stack : [acc, 32, offset] *)
+  let ce = codegen_exp le ce arg in
+  (* stack : [acc, 32, offset, val] *)
+  let ce = append_instruction ce MSTORE in
+  (* stack : [acc, 32] *)
+  let ce = append_instruction ce ADD in
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
+(** [add_constructor_arguments_to_memory args] realizes [args] on the memory
+ *  according to the ABI.  This leaves the amount of memory on the stack.
+ *  Usually this function is called right after the constructor code is set up in the memory,
+ *  so the offset of the memory is not returned.
+ *  (This makes it easy for the zero-argument case)
+ *)
+and add_constructor_arguments_to_memory le ce (args : Syntax.typ exp list) =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  (* stack [0] *)
+  let ce = List.fold_left (add_constructor_argument_to_memory le)
+                          ce args in
+  let () = assert (original_stack_size + 1 = stack_size ce) in
+  ce
+and produce_init_code_in_memory le ce new_exp =
   let name = new_exp.new_head in
   let contract_id =
     try CodegenEnv.cid_lookup ce name
@@ -136,26 +171,33 @@ let produce_init_code_in_memory ce new_exp =
   (* stack: [memory_size, memory_offset] *)
   let ce = copy_whole_current_code_to_memory ce in
   (* stack: [memory_size, memory_offset, memory_second_size, memory_second_offset] *)
-  let ce = append_instruction ce POP in
-  (* stack: [memory_size, memory_offset, memory_second_size] *)
+
+  (* I still need to add the constructor arguments *)
+  let ce = add_constructor_arguments_to_memory le ce new_exp.new_args in
+  (* stack: [memory_size, memory_offset, memory_second_size, memory_second_offset, memory_args_size] *)
   let ce = append_instruction ce SWAP1 in
-  (* stack: [memory_size, memory_second_size, memory_offset] *)
+  (* stack: [memory_size, memory_offset, memory_second_size, memory_args_size, memory_second_offset] *)
+  let ce = append_instruction ce POP in
+  (* stack: [memory_size, memory_offset, memory_second_size, memory_args_size] *)
+  let ce = append_instruction ce ADD in
+  (* stack: [memory_size, memory_offset, memory_second_args_size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: [memory_size, memory_second_args_size, memory_offset] *)
   let ce = append_instruction ce SWAP2 in
-  (* stack: [memory_offset, memory_second_size, memory_size] *)
+  (* stack: [memory_offset, memory_second_args_size, memory_size] *)
   let ce = append_instruction ce ADD in
   (* stack: [memory_offset, memory_total_size] *)
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_total_size, memory_offset] *)
   ce
-
-let rec codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
+and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
   let () = assert(is_throw_only new_exp.new_msg_info.message_reentrance_info)  in
   (* set up the reentrance guard *)
   let ce = swap_entrance_pc_with_zero ce in
   (* stack : [entrance_pc_bkp] *)
-  let ce = produce_init_code_in_memory ce new_exp in
+  let ce = produce_init_code_in_memory le ce new_exp in
   (* stack : [entrance_pc_bkp, size, offset] *)
   let ce =
     (match new_exp.new_msg_info.message_value_info with
@@ -306,6 +348,7 @@ and codegen_exp
   ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
+
 
 let codegen_sentence
   (orig : CodegenEnv.codegen_env)
