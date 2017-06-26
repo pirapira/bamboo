@@ -54,9 +54,6 @@ val codegen_bytecode :
   Syntax.typ Syntax.contract ->
   PseudoImm.pseudo_imm Evm.program
 
-(** [size_of_typ typ] is the number of bytes that a value of [typ] occupies *)
-val size_of_typ : Syntax.typ -> int
-
 val move_info_around :
   (* assumption *) CodegenEnv.codegen_env ->
   (* goal *)       LocationEnv.location_env ->

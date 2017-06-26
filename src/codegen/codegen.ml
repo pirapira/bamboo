@@ -3,17 +3,6 @@ open CodegenEnv
 open Evm
 open Syntax
 
-let size_of_typ (* in bytes *) = function
-  | UintType -> 32
-  | AddressType -> 32 (* Though only 20 bytes are used *)
-  | BoolType -> 32
-  | ReferenceType _ -> 32
-  | TupleType lst ->
-     failwith "size_of_typ Tuple"
-  | MappingType _ -> failwith "size_of_typ MappingType"
-  | ContractArchType _ -> failwith "size_of_typ ContractArchType"
-  | ContractInstanceType _ -> 32 (* address as word *)
-
 let copy_storage_range_to_stack_top le ce (range : PseudoImm.pseudo_imm Location.storage_range) =
   let () = assert (PseudoImm.is_constant_int 1 range.Location.storage_size) in
   let offset : PseudoImm.pseudo_imm = range.Location.storage_start in
@@ -338,7 +327,7 @@ and codegen_exp
      failwith "ParenthExp not expected."
   | SingleDereferenceExp (reference, ref_typ), value_typ ->
      let () = assert (ref_typ = ReferenceType [value_typ]) in
-     let size = size_of_typ value_typ in
+     let size = Syntax.size_of_typ value_typ in
      let () = assert (size mod 32 = 0) in (* assuming word-size *)
      let ce = codegen_exp le ce (reference, ref_typ) in (* pushes the pointer *)
      let ce = append_instruction ce MLOAD in

@@ -117,4 +117,7 @@ val count_plain_args : typ list -> int
 val fits_in_one_storage_slot : typ -> bool
 val calldata_size_of_arg : arg -> int
 
+(** [size_of_typ typ] is the number of bytes that a value of [typ] occupies *)
+val size_of_typ : typ -> int
+
 val is_throw_only : typ sentence list -> bool

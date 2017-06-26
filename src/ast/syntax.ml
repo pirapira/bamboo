@@ -199,3 +199,14 @@ let is_throw_only (ss : typ sentence list) : bool =
   | [] -> false
   | [AbortSentence] -> true
   | _ -> false
+
+let size_of_typ (* in bytes *) = function
+  | UintType -> 32
+  | AddressType -> 32 (* Though only 20 bytes are used *)
+  | BoolType -> 32
+  | ReferenceType _ -> 32
+  | TupleType lst ->
+     failwith "size_of_typ Tuple"
+  | MappingType _ -> failwith "size_of_typ MappingType"
+  | ContractArchType _ -> failwith "size_of_typ ContractArchType"
+  | ContractInstanceType _ -> 32 (* address as word *)
