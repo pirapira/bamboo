@@ -2,6 +2,27 @@
 
 [![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+### Compiler in development
+
+The Bamboo compiler sometimes produces bytecode, which needs to be tested.
+
+As preparattion,
+* install [opam](http://opam.ocaml.org/doc/Install.html)
+* and then use `opam install menhir` to install `menhir`.
+* `opam install batteries rope`
+* checkout [cryptokit](https://github.com/xavierleroy/cryptokit/) and follow the build instruction (the version available in `opam` does not work)
+
+Then,
+```
+make
+```
+builds a compiler `bbo.native`.
+
+```
+./bbo.native < src/parse/examples/00a_auc_first_cast.bbo
+```
+produces a bytecode.
+
 ## Problem
 
 Smart contracts should reduce surprises.
@@ -140,28 +161,6 @@ contract auction
 ```
 
 There are other [example contracts that morph into another](src/parse/examples/00d_auction.bbo).
-
-### Compiler in development
-
-Currently the compiler can parse the examples, assign types to expressions, but
-the code generation is still in development.
-
-As preparattion,
-* install [opam](http://opam.ocaml.org/doc/Install.html)
-* and then use `opam install menhir` to install `menhir`.
-* `opam install batteries rope`
-* checkout [cryptokit](https://github.com/xavierleroy/cryptokit/) and follow the build instruction (the version available in `opam` does not work)
-
-Then,
-```
-make
-```
-builds a compiler `bbo.native`.
-
-```
-./bbo.native < src/parse/examples/00a_auc_first_cast.bbo
-```
-produces a bytecode.
 
 ### Not to have
 
