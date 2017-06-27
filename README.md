@@ -1,4 +1,4 @@
-# Bamboo: an embryonic smart contract language
+# Bamboo: a morphing smart contract language
 
 [![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -38,71 +38,39 @@ the possible orderings of events.
 
 ## Solution
 
-The solution is a programming language that runs from top to bottom.
+The solution is polymorphic contracts.  According to the stages,
+a contract changes its signature.
 
 ```
-contract CrowdFund {
-	while(now < deadline) {
-		call = sleep_till_called();
-		// toBeCalledDuringFunding
-		...
+contract Funding() {
+	function toBeCalledDuringFunding() {
+		// something something
+		return true then Funding();
 	}
-	while(true) {
-		if(success) {
-			call = sleep_till_called();
-			// toBeCalledAfterSuccess
-			...
-		}
-		else {
-			call = sleep_till_called();
-			// toBeCalledAfterFailure
-			...
-		}
+	function endFunding() {
+		if (something)
+			return (true) then FundingSuccess();
+		else
+			return (false) then FundingFailure();
+	}
+}
+contract FundingSuccess() {
+	function toBeCalledAfterSuccess() {
+		// something
+	}
+}
+contract FundingFailure() {
+	function toBeCalledAfterFailure() {
+		// something
 	}
 }
 ```
-Here I used common syntax so that it's clear to people and the
-(not-yet implemented) machine what can happen in which order.
+
+All of these contracts `Funding`, `FundingSuccess` and `FundingFailure` occupies the same address.  The initial contract `Funding` becomes `FundingSuccess` or `FundingFailure`.
+
 Where has gone the `notSureWhatThisDoes()` function in the previous
 example?  It's not there because, well, I am not sure where it goes.
 The new style forces temporal organization of the code lines.
-
-### Strategy Taken
-
-The trick here is to enlarge the duration of program execution.  In the
-first example, the program starts when it is called and finishes when
-it returns.  In the second example, the program starts when it is
-created and finishes when it disappears (if ever).
-
-The other way around, the new programming language must be aware
-of the "called until returns" delimitation.  Above it's vaguely
-written as `sleep_till_called()`.  Actually there are three different
-ways to exit a contract:
-* `sleep_after_return(result_of_previous_call)`
-* `cancel_current_call()`
-* `sleep_after_calling(call_to_other_account)`.
-
-The first `sleep_after_return()` is the most straightforward.  It
-returns to the caller and waits to be called again.  Next time the
-contract is called, the expression reveals the details of the new
-call.  The second `cancel_current_call()` is also easy.  The
-expression rewinds all the effects during the current call.  When this
-expression is evaluated, the program goes back to where it was when
-the call came in.
-
-The third `sleep_after_calling()` is interesting.  When this expression
-is evaluated, the contract calls the specified account.  After that,
-two possibilities exist.  Either the called account returns or some
-account calls into our contract.  In any case, the expression
-`sleep_after_calling()` returns, revealing whether the callee has
-returned or a reentrancy has happened.
-
-```
-sleep_after_calling(account, value, data) with reentrancy(_call) {
-	// What should happen when reentered.  For instance
-	cancel_current_call();
-}
-```
 
 ### Syntax
 
@@ -136,6 +104,8 @@ contract bid
 }
 ```
 
+There are other [example contracts that morph into another](src/parse/examples/00d_auction.bbo).
+
 ### Compiler in development
 
 Currently the compiler can parse the examples, assign types to expressions, but
@@ -149,24 +119,14 @@ As preparattion,
 
 Then,
 ```
-cd src
-sh run_tests.sh
+make
 ```
-builds a compiler in development and tests it against the example files
-`src/parse/examples/*.bbo`
+builds a compiler `bbo.native`.
 
-### Implementation
-
-What would be difficult to implement?  Maybe not much: one word in
-the storage to keep track where we are in the program, and some
-dataflow analysis to decide which variable should live in the storage.
-The ABI should be the common one while the method names should be
-piped into the program in a nice syntax (something like the pattern
-match in Erlang).
-
-I'm thinking about using OCaml, but type-level lists in Haskell might
-be convenient for keeping track of the stack elements during EVM code
-generation.
+```
+./bbo.native < src/parse/examples/00a_auc_first_cast.bbo
+```
+produces a bytecode.
 
 ### Not to have
 
