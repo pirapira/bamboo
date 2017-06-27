@@ -1,5 +1,7 @@
 # Bamboo: an embryonic smart contract language
 
+[![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Problem
 
 Smart contracts should reduce surprises.
