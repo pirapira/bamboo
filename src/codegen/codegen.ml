@@ -404,7 +404,30 @@ and prepare_input_in_memory le ce s usual_header : CodegenEnv.codegen_env =
   (* stack : [total size, signature offset] *)
   let () = assert (stack_size ce = original_stack_size + 2) in
   ce
-and obtain_return_values_from_memory ce = failwith "obtain_return_values_from_memory"
+(** [obtain_return_values_from_memory] assumes stack (..., out size, out offset),
+    and copies the outputs onto the stack.  The first comes top-most. *)
+(* XXX currently supports one-word output only *)
+and obtain_return_values_from_memory ce =
+  (* stack: out size, out offset *)
+  let ce = append_instruction ce DUP2 in
+  (* stack: out size, out offset, out size *)
+  let ce = append_instruction ce (PUSH1 (Int 32)) in
+  (* stack: out size, out offset, out size, 32 *)
+  let ce = append_instruction ce EQ in
+  (* stack: out size, out offset, out size = 32 *)
+  let ce = append_instruction ce ISZERO in
+  (* stack: out size, out offset, out size != 32 *)
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  (* stack: out size, out offset, out size != 32, 0 *)
+  let ce = append_instruction ce JUMPI in
+  (* stack: out size, out offset *)
+  let ce = append_instruction ce MLOAD in
+  (* stack: out size, out *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack: out, out size *)
+  let ce = append_instruction ce POP in
+  (* stack: out *)
+  ce
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
   let head_contract = s.send_head_contract in
