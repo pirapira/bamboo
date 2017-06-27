@@ -214,7 +214,13 @@ let lookup_usual_case_header (c : 'annot contract) (case_name : string) : usual_
                                      | DefaultCaseHeader -> false
                                      | UsualCaseHeader uc ->
                                         uc.case_name = case_name) cases in
-  let () = assert (List.length cases = 1) in
+  let () = if (List.length cases = 0) then
+             let () = Printf.eprintf "case %s not found\n%!" case_name in
+             failwith "case_lookup"
+           else if (List.length cases > 1) then
+             let () = Printf.eprintf "case %s duplicated\n%!" case_name in
+             failwith "case_lookup"
+  in
   let [a] = cases in
   let UsualCaseHeader uc = a.case_header in
   uc

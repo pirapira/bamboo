@@ -1095,7 +1095,11 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | AssignmentSentence (l, r) -> add_assignment le ce layout l r
   | VariableInitSentence i -> add_variable_init le ce layout i
   | IfSingleSentence (cond, body) -> add_if_single le ce layout cond body
-  | SelfdestructSentence _ -> failwith "destruct"
+  | SelfdestructSentence exp -> add_self_destruct le ce layout exp
+and add_self_destruct le ce layout exp =
+  let ce = codegen_exp le ce exp in
+  let ce = append_instruction ce SUICIDE in
+  le, ce
 
 let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
   let additions : (string * Location.location) list = Ethereum.arguments_with_locations case in
