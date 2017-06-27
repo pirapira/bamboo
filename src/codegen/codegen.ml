@@ -18,6 +18,12 @@ let copy_stack_to_stack_top le ce (s : int) =
   let () = assert (stack_size ce = original_stack_size + 1) in
   le, ce
 
+let copy_calldata_to_stack_top le ce (range : Location.calldata_range) =
+  let () = assert (range.Location.calldata_size = 32) in
+  let ce = append_instruction ce (PUSH4 (Int range.Location.calldata_offset)) in
+  let ce = append_instruction ce CALLDATALOAD in
+  le, ce
+
 let copy_to_stack_top le ce (l : Location.location) =
   Location.(
     match l with
@@ -26,7 +32,7 @@ let copy_to_stack_top le ce (l : Location.location) =
     | CachedStorage _ -> failwith "copy_to_stack_top: CachedStorage"
     | Volatile _ -> failwith "copy_to_stack_top: Volatile"
     | Code _ -> failwith "copy_to_stack_top: Code"
-    | Calldata _ -> failwith "copy_to_stack_top: Calldata"
+    | Calldata range -> copy_calldata_to_stack_top le ce range
     | Stack s ->
        copy_stack_to_stack_top le ce s
   )

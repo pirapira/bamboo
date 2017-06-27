@@ -36,6 +36,11 @@ contract auction
 		return (_highest_bid == _value) then
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
+	case (address beneficiary())
+	{
+		return (_beneficiary) then
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
+	}
 	default
 	{
 		abort; // cancels the call.
