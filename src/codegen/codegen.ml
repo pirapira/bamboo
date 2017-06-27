@@ -323,7 +323,7 @@ and codegen_exp
   ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
-and prepare_arguments_in_memory = failwith "prepare_arguments_in_memory"
+and prepare_input_in_memory = failwith "prepare_input_in_memory: case signature and input args"
 and obtain_return_values_from_memory = failwith "obtain_return_values_from_memory"
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
@@ -358,7 +358,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
      (* stack : [entrance_bkp, out size, out offset, out size] *)
      let ce = append_instruction ce DUP2 in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
-     let ce = prepare_arguments_in_memory s.Syntax.send_args in
+     let ce = prepare_input_in_memory s in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
      let ce =
        (match s.send_msg_info.message_value_info with
