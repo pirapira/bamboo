@@ -35,4 +35,4 @@ You can continue [testing the bytecode](doc/testing-bytecode.md).
 * notice problems and point them out. [create issues](https://github.com/pirapira/bamboo/issues/new).
 * write new Bamboo code and test the compiler.
 * join the [Gitter channel](https://gitter.im/bbo-dev/Lobby).
-* spread a rumor to your friends who are into functional/logic programming languages.
+* spread a rumor to your friends who are into programming languages.
