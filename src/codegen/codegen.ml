@@ -323,8 +323,8 @@ and codegen_exp
   ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
-and prepare_input_in_memory = failwith "prepare_input_in_memory: case signature and input args"
-and obtain_return_values_from_memory = failwith "obtain_return_values_from_memory"
+and prepare_input_in_memory le ce s : CodegenEnv.codegen_env = failwith "prepare_input_in_memory: case signature and input args"
+and obtain_return_values_from_memory ce = failwith "obtain_return_values_from_memory"
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
   let head_contract = s.send_head_contract in
@@ -335,7 +335,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
       let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
       raise Not_found
   in
-  let callee_contract = failwith "callee_contract" in
+  let callee_contract : Syntax.typ Syntax.contract = failwith "callee_contract" in
   let method_name = s.send_head_method in
   let case_header : case_header =
     Syntax.lookup_case_header callee_contract method_name in
@@ -358,7 +358,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
      (* stack : [entrance_bkp, out size, out offset, out size] *)
      let ce = append_instruction ce DUP2 in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
-     let ce = prepare_input_in_memory s in
+     let ce = prepare_input_in_memory le ce s in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
      let ce =
        (match s.send_msg_info.message_value_info with
