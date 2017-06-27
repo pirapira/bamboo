@@ -119,6 +119,12 @@ let copy_whole_current_code_to_memory ce =
   let () = assert(original_stack_size + 2 = stack_size ce) in
   ce
 
+(** [prepare_functiohn_signature ce usual_header]
+ *  Allocates 4 bytes on the memory, and puts the function signature of the argument there.
+ *  After that, the stack has (..., signature size, signature offset )
+ *)
+let prepare_function_signature ce usual_header = failwith "prepare_function_signature"
+
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
  *  according to the ABI.  This increases the stack top element by the size of the
  *  new allocation. *)
@@ -323,7 +329,33 @@ and codegen_exp
   ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
-and prepare_input_in_memory le ce s : CodegenEnv.codegen_env = failwith "prepare_input_in_memory: case signature and input args"
+(** [prepare_arguments] prepares arguments in the memory.
+ *  This leaves (..., args size) on the stack.
+ *  Since this is called always immediately after allocating memory for the signature,
+ *  the offset of the memory is not necessary.
+ *  Also, when there are zero amount of memory desired, it's easy to just return zero.
+ *)
+and prepare_arguments ce args = failwith "prepare_arguments"
+(** [prepare_input_in_memory] prepares the input for CALL instruction in the memory.
+ *  That leaves "..., in size, in offset" (top) on the stack.
+ *)
+and prepare_input_in_memory le ce s usual_header : CodegenEnv.codegen_env =
+  let original_stack_size = stack_size ce in
+  let ce = prepare_function_signature ce usual_header in
+  (* stack : [signature size, signature offset] *)
+  let args = s.send_args in
+  let ce = prepare_arguments ce args in (* this should leave only one number on the stack!! *)
+  (* stack : [signature size, signature offset, args size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack : [signature size, args size, signature offset] *)
+  let ce = append_instruction ce SWAP2 in
+  (* stack : [signature offset, args size, signature size] *)
+  let ce = append_instruction ce ADD in
+  (* stack : [signature offset, total size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack : [total size, signature offset] *)
+  let () = assert (stack_size ce = original_stack_size + 2) in
+  failwith "prepare_input_in_memory: case signature and input args"
 and obtain_return_values_from_memory ce = failwith "obtain_return_values_from_memory"
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
@@ -356,7 +388,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   (* stack : [entrance_bkp, out size, out offset, out size] *)
   let ce = append_instruction ce DUP2 in
   (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
-  let ce = prepare_input_in_memory le ce s in
+  let ce = prepare_input_in_memory le ce s usual_header in
   (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
   let ce =
     (match s.send_msg_info.message_value_info with
