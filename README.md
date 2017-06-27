@@ -18,9 +18,11 @@ make
 builds a compiler `bbo.native`.
 
 ```
-./bbo.native < src/parse/examples/00a_auc_first_cast.bbo
+./bbo.native < src/parse/examples/006auction_first_case.bbo
 ```
 produces a bytecode.
+
+You can continue [testing the bytecode](doc/testing-bytecode.md).
 
 ## Problem
 
