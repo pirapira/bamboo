@@ -153,6 +153,33 @@ let prepare_function_signature ce usual_header =
   let () = assert (stack_size ce = original_stack_size + 2) in
   ce
 
+(* TODO: refactor with codegen_exp *)
+let codegen_array_seed le ce array =
+  begin match LocationEnv.lookup le array with
+  (** if things are just DUP'ed, location env should not be
+   * updated.  If they are SLOADED, the location env should be
+   * updated. *)
+  | Some location ->
+     let (le, ce) = copy_to_stack_top le ce location in
+     ce
+  | None -> failwith ("identifier's location not found: "^array)
+  end
+
+let keccak_cons le ce =
+  let original_stack_size = stack_size ce in
+  (* put the top into 0x00 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
+  let ce = append_instruction ce MSTORE in
+  (* put the top into 0x20 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
+  let ce = append_instruction ce MSTORE in
+  (* take the sah3 of 0x00--0x40 *)
+  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
+  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
+  let ce = append_instruction ce SHA3 in
+  let () = assert (stack_size ce + 1 = original_stack_size) in
+  ce
+
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
  *  according to the ABI.  This increases the stack top element by the size of the
  *  new allocation. *)
@@ -249,6 +276,15 @@ and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : 
   let () = assert (stack_size ce = original_stack_size + 1) in
   ce
 
+and codegen_array_access le ce (aa : Syntax.typ Syntax.array_access) =
+  let array = aa.array_access_array in
+  let index = aa.array_access_index in
+  let ce = codegen_exp le ce index in
+  let ce = codegen_array_seed le ce array in
+  let ce = keccak_cons le ce in
+  let ce = append_instruction ce SLOAD in
+  ce
+
 (* le is not updated here.  It can be only updated in
  * a variable initialization *)
 and codegen_exp
@@ -276,8 +312,9 @@ and codegen_exp
       let ce = CodegenEnv.append_instruction ce CALLER in
       ce
    | SenderExp,_ -> failwith "codegen_exp: SenderExp of strange type"
-   | ArrayAccessExp _, _ ->
-      failwith "code gen array access"
+   | ArrayAccessExp aa, _ ->
+      let ce = codegen_array_access le ce aa in
+      ce
    | ThisExp,_ ->
       let ce = CodegenEnv.append_instruction ce ADDRESS in
       ce
@@ -1016,33 +1053,6 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let ce = return_mem_content le ce in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
-
-(* TODO: refactor with codegen_exp *)
-let codegen_array_seed le ce array =
-  begin match LocationEnv.lookup le array with
-  (** if things are just DUP'ed, location env should not be
-   * updated.  If they are SLOADED, the location env should be
-   * updated. *)
-  | Some location ->
-     let (le, ce) = copy_to_stack_top le ce location in
-     ce
-  | None -> failwith ("identifier's location not found: "^array)
-  end
-
-let keccak_cons le ce =
-  let original_stack_size = stack_size ce in
-  (* put the top into 0x00 *)
-  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
-  let ce = append_instruction ce MSTORE in
-  (* put the top into 0x20 *)
-  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
-  let ce = append_instruction ce MSTORE in
-  (* take the sah3 of 0x00--0x40 *)
-  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
-  let ce = append_instruction ce (PUSH1 (Int 0x0)) in
-  let ce = append_instruction ce SHA3 in
-  let () = assert (stack_size ce + 1 = original_stack_size) in
-  ce
 
 let put_stacktop_into_array_access le ce layout (aa : Syntax.typ Syntax.array_access) =
   let array = aa.Syntax.array_access_array in
