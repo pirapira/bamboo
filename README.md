@@ -2,8 +2,6 @@
 
 [![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## What
-
 Bamboo is a programming language for Ethereum contracts.
 Bamboo makes state transition explicit and avoids reentrance problems by default.
 See [manifest](doc/manifest.md) for the motivation.
