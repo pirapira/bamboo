@@ -1,8 +1,8 @@
-# Bamboo: a morphing smart contract language
+# Bamboo: a language for morphing smart contracts
 
 [![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-### Compiler in development
+## Compiler in development
 
 The Bamboo compiler sometimes produces bytecode, which needs to be tested.
 
