@@ -29,3 +29,10 @@ builds a compiler `bbo.native`.
 produces a bytecode.
 
 You can continue [testing the bytecode](doc/testing-bytecode.md).
+
+## How to Contribute
+
+* notice problems and point them out. [create issues](./issues/new).
+* write new Bamboo code and test the compiler.
+* join the [Gitter channel](https://gitter.im/bbo-dev/Lobby).
+* spread a rumor to your friends who are into functional/logic programming languages.
