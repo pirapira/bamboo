@@ -335,56 +335,54 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
       let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
       raise Not_found
   in
-  let callee_contract : Syntax.typ Syntax.contract = failwith "callee_contract" in
+  let callee_contract : Syntax.typ Syntax.contract =
+    CodegenEnv.contract_lookup ce callee_contract_id in
   let method_name = s.send_head_method in
-  let case_header : case_header =
-    Syntax.lookup_case_header callee_contract method_name in
-  match case_header with
-  | DefaultCaseHeader -> failwith "calling default case not supported"
-  | UsualCaseHeader usual_header ->
-     let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
-     let ce = swap_entrance_pc_with_zero ce in
-     (* stack : [entrance_pc_bkp] *)
-     let return_typ = usual_header.case_return_typ in
-     let return_size = Syntax.size_of_typs return_typ in
-     (* stack : [entrance_bkp] *)
-     let ce = append_instruction ce (PUSH1 (Int return_size)) in
-     (* stack : [entrance_bkp, out size] *)
-     let ce = append_instruction ce DUP1 in
-     (* stack : [entrance_bkp, out size, out size] *)
-     let ce = push_allocated_memory ce in
-     (* stack : [entrance_bkp, out size, out offset] *)
-     let ce = append_instruction ce DUP2 in
-     (* stack : [entrance_bkp, out size, out offset, out size] *)
-     let ce = append_instruction ce DUP2 in
-     (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
-     let ce = prepare_input_in_memory le ce s in
-     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
-     let ce =
-       (match s.send_msg_info.message_value_info with
-        | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
-        | Some e -> codegen_exp le ce e) in
-     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
-     let ce = codegen_exp le ce s.send_head_contract in
-     let ce = append_instruction ce GAS in
-     let ce = append_instruction ce (PUSH4 (Int 3000)) in
-     let ce = append_instruction ce SUB in
-     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
-     let ce = append_instruction ce CALL in
-     (* stack : [entrance_bkp, out size, out offset, success] *)
-     let ce = append_instruction ce ISZERO in
-     let ce = append_instruction ce (PUSH1 (Int 0)) in
-     let ce = append_instruction ce JUMPI in
-     let ce = restore_entrance_pc ce in
-     (* stack : [entrance_bkp, out size, out offset] *)
-     let () = assert (stack_size ce = original_stack_size + 3) in
-     let ce = append_instruction ce SWAP2 in
-     (* stack : [out offset, out size, out offset, entrance_bkp] *)
-     let ce = restore_entrance_pc ce in
-     (* stack : [out offset, out size, out offset] *)
-     let ce = obtain_return_values_from_memory ce in
-     (* stack : [outputs] *)
-     ce
+  let usual_header : usual_case_header =
+    Syntax.lookup_usual_case_header callee_contract method_name in
+  let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
+  let ce = swap_entrance_pc_with_zero ce in
+  (* stack : [entrance_pc_bkp] *)
+  let return_typ = usual_header.case_return_typ in
+  let return_size = Syntax.size_of_typs return_typ in
+  (* stack : [entrance_bkp] *)
+  let ce = append_instruction ce (PUSH1 (Int return_size)) in
+  (* stack : [entrance_bkp, out size] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack : [entrance_bkp, out size, out size] *)
+  let ce = push_allocated_memory ce in
+  (* stack : [entrance_bkp, out size, out offset] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack : [entrance_bkp, out size, out offset, out size] *)
+  let ce = append_instruction ce DUP2 in
+  (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
+  let ce = prepare_input_in_memory le ce s in
+  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
+  let ce =
+    (match s.send_msg_info.message_value_info with
+     | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
+     | Some e -> codegen_exp le ce e) in
+  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
+  let ce = codegen_exp le ce s.send_head_contract in
+  let ce = append_instruction ce GAS in
+  let ce = append_instruction ce (PUSH4 (Int 3000)) in
+  let ce = append_instruction ce SUB in
+  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
+  let ce = append_instruction ce CALL in
+  (* stack : [entrance_bkp, out size, out offset, success] *)
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce JUMPI in
+  let ce = restore_entrance_pc ce in
+  (* stack : [entrance_bkp, out size, out offset] *)
+  let () = assert (stack_size ce = original_stack_size + 3) in
+  let ce = append_instruction ce SWAP2 in
+  (* stack : [out offset, out size, out offset, entrance_bkp] *)
+  let ce = restore_entrance_pc ce in
+  (* stack : [out offset, out size, out offset] *)
+  let ce = obtain_return_values_from_memory ce in
+  (* stack : [outputs] *)
+  ce
 
 (* throw if failure *)
 

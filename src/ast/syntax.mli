@@ -125,4 +125,4 @@ val size_of_typs : typ list -> int
 
 val is_throw_only : typ sentence list -> bool
 
-val lookup_case_header : 'annot contract -> string -> case_header
+val lookup_usual_case_header : 'annot contract -> string -> usual_case_header

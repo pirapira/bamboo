@@ -208,8 +208,16 @@ let is_throw_only (ss : typ sentence list) : bool =
   | [AbortSentence] -> true
   | _ -> false
 
-let lookup_case_header (c : 'annot contract) (case_name : string) : case_header =
-  failwith "lookup_case_header"
+let lookup_usual_case_header (c : 'annot contract) (case_name : string) : usual_case_header =
+  let cases = c.contract_cases in
+  let cases = List.filter (fun c -> match c.case_header with
+                                     | DefaultCaseHeader -> false
+                                     | UsualCaseHeader uc ->
+                                        uc.case_name = case_name) cases in
+  let () = assert (List.length cases = 1) in
+  let [a] = cases in
+  let UsualCaseHeader uc = a.case_header in
+  uc
 
 let size_of_typs (typs : typ list) =
   BatList.sum (List.map size_of_typ typs)
