@@ -1,0 +1,15 @@
+contract A() {
+    case (bool a()) {
+        return (true) then B();
+    }
+}
+contract B() {
+    case (bool b()) {
+        return (false) then B();
+    }
+}
+contract C(A instance) {
+    case (bool c()) {
+        return (instance.b() reentrance { abort; }) then C(instance);
+    }
+}
