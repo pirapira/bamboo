@@ -276,9 +276,7 @@ let rec sentence_might_become (s : typ sentence) : string list =
      (exp_might_become ret.return_exp)@
        (exp_might_become ret.return_cont)@
          (match contract_name_of_return_cont ret.return_cont with
-          | Some name ->
-             let () = Printf.eprintf "found becomes %s\n%!" name in
-             [name]
+          | Some name -> [name]
           | None -> []
          )
   | AssignmentSentence (l, r) ->
@@ -308,7 +306,6 @@ let lookup_usual_case_in_single_contract c case_name =
                                      | UsualCaseHeader uc ->
                                         uc.case_name = case_name) cases in
   let () = if (List.length cases = 0) then
-             let () = Printf.eprintf "case %s not found\n%!" case_name in
              raise Not_found
            else if (List.length cases > 1) then
              let () = Printf.eprintf "case %s duplicated\n%!" case_name in
