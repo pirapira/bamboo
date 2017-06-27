@@ -351,13 +351,39 @@ and codegen_exp
   ) in
   let () = assert (stack_size ret = stack_size ce + 1) in
   ret
+(** [prepare_argument ce arg] places an argument in the memory, and increments the stack top position by the size of the argument. *)
+and prepare_argument le ce arg =
+  (* stack: (..., accum) *)
+  let original_stack_size = stack_size ce in
+  let size = Syntax.size_of_typ (snd arg) in
+  let () = assert (size = 32) in
+  let ce = append_instruction ce (PUSH1 (Int size)) in
+  (* stack: (..., accum, size) *)
+  let ce = codegen_exp le ce arg in
+  (* stack: (..., accum, size, val) *)
+  let ce = append_instruction ce DUP2 in
+  (* stack: (..., accum, size, val, size) *)
+  let ce = push_allocated_memory ce in
+  (* stack: (..., accum, size, val, offset) *)
+  let ce = append_instruction ce MSTORE in
+  (* stack: (..., accum, size) *)
+  let ce = append_instruction ce ADD in
+  (* stack: (..., new_accum) *)
+  let () = assert (stack_size ce = original_stack_size) in
+  ce
 (** [prepare_arguments] prepares arguments in the memory.
  *  This leaves (..., args size) on the stack.
  *  Since this is called always immediately after allocating memory for the signature,
  *  the offset of the memory is not necessary.
  *  Also, when there are zero amount of memory desired, it's easy to just return zero.
  *)
-and prepare_arguments ce args = failwith "prepare_arguments"
+and prepare_arguments le ce args =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = List.fold_left
+             (prepare_argument le) ce args in
+  let () = assert (stack_size ce = original_stack_size + 1) in
+  ce
 (** [prepare_input_in_memory] prepares the input for CALL instruction in the memory.
  *  That leaves "..., in size, in offset" (top) on the stack.
  *)
@@ -366,7 +392,7 @@ and prepare_input_in_memory le ce s usual_header : CodegenEnv.codegen_env =
   let ce = prepare_function_signature ce usual_header in
   (* stack : [signature size, signature offset] *)
   let args = s.send_args in
-  let ce = prepare_arguments ce args in (* this should leave only one number on the stack!! *)
+  let ce = prepare_arguments le ce args in (* this should leave only one number on the stack!! *)
   (* stack : [signature size, signature offset, args size] *)
   let ce = append_instruction ce SWAP1 in
   (* stack : [signature size, args size, signature offset] *)
@@ -377,7 +403,7 @@ and prepare_input_in_memory le ce s usual_header : CodegenEnv.codegen_env =
   let ce = append_instruction ce SWAP1 in
   (* stack : [total size, signature offset] *)
   let () = assert (stack_size ce = original_stack_size + 2) in
-  failwith "prepare_input_in_memory: case signature and input args"
+  ce
 and obtain_return_values_from_memory ce = failwith "obtain_return_values_from_memory"
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
@@ -404,6 +430,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   (* stack : [entrance_bkp, out size] *)
   let ce = append_instruction ce DUP1 in
   (* stack : [entrance_bkp, out size, out size] *)
+  let () = assert (stack_size ce = original_stack_size + 3) in
   let ce = push_allocated_memory ce in
   (* stack : [entrance_bkp, out size, out offset] *)
   let ce = append_instruction ce DUP2 in
@@ -424,16 +451,18 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
   let ce = append_instruction ce CALL in
   (* stack : [entrance_bkp, out size, out offset, success] *)
+  let () = assert (stack_size ce = original_stack_size + 4) in
   let ce = append_instruction ce ISZERO in
   let ce = append_instruction ce (PUSH1 (Int 0)) in
   let ce = append_instruction ce JUMPI in
-  let ce = restore_entrance_pc ce in
   (* stack : [entrance_bkp, out size, out offset] *)
   let () = assert (stack_size ce = original_stack_size + 3) in
   let ce = append_instruction ce SWAP2 in
-  (* stack : [out offset, out size, out offset, entrance_bkp] *)
+  (* stack : [out offset, out size entrance_bkp] *)
   let ce = restore_entrance_pc ce in
-  (* stack : [out offset, out size, out offset] *)
+  (* stack : [out offset, out size] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack : [out size, out offset] *)
   let ce = obtain_return_values_from_memory ce in
   (* stack : [outputs] *)
   ce
