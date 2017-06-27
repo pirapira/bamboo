@@ -483,9 +483,18 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   in
   let callee_contract : Syntax.typ Syntax.contract =
     CodegenEnv.contract_lookup ce callee_contract_id in
+  let contract_lookup_by_name (name : string) : Syntax.typ Syntax.contract =
+    let contract_id =
+      try
+        CodegenEnv.cid_lookup ce name
+      with Not_found ->
+        let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
+        raise Not_found
+    in
+    CodegenEnv.contract_lookup ce contract_id in
   let method_name = s.send_head_method in
   let usual_header : usual_case_header =
-    Syntax.lookup_usual_case_header callee_contract method_name in
+    Syntax.lookup_usual_case_header callee_contract method_name contract_lookup_by_name in
   let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
   let ce = swap_entrance_pc_with_zero ce in
   (* stack : [entrance_pc_bkp] *)

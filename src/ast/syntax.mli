@@ -125,4 +125,9 @@ val size_of_typs : typ list -> int
 
 val is_throw_only : typ sentence list -> bool
 
-val lookup_usual_case_header : 'annot contract -> string -> usual_case_header
+(** [lookup_usual_case_header c name f] looks up a case called
+    [name] in the contract [c].  [f] is a function that looks up a contract by its name. *)
+val lookup_usual_case_header : typ contract -> string -> (string -> typ contract) -> usual_case_header
+
+(** [might_become c] lists the name of the contracts that [c] might become, except [c] itself. *)
+val might_become : typ contract -> string list

@@ -208,7 +208,100 @@ let is_throw_only (ss : typ sentence list) : bool =
   | [AbortSentence] -> true
   | _ -> false
 
-let lookup_usual_case_header (c : 'annot contract) (case_name : string) : usual_case_header =
+let rec functioncall_might_become f =
+  List.concat (List.map exp_might_become f.call_args)
+and new_exp_might_become n =
+  List.concat (List.map exp_might_become n.new_args)@
+    (msg_info_might_become n.new_msg_info)
+and msg_info_might_become m =
+  (match m.message_value_info with
+   | None -> []
+   | Some e -> exp_might_become e)@
+    [(* TODO: message_reentrance_info should contain a continuation! *)]
+and send_exp_might_become s =
+  (exp_might_become s.send_head_contract)@
+    (List.concat (List.map exp_might_become s.send_args))@
+      (msg_info_might_become s.send_msg_info)
+and array_access_might_become aa =
+  exp_might_become aa.array_access_index
+and exp_might_become e : string list =
+  match fst e with
+  | TrueExp -> []
+  | FalseExp -> []
+  | NowExp -> []
+  | FunctionCallExp f ->
+     functioncall_might_become f
+  | IdentifierExp _ -> []
+  | ParenthExp content ->
+     exp_might_become content
+  | NewExp n ->
+     new_exp_might_become n
+  | SendExp s ->
+     send_exp_might_become s
+  | LtExp (l, r) ->
+     (exp_might_become l)@(exp_might_become r)
+  | GtExp (l, r) ->
+     (exp_might_become l)@(exp_might_become r)
+  | NeqExp (l, r) ->
+     (exp_might_become l)@(exp_might_become r)
+  | EqualityExp (l, r) ->
+     (exp_might_become l)@(exp_might_become r)
+  | AddressExp a ->
+     (exp_might_become a)
+  | NotExp n ->
+     exp_might_become n
+  | ArrayAccessExp aa ->
+     array_access_might_become aa
+  | ValueExp -> []
+  | SenderExp -> []
+  | ThisExp -> []
+  | SingleDereferenceExp e ->
+     exp_might_become e
+  | TupleDereferenceExp e ->
+     exp_might_become e
+
+let lexp_might_become l =
+  match l with
+  | IdentifierLExp _ -> []
+  | ArrayAccessLExp aa ->
+     array_access_might_become aa
+
+let variable_init_might_become v =
+  exp_might_become v.variable_init_value
+
+let rec sentence_might_become (s : typ sentence) : string list =
+  match s with
+  | AbortSentence -> []
+  | ReturnSentence ret ->
+     (exp_might_become ret.return_exp)@
+       (exp_might_become ret.return_cont)@
+         (match contract_name_of_return_cont ret.return_cont with
+          | Some name ->
+             let () = Printf.eprintf "found becomes %s\n%!" name in
+             [name]
+          | None -> []
+         )
+  | AssignmentSentence (l, r) ->
+     (lexp_might_become l)@
+       (exp_might_become r)
+  | VariableInitSentence v ->
+     variable_init_might_become v
+  | IfSingleSentence (c, b) ->
+     (exp_might_become c)@(sentence_might_become b)
+  | SelfdestructSentence e ->
+     exp_might_become e
+
+
+let case_might_become (case : typ case) : string list =
+  let body = case.case_body in
+  List.concat (List.map sentence_might_become body)
+
+let might_become (c : typ contract) : string list =
+  let cases = c.contract_cases in
+  List.concat (List.map case_might_become cases)
+
+
+let lookup_usual_case_in_single_contract c case_name =
   let cases = c.contract_cases in
   let cases = List.filter (fun c -> match c.case_header with
                                      | DefaultCaseHeader -> false
@@ -216,7 +309,7 @@ let lookup_usual_case_header (c : 'annot contract) (case_name : string) : usual_
                                         uc.case_name = case_name) cases in
   let () = if (List.length cases = 0) then
              let () = Printf.eprintf "case %s not found\n%!" case_name in
-             failwith "case_lookup"
+             raise Not_found
            else if (List.length cases > 1) then
              let () = Printf.eprintf "case %s duplicated\n%!" case_name in
              failwith "case_lookup"
@@ -224,6 +317,31 @@ let lookup_usual_case_header (c : 'annot contract) (case_name : string) : usual_
   let [a] = cases in
   let UsualCaseHeader uc = a.case_header in
   uc
+
+let rec lookup_usual_case_header_inner (already_seen : typ contract list)
+                                   (c : typ contract)
+                                   (case_name : string) f : usual_case_header =
+  if List.mem c already_seen then
+    raise Not_found
+  else
+    try
+      lookup_usual_case_in_single_contract c case_name
+    with Not_found ->
+         let already_seen = c :: already_seen in
+         let becomes = List.map f (might_become c) in
+         let rec try_becomes bs already_seen =
+           (match bs with
+            | [] -> raise Not_found
+            | h :: tl ->
+               (try
+                  lookup_usual_case_header_inner already_seen h case_name f
+                with Not_found ->
+                     let already_seen = h :: already_seen in
+                     try_becomes tl already_seen)) in
+         try_becomes becomes already_seen
+
+let lookup_usual_case_header (c : typ contract) (case_name : string) f : usual_case_header =
+  lookup_usual_case_header_inner [] c case_name f
 
 let size_of_typs (typs : typ list) =
   BatList.sum (List.map size_of_typ typs)
