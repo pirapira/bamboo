@@ -119,11 +119,33 @@ let copy_whole_current_code_to_memory ce =
   let () = assert(original_stack_size + 2 = stack_size ce) in
   ce
 
+let push_signature_code (ce : CodegenEnv.codegen_env)
+                        (case_signature : usual_case_header)
+  =
+  let hash = Ethereum.case_header_signature_hash case_signature in
+  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
+  ce
+
 (** [prepare_functiohn_signature ce usual_header]
  *  Allocates 4 bytes on the memory, and puts the function signature of the argument there.
  *  After that, the stack has (..., signature size, signature offset )
  *)
-let prepare_function_signature ce usual_header = failwith "prepare_function_signature"
+let prepare_function_signature ce usual_header =
+  let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH1 (Int 4)) in
+  (* stack : (..., 4) *)
+  let ce = append_instruction ce DUP1 in
+  (* stack : (..., 4, 4) *)
+  let ce = push_allocated_memory ce in
+  (* stack : (..., 4, signature_offset) *)
+  let ce = push_signature_code ce usual_header in
+  (* stack : (..., 4, signature_offset, sig) *)
+  let ce = append_instruction ce DUP2 in
+  (* stack : (..., 4, signature_offset, sig, signature_offset) *)
+  let ce = append_instruction ce MSTORE in
+  (* stack : (..., 4, signature_offset) *)
+  let () = assert (stack_size ce = original_stack_size + 2) in
+  ce
 
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
  *  according to the ABI.  This increases the stack top element by the size of the
@@ -732,13 +754,6 @@ let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) layouts 
   { runtime_codegen_env = ce
   ; runtime_contract_offsets = []
   }
-
-let push_signature_code (ce : CodegenEnv.codegen_env)
-                        (case_signature : usual_case_header)
-  =
-  let hash = Ethereum.case_header_signature_hash case_signature in
-  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
-  ce
 
 let push_destination_for (ce : CodegenEnv.codegen_env)
                          (cid : Assoc.contract_id)
