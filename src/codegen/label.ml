@@ -1,6 +1,6 @@
 type label = int
 
-let debug_label = true
+let debug_label = false
 
 (* internal data not accessible from outside of the module. *)
 let next_fresh_label : int ref = ref 0
@@ -20,5 +20,5 @@ let lookup_value l =
   try
     List.assoc l !store
   with Not_found ->
-    let () = Printf.printf "label: %d not found\n%!" l in
+    let () = if debug_label then Printf.eprintf "label: %d not found\n%!" l in
     raise Not_found

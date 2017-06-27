@@ -581,7 +581,6 @@ let copy_arguments_from_code_to_memory
       (CodegenEnv.codegen_env) =
   let total_size = Ethereum.total_size_of_interface_args
                      (List.map snd (Ethereum.constructor_arguments contract)) in
-  let () = Printf.printf "total size of constructor arguments: %d\n%!" total_size in
   let original_stack_size = stack_size ce in
   (* [] *)
   let ce = append_instruction ce (PUSH32 (Int total_size)) in
