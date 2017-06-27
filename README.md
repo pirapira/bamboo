@@ -80,7 +80,7 @@ There is some influence from Erlang.
 contract bid
 	(address _bidder
 	,uint _value
-	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
+	,auction _auction)
 {
 	case (bool refund())
 	{
@@ -95,13 +95,48 @@ contract bid
 		if (not _auction.bid_is_highest(_value) reentrance { abort; })
 			abort;
 		address beneficiary = _auction.beneficiary() reentrance { abort; };
-		selfdestruct(_beneficiary);
+		selfdestruct(beneficiary);
 	}
 	default
 	{
 		abort;
 	}
 }
+contract auction
+	(address _beneficiary
+	,uint _bidding_time
+	,bool[address] _bids /// When the contract is created, this must be empty.
+	,uint _highest_bid)
+{
+	case (bool bid())
+	{
+		if (now(block) > _bidding_time)
+			return (false) then auction_done(_beneficiary, _bids, _highest_bid);
+		if (value(msg) < _highest_bid)
+			abort;
+		bid new_bid =
+			new bid(sender(msg), value(msg), this) along value(msg)
+				reentrance { abort; }; // failure throws.
+		_bids[address(new_bid)] = true;
+		return (true) then
+			auction(_beneficiary, _bidding_time, _bids, value(msg));
+	}
+	case (bool bid_is_highest(uint _value))
+	{
+		return (_highest_bid == _value) then
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
+	}
+	case (address beneficiary())
+	{
+		return (_beneficiary) then
+			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
+	}
+	default
+	{
+		abort; // cancels the call.
+	}
+}
+
 ```
 
 There are other [example contracts that morph into another](src/parse/examples/00d_auction.bbo).
