@@ -12,7 +12,7 @@ The Bamboo compiler sometimes produces bytecode, which needs to be tested.
 
 As preparattion,
 * install [opam](http://opam.ocaml.org/doc/Install.html)
-* and then use `opam install menhir batteries rope` to install some of the dependencies.
+* and then use `opam install ocamlfind menhir batteries rope` to install some of the dependencies.
 * checkout [cryptokit](https://github.com/xavierleroy/cryptokit/) and follow the build&install instruction (the version available in `opam` does not work yet)
 
 Then,
