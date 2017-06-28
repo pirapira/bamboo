@@ -49,3 +49,9 @@ Error: Unbound value Hash.keccak
 You need to install cryptokit from master branch of https://github.com/xavierleroy/cryptokit
 because my PR was recently merged into this project.
 After cryptokit 1.12 (or any new version) is released, you will be able to use cryptokit from opam, I believe.
+
+## Related Work
+
+### Linden Scripting Language
+
+[Linden Scripting Language](http://wiki.secondlife.com/wiki/Getting_started_with_LSL#Introducing_States_and_Events) has similar organization of code according to `state`s.
