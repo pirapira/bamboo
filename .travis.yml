@@ -20,7 +20,7 @@ before_install:
 - opam init -y --comp=4.02.3
 - eval `opam config env`
 - opam update
-- opam install -y ocamlfind menhir batteries rope
+- opam install -y ocamlfind menhir batteries rope zarith
 - git clone https://github.com/xavierleroy/cryptokit.git cryptokit
 - cd cryptokit
 - ocaml setup.ml -configure
