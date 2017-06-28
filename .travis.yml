@@ -25,7 +25,7 @@ before_install:
 - cd cryptokit
 - ocaml setup.ml -configure
 - ocaml setup.ml -build
-- ocaml setup.ml -install
+- ocaml setup.ml -install || echo "It fails the second time.  It's ok."
 - cd ..
 script:
 - make
