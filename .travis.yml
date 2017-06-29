@@ -5,16 +5,6 @@ cache:
 sudo: required
 before_install:
 - sudo apt-get -qq update
-# - git clone https://github.com/polyml/polyml.git
-# - cd polyml
-# - git checkout v5.6
-# - ./configure
-# - make
-# - make compiler
-# - sudo make install
-# - cd -
-# - sudo updatedb
-# - locate libpolymain.a
 - wget https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh -O - | sudo sh -s /usr/local/bin
 - export OPAMJOBS=2
 - opam init -y --comp=4.02.3
