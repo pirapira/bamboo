@@ -5,6 +5,7 @@ cache:
 sudo: required
 before_install:
 - sudo apt-get -qq update
+- sudo apt-get install libleveldb1v5
 - wget https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh -O - | sudo sh -s /usr/local/bin
 - export OPAMJOBS=2
 - opam init -y --comp=4.02.3
@@ -17,6 +18,14 @@ before_install:
 - ocaml setup.ml -build
 - ocaml setup.ml -install || echo "It fails the second time.  It's ok."
 - cd ..
+- mkdir -p /tmp/test
+- wget -O /tmp/test/eth https://github.com/ethereum/cpp-ethereum/releases/download/solidityTester/eth
+- sync
+- chmod +x /tmp/test/eth
+- sync
+- /tmp/test/eth --test -d /tmp/test &
+- ETH_PID=$!
 script:
 - make
 - make test
+- kill $ETH_PID
