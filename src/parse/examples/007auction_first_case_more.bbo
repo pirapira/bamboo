@@ -9,7 +9,7 @@ contract auction
    default
    {
      _bids[sender(msg)] = true;
-     return (true) then
+     return (true) then become
          auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }

@@ -18,6 +18,7 @@
 %token FALSE
 %token TRUE
 %token THEN
+%token BECOME
 %token SEMICOLON
 %token EQUALITY
 %token NEQ
@@ -154,7 +155,7 @@ rev_sentences:
 
 sentence :
   | ABORT; SEMICOLON { Syntax.AbortSentence }
-  | RETURN; value = exp; THEN; cont = exp; SEMICOLON
+  | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
     { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
