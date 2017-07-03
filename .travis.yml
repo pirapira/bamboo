@@ -37,3 +37,4 @@ before_install:
 script:
 - make
 - make test
+- make end-to-end
