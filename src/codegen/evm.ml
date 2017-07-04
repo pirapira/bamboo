@@ -395,6 +395,10 @@ let print_imm_program (p : Big_int.big_int program) : unit =
   let hex = hex_of_program p in
   Hex.print_hex ~prefix:"0x" hex
 
+let string_of_imm_program (p : Big_int.big_int program) : string =
+  let hex = hex_of_program p in
+  Hex.string_of_hex ~prefix:"0x" hex
+
 let size_of_instruction i =
   match i with
   | PUSH1 _ -> 2
