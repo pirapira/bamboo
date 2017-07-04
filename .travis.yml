@@ -10,6 +10,7 @@ cache:
   directories:
   - $HOME/.opam
   - $HOME/build/pirapira/cpp-ethereum
+  - $HOME/build/pirapira/cmake
 sudo: required
 before_install:
 - BAMBOO=`pwd`
@@ -41,9 +42,11 @@ before_install:
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
 - sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
 - sudo apt purge -y cmake
-- wget https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz
-- tar xf cmake-3.8.2-Linux-x86_64.tar.gz
+- mkdir -p cmake
+- cd cmake
+- if [ ! -f cmake-3.8.2-Linux-x86_64.tar.gz ]; then wget https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz && tar xf cmake-3.8.2-Linux-x86_64.tar.gz; fi
 - PATH=`pwd`/cmake-3.8.2-Linux-x86_64/bin:$PATH
+- cd -
 - cmake --version
 - cd cpp-ethereum
 - git pull
