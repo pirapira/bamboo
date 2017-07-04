@@ -55,5 +55,6 @@ script:
 - which eth
 - eth --version
 - eth --test -d /tmp/test &
+- ./end-to-end.native
 - PID=$!
 - kill $PID
