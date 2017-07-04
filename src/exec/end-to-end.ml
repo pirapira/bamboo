@@ -292,6 +292,12 @@ let wait_till_mined s old_block =
 let simple_code =
   "0x600580600c6000396000f3006004600301"
 
+let advance_block s =
+  let old_blk = eth_blockNumber s in
+  let () = test_mineBlocks s 1 in
+  let () = wait_till_mined s old_blk in
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = personal_newAccount s in
@@ -311,9 +317,7 @@ let () =
     }
   in
   let tx = (eth_sendTransaction s trans) in
-  let old_blk = eth_blockNumber s in
-  let () = test_mineBlocks s 1 in
-  let () = wait_till_mined s old_blk in
+  let () = advance_block s in
 (*  let () = test_mineBlocks s 1 in
   let () = wait_till_mined s (Int64.add old_blk Int64.one) in *)
   let receipt = eth_getTransactionReceipt s tx in
@@ -333,9 +337,7 @@ let () =
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let tx = eth_sendTransaction s call in
-  let old_blk = eth_blockNumber s in
-  let () = test_mineBlocks s 1 in
-  let () = wait_till_mined s old_blk in
+  let () = advance_block s in
   let receipt = eth_getTransactionReceipt s tx in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
