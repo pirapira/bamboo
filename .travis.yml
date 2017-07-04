@@ -57,7 +57,8 @@ script:
 - which eth
 - eth --version
 - mkdir -p /tmp/test
-- eth --test -d /tmp/test &
+- eth --test -d /tmp/test &> eth.log &
 - ./end-to-end.native
 - PID=$!
 - kill $PID
+- cat eth.log
