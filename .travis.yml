@@ -12,6 +12,7 @@ cache:
 sudo: required
 before_install:
 - sudo apt-get -qq update
+- sudo apt-get install aspcud
 # - git clone https://github.com/polyml/polyml.git
 # - cd polyml
 # - git checkout v5.6
