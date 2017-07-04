@@ -12,6 +12,7 @@ cache:
 sudo: required
 before_install:
 - sudo apt-get -qq update
+- sudo apt-get install aspcud
 # - git clone https://github.com/polyml/polyml.git
 # - cd polyml
 # - git checkout v5.6
@@ -27,13 +28,38 @@ before_install:
 - opam init -y --comp=4.02.3
 - eval `opam config env`
 - opam update
-- opam install -y ocamlfind menhir batteries rope zarith
+- opam upgrade -y
+- opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc
 - git clone https://github.com/xavierleroy/cryptokit.git cryptokit
 - cd cryptokit
 - ocaml setup.ml -configure
 - ocaml setup.ml -build
 - ocaml setup.ml -install || echo "It fails the second time.  It's ok."
 - cd ..
+- git clone https://github.com/ethereum/cpp-ethereum --recursive
+- sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
+- sudo apt purge -y cmake
+- wget https://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz
+- tar xf cmake-3.8.2-Linux-x86_64.tar.gz
+- PATH=`pwd`/cmake-3.8.2-Linux-x86_64/bin:$PATH
+- cmake --version
+- cd cpp-ethereum
+- mkdir -p build
+- cd build
+- cmake ..
+- make -j3 eth
+- sudo make install
+- cd ../..
 script:
 - make
 - make test
+- make end-to-end
+- which eth
+- eth --version
+- mkdir -p /tmp/test
+- eth --test -d /tmp/test &> eth.log &
+- until grep JSONRPC eth.log; do sleep 1; echo "waiting for eth"; done
+- ./end-to-end.native
+- PID=$!
+- kill $PID
+- cat eth.log
