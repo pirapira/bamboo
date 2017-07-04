@@ -94,6 +94,7 @@ val print_pseudo_program : PseudoImm.pseudo_imm program -> unit
 val hex_of_instruction : Big_int.big_int instruction -> Hex.hex
 val hex_of_program : Big_int.big_int program -> Hex.hex
 
+val string_of_imm_program : Big_int.big_int program -> string
 val print_imm_program : Big_int.big_int program -> unit
 
 val size_of_instruction : 'exp instruction -> int
