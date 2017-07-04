@@ -56,6 +56,7 @@ script:
 - make end-to-end
 - which eth
 - eth --version
+- mkdir -p /tmp/test
 - eth --test -d /tmp/test &
 - ./end-to-end.native
 - PID=$!
