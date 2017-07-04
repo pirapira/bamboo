@@ -58,6 +58,7 @@ script:
 - eth --version
 - mkdir -p /tmp/test
 - eth --test -d /tmp/test &> eth.log &
+- until grep JSONRPC eth.log; do sleep 1; echo "waiting for eth"; done
 - ./end-to-end.native
 - PID=$!
 - kill $PID
