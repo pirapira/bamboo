@@ -318,15 +318,13 @@ let call s my_acc tr =
   let () = advance_block s in
   eth_getTransactionReceipt s tx
 
-let () =
+let testing_006 s =
   let initcode_compiled : string = CompileFile.compile_file sample_file_name in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000"
     ^ "0000000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-
-  let s = Utils.open_connection_unix_fd filename in
   let my_acc = reset_chain s in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
@@ -346,7 +344,11 @@ let () =
   let receipt = call s my_acc tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
+  ()
 
+let () =
+  let s = Utils.open_connection_unix_fd filename in
+  let () = testing_006 s in
   let () = Unix.close s in
   ()
 
