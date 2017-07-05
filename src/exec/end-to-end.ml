@@ -359,19 +359,15 @@ let testing_00b s =
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code!\n" in
-(*  let original = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
-  let () = assert (Big_int.(eq_big_int original zero_big_int)) in
   let tr : eth_transaction =
     { from = my_acc
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "100"
-    ; data = ""
+    ; data = String.sub (Ethereum.string_keccak "bid()") 0 8
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let receipt = call s my_acc tr in
-  let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
-  let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in *)
   ()
 
 let () =
