@@ -287,6 +287,37 @@ let advance_block s =
   let () = wait_till_mined s old_blk in
   ()
 
+let reset_chain s =
+  (* Maybe it's not necessary to create a new account every time *)
+  let my_acc = personal_newAccount s in
+  let config = rich_config [my_acc] in
+  let () = test_setChainParams s config in
+  let () = test_rewindToBlock s in
+  let () = test_rewindToBlock s in
+  let balance = eth_getBalance s my_acc in
+  let () = assert (Big_int.gt_big_int balance (Big_int.big_int_of_int 10000000000000000)) in
+  my_acc
+
+let deploy_code s my_acc code =
+  let trans : eth_transaction =
+    { from = my_acc
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    ; data = code
+    ; _to = "0x"
+    }
+  in
+  let tx = (eth_sendTransaction s trans) in
+  let () = advance_block s in
+  let receipt = eth_getTransactionReceipt s tx in
+  receipt
+
+let call s my_acc tr =
+  let tx = eth_sendTransaction s tr in
+  let () = advance_block s in
+  eth_getTransactionReceipt s tx
+
 let () =
   let initcode_compiled : string = CompileFile.compile_file sample_file_name in
   let initcode_args : string =
@@ -296,35 +327,15 @@ let () =
   let initcode = initcode_compiled^initcode_args in
 
   let s = Utils.open_connection_unix_fd filename in
-  let my_acc = personal_newAccount s in
-  let config = rich_config [my_acc] in
-  let () = test_setChainParams s config in
-  let () = test_rewindToBlock s in
-  let () = test_rewindToBlock s in
-  let balance = eth_getBalance s my_acc in
-  let () = assert (Big_int.gt_big_int balance (Big_int.big_int_of_int 10000000000000000)) in
-  let trans : eth_transaction =
-    { from = my_acc
-    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
-    ; value = "0x0000000000000000000000000000000000000000000000000000000000000000"
-    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
-    ; data = initcode
-    ; _to = "0x"
-    }
-  in
-  let tx = (eth_sendTransaction s trans) in
-  let () = advance_block s in
-(*  let () = test_mineBlocks s 1 in
-  let () = wait_till_mined s (Int64.add old_blk Int64.one) in *)
-  let receipt = eth_getTransactionReceipt s tx in
-  let () = Printf.printf "got receipt!\n" in
+  let my_acc = reset_chain s in
+  let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code!\n" in
   let original = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int original zero_big_int)) in
-  let call : eth_transaction =
+  let tr : eth_transaction =
     { from = my_acc
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
@@ -332,9 +343,7 @@ let () =
     ; data = ""
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
-  let tx = eth_sendTransaction s call in
-  let () = advance_block s in
-  let receipt = eth_getTransactionReceipt s tx in
+  let receipt = call s my_acc tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
 
