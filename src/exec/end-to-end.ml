@@ -346,9 +346,38 @@ let testing_006 s =
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
+let testing_00b s =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00b_auction_more.bbo" in
+  let initcode_args : string =
+    "0000000000000000000000000000000000000000000000000000000000000000"
+    ^ "0000000000000000000000000000000000000000000000000000000400000020"
+    ^ "0000000000000000000000000000000000000000000000000000000000000000" in
+  let initcode = initcode_compiled^initcode_args in
+  let my_acc = reset_chain s in
+  let receipt = deploy_code s my_acc initcode in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+(*  let original = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
+  let () = assert (Big_int.(eq_big_int original zero_big_int)) in
+  let tr : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "100"
+    ; data = ""
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let receipt = call s my_acc tr in
+  let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
+  let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in *)
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let () = testing_006 s in
+  let () = testing_00b s in
   let () = Unix.close s in
   ()
 
