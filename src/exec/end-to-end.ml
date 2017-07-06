@@ -150,6 +150,15 @@ let eth_sendTransaction s (trans : eth_transaction) : address =
   let result = address_of_rpc json in
   result
 
+let eth_call s (trans : eth_transaction) : string =
+  let c : Rpc.call =
+    Rpc.({ name = "eth_call"
+         ; params = [rpc_of_eth_transaction trans; Rpc.rpc_of_string "latest"]
+         }) in
+  let res : Rpc.response = do_rpc_unix s c in
+  let json = pick_result res in
+  Rpc.string_of_rpc json
+
 let test_mineBlocks s (num : int) =
   let call : Rpc.call =
     Rpc.({ name = "test_mineBlocks"
@@ -346,9 +355,51 @@ let testing_006 s =
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
+let compute_signature_hash (signature : string) : string =
+  String.sub (Ethereum.string_keccak signature) 0 8
+
+
+(* showing not quite satisfactory results *)
+let testing_00b s =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00b_auction_more.bbo" in
+  let initcode_args : string =
+    "0000000000000000000000000000000000000000000000000000000000000000"
+    ^ "ff00000000000000000000000000000000000000000000000000000400000020"
+    ^ "0000000000000000000000000000000000000000000000000000000000000000" in
+  let initcode = initcode_compiled^initcode_args in
+  let my_acc = reset_chain s in
+  let receipt = deploy_code s my_acc initcode in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let highest_bid : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = compute_signature_hash "highest_bid()"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call s highest_bid in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let tr : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "100"
+    ; data = compute_signature_hash "bid()"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let receipt = call s my_acc tr in
+  let answer = eth_call s highest_bid in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let () = testing_006 s in
+  let () = testing_00b s in
   let () = Unix.close s in
   ()
 
