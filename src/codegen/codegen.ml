@@ -196,6 +196,8 @@ let rec add_constructor_argument_to_memory le ce (arg : Syntax.typ exp) =
   (* stack : [acc, 32, offset] *)
   let ce = codegen_exp le ce arg in
   (* stack : [acc, 32, offset, val] *)
+  let ce = append_instruction ce SWAP1 in
+  (* stack : [acc, 32, val, offset] *)
   let ce = append_instruction ce MSTORE in
   (* stack : [acc, 32] *)
   let ce = append_instruction ce ADD in
@@ -1165,6 +1167,7 @@ let codegen_append_contract_bytecode
 let append_runtime layout (prev : runtime_compiled)
                    ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
                    : runtime_compiled =
+  let () = Printf.printf "appending a contract at position %d\n" (CodegenEnv.code_length prev.runtime_codegen_env) in
   { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env layout (cid, contract)
   ; runtime_contract_offsets = Assoc.insert cid (CodegenEnv.code_length prev.runtime_codegen_env) prev.runtime_contract_offsets
   }

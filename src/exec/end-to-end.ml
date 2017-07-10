@@ -362,15 +362,16 @@ let compute_signature_hash (signature : string) : string =
 let testing_00bb s =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00bbauction_first_named_case.bbo" in
   let initcode_args : string =
-    "0000000000000000000000000000000000000000000000000000000000000000"
-    ^ "0000000000000000000000000000000000000000000000000000000000000000" in
+    "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
-  let () = Printf.printf "saw code!\n" in
+  let () = Printf.printf "saw code! %s\n" deployed in
+  let storage_first_word = eth_getStorageAt s contract_address (Big_int.big_int_of_int 0) in
+  let () = Printf.printf "first word! %s\n" (Big_int.string_of_big_int storage_first_word) in
   let original = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int original zero_big_int)) in
   let tr : eth_transaction =
@@ -382,7 +383,9 @@ let testing_00bb s =
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let receipt = call s my_acc tr in
-  let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
+  let () = Printf.printf "used gas: %s\n%!" (Int64.to_string receipt.gasUsed) in
+  let () = Printf.printf "transaction hash: %s\n%!" receipt.transactionHash in
+  let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 2) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
