@@ -363,7 +363,6 @@ let testing_00bb s =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00bbauction_first_named_case.bbo" in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000"
-    ^ "0000000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s in

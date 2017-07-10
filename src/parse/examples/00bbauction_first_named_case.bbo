@@ -9,7 +9,7 @@ contract auction
    case(bool bid())
    {
 	bid new_bid =
-		new bid(sender(msg), value(msg), this) along value(msg)
+		new bid(sender(msg)) along value(msg)
 			 reentrance { abort; }; // failure throws.
      return (true) then become
      auction(_beneficiary, _bidding_time, _bids, value(msg));
@@ -17,8 +17,6 @@ contract auction
 }
 contract bid
   (address _sender
-  ,uint _value
-  ,address _auction
   )
 {
 }
