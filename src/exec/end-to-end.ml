@@ -355,6 +355,10 @@ let testing_006 s =
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
+(** XXX this should move to a library *)
+let compute_signature_hash (signature : string) : string =
+  String.sub (Ethereum.string_keccak signature) 0 8
+
 let testing_00bb s =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00bbauction_first_named_case.bbo" in
   let initcode_args : string =
@@ -375,16 +379,13 @@ let testing_00bb s =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "100"
-    ; data = ""
+    ; data = compute_signature_hash "bid()"
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let receipt = call s my_acc tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
-
-let compute_signature_hash (signature : string) : string =
-  String.sub (Ethereum.string_keccak signature) 0 8
 
 
 (* showing not quite satisfactory results *)
