@@ -1027,10 +1027,12 @@ let move_stack_top_to_memory typ le ce =
   let ce = push_allocated_memory ce in
   (* ..., value, 32, addr *)
   let ce = append_instruction ce SWAP2 in
-  (* ..., 32, addr, value *)
-  let ce = append_instruction ce DUP2 in
-  (* ..., 32, addr, value, addr *)
+  (* ..., addr, 32, value *)
+  let ce = append_instruction ce DUP3 in
+  (* ..., addr, 32, value, addr *)
   let ce = append_instruction ce MSTORE in
+  (* ..., addr, 32 *)
+  let ce = append_instruction ce SWAP1 in
   (* ..., 32, addr *)
   ce
 

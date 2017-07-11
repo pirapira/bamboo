@@ -425,6 +425,7 @@ let testing_00b s =
   let receipt = call s my_acc tr in
   let answer = eth_call s highest_bid in
   let () = Printf.printf "got answer: %s\n%!" answer in
+  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
   ()
 
 let () =
