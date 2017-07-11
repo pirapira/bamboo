@@ -717,6 +717,13 @@ let bulk_sstore_from_memory ce =
  *)
 let copy_arguments_from_memory_to_storage le ce (contract_id : Assoc.contract_id) =
   let ce = append_instruction
+             ce (PUSH32 (InitDataSize contract_id)) in
+  let ce = append_instruction ce CODESIZE in
+  let ce = append_instruction ce EQ in
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH1 (Int 2)) in
+  let ce = append_instruction ce JUMPI in
+  let ce = append_instruction
              ce (PUSH32 (StorageConstructorArgumentsBegin contract_id)) in
   (* stack, [..., size, memory_start, destination_storage_start] *)
   bulk_sstore_from_memory ce

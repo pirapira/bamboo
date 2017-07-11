@@ -355,6 +355,20 @@ let testing_006 s =
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
+let constructor_arg_test s =
+  let initcode_compiled : string = CompileFile.compile_file sample_file_name in
+  let initcode_args : string =
+    "0000000000000000000000000000000000000000000000000000000000000000"
+    ^ "0000000000000000000000000000000000000000000000000000000000000000" in
+  let initcode = initcode_compiled^initcode_args in
+  let my_acc = reset_chain s in
+  let receipt = deploy_code s my_acc initcode in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (not (String.length deployed > 2)) in
+  let () = Printf.printf "didn't find code! good!\n" in
+  ()
+
 (** XXX this should move to a library *)
 let compute_signature_hash (signature : string) : string =
   String.sub (Ethereum.string_keccak signature) 0 8
@@ -430,6 +444,7 @@ let testing_00b s =
 
 let () =
   let s = Utils.open_connection_unix_fd filename in
+  let () = constructor_arg_test s in
   let () = testing_00bb s in
   let () = testing_006 s in
   let () = testing_00b s in
