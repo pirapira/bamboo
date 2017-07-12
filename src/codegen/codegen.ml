@@ -66,7 +66,7 @@ let throw_if_zero ce =
 let push_allocated_memory (ce : CodegenEnv.codegen_env) =
   let original_stack_size = stack_size ce in
   (* [desired_length] *)
-  let ce = append_instruction ce (PUSH32 (Int 64)) in
+  let ce = append_instruction ce (PUSH1 (Int 64)) in
   let ce = append_instruction ce DUP1 in
   (* [desired_length, 64, 64] *)
   let ce = append_instruction ce MLOAD in
@@ -82,6 +82,14 @@ let push_allocated_memory (ce : CodegenEnv.codegen_env) =
   let ce = append_instruction ce MSTORE in
   (* [memory[64]] *)
   let () = assert (stack_size ce = original_stack_size) in
+  ce
+
+let peek_next_memory_allocation (ce : CodegenEnv.codegen_env) =
+  let original_stack_size = stack_size ce in
+  (* [] *)
+  let ce = append_instruction ce (PUSH1 (Int 64)) in
+  let ce = append_instruction ce MLOAD in
+  let () = assert (stack_size ce = 1 + original_stack_size) in
   ce
 
 let copy_from_code_to_memory ce =
@@ -251,6 +259,28 @@ and produce_init_code_in_memory le ce new_exp =
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_total_size, memory_offset] *)
   ce
+and codegen_function_call_exp le ce (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
+  if function_call.call_head = "pre_ecdsarecover" then
+    codegen_ecdsarecover le ce function_call.call_args rettyp
+  else
+    failwith "codegen_function_call_exp: unknown function head."
+and codegen_ecdsarecover le ce args rettyp =
+  match args with
+  | [h; v; r; s] ->
+     (* stack: [] *)
+     let original_stack_size = stack_size ce in
+     let ce = peek_next_memory_allocation ce in
+     let ce = add_constructor_arguments_to_memory le ce args in
+     (* stack: [memory_offset, memory_total_size] *)
+
+     (* stack: ??? *)
+     let ce = append_instruction ce CALL in
+     (* stack: [success?] *)
+     let ce = throw_if_zero ce in
+     (* stack: [] *)
+     let () = assert (stack_size ce = original_stack_size) in
+     ce
+  | _ -> failwith "pre_ecdsarecover has a wrong number of arguments"
 and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
@@ -379,9 +409,8 @@ and codegen_exp
      codegen_new_exp le ce new_e ctyp
   | NewExp new_e, _ ->
      failwith "exp code gen for new expression with unexpected type"
-  | FunctionCallExp _, _ ->
-     (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
-     failwith "exp code gen for callexp"
+  | FunctionCallExp function_call, rettyp ->
+     codegen_function_call_exp le ce function_call rettyp
   | ParenthExp _, _ ->
      failwith "ParenthExp not expected."
   | SingleDereferenceExp (reference, ref_typ), value_typ ->
