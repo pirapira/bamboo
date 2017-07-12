@@ -72,7 +72,7 @@ The new style forces temporal organization of the code lines.
 
 ### Syntax
 
-After some polishing I ended up to something like [this](src/parse/examples/00d_auction.bbo).
+After some polishing I ended up to something like [this](../src/parse/examples/00d_auction.bbo).
 There is some influence from Erlang.
 
 ### Not to have
