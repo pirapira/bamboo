@@ -79,5 +79,5 @@ There is some influence from Erlang.
 
 This language is designed to facilliate a particular style.
 So the language will not support features like:
-* loop constructs (`for`, `while`, ...).  Due to the constant block gas limit, loops chould be avoided and each iteration should be done in separate transactions.
-* assignments into storage variables, except array elements.  Instead of assigning a new value to a storage variable, the new value can be given as an arument in the continaution (e.g. `return () then auction(new_highest_bidder, ...)`
+* loop constructs (`for`, `while`, ...).  Due to the constant block gas limit, loops should be avoided and each iteration should be done in separate transactions.
+* assignments into storage variables, except array elements.  Instead of assigning a new value to a storage variable, the new value can be given as an argument in the continaution (e.g. `return () then auction(new_highest_bidder, ...)`
