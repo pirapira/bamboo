@@ -1,0 +1,5 @@
+contract unknown () {
+   case(bool f(xyz k)) {
+       return (true) then become unknown();
+   }
+}

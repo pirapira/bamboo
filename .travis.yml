@@ -59,6 +59,7 @@ before_install:
 - cd $BAMBOO
 script:
 - make
+- if ./bbo.native < ./src/parse/not_working_examples/unknown_type.bbo; then false; else true; fi
 - make test
 - make end-to-end
 - which eth
