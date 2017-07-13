@@ -60,8 +60,10 @@ let rec argument_sizes_to_positions_inner ret used sizes =
   match sizes with
   | [] -> List.rev ret
   | h :: t ->
+     let () = assert (h > 0) in
+     let () = assert (h <= 32) in (* XXX using div and mod, generalization is possible *)
      argument_sizes_to_positions_inner
-       (used :: ret) (used + h) t
+       (used + 32 - h :: ret) (used + 32) t
 
 let argument_sizes_to_positions sizes =
   argument_sizes_to_positions_inner [] 0 sizes
