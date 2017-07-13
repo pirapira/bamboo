@@ -289,16 +289,42 @@ and codegen_ecdsarecover le ce args rettyp =
   | [h; v; r; s] ->
      (* stack: [] *)
      let original_stack_size = stack_size ce in
+     let ce = append_instruction ce (PUSH1 (Int 32)) in
+     (* stack: [out size] *)
+     let ce = append_instruction ce DUP1 in
+     (* stack: [out size, out size] *)
+     let ce = push_allocated_memory ce in
+     (* stack: [out size, out address] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack: [out size, out address, out size] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack: [out size, out address, out size, out address] *)
      let ce = peek_next_memory_allocation ce in
      let ce = add_constructor_arguments_to_memory le ce args in
-     (* stack: [memory_offset, memory_total_size] *)
-
-     (* stack: ??? *)
+     (* stack: [out size, out address, out size, out address, memory_offset, memory_total_size] *)
+     let ce = append_instruction ce SWAP1 in
+     (* stack: [out size, out address, out size, out address, in size, in offset] *)
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     (* stack: [out size, out address, out size, out address, in size, in offset, value] *)
+     let () = assert (stack_size ce = original_stack_size + 7) in
+     let ce = append_instruction ce (PUSH1 (Int 1)) in
+     (* stack: [out size, out address, out size, out address, in size, in offset, value, to] *)
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     (* stack: [out size, out address, out size, out offset, in size, in offset, value, to, gas] *)
      let ce = append_instruction ce CALL in
-     (* stack: [success?] *)
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     (* stack: [out size, out address, success?] *)
      let ce = throw_if_zero ce in
-     (* stack: [] *)
-     let () = assert (stack_size ce = original_stack_size) in
+     let ce = append_instruction ce POP in
+     (* stack: [out size, out address] *)
+     let () = assert (stack_size ce = original_stack_size + 2) in
+     let ce = append_instruction ce SWAP1 in
+     (* stack: [out address, out size] *)
+     let ce = append_instruction ce POP in (* we know it's 32 *)
+     (* stack: [out address] *)
+     let ce = append_instruction ce MLOAD in
+     let () = assert (stack_size ce = original_stack_size + 1) in
+     (* stack: [output] *)
      ce
   | _ -> failwith "pre_ecdsarecover has a wrong number of arguments"
 and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
