@@ -170,7 +170,7 @@ let codegen_array_seed le ce array =
   | Some location ->
      let (le, ce) = copy_to_stack_top le ce location in
      ce
-  | None -> failwith ("identifier's location not found: "^array)
+  | None -> failwith ("codegen_array_seed: identifier's location not found: "^array)
   end
 
 let keccak_cons le ce =
@@ -358,7 +358,7 @@ and codegen_exp
       | Some location ->
          let (le, ce) = copy_to_stack_top le ce location in
          ce
-      | None -> failwith ("identifier's location not found: "^id)
+      | None -> failwith ("codegen_exp: identifier's location not found: "^id)
       end
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction

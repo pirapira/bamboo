@@ -1,5 +1,5 @@
 contract A() {
-	case (int a(bytes32 a, bytes32 b, uint8 c, bytes32 d)) {
-		return (pre_ecdsarecover(a, b, c, d)) then become A();
+	case (int a(bytes32 x, bytes32 b, uint8 c, bytes32 d)) {
+		return (pre_ecdsarecover(x, b, c, d)) then become A();
 	}
 }
