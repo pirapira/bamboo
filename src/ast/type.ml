@@ -16,6 +16,7 @@ let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.c
   Syntax.(
     match t with
     | UintType -> true
+    | Uint8Type -> true
     | Bytes32Type -> true
     | AddressType -> true
     | BoolType -> true

@@ -13,6 +13,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   Syntax.
   (match str with
   | UintType -> InterfaceUint 256
+  | Uint8Type -> InterfaceUint 256 (* XXX: More propertly, uint8 type should be an independent entry *)
   | Bytes32Type -> InterfaceUint 256 (* XXX: More properly, BytesXX types should be independent entries *)
   | AddressType -> InterfaceAddress
   | BoolType -> InterfaceBool

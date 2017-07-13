@@ -1,5 +1,6 @@
 type typ =
   | UintType
+  | Uint8Type
   | Bytes32Type
   | AddressType
   | BoolType
