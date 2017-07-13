@@ -58,7 +58,7 @@ let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
 
 let rec argument_sizes_to_positions_inner ret used sizes =
   match sizes with
-  | [] -> ret
+  | [] -> List.rev ret
   | h :: t ->
      argument_sizes_to_positions_inner
        (used :: ret) (used + h) t
