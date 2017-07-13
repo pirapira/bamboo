@@ -9,6 +9,38 @@ let ident_lookup_type
   | None -> failwith ("unknown identifier "^id)
   (* what should it return when it is a method name? *)
 
+let is_known_contract contract_interfaces name =
+  BatList.exists (fun (_, i) -> i.Contract.contract_interface_name = name) contract_interfaces
+
+let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (t : typ) =
+  Syntax.(
+    match t with
+    | UintType -> true
+    | AddressType -> true
+    | BoolType -> true
+    | ReferenceType lst ->
+       BatList.for_all (is_known_type contract_interfaces) lst
+    | TupleType lst ->
+       BatList.for_all (is_known_type contract_interfaces) lst
+    | MappingType (a, b) ->
+       is_known_type contract_interfaces a && is_known_type contract_interfaces b
+    | ContractArchType contract ->
+       is_known_contract contract_interfaces contract
+    | ContractInstanceType contract ->
+       is_known_contract contract_interfaces contract
+  )
+
+let arg_has_known_type contract_interfaces arg =
+  is_known_type contract_interfaces arg.arg_typ
+
+let assign_type_case_header contract_interfaces header =
+  match header with
+  | UsualCaseHeader header ->
+     let () = assert (BatList.for_all (arg_has_known_type contract_interfaces) header.case_arguments) in
+     UsualCaseHeader header
+  | DefaultCaseHeader ->
+     DefaultCaseHeader
+
 
 let rec assign_type_call
       contract_interfaces
@@ -177,6 +209,7 @@ and type_variable_init
                                cname tenv vi.variable_init_value in
   let added_name = vi.variable_init_name in
   let added_typ = vi.variable_init_type in
+  let () = assert (is_known_type contract_interfaces added_typ) in
   let new_env = TypeEnv.add_pair tenv added_name added_typ in
   let new_init =
     { variable_init_type = added_typ
@@ -234,7 +267,7 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
                      (venv : TypeEnv.type_env)
                      (case : unit case) =
   let case_arguments = case_header_arg_list case.case_header in
-  { case_header = case.case_header
+  { case_header = assign_type_case_header contract_interfaces case.case_header
   ; case_body = assign_type_sentences
                   contract_interfaces
                   contract_name
