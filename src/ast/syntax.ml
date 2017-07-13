@@ -1,5 +1,6 @@
 type typ =
   | UintType
+  | Uint8Type
   | Bytes32Type
   | AddressType
   | BoolType
@@ -13,6 +14,7 @@ type typ =
 let rec string_of_typ t =
   match t with
   | UintType -> "uint"
+  | Uint8Type -> "uint8"
   | Bytes32Type -> "bytes32"
   | AddressType -> "address"
   | BoolType -> "bool"
@@ -159,6 +161,7 @@ let string_of_exp_inner e =
 let is_mapping (typ : typ) =
   match typ with
   | UintType
+  | Uint8Type
   | Bytes32Type
   | AddressType
   | BoolType
@@ -175,6 +178,7 @@ let count_plain_args (typs : typ list) =
 let fits_in_one_storage_slot (typ : typ) =
   match typ with
   | UintType
+  | Uint8Type
   | Bytes32Type
   | AddressType
   | BoolType
@@ -186,6 +190,7 @@ let fits_in_one_storage_slot (typ : typ) =
 
 let size_of_typ (* in bytes *) = function
   | UintType -> 32
+  | Uint8Type -> 8
   | Bytes32Type -> 32
   | AddressType -> 32 (* Though only 20 bytes are used *)
   | BoolType -> 32
