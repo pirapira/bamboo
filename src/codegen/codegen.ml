@@ -18,10 +18,30 @@ let copy_stack_to_stack_top le ce (s : int) =
   let () = assert (stack_size ce = original_stack_size + 1) in
   le, ce
 
+let shift_stack_top_to_right ce bits =
+  let () = assert (bits >= 0) in
+  let () = assert (bits < 256) in
+  if bits = 0 then ce
+  else
+    (* [x] *)
+    let ce = append_instruction ce (PUSH1 (Int bits)) in
+    (* [x, bits] *)
+    let ce = append_instruction ce (PUSH1 (Int 2)) in
+    (* [x, bits, 2] *)
+    let ce = append_instruction ce EXP in
+    (* [x, 2 ** bits] *)
+    let ce = append_instruction ce SWAP1 in
+    (* [2 ** bits, x] *)
+    let ce = append_instruction ce DIV in
+    (* [x / (2 ** bits)] *)
+    ce
+
 let copy_calldata_to_stack_top le ce (range : Location.calldata_range) =
-  let () = assert (range.Location.calldata_size = 32) in
+  let () = assert (range.Location.calldata_size > 0) in
+  let () = assert (range.Location.calldata_size <= 32) in
   let ce = append_instruction ce (PUSH4 (Int range.Location.calldata_offset)) in
   let ce = append_instruction ce CALLDATALOAD in
+  let ce = shift_stack_top_to_right ce ((32 - range.Location.calldata_size) * 8) in
   le, ce
 
 let copy_to_stack_top le ce (l : Location.location) =
