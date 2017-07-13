@@ -358,7 +358,9 @@ and codegen_exp
       | Some location ->
          let (le, ce) = copy_to_stack_top le ce location in
          ce
-      | None -> failwith ("codegen_exp: identifier's location not found: "^id)
+      | None ->
+         let () = Printf.printf "location env has %d entries\n" (LocationEnv.size le) in
+         failwith ("codegen_exp: identifier's location not found: "^id)
       end
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction
@@ -1167,7 +1169,9 @@ and add_self_destruct le ce layout exp =
 
 let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
   let additions : (string * Location.location) list = Ethereum.arguments_with_locations case in
-  LocationEnv.add_pairs le additions
+  let ret = LocationEnv.add_pairs le additions in
+  let () = Printf.printf "created a location env of size %d\n" (LocationEnv.size ret) in
+  ret
 
 let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
