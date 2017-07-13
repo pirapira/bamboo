@@ -24,6 +24,7 @@ rule read =
   | "case"     { CASE }
   | "abort"    { ABORT }
   | "uint"     { UINT }
+  | "bytes32"  { BYTES32 }
   | "address"  { ADDRESS }
   | "bool"     { BOOL }
   | "["        { LSQBR }

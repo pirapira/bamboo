@@ -1,5 +1,6 @@
 type typ =
   | UintType
+  | Bytes32Type
   | AddressType
   | BoolType
   | ReferenceType of typ list (** pointer to [typ list] on memory *)

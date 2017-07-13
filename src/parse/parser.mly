@@ -2,6 +2,7 @@
 %token <string> IDENT
 %token ADDRESS
 %token UINT
+%token BYTES32
 %token BOOL
 %token LPAR
 %token RPAR
@@ -133,6 +134,7 @@ arg:
 
 typ:
   | UINT { Syntax.UintType }
+  | BYTES32 { Syntax.Bytes32Type }
   | ADDRESS { Syntax.AddressType }
   | BOOL { Syntax.BoolType }
   | value = typ;

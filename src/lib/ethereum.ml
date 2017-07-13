@@ -13,6 +13,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   Syntax.
   (match str with
   | UintType -> InterfaceUint 256
+  | Bytes32Type -> InterfaceUint 256 (* XXX: More properly, BytesXX types should be independent entries *)
   | AddressType -> InterfaceAddress
   | BoolType -> InterfaceBool
   | TupleType _ -> failwith "interpret_interface_type: tuple types are not supported yet"
