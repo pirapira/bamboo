@@ -35,10 +35,14 @@ let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.c
 let arg_has_known_type contract_interfaces arg =
   is_known_type contract_interfaces arg.arg_typ
 
+let ret_type_is_known contract_interfaces header =
+  BatList.for_all (is_known_type contract_interfaces) header.case_return_typ
+
 let assign_type_case_header contract_interfaces header =
   match header with
   | UsualCaseHeader header ->
      let () = assert (BatList.for_all (arg_has_known_type contract_interfaces) header.case_arguments) in
+     let () = assert (ret_type_is_known contract_interfaces header) in
      UsualCaseHeader header
   | DefaultCaseHeader ->
      DefaultCaseHeader
