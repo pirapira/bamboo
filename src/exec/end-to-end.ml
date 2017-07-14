@@ -449,6 +449,20 @@ let random_ecdsa s =
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert(String.length deployed > 2) in (* XXX the procedure so far can be factored out *)
+  let random_req : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = "0x0000000000000000000000000000000000000000000000000000000005f5e100"^
+               "0000000000000000000000000000000000000000000000000000000005f5e100"^
+                 "0000000000000000000000000000000000000000000000000000000005f5e100"^
+                   "0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call s random_req in
+  let () = Printf.printf "got answer: %s\n" answer in
+  let () = assert(answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
   ()
 
 
