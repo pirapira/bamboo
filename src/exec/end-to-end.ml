@@ -285,7 +285,7 @@ let eth_getStorageAt s addr slot =
 
 let wait_till_mined s old_block =
   while eth_blockNumber s = old_block do
-    Unix.sleep 1
+    Unix.sleepf 0.01
   done
 
 let sample_file_name : string = "./src/parse/examples/006auction_first_case.bbo"
