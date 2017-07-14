@@ -442,12 +442,23 @@ let testing_00b s =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
   ()
 
+let random_ecdsa s =
+  let my_acc = reset_chain s in
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
+  let receipt = deploy_code s my_acc initcode_compiled in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert(String.length deployed > 2) in (* XXX the procedure so far can be factored out *)
+  ()
+
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let () = constructor_arg_test s in
   let () = testing_00bb s in
   let () = testing_006 s in
   let () = testing_00b s in
+  let () = random_ecdsa s in
   let () = Unix.close s in
   ()
 
