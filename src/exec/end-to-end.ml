@@ -454,7 +454,8 @@ let random_ecdsa s =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = "0x0000000000000000000000000000000000000000000000000000000005f5e100"^
+    ; data = (compute_signature_hash "a(bytes32,bytes32,uint8,bytes32)") ^
+        "0000000000000000000000000000000000000000000000000000000005f5e100"^
                "0000000000000000000000000000000000000000000000000000000005f5e100"^
                  "0000000000000000000000000000000000000000000000000000000005f5e100"^
                    "0000000000000000000000000000000000000000000000000000000005f5e100"
@@ -462,6 +463,10 @@ let random_ecdsa s =
     } in
   let answer = eth_call s random_req in
   let () = Printf.printf "got answer: %s\n" answer in
+  let tx = eth_sendTransaction s random_req in
+  let () = advance_block s in
+  let () = Printf.printf "transaction id for random_eq: %s\n%!" tx in
+
   let () = assert(answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
   ()
 

@@ -157,6 +157,7 @@ let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : usual_case_header)
   =
   let hash = Ethereum.case_header_signature_hash case_signature in
+  let () = Printf.printf "computed hash of signature %s\n%!" hash in
   let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
   ce
 
@@ -309,7 +310,7 @@ and codegen_ecdsarecover le ce args rettyp =
      let () = assert (stack_size ce = original_stack_size + 7) in
      let ce = append_instruction ce (PUSH1 (Int 1)) in
      (* stack: [out size, out address, out size, out address, in size, in offset, value, to] *)
-     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     let ce = append_instruction ce (PUSH4 (Int 10000)) in
      (* stack: [out size, out address, out size, out offset, in size, in offset, value, to, gas] *)
      let ce = append_instruction ce CALL in
      let () = assert (stack_size ce = original_stack_size + 3) in

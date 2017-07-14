@@ -3,6 +3,7 @@ val signature_bits : int
 
 type interface_typ =
   | InterfaceUint of int
+  | InterfaceBytes of int
   | InterfaceAddress
   | InterfaceBool
 

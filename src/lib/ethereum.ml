@@ -3,6 +3,7 @@ let signature_bits = 32
 
 type interface_typ =
   | InterfaceUint of int
+  | InterfaceBytes of int
   | InterfaceAddress
   | InterfaceBool
 
@@ -13,8 +14,8 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   Syntax.
   (match str with
   | UintType -> InterfaceUint 256
-  | Uint8Type -> InterfaceUint 256 (* XXX: More propertly, uint8 type should be an independent entry *)
-  | Bytes32Type -> InterfaceUint 256 (* XXX: More properly, BytesXX types should be independent entries *)
+  | Uint8Type -> InterfaceUint 8
+  | Bytes32Type -> InterfaceBytes 32
   | AddressType -> InterfaceAddress
   | BoolType -> InterfaceBool
   | TupleType _ -> failwith "interpret_interface_type: tuple types are not supported yet"
@@ -31,6 +32,9 @@ let to_typ (ityp : interface_typ) =
        let () = if (x < 0 || x > 256) then
                   failwith "too small or too big integer" in
        UintType
+    | InterfaceBytes x ->
+       let () = assert (x = 32) in
+       Bytes32Type
     | InterfaceBool -> BoolType
     | InterfaceAddress -> AddressType
   )
@@ -41,6 +45,7 @@ let interface_typ_size (ityp : interface_typ) : int =
   | InterfaceUint _ -> 32
   | InterfaceAddress -> 32
   | InterfaceBool -> 32
+  | InterfaceBytes _ -> 32
 
 type function_signature =
   { sig_return : interface_typ list
@@ -123,6 +128,8 @@ let string_of_interface_type (i : interface_typ) : string =
   match i with
   | InterfaceUint x ->
      "uint"^(string_of_int x)
+  | InterfaceBytes x ->
+     "bytes"^(string_of_int x)
   | InterfaceAddress -> "address"
   | InterfaceBool -> "bool"
 
@@ -135,7 +142,9 @@ let case_header_signature_string (h : Syntax.usual_case_header) : string =
   name_of_case ^ "(" ^ args ^ ")"
 
 let case_header_signature_hash (h : Syntax.usual_case_header) : string =
-  keccak_signature (case_header_signature_string h)
+  let sign = case_header_signature_string h in
+  let () = Printf.printf "for signature %s\n" sign in
+  keccak_signature sign
 
 let hex_to_big_int h =
   BatBig_int.big_int_of_string ("0x"^h)
