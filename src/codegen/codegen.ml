@@ -18,10 +18,30 @@ let copy_stack_to_stack_top le ce (s : int) =
   let () = assert (stack_size ce = original_stack_size + 1) in
   le, ce
 
+let shift_stack_top_to_right ce bits =
+  let () = assert (bits >= 0) in
+  let () = assert (bits < 256) in
+  if bits = 0 then ce
+  else
+    (* [x] *)
+    let ce = append_instruction ce (PUSH1 (Int bits)) in
+    (* [x, bits] *)
+    let ce = append_instruction ce (PUSH1 (Int 2)) in
+    (* [x, bits, 2] *)
+    let ce = append_instruction ce EXP in
+    (* [x, 2 ** bits] *)
+    let ce = append_instruction ce SWAP1 in
+    (* [2 ** bits, x] *)
+    let ce = append_instruction ce DIV in
+    (* [x / (2 ** bits)] *)
+    ce
+
 let copy_calldata_to_stack_top le ce (range : Location.calldata_range) =
-  let () = assert (range.Location.calldata_size = 32) in
+  let () = assert (range.Location.calldata_size > 0) in
+  let () = assert (range.Location.calldata_size <= 32) in
   let ce = append_instruction ce (PUSH4 (Int range.Location.calldata_offset)) in
   let ce = append_instruction ce CALLDATALOAD in
+  let ce = shift_stack_top_to_right ce ((32 - range.Location.calldata_size) * 8) in
   le, ce
 
 let copy_to_stack_top le ce (l : Location.location) =
@@ -66,7 +86,7 @@ let throw_if_zero ce =
 let push_allocated_memory (ce : CodegenEnv.codegen_env) =
   let original_stack_size = stack_size ce in
   (* [desired_length] *)
-  let ce = append_instruction ce (PUSH32 (Int 64)) in
+  let ce = append_instruction ce (PUSH1 (Int 64)) in
   let ce = append_instruction ce DUP1 in
   (* [desired_length, 64, 64] *)
   let ce = append_instruction ce MLOAD in
@@ -82,6 +102,14 @@ let push_allocated_memory (ce : CodegenEnv.codegen_env) =
   let ce = append_instruction ce MSTORE in
   (* [memory[64]] *)
   let () = assert (stack_size ce = original_stack_size) in
+  ce
+
+let peek_next_memory_allocation (ce : CodegenEnv.codegen_env) =
+  let original_stack_size = stack_size ce in
+  (* [] *)
+  let ce = append_instruction ce (PUSH1 (Int 64)) in
+  let ce = append_instruction ce MLOAD in
+  let () = assert (stack_size ce = 1 + original_stack_size) in
   ce
 
 let copy_from_code_to_memory ce =
@@ -162,7 +190,7 @@ let codegen_array_seed le ce array =
   | Some location ->
      let (le, ce) = copy_to_stack_top le ce location in
      ce
-  | None -> failwith ("identifier's location not found: "^array)
+  | None -> failwith ("codegen_array_seed: identifier's location not found: "^array)
   end
 
 let keccak_cons le ce =
@@ -251,6 +279,54 @@ and produce_init_code_in_memory le ce new_exp =
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_total_size, memory_offset] *)
   ce
+and codegen_function_call_exp le ce (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
+  if function_call.call_head = "pre_ecdsarecover" then
+    codegen_ecdsarecover le ce function_call.call_args rettyp
+  else
+    failwith "codegen_function_call_exp: unknown function head."
+and codegen_ecdsarecover le ce args rettyp =
+  match args with
+  | [h; v; r; s] ->
+     (* stack: [] *)
+     let original_stack_size = stack_size ce in
+     let ce = append_instruction ce (PUSH1 (Int 32)) in
+     (* stack: [out size] *)
+     let ce = append_instruction ce DUP1 in
+     (* stack: [out size, out size] *)
+     let ce = push_allocated_memory ce in
+     (* stack: [out size, out address] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack: [out size, out address, out size] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack: [out size, out address, out size, out address] *)
+     let ce = peek_next_memory_allocation ce in
+     let ce = add_constructor_arguments_to_memory le ce args in
+     (* stack: [out size, out address, out size, out address, memory_offset, memory_total_size] *)
+     let ce = append_instruction ce SWAP1 in
+     (* stack: [out size, out address, out size, out address, in size, in offset] *)
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     (* stack: [out size, out address, out size, out address, in size, in offset, value] *)
+     let () = assert (stack_size ce = original_stack_size + 7) in
+     let ce = append_instruction ce (PUSH1 (Int 1)) in
+     (* stack: [out size, out address, out size, out address, in size, in offset, value, to] *)
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     (* stack: [out size, out address, out size, out offset, in size, in offset, value, to, gas] *)
+     let ce = append_instruction ce CALL in
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     (* stack: [out size, out address, success?] *)
+     let ce = throw_if_zero ce in
+     let ce = append_instruction ce POP in
+     (* stack: [out size, out address] *)
+     let () = assert (stack_size ce = original_stack_size + 2) in
+     let ce = append_instruction ce SWAP1 in
+     (* stack: [out address, out size] *)
+     let ce = append_instruction ce POP in (* we know it's 32 *)
+     (* stack: [out address] *)
+     let ce = append_instruction ce MLOAD in
+     let () = assert (stack_size ce = original_stack_size + 1) in
+     (* stack: [output] *)
+     ce
+  | _ -> failwith "pre_ecdsarecover has a wrong number of arguments"
 and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
@@ -328,7 +404,8 @@ and codegen_exp
       | Some location ->
          let (le, ce) = copy_to_stack_top le ce location in
          ce
-      | None -> failwith ("identifier's location not found: "^id)
+      | None ->
+         failwith ("codegen_exp: identifier's location not found: "^id)
       end
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction
@@ -379,9 +456,8 @@ and codegen_exp
      codegen_new_exp le ce new_e ctyp
   | NewExp new_e, _ ->
      failwith "exp code gen for new expression with unexpected type"
-  | FunctionCallExp _, _ ->
-     (* TODO maybe the name callexp should be changed, the only instance is the newly created contract, for which the new_exp should be responsible *)
-     failwith "exp code gen for callexp"
+  | FunctionCallExp function_call, rettyp ->
+     codegen_function_call_exp le ce function_call rettyp
   | ParenthExp _, _ ->
      failwith "ParenthExp not expected."
   | SingleDereferenceExp (reference, ref_typ), value_typ ->
@@ -1138,7 +1214,8 @@ and add_self_destruct le ce layout exp =
 
 let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
   let additions : (string * Location.location) list = Ethereum.arguments_with_locations case in
-  LocationEnv.add_pairs le additions
+  let ret = LocationEnv.add_pairs le additions in
+  ret
 
 let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
@@ -1176,7 +1253,6 @@ let codegen_append_contract_bytecode
 let append_runtime layout (prev : runtime_compiled)
                    ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
                    : runtime_compiled =
-  let () = Printf.printf "appending a contract at position %d\n" (CodegenEnv.code_length prev.runtime_codegen_env) in
   { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env layout (cid, contract)
   ; runtime_contract_offsets = Assoc.insert cid (CodegenEnv.code_length prev.runtime_codegen_env) prev.runtime_contract_offsets
   }

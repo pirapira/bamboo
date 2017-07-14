@@ -3,6 +3,9 @@ open PseudoImm
 type location_env =
   (string * Location.location) list list
 
+let size l =
+  BatList.sum (List.map List.length l)
+
 let empty_location_env = []
 
 let forget_innermost = function
@@ -37,7 +40,7 @@ let add_pair (le : location_env) (key : string) (loc : Location.location)
   | h :: t -> ((key, loc) :: h) :: t
 
 let add_pairs (le : location_env) (lst : (string * Location.location) list) : location_env =
-  List.fold_left (fun le' (str, loc) -> add_pair le str loc) le lst
+  List.fold_left (fun le' (str, loc) -> add_pair le' str loc) le lst
 
 let add_empty_block orig = [] :: orig
 

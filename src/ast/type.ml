@@ -53,6 +53,7 @@ let rec assign_type_call
   let ret_typ =
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
+    | "pre_ecdsarecover" -> AddressType
     | contract_name
       when true (* check the contract exists*) -> ContractArchType contract_name
     | _ -> failwith "assign_type_call: should not happen"

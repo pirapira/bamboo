@@ -20,6 +20,9 @@ val last_stack_element_recorded : location_env -> int
 val update : location_env -> string ->
              Location.location -> location_env option
 
+(** [size l] returns the number of entries in [l] *)
+val size : location_env -> int
+
 (** Nothing similar to typeEnv.add_block.  Add elements one by one. *)
 
 

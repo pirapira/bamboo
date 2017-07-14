@@ -58,13 +58,20 @@ let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
 
 let rec argument_sizes_to_positions_inner ret used sizes =
   match sizes with
-  | [] -> ret
+  | [] -> List.rev ret
   | h :: t ->
+     let () = assert (h > 0) in
+     let () = assert (h <= 32) in (* XXX using div and mod, generalization is possible *)
      argument_sizes_to_positions_inner
-       (used :: ret) (used + h) t
+       (used + 32 - h :: ret) (used + 32) t
 
 let argument_sizes_to_positions sizes =
   argument_sizes_to_positions_inner [] 0 sizes
+
+let print_arg_loc r =
+  List.iter (fun (name, loc) ->
+      Printf.printf "argument %s at %s\n" name (Location.as_string loc)
+    ) r
 
 let arguments_with_locations (c : Syntax.typ Syntax.case) : (string * Location.location) list =
   Syntax.(
@@ -76,7 +83,9 @@ let arguments_with_locations (c : Syntax.typ Syntax.case) : (string * Location.l
        let size_pos : (int * int) list = List.combine positions sizes in
        let locations : Location.location list = List.map (fun (o, s) -> Location.(Calldata {calldata_offset = o; calldata_size = s})) size_pos in
        let names : string list = List.map (fun a -> a.Syntax.arg_ident) h.Syntax.case_arguments in
-       List.combine names locations
+       let ret = List.combine names locations in
+       let () = print_arg_loc ret in
+       ret
   )
 
 let get_array (raw : Syntax.arg) : (string * Syntax.typ * Syntax.typ) option =

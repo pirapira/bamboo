@@ -1,5 +1,3 @@
-(* This module annotates idents with the locations of the data *)
-
 type 'imm memory_range =
   { memory_start : 'imm (* In byte as in EVM *)
   ; memory_size  : 'imm (* In byte *)
@@ -42,4 +40,11 @@ type location =
   | Calldata of calldata_range
   | Stack of int
 
-val as_string : location -> string
+let as_string (l : location) : string =
+  match l with
+  | Storage _ -> "Storage ..."
+  | CachedStorage _ -> "CachedStorage ..."
+  | Volatile _ -> "Volatile ..."
+  | Code _ -> "Code ..."
+  | Calldata c -> Printf.sprintf "Calldata offset %d, size %d" c.calldata_offset c.calldata_size
+  | Stack i -> Printf.sprintf "Stack %d" i
