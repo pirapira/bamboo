@@ -190,7 +190,7 @@ let fits_in_one_storage_slot (typ : typ) =
 
 let size_of_typ (* in bytes *) = function
   | UintType -> 32
-  | Uint8Type -> 8
+  | Uint8Type -> 1
   | Bytes32Type -> 32
   | AddressType -> 32 (* Though only 20 bytes are used *)
   | BoolType -> 32

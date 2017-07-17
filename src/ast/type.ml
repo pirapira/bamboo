@@ -54,6 +54,7 @@ let rec assign_type_call
       venv (src : unit function_call) : (typ function_call * typ) =
   let args' = List.map (assign_type_exp contract_interfaces cname venv)
                        src.call_args in
+  (* XXX: type check missing for arguments of pre_ecdsarecover *)
   let ret_typ =
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
