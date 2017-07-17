@@ -454,7 +454,7 @@ let random_ecdsa s =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "a(bytes32,bytes32,uint8,bytes32)") ^
+    ; data = "0x" ^ (compute_signature_hash "a(bytes32,uint8,bytes32,bytes32)") ^
         "0000000000000000000000000000000000000000000000000000000005f5e100"^
                "0000000000000000000000000000000000000000000000000000000005f5e100"^
                  "0000000000000000000000000000000000000000000000000000000005f5e100"^
@@ -471,6 +471,35 @@ let random_ecdsa s =
   ()
 
 
+let correct_ecdsa s =
+  (* The input data and the output data are cited from Parity:builtin.rs from commit
+   * 3308c404400a2bc58b12489814e9f3cfd5c9d272
+   *)
+  let my_acc = reset_chain s in
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
+  let receipt = deploy_code s my_acc initcode_compiled in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert(String.length deployed > 2) in (* XXX the procedure so far can be factored out *)
+  let random_req : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = "0x" ^ (compute_signature_hash "a(bytes32,uint8,bytes32,bytes32)") ^
+        "47173285a8d7341e5e972fc677286384f802f8ef42a5ec5f03bbfa254cb01fad000000000000000000000000000000000000000000000000000000000000001b650acf9d3f5f0a2c799776a1254355d5f4061762a237396a99a0e0e3fc2bcd6729514a0dacb2e623ac4abd157cb18163ff942280db4d5caad66ddf941ba12e03"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call s random_req in
+  let () = Printf.printf "got answer: %s\n" answer in
+  let tx = eth_sendTransaction s random_req in
+  let () = advance_block s in
+  let () = Printf.printf "transaction id for random_eq: %s\n%!" tx in
+
+  let () = assert(answer = "0x000000000000000000000000c08b5542d177ac6686946920409741463a15dddb") in
+  ()
+
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let () = constructor_arg_test s in
@@ -478,6 +507,7 @@ let () =
   let () = testing_006 s in
   let () = testing_00b s in
   let () = random_ecdsa s in
+  let () = correct_ecdsa s in
   let () = Unix.close s in
   ()
 

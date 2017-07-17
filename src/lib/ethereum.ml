@@ -71,7 +71,7 @@ let rec argument_sizes_to_positions_inner ret used sizes =
        (used + 32 - h :: ret) (used + 32) t
 
 let argument_sizes_to_positions sizes =
-  argument_sizes_to_positions_inner [] 0 sizes
+  argument_sizes_to_positions_inner [] 4 (* size of signature *) sizes
 
 let print_arg_loc r =
   List.iter (fun (name, loc) ->
