@@ -1,0 +1,5 @@
+contract A() {
+	case (address a(uint8 x, uint8 b, bytes32 c, bytes32 d)) {
+		return (pre_ecdsarecover(x, b, c, d)) then become A();
+	}
+}

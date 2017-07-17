@@ -47,6 +47,22 @@ let assign_type_case_header contract_interfaces header =
   | DefaultCaseHeader ->
      DefaultCaseHeader
 
+let call_arg_expectations (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) call_head : typ list =
+  match call_head with
+  | "pre_ecdsarecover" ->
+     [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type]
+  | name ->
+     let cid = Assoc.lookup_id (fun c -> c.Contract.contract_interface_name = name) contract_interfaces in
+     let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
+     interface.Contract.contract_interface_args
+
+let type_check ((exp : typ), ((_,t) : typ exp)) =
+  assert (exp = t)
+
+let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : typ exp list) call_head =
+  let expectations : typ list = call_arg_expectations contract_interfaces call_head in
+  let () = List.iter type_check (List.combine expectations args) in
+  ()
 
 let rec assign_type_call
       contract_interfaces
@@ -54,7 +70,7 @@ let rec assign_type_call
       venv (src : unit function_call) : (typ function_call * typ) =
   let args' = List.map (assign_type_exp contract_interfaces cname venv)
                        src.call_args in
-  (* XXX: type check missing for arguments of pre_ecdsarecover *)
+  let () = check_args_match contract_interfaces args' src.call_head in
   let ret_typ =
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
