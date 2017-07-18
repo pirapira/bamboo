@@ -51,6 +51,8 @@ let call_arg_expectations (contract_interfaces : Contract.contract_interface Ass
   match call_head with
   | "pre_ecdsarecover" ->
      (fun x -> x = [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type])
+  | "keccak256" ->
+     (fun _ -> true)
   | name ->
      let cid = Assoc.lookup_id (fun c -> c.Contract.contract_interface_name = name) contract_interfaces in
      let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
