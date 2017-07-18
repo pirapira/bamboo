@@ -434,6 +434,8 @@ and codegen_exp
      let ce = codegen_exp le ce r in
      (* stack: [..., r] *)
      let ce = append_instruction ce (JUMPDEST shortcut_label) in
+     let ce = append_instruction ce ISZERO in
+     let ce = append_instruction ce ISZERO in
      ce
   | LandExp (_, _), _ ->
      failwith "codegen_exp: LandExp of unexpected type"
