@@ -39,6 +39,7 @@ and 'exp_annot exp_inner =
   | ParenthExp of 'exp_annot exp
   | NewExp of 'exp_annot new_exp
   | SendExp of 'exp_annot send_exp
+  | LandExp of 'exp_annot exp * 'exp_annot exp
   | LtExp of 'exp_annot exp * 'exp_annot exp
   | GtExp of 'exp_annot exp * 'exp_annot exp
   | NeqExp of 'exp_annot exp * 'exp_annot exp

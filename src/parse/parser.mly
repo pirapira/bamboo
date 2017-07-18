@@ -37,6 +37,7 @@
 %token SENDER
 %token MSG
 %token THIS
+%token LAND
 %token NOW
 %token BLOCK
 %token EOF
@@ -178,6 +179,7 @@ sentence :
   ;
 
 exp:
+  | lhs = exp; LAND; rhs = exp { Syntax.LandExp (lhs, rhs), () }
   | TRUE { Syntax.TrueExp, () }
   | FALSE { Syntax.FalseExp, () }
   | VALUE LPAR MSG RPAR { Syntax.ValueExp, () }

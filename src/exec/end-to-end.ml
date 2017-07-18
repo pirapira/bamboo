@@ -442,6 +442,27 @@ let testing_00b s =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
   ()
 
+let testing_010 s =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/010_logical_and.bbo" in
+  let my_acc = reset_chain s in
+  let receipt = deploy_code s my_acc initcode_compiled in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let both : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "f(bool,bool)") ^ "0000000000000000000000000000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000005f5e100"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call s both in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
+  ()
+
 let random_ecdsa s =
   let my_acc = reset_chain s in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
@@ -529,6 +550,7 @@ let () =
   let () = testing_00b s in
   let () = random_ecdsa s in
   let () = correct_ecdsa s in
+  let () = testing_010 s in
   let () = testing_00i s in
   let () = Unix.close s in
   ()
