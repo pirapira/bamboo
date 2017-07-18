@@ -486,7 +486,7 @@ and codegen_exp
   | SingleDereferenceExp (reference, ref_typ), value_typ ->
      let () = assert (ref_typ = ReferenceType [value_typ]) in
      let size = Syntax.size_of_typ value_typ in
-     let () = assert (size mod 32 = 0) in (* assuming word-size *)
+     let () = assert (size <= 32) in (* assuming word-size *)
      let ce = codegen_exp le ce (reference, ref_typ) in (* pushes the pointer *)
      let ce = append_instruction ce MLOAD in
      ce
