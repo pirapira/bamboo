@@ -112,6 +112,12 @@ let peek_next_memory_allocation (ce : CodegenEnv.codegen_env) =
   let () = assert (stack_size ce = 1 + original_stack_size) in
   ce
 
+(** [Tight] just uses [size_of_typ] bytes on the memory.
+ *  [ABI] always uses multiples of 32 bytes.
+ *  These choices do not affect the alighments
+ *)
+type memoryPacking = TightPacking | ABIPacking
+
 let copy_from_code_to_memory ce =
   (* stack: [codesize, codeoffset] *)
   let ce = append_instruction ce DUP2 in
@@ -209,26 +215,38 @@ let keccak_cons le ce =
   let () = assert (stack_size ce + 1 = original_stack_size) in
   ce
 
+type alignment = LeftAligned | RightAligned
+
+let align_boolean ce alignment =
+  let () = assert (alignment = RightAligned) in
+  ce
+
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
  *  according to the ABI.  This increases the stack top element by the size of the
  *  new allocation. *)
-let rec add_constructor_argument_to_memory le ce (arg : Syntax.typ exp) =
+let rec add_constructor_argument_to_memory le (packing : memoryPacking) ce (arg : Syntax.typ exp) =
   let original_stack_size = stack_size ce in
   let typ = snd arg in
   let () = assert (Syntax.fits_in_one_storage_slot typ) in
   (* stack : [acc] *)
-  let ce = append_instruction ce (PUSH1 (Int 32)) in
-  (* stack : [acc, 32] *)
+  let ce = append_instruction ce (PUSH1 (Int
+                                           (match packing with
+                                           | ABIPacking -> 32
+                                           | TightPacking -> Syntax.size_of_typ typ))) in
+  (* stack : [acc, size] *)
   let ce = append_instruction ce DUP1 in
-  (* stack : [acc, 32, 32] *)
+  (* stack : [acc, size, size] *)
   let ce = push_allocated_memory ce in
-  (* stack : [acc, 32, offset] *)
-  let ce = codegen_exp le ce arg in
-  (* stack : [acc, 32, offset, val] *)
+  (* stack : [acc, size, offset] *)
+  let ce = codegen_exp le ce (match packing with
+                                  | ABIPacking -> LeftAligned
+                                  | TightPacking -> RightAligned
+                                 ) arg in
+  (* stack : [acc, size, offset, val] *)
   let ce = append_instruction ce SWAP1 in
-  (* stack : [acc, 32, val, offset] *)
+  (* stack : [acc, size, val, offset] *)
   let ce = append_instruction ce MSTORE in
-  (* stack : [acc, 32] *)
+  (* stack : [acc, size] *)
   let ce = append_instruction ce ADD in
   let () = assert (stack_size ce = original_stack_size) in
   ce
@@ -238,11 +256,11 @@ let rec add_constructor_argument_to_memory le ce (arg : Syntax.typ exp) =
  *  so the offset of the memory is not returned.
  *  (This makes it easy for the zero-argument case)
  *)
-and add_constructor_arguments_to_memory le ce (args : Syntax.typ exp list) =
+and add_constructor_arguments_to_memory le (packing : memoryPacking) ce (args : Syntax.typ exp list) =
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH1 (Int 0)) in
   (* stack [0] *)
-  let ce = List.fold_left (add_constructor_argument_to_memory le)
+  let ce = List.fold_left (add_constructor_argument_to_memory le ABIPacking)
                           ce args in
   let () = assert (original_stack_size + 1 = stack_size ce) in
   ce
@@ -263,7 +281,7 @@ and produce_init_code_in_memory le ce new_exp =
   (* stack: [memory_size, memory_offset, memory_second_size, memory_second_offset] *)
 
   (* I still need to add the constructor arguments *)
-  let ce = add_constructor_arguments_to_memory le ce new_exp.new_args in
+  let ce = add_constructor_arguments_to_memory le ABIPacking ce new_exp.new_args in
   (* stack: [memory_size, memory_offset, memory_second_size, memory_second_offset, memory_args_size] *)
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_size, memory_offset, memory_second_size, memory_args_size, memory_second_offset] *)
@@ -289,7 +307,11 @@ and codegen_function_call_exp le ce (function_call : Syntax.typ Syntax.function_
     failwith "codegen_function_call_exp: unknown function head."
 and codegen_keccak256 le ce args rettyp =
   let original_stack_size = stack_size ce in
-  let ce = produce_args_tightly_in_memory args in
+  let ce = peek_next_memory_allocation ce in
+  (* stack: [..., offset] *)
+  let ce = add_constructor_arguments_to_memory le TightPacking ce args in
+  (* stack: [..., offset, size] *)
+  let ce = append_instruction ce SWAP1 in
   (* stack: [..., size, offset] *)
   let ce = append_instruction ce SHA3 in
   let () = assert(stack_size ce = original_stack_size + 1) in
@@ -310,7 +332,7 @@ and codegen_ecdsarecover le ce args rettyp =
      let ce = append_instruction ce DUP2 in
      (* stack: [out size, out address, out size, out address] *)
      let ce = peek_next_memory_allocation ce in
-     let ce = add_constructor_arguments_to_memory le ce args in
+     let ce = add_constructor_arguments_to_memory le ABIPacking ce args in
      (* stack: [out size, out address, out size, out address, memory_offset, memory_total_size] *)
      let ce = append_instruction ce SWAP1 in
      (* stack: [out size, out address, out size, out address, in size, in offset] *)
@@ -349,7 +371,7 @@ and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : 
   let ce =
     (match new_exp.new_msg_info.message_value_info with
      | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
-     | Some e -> codegen_exp le ce e) in
+     | Some e -> codegen_exp le ce RightAligned e) in
   (* stack : [entrance_pc_bkp, size, offset, value] *)
   let ce = append_instruction ce CREATE in
   (* stack : [entrance_pc_bkp, create_result] *)
@@ -367,7 +389,7 @@ and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : 
 and codegen_array_access le ce (aa : Syntax.typ Syntax.array_access) =
   let array = aa.array_access_array in
   let index = aa.array_access_index in
-  let ce = codegen_exp le ce index in
+  let ce = codegen_exp le ce RightAligned index in
   let ce = codegen_array_seed le ce array in
   let ce = keccak_cons le ce in
   let ce = append_instruction ce SLOAD in
@@ -378,13 +400,14 @@ and codegen_array_access le ce (aa : Syntax.typ Syntax.array_access) =
 and codegen_exp
       (le : LocationEnv.location_env)
       (ce : CodegenEnv.codegen_env)
+      (alignment : alignment)
       ((e,t) : Syntax.typ Syntax.exp) :
       CodegenEnv.codegen_env =
   let ret =
   Syntax.
   (match e,t with
    | AddressExp ((c, ContractInstanceType _)as inner), AddressType ->
-      let ce = codegen_exp le ce inner in
+      let ce = codegen_exp le ce alignment inner in
       (* c is a contract instance.
        * The concrete representation of a contact instance is
        * already the address
@@ -428,7 +451,7 @@ and codegen_exp
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
-     let ce = codegen_exp le ce l in
+     let ce = codegen_exp le ce RightAligned l in
      (* stack: [..., l] *)
      let ce = append_instruction ce DUP1 in
      (* stack: [..., l, l] *)
@@ -440,7 +463,7 @@ and codegen_exp
      (* stack: [..., l] *)
      let ce = append_instruction ce POP in
      (* stack: [...] *)
-     let ce = codegen_exp le ce r in
+     let ce = codegen_exp le ce RightAligned r in
      (* stack: [..., r] *)
      let ce = append_instruction ce (JUMPDEST shortcut_label) in
      let ce = append_instruction ce ISZERO in
@@ -449,36 +472,40 @@ and codegen_exp
   | LandExp (_, _), _ ->
      failwith "codegen_exp: LandExp of unexpected type"
   | NotExp sub,_ -> (* perhaps, better to check types *)
-     let ce = codegen_exp le ce sub in
+     let ce = codegen_exp le ce alignment sub in
      let ce = append_instruction ce NOT in
      ce
   | NowExp,UintType ->
      append_instruction ce TIMESTAMP
   | NowExp,_ -> failwith "codegen_exp: NowExp of unexpected type"
   | NeqExp (l, r), BoolType ->
-     let ce = codegen_exp le ce r in
-     let ce = codegen_exp le ce l in (* l later because it should come at the top *)
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in (* l later because it should come at the top *)
      let ce = append_instruction ce EQ in
      let ce = append_instruction ce ISZERO in
+     let ce = align_boolean ce alignment in
      ce
   | NeqExp _, _ ->
      failwith "codegen_exp: NeqExp of unexpected type"
   | LtExp (l, r), BoolType ->
-     let ce = codegen_exp le ce r in
-     let ce = codegen_exp le ce l in
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce LT in
+     let ce = align_boolean ce alignment in
      ce
   | LtExp _, _ -> failwith "codegen_exp: LtExp of unexpected type"
   | GtExp (l, r), BoolType ->
-     let ce = codegen_exp le ce r in
-     let ce = codegen_exp le ce l in
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce GT in
+     let ce = align_boolean ce alignment in (* XXX there should be some type system making sure this line exists *)
      ce
   | GtExp _, _ -> failwith "codegen_exp GtExp of unexpected type"
   | EqualityExp (l, r), BoolType ->
-     let ce = codegen_exp le ce r in
-     let ce = codegen_exp le ce l in
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce EQ in
+     let ce = align_boolean ce alignment in
      ce
   | EqualityExp _, _ ->
      failwith "codegen_exp EqualityExp of unexpected type"
@@ -496,7 +523,7 @@ and codegen_exp
      let () = assert (ref_typ = ReferenceType [value_typ]) in
      let size = Syntax.size_of_typ value_typ in
      let () = assert (size <= 32) in (* assuming word-size *)
-     let ce = codegen_exp le ce (reference, ref_typ) in (* pushes the pointer *)
+     let ce = codegen_exp le ce RightAligned (reference, ref_typ) in (* pushes the pointer *)
      let ce = append_instruction ce MLOAD in
      ce
   | TupleDereferenceExp _, _ ->
@@ -512,7 +539,7 @@ and prepare_argument le ce arg =
   let () = assert (size = 32) in
   let ce = append_instruction ce (PUSH1 (Int size)) in
   (* stack: (..., accum, size) *)
-  let ce = codegen_exp le ce arg in
+  let ce = codegen_exp le ce RightAligned arg in
   (* stack: (..., accum, size, val) *)
   let ce = append_instruction ce DUP2 in
   (* stack: (..., accum, size, val, size) *)
@@ -627,9 +654,9 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let ce =
     (match s.send_msg_info.message_value_info with
      | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
-     | Some e -> codegen_exp le ce e) in
+     | Some e -> codegen_exp le ce RightAligned e) in
   (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
-  let ce = codegen_exp le ce s.send_head_contract in
+  let ce = codegen_exp le ce RightAligned s.send_head_contract in
   let ce = append_instruction ce GAS in
   let ce = append_instruction ce (PUSH4 (Int 3000)) in
   let ce = append_instruction ce SUB in
@@ -1058,7 +1085,7 @@ let add_case_destination ce (cid : Assoc.contract_id) (h : Syntax.case_header) =
  * [arg0] will be the topmost element of the stack.
  *)
 let prepare_words_on_stack le ce (args : typ exp list) =
-  (le, List.fold_right (fun arg ce' -> codegen_exp le ce' arg) args ce)
+  (le, List.fold_right (fun arg ce' -> codegen_exp le ce' RightAligned arg) args ce)
 
 let store_word_into_storage_location (le, ce) (arg_location : Storage.storage_location) =
   let ce = append_instruction ce (PUSH32 (PseudoImm.Int arg_location)) in
@@ -1155,9 +1182,12 @@ let move_stack_top_to_memory typ le ce =
  * after this, the stack contains
  * ..., size, offset_in_memory
  *)
-let place_exp_in_memory le ce ((e, typ) : typ exp) =
+let place_exp_in_memory le ce packing ((e, typ) : typ exp) =
   let original_stack_size = stack_size ce in
-  let ce = codegen_exp le ce (e, typ) in
+  let alignment = match packing with
+    | ABIPacking -> RightAligned
+    | TightPacking -> LeftAligned in
+  let ce = codegen_exp le ce alignment (e, typ) in
   let () = assert (stack_size ce = 1 + original_stack_size) in
   (* the stack layout depends on typ *)
   let ce = move_stack_top_to_memory typ le ce in
@@ -1176,7 +1206,7 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let e = ret.return_exp in
   let c = ret.return_cont in
   let (le, ce) = set_continuation le ce layout c in
-  let (le, ce) = place_exp_in_memory le ce e in
+  let (le, ce) = place_exp_in_memory le ce ABIPacking e in
   let ce = return_mem_content le ce in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
@@ -1184,7 +1214,7 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
 let put_stacktop_into_array_access le ce layout (aa : Syntax.typ Syntax.array_access) =
   let array = aa.Syntax.array_access_array in
   let index = aa.Syntax.array_access_index in
-  let ce = codegen_exp le ce index in
+  let ce = codegen_exp le ce RightAligned index in
   (* stack : [value, index] *)
   let ce = codegen_array_seed le ce array in
   (* stack : [value, index, array_seed] *)
@@ -1206,7 +1236,7 @@ let put_stacktop_into_lexp le ce layout l =
 let add_assignment le ce layout l r =
   let original_stack_size = stack_size ce in
   (* produce r on the stack and then think about where to put that *)
-  let ce = codegen_exp le ce r in
+  let ce = codegen_exp le ce RightAligned r in
   let () = assert (1 + original_stack_size = stack_size ce) in
   let ce = put_stacktop_into_lexp le ce layout l in
   let () = assert (original_stack_size = stack_size ce) in
@@ -1214,7 +1244,7 @@ let add_assignment le ce layout l r =
 
 let add_variable_init le ce layout i =
   let position = stack_size ce in
-  let ce = codegen_exp le ce i.Syntax.variable_init_value in
+  let ce = codegen_exp le ce RightAligned i.Syntax.variable_init_value in
   let name = i.Syntax.variable_init_name in
   let loc = Location.Stack (position + 1) in
   let le = LocationEnv.add_pair le name loc in
@@ -1223,7 +1253,7 @@ let add_variable_init le ce layout i =
 let rec add_if_single le ce (layout : LayoutInfo.layout_info) cond body =
   let jump_label_skip = Label.new_label () in
   let original_stack_size = stack_size ce in
-  let ce = codegen_exp le ce cond in
+  let ce = codegen_exp le ce RightAligned cond in
   let ce = append_instruction ce ISZERO in
   let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
   let ce = append_instruction ce JUMPI in
@@ -1240,7 +1270,7 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | IfSingleSentence (cond, body) -> add_if_single le ce layout cond body
   | SelfdestructSentence exp -> add_self_destruct le ce layout exp
 and add_self_destruct le ce layout exp =
-  let ce = codegen_exp le ce exp in
+  let ce = codegen_exp le ce RightAligned exp in
   let ce = append_instruction ce SUICIDE in
   le, ce
 

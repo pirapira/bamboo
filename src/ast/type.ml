@@ -77,6 +77,7 @@ let rec assign_type_call
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
     | "pre_ecdsarecover" -> AddressType
+    | "keccak256" -> Bytes32Type
     | contract_name
       when true (* check the contract exists*) -> ContractArchType contract_name
     | _ -> failwith "assign_type_call: should not happen"
