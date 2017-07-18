@@ -1124,7 +1124,7 @@ let set_continuation le ce (layout : LayoutInfo.layout_info) (cont_exp, typ_exp)
  * ..., size_in_bytes, offset_in_memory
  *)
 let move_stack_top_to_memory typ le ce =
-  let () = assert (size_of_typ typ = 32) in
+  let () = assert (size_of_typ typ <= 32) in
   (* ..., value *)
   let ce = append_instruction ce (PUSH1 (PseudoImm.Int 32)) in
   (* ..., value, 32 *)

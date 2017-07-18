@@ -194,7 +194,7 @@ let size_of_typ (* in bytes *) = function
   | UintType -> 32
   | Uint8Type -> 1
   | Bytes32Type -> 32
-  | AddressType -> 32 (* Though only 20 bytes are used *)
+  | AddressType -> 20
   | BoolType -> 32
   | ReferenceType _ -> 32
   | TupleType lst ->
