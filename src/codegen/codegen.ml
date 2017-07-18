@@ -283,8 +283,17 @@ and produce_init_code_in_memory le ce new_exp =
 and codegen_function_call_exp le ce (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
   if function_call.call_head = "pre_ecdsarecover" then
     codegen_ecdsarecover le ce function_call.call_args rettyp
+  else if function_call.call_head = "keccak256" then
+    codegen_keccak256 le ce function_call.call_args rettyp
   else
     failwith "codegen_function_call_exp: unknown function head."
+and codegen_keccak256 le ce args rettyp =
+  let original_stack_size = stack_size ce in
+  let ce = produce_args_tightly_in_memory args in
+  (* stack: [..., size, offset] *)
+  let ce = append_instruction ce SHA3 in
+  let () = assert(stack_size ce = original_stack_size + 1) in
+  ce
 and codegen_ecdsarecover le ce args rettyp =
   match args with
   | [h; v; r; s] ->
