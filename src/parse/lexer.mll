@@ -59,5 +59,6 @@ rule read =
   | "this" { THIS }
   | "now"  { NOW }
   | "block" { BLOCK }
+  | "&&" { LAND }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }
