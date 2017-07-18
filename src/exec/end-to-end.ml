@@ -296,9 +296,13 @@ let advance_block s =
   let () = wait_till_mined s old_blk in
   ()
 
-let reset_chain s =
+let reset_chain s acc =
   (* Maybe it's not necessary to create a new account every time *)
-  let my_acc = personal_newAccount s in
+  let my_acc =
+    match acc with
+    | None ->
+       personal_newAccount s
+    | Some acc -> acc in
   let config = rich_config [my_acc] in
   let () = test_setChainParams s config in
   let () = test_rewindToBlock s in
@@ -327,14 +331,14 @@ let call s my_acc tr =
   let () = advance_block s in
   eth_getTransactionReceipt s tx
 
-let testing_006 s =
+let testing_006 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file sample_file_name in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000"
     ^ "0000000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some my_acc) in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -361,24 +365,24 @@ let constructor_arg_test s =
     "0000000000000000000000000000000000000000000000000000000000000000"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s None in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (not (String.length deployed > 2)) in
   let () = Printf.printf "didn't find code! good!\n" in
-  ()
+  my_acc
 
 (** XXX this should move to a library *)
 let compute_signature_hash (signature : string) : string =
   String.sub (Ethereum.string_keccak signature) 0 8
 
-let testing_00bb s =
+let testing_00bb s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00bbauction_first_named_case.bbo" in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -405,14 +409,14 @@ let testing_00bb s =
 
 
 (* showing not quite satisfactory results *)
-let testing_00b s =
+let testing_00b s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00b_auction_more.bbo" in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000"
     ^ "ff00000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -442,9 +446,9 @@ let testing_00b s =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
   ()
 
-let testing_010 s =
+let testing_010 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/010_logical_and.bbo" in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -463,8 +467,8 @@ let testing_010 s =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
   ()
 
-let random_ecdsa s =
-  let my_acc = reset_chain s in
+let random_ecdsa s acc =
+  let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
   let receipt = deploy_code s my_acc initcode_compiled in
   let contract_address = receipt.contractAddress in
@@ -492,11 +496,11 @@ let random_ecdsa s =
   ()
 
 
-let correct_ecdsa s =
+let correct_ecdsa s acc =
   (* The input data and the output data are cited from Parity:builtin.rs from commit
    * 3308c404400a2bc58b12489814e9f3cfd5c9d272
    *)
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
   let receipt = deploy_code s my_acc initcode_compiled in
   let contract_address = receipt.contractAddress in
@@ -521,9 +525,9 @@ let correct_ecdsa s =
   ()
 
 (* showing not quite satisfactory results *)
-let testing_00i s =
+let testing_00i s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00i_local_bool.bbo" in
-  let my_acc = reset_chain s in
+  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -544,14 +548,14 @@ let testing_00i s =
 
 let () =
   let s = Utils.open_connection_unix_fd filename in
-  let () = constructor_arg_test s in
-  let () = testing_00bb s in
-  let () = testing_006 s in
-  let () = testing_00b s in
-  let () = random_ecdsa s in
-  let () = correct_ecdsa s in
-  let () = testing_010 s in
-  let () = testing_00i s in
+  let my_acc = constructor_arg_test s in
+  let () = testing_00bb s my_acc in
+  let () = testing_006 s my_acc in
+  let () = testing_00b s my_acc in
+  let () = random_ecdsa s my_acc in
+  let () = correct_ecdsa s my_acc in
+  let () = testing_010 s my_acc in
+  let () = testing_00i s my_acc in
   let () = Unix.close s in
   ()
 
