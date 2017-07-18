@@ -417,6 +417,28 @@ and codegen_exp
      let ce = append_instruction ce (PUSH1 (Big Big_int.unit_big_int)) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
+  | LandExp (l, r), BoolType ->
+     let shortcut_label = Label.new_label () in
+     let ce = codegen_exp le ce l in
+     (* stack: [..., l] *)
+     let ce = append_instruction ce DUP1 in
+     (* stack: [..., l, l] *)
+     let ce = append_instruction ce ISZERO in
+     (* stack: [..., l, !l] *)
+     let ce = append_instruction ce (PUSH32 (DestLabel shortcut_label)) in
+     (* stack: [..., l, !l, shortcut] *)
+     let ce = append_instruction ce JUMPI in
+     (* stack: [..., l] *)
+     let ce = append_instruction ce POP in
+     (* stack: [...] *)
+     let ce = codegen_exp le ce r in
+     (* stack: [..., r] *)
+     let ce = append_instruction ce (JUMPDEST shortcut_label) in
+     let ce = append_instruction ce ISZERO in
+     let ce = append_instruction ce ISZERO in
+     ce
+  | LandExp (_, _), _ ->
+     failwith "codegen_exp: LandExp of unexpected type"
   | NotExp sub,_ -> (* perhaps, better to check types *)
      let ce = codegen_exp le ce sub in
      let ce = append_instruction ce NOT in

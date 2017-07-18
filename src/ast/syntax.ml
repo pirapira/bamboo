@@ -53,6 +53,7 @@ and 'exp_annot exp_inner =
   | ParenthExp of 'exp_annot exp
   | NewExp of 'exp_annot new_exp
   | SendExp of 'exp_annot send_exp
+  | LandExp of 'exp_annot exp * 'exp_annot exp
   | LtExp of 'exp_annot exp * 'exp_annot exp
   | GtExp of 'exp_annot exp * 'exp_annot exp
   | NeqExp of 'exp_annot exp * 'exp_annot exp
@@ -150,8 +151,9 @@ let string_of_exp_inner e =
   | TrueExp -> "true"
   | NotExp _ -> "not"
   | NeqExp _ -> "neq"
+  | LandExp _ -> "_ && _"
   | LtExp _ -> "lt"
-  | GtExp _ -> "lt"
+  | GtExp _ -> "gt"
   | ValueExp -> "value"
   | EqualityExp _ -> "equality"
   | AddressExp _ -> "address"
@@ -248,6 +250,8 @@ and exp_might_become e : string list =
      new_exp_might_become n
   | SendExp s ->
      send_exp_might_become s
+  | LandExp (l, r) ->
+     (exp_might_become l)@(exp_might_become r)
   | LtExp (l, r) ->
      (exp_might_become l)@(exp_might_become r)
   | GtExp (l, r) ->

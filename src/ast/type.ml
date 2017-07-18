@@ -113,6 +113,12 @@ and assign_type_exp
   | NewExp n ->
      let (n', contract_name) = assign_type_new_exp contract_interfaces cname venv n in
      (NewExp n', ContractInstanceType contract_name)
+  | LandExp (l, r) ->
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let () = type_check (BoolType, l) in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = type_check (BoolType, r) in
+     (LandExp (l, r), BoolType)
   | LtExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
