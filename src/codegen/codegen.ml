@@ -44,18 +44,48 @@ let copy_calldata_to_stack_top le ce (range : Location.calldata_range) =
   let ce = shift_stack_top_to_right ce ((32 - range.Location.calldata_size) * 8) in
   le, ce
 
-let copy_to_stack_top le ce (l : Location.location) =
-  Location.(
-    match l with
-    | Storage range ->
-       copy_storage_range_to_stack_top le ce range
-    | CachedStorage _ -> failwith "copy_to_stack_top: CachedStorage"
-    | Volatile _ -> failwith "copy_to_stack_top: Volatile"
-    | Code _ -> failwith "copy_to_stack_top: Code"
-    | Calldata range -> copy_calldata_to_stack_top le ce range
-    | Stack s ->
-       copy_stack_to_stack_top le ce s
-  )
+type alignment = LeftAligned | RightAligned
+
+let align_boolean ce alignment =
+  let () = assert (alignment = RightAligned) in
+  ce
+
+let align_from_right_aligned (ce : CodegenEnv.codegen_env) alignment typ =
+  match alignment with
+  | RightAligned -> ce
+  | LeftAligned ->
+     let size = size_of_typ typ in
+     let () = assert (size <= 32) in
+     if size = 32 then
+       ce
+     else
+       let shift = (32 - size) * 8 in
+       let ce = append_instruction ce (PUSH1 (Int shift)) in
+       (* stack: [shift] *)
+       let ce = append_instruction ce (PUSH1 (Int 2)) in
+       (* stack: [shift, 2] *)
+       let ce = append_instruction ce EXP in
+       (* stack: [2 ** shift] *)
+       let ce = append_instruction ce MUL in
+       ce
+
+
+let copy_to_stack_top le ce alignment typ (l : Location.location) =
+  let le, ce =
+    Location.(
+      match l with
+      | Storage range ->
+         copy_storage_range_to_stack_top le ce range
+      | CachedStorage _ -> failwith "copy_to_stack_top: CachedStorage"
+      | Volatile _ -> failwith "copy_to_stack_top: Volatile"
+      | Code _ -> failwith "copy_to_stack_top: Code"
+      | Calldata range -> copy_calldata_to_stack_top le ce range
+      | Stack s ->
+         copy_stack_to_stack_top le ce s
+    ) in
+  let ce = align_from_right_aligned ce alignment typ in
+  (* le needs to remember the alignment *)
+  le, ce
 
 let swap_entrance_pc_with_zero ce =
   let ce = append_instruction ce (PUSH1 (Int 0)) in
@@ -195,7 +225,7 @@ let codegen_array_seed le ce array =
    * updated.  If they are SLOADED, the location env should be
    * updated. *)
   | Some location ->
-     let (le, ce) = copy_to_stack_top le ce location in
+     let (le, ce) = copy_to_stack_top le ce RightAligned UintType location in
      ce
   | None -> failwith ("codegen_array_seed: identifier's location not found: "^array)
   end
@@ -213,12 +243,6 @@ let keccak_cons le ce =
   let ce = append_instruction ce (PUSH1 (Int 0x0)) in
   let ce = append_instruction ce SHA3 in
   let () = assert (stack_size ce + 1 = original_stack_size) in
-  ce
-
-type alignment = LeftAligned | RightAligned
-
-let align_boolean ce alignment =
-  let () = assert (alignment = RightAligned) in
   ce
 
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
@@ -239,8 +263,8 @@ let rec add_constructor_argument_to_memory le (packing : memoryPacking) ce (arg 
   let ce = push_allocated_memory ce in
   (* stack : [acc, size, offset] *)
   let ce = codegen_exp le ce (match packing with
-                                  | ABIPacking -> LeftAligned
-                                  | TightPacking -> RightAligned
+                                  | ABIPacking -> RightAligned
+                                  | TightPacking -> LeftAligned
                                  ) arg in
   (* stack : [acc, size, offset, val] *)
   let ce = append_instruction ce SWAP1 in
@@ -260,7 +284,7 @@ and add_constructor_arguments_to_memory le (packing : memoryPacking) ce (args : 
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH1 (Int 0)) in
   (* stack [0] *)
-  let ce = List.fold_left (add_constructor_argument_to_memory le ABIPacking)
+  let ce = List.fold_left (add_constructor_argument_to_memory le packing)
                           ce args in
   let () = assert (original_stack_size + 1 = stack_size ce) in
   ce
@@ -429,13 +453,13 @@ and codegen_exp
    | ThisExp,_ ->
       let ce = CodegenEnv.append_instruction ce ADDRESS in
       ce
-   | IdentifierExp id,_ ->
+   | IdentifierExp id, typ ->
       begin match LocationEnv.lookup le id with
       (** if things are just DUP'ed, location env should not be
        * updated.  If they are SLOADED, the location env should be
        * updated. *)
       | Some location ->
-         let (le, ce) = copy_to_stack_top le ce location in
+         let (le, ce) = copy_to_stack_top le ce alignment typ location in
          ce
       | None ->
          failwith ("codegen_exp: identifier's location not found: "^id)

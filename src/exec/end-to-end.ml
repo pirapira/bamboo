@@ -482,6 +482,7 @@ let testing_011 s =
   let answer = eth_call s both in
   let () = Printf.printf "got answer: %s\n%!" answer in
   let expectation = "0x" ^ (Ethereum.hex_keccak "0x0000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000005f5e100") in
+  let () = Printf.printf "expectation: %s\n%!" expectation in
   let () = assert (answer = expectation) in
   ()
 
