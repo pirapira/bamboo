@@ -467,6 +467,29 @@ let testing_010 s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
   ()
 
+let testing_011 s acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/011_keccak256.bbo" in
+  let my_acc = reset_chain s (Some acc) in
+  let receipt = deploy_code s my_acc initcode_compiled in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let both : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "f(address,bytes32)") ^ "0000000000000000000000000000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000005f5e100"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call s both in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let expectation = "0x" ^ (Ethereum.hex_keccak "0x0000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000005f5e100") in
+  let () = Printf.printf "expectation: %s\n%!" expectation in
+  let () = assert (answer = expectation) in
+  ()
+
 let random_ecdsa s acc =
   let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
@@ -556,6 +579,7 @@ let () =
   let () = correct_ecdsa s my_acc in
   let () = testing_010 s my_acc in
   let () = testing_00i s my_acc in
+  let () = testing_011 s my_acc in
   let () = Unix.close s in
   ()
 

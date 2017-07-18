@@ -9,3 +9,4 @@ B _build/codegen
 PKG batteries
 PKG cryptokit
 PKG rope
+PKG hex

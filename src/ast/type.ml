@@ -47,21 +47,23 @@ let assign_type_case_header contract_interfaces header =
   | DefaultCaseHeader ->
      DefaultCaseHeader
 
-let call_arg_expectations (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) call_head : typ list =
+let call_arg_expectations (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) call_head : typ list -> bool =
   match call_head with
   | "pre_ecdsarecover" ->
-     [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type]
+     (fun x -> x = [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type])
+  | "keccak256" ->
+     (fun _ -> true)
   | name ->
      let cid = Assoc.lookup_id (fun c -> c.Contract.contract_interface_name = name) contract_interfaces in
      let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
-     interface.Contract.contract_interface_args
+     (fun x -> x = interface.Contract.contract_interface_args)
 
 let type_check ((exp : typ), ((_,t) : typ exp)) =
   assert (exp = t)
 
 let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : typ exp list) call_head =
-  let expectations : typ list = call_arg_expectations contract_interfaces call_head in
-  let () = List.iter type_check (List.combine expectations args) in
+  let expectations : typ list -> bool = call_arg_expectations contract_interfaces call_head in
+  let () = assert (expectations (List.map snd args)) in
   ()
 
 let rec assign_type_call
@@ -75,6 +77,7 @@ let rec assign_type_call
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
     | "pre_ecdsarecover" -> AddressType
+    | "keccak256" -> Bytes32Type
     | contract_name
       when true (* check the contract exists*) -> ContractArchType contract_name
     | _ -> failwith "assign_type_call: should not happen"

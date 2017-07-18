@@ -310,12 +310,12 @@ let string_of_pseudo_program prg =
 let print_pseudo_program prg =
   Printf.printf "%s" (string_of_pseudo_program prg)
 
-let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
-  let h = Hex.hex_of_string in
+let hex_of_instruction (i : Big_int.big_int instruction) : Hexa.hex =
+  let h = Hexa.hex_of_string in
   match i with
-  | PUSH1 i -> Hex.concat_hex (h "60") (Hex.hex_of_big_int i 1)
-  | PUSH4 i -> Hex.concat_hex (h "63") (Hex.hex_of_big_int i 4)
-  | PUSH32 i -> Hex.concat_hex (h "7f") (Hex.hex_of_big_int i 32)
+  | PUSH1 i -> Hexa.concat_hex (h "60") (Hexa.hex_of_big_int i 1)
+  | PUSH4 i -> Hexa.concat_hex (h "63") (Hexa.hex_of_big_int i 4)
+  | PUSH32 i -> Hexa.concat_hex (h "7f") (Hexa.hex_of_big_int i 32)
   | NOT -> h "19"
   | TIMESTAMP -> h "42"
   | EQ -> h "14"
@@ -385,19 +385,19 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hex.hex =
   | DUP6 -> h "85"
   | DUP7 -> h "86"
 
-let rev_append_op (h : Hex.hex) (i : Big_int.big_int instruction) : Hex.hex =
-  Hex.concat_hex (hex_of_instruction i) h
+let rev_append_op (h : Hexa.hex) (i : Big_int.big_int instruction) : Hexa.hex =
+  Hexa.concat_hex (hex_of_instruction i) h
 
-let hex_of_program (p : Big_int.big_int program) : Hex.hex =
-  List.fold_left rev_append_op Hex.empty_hex p
+let hex_of_program (p : Big_int.big_int program) : Hexa.hex =
+  List.fold_left rev_append_op Hexa.empty_hex p
 
 let print_imm_program (p : Big_int.big_int program) : unit =
   let hex = hex_of_program p in
-  Hex.print_hex ~prefix:"0x" hex
+  Hexa.print_hex ~prefix:"0x" hex
 
 let string_of_imm_program (p : Big_int.big_int program) : string =
   let hex = hex_of_program p in
-  Hex.string_of_hex ~prefix:"0x" hex
+  Hexa.string_of_hex ~prefix:"0x" hex
 
 let size_of_instruction i =
   match i with

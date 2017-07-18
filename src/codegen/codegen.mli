@@ -1,9 +1,12 @@
+type alignment = LeftAligned | RightAligned
+
 (** [codegen_exp original_env exp]
  * is a new codegenEnv where a stack element is pushed, whose
  * value is the evaluation of exp *)
 val codegen_exp :
   LocationEnv.location_env ->
   CodegenEnv.codegen_env ->
+  alignment ->
   Syntax.typ Syntax.exp ->
   CodegenEnv.codegen_env
 
