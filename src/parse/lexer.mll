@@ -48,7 +48,7 @@ rule read =
   | ">" { GT }
   | "="  { SINGLE_EQ }
   | "new" { NEW }
-  | "along" { ALONG }
+  | "with" { ALONG }
   | "reentrance" { REENTRANCE }
   | "selfdestruct" { SELFDESTRUCT }
   | "." { DOT }
