@@ -1,0 +1,13 @@
+contract Channel
+( address channelSender
+, address channelRecipient
+, uint startDate
+, uint channelTimeout
+, address[bytes32] signatures
+)
+{
+  case(bool CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint value)) {
+    address signer = pre_ecdsarecover(h, v, r, s)
+    // hmmm.  Can local variable be dealed with?
+  }
+}
