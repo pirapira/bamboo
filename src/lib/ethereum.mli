@@ -45,6 +45,10 @@ val total_size_of_interface_args :
  * hex, without the prefix [0x]. *)
 val string_keccak : string -> string
 
+(** [hex_keccak] expects a hex string and returns the Keccak-256 hash of the
+ *  represented byte sequence, without the prefix [0x]. *)
+val hex_keccak : string -> string
+
 (** [keccak_short "pay(address)"] returns the
  * method signature code (which is commonly used in the ABI.
  *)
