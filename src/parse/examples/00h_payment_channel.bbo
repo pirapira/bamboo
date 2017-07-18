@@ -2,19 +2,26 @@ contract Channel
 ( address channelSender
 , address channelRecipient
 , uint startDate
-, uint channelTimeout
+, uint endDate
 , address[bytes32] signatures
 )
 {
-  case(bool CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint val)) {
-    address signer = pre_ecdsarecover(h, v, r, s)
+  case(void CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint val)) {
+    address signer = pre_ecdsarecover(h, v, r, s);
     if (signer != channelSender && signer != channelRecipient) throw;
     bytes32 proof = sha3(this, value);
     if (proof != h) throw;
     if (signatures[proof] == 0)
       signatures[proof] = signer;
     else if (signatures[proof] != signer) {
-      if (!channelRecipient() with value val)  // hmmm, there should be a check against keywords.
+      channelRecipient() along value val reentrance { abort; }; // failure throws.
+      selfdestruct(channelSender);
     }
+  }
+
+  case(void ChannelTimeOut()) {
+    if (endDate > now)
+      throw;
+    selfdestruct(channelSender);
   }
 }
