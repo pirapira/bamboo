@@ -1,0 +1,5 @@
+contract A() {
+  case(bytes32 f(address a, bytes32 b)) {
+    return(keccak256(a, b)) then become A();
+  }
+}
