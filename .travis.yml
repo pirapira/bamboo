@@ -12,6 +12,9 @@ cache:
   - $HOME/.ccache
   - $HOME/build/pirapira/cpp-ethereum
   - $HOME/build/pirapira/cmake
+env:
+  global:
+  - CASHER_TIME_OUT=1200
 sudo: required
 before_install:
 - BAMBOO=`pwd`
