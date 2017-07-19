@@ -666,7 +666,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
         raise Not_found
     in
     CodegenEnv.contract_lookup ce contract_id in
-  let method_name = s.send_head_method in
+  let Some method_name = s.send_head_method in
   let usual_header : usual_case_header =
     Syntax.lookup_usual_case_header callee_contract method_name contract_lookup_by_name in
   let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in

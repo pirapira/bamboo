@@ -25,7 +25,7 @@ and 'exp_annot new_exp =
   }
 and 'exp_annot send_exp =
   { send_head_contract : 'exp_annot exp
-  ; send_head_method : string
+  ; send_head_method : string option (* None means default *)
   ; send_args : 'exp_annot exp list
   ; send_msg_info : 'exp_annot message_info
   }
