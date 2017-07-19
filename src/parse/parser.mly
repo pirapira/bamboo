@@ -174,7 +174,8 @@ sentence :
                 ; variable_init_value = value
                 }
               }
-  | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfSingleSentence (cond, body) }
+  | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
+  | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 
