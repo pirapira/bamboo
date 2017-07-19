@@ -11,7 +11,7 @@ contract Channel
     if (signer != channelSender && signer != channelRecipient) abort;
     bytes32 proof = keccak256(this, val);
     if (proof != h) abort;
-    if (signatures[proof] == 0)
+    if (iszero(signatures[proof]))
       signatures[proof] = signer;
     else if (signatures[proof] != signer) {
       channelRecipient() along value val reentrance { abort; }; // failure throws.
