@@ -68,6 +68,7 @@ script:
 - if ./bbo.native < ./src/parse/not_working_examples/unknown_return.bbo; then false; else true; fi
 - if ./bbo.native < ./src/parse/not_working_examples/wrong_arg.bbo; then false; else true; fi
 - if ./bbo.native < ./src/parse/not_working_examples/keyword.bbo; then false; else true; fi
+- if ./bbo.native < ./src/parse/not_working_examples/void_not_void.bbo; then false; else true; fi
 - make test
 - make end-to-end
 - which eth

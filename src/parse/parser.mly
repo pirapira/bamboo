@@ -40,6 +40,7 @@
 %token THIS
 %token LAND
 %token NOW
+%token VOID
 %token BLOCK
 %token EOF
 
@@ -175,6 +176,8 @@ sentence :
                 ; variable_init_value = value
                 }
               }
+  | VOID; SINGLE_EQ; value = exp; SEMICOLON
+    { Syntax.ExpSentence value }
   | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, [bodyT], [bodyF]) }
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, bodyT, [bodyF]) }
   | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = block { Syntax.IfThenElse (cond, [bodyT], bodyF) }

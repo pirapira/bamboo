@@ -72,6 +72,7 @@ and 'exp_annot sentence =
   | IfThenOnly of 'exp_annot exp * 'exp_annot sentence list
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
+  | ExpSentence of 'exp_annot exp
 and 'exp_annot return =
   { return_exp : 'exp_annot exp
   ; return_cont : 'exp_annot exp
