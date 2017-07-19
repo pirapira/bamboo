@@ -16,6 +16,7 @@
 %token CASE
 %token DEFAULT
 %token IF
+%token ELSE
 %token RETURN
 %token FALSE
 %token TRUE
@@ -174,6 +175,10 @@ sentence :
                 ; variable_init_value = value
                 }
               }
+  | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, [bodyT], [bodyF]) }
+  | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, bodyT, [bodyF]) }
+  | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = block { Syntax.IfThenElse (cond, [bodyT], bodyF) }
+  | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }

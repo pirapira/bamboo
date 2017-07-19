@@ -1298,6 +1298,22 @@ let rec add_if_single le ce (layout : LayoutInfo.layout_info) cond body =
   let ce = append_instruction ce (JUMPDEST jump_label_skip) in
   let () = assert (original_stack_size = stack_size ce) in
   (le, ce)
+and add_if le ce (layout : LayoutInfo.layout_info) cond bodyT bodyF =
+  let jump_label_false = Label.new_label () in
+  let jump_label_end = Label.new_label () in
+  let original_stack_size = stack_size ce in
+  let ce = codegen_exp le ce RightAligned cond in
+  let ce = append_instruction ce ISZERO in
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_false)) in
+  let ce = append_instruction ce JUMPI in
+  let _, ce = add_sentences le ce layout bodyT in (* location env needs to be discarded *)
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_end)) in
+  let ce = append_instruction ce JUMP in
+  let ce = append_instruction ce (JUMPDEST jump_label_false) in
+  let _, ce = add_sentences le ce layout bodyF in (* location env needs to be discarded *)
+  let ce = append_instruction ce (JUMPDEST jump_label_end) in
+  let () = assert (original_stack_size = stack_size ce) in
+  (le, ce)
 and add_sentences le ce layout ss =
   List.fold_left (fun (le, ce) s -> add_sentence le ce layout s) (le, ce) ss
 and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
@@ -1306,7 +1322,9 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | ReturnSentence ret -> add_return le ce layout ret
   | AssignmentSentence (l, r) -> add_assignment le ce layout l r
   | VariableInitSentence i -> add_variable_init le ce layout i
-  | IfThenOnly (cond, body) -> add_if_single le ce layout cond body
+  | IfThenOnly (cond, body) -> add_if_single le ce layout cond body (* this is a special case of the next *)
+  | IfThenElse (cond, bodyT, bodyF) ->
+     add_if le ce layout cond bodyT bodyF
   | SelfdestructSentence exp -> add_self_destruct le ce layout exp
 and add_self_destruct le ce layout exp =
   let ce = codegen_exp le ce RightAligned exp in

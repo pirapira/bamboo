@@ -277,6 +277,11 @@ and assign_type_sentence
        = assign_type_sentences
            contract_interfaces cname venv ss in
      (IfThenOnly (cond', ss'), venv)
+  | IfThenElse (cond, sst, ssf) ->
+     let cond' = assign_type_exp contract_interfaces cname venv cond in
+     let sst' = assign_type_sentences contract_interfaces cname venv sst in
+     let ssf' = assign_type_sentences contract_interfaces cname venv ssf in
+     (IfThenElse (cond', sst', ssf'), venv)
   | SelfdestructSentence e ->
      let e' = assign_type_exp contract_interfaces cname venv e in
      (SelfdestructSentence e', venv)
