@@ -1,15 +1,15 @@
 contract A() {
     case (bool a()) {
-        return (true) then B();
+        return (true) then become B();
     }
 }
 contract B() {
     case (bool b()) {
-        return (false) then B();
+        return (false) then become B();
     }
 }
 contract C(A instance) {
     case (bool c()) {
-        return (instance.b() reentrance { abort; }) then C(instance);
+        return (instance.b() reentrance { abort; }) then become C(instance);
     }
 }
