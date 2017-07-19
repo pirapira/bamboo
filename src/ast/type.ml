@@ -271,12 +271,12 @@ and assign_type_sentence
      let l' = assign_type_lexp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
      (AssignmentSentence (l', r'), venv)
-  | IfSingleSentence (cond, s) ->
+  | IfThenOnly (cond, ss) ->
      let cond' = assign_type_exp contract_interfaces cname venv cond in
-     let (s', _ (* new variable in the if-body does not affect the context*) )
-       = assign_type_sentence
-           contract_interfaces cname venv s in
-     (IfSingleSentence (cond', s'), venv)
+     let ss'
+       = assign_type_sentences
+           contract_interfaces cname venv ss in
+     (IfThenOnly (cond', ss'), venv)
   | SelfdestructSentence e ->
      let e' = assign_type_exp contract_interfaces cname venv e in
      (SelfdestructSentence e', venv)
