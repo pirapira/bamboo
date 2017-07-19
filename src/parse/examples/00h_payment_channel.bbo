@@ -14,7 +14,7 @@ contract Channel
     if (iszero(signatures[proof]))
       signatures[proof] = signer;
     else if (signatures[proof] != signer) {
-      channelRecipient() along value val reentrance { abort; }; // failure throws.
+      void = channelRecipient(h) with value(val) reentrance { abort; }; // failure throws.
       selfdestruct(channelSender);
     }
   }
