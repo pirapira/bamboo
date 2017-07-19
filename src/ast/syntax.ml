@@ -84,6 +84,7 @@ and 'exp_annot sentence =
   | AssignmentSentence of 'exp_annot lexp * 'exp_annot exp
   | VariableInitSentence of 'exp_annot variable_init
   | IfThenOnly of 'exp_annot exp * 'exp_annot sentence list
+  | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
 and 'exp_annot return =
   { return_exp : 'exp_annot exp

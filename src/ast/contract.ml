@@ -46,6 +46,8 @@ let rec collect_continuation_in_sentence (raw : 'exp Syntax.sentence) : string l
     | SelfdestructSentence _ -> []
     | IfThenOnly (_, ss) ->
        collect_continuation_in_sentences ss
+    | IfThenElse (_, s, t) ->
+       (collect_continuation_in_sentences) s @ (collect_continuation_in_sentences t)
   )
 and collect_continuation_in_sentences ss =
   List.concat (List.map collect_continuation_in_sentence ss)
