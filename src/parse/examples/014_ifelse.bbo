@@ -1,0 +1,6 @@
+contract A () {
+  case (bool f(bool x)) {
+     if (x) return (true) then become A ();
+     else return (false) then become A ();
+  }
+}
