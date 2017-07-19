@@ -53,6 +53,8 @@ let call_arg_expectations (contract_interfaces : Contract.contract_interface Ass
      (fun x -> x = [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type])
   | "keccak256" ->
      (fun _ -> true)
+  | "iszero" ->
+     (fun x -> x = [Bytes32Type] || x = [Uint8Type] || x = [UintType] || x = [BoolType] || x = [AddressType])
   | name ->
      let cid = Assoc.lookup_id (fun c -> c.Contract.contract_interface_name = name) contract_interfaces in
      let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
@@ -78,6 +80,9 @@ let rec assign_type_call
     | "value" when true (* check the argument is 'msg' *) -> UintType
     | "pre_ecdsarecover" -> AddressType
     | "keccak256" -> Bytes32Type
+    | "iszero" -> (match args' with
+                   | [arg] -> snd arg
+                   | _ -> failwith "should not happen")
     | contract_name
       when true (* check the contract exists*) -> ContractArchType contract_name
     | _ -> failwith "assign_type_call: should not happen"

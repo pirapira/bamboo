@@ -288,7 +288,7 @@ and add_constructor_arguments_to_memory le (packing : memoryPacking) ce (args : 
                           ce args in
   let () = assert (original_stack_size + 1 = stack_size ce) in
   ce
-and produce_init_code_in_memory le ce new_exp =
+and produce_init_code_in_memory (le : LocationEnv.location_env) ce new_exp =
   let name = new_exp.new_head in
   let contract_id =
     try CodegenEnv.cid_lookup ce name
@@ -322,14 +322,27 @@ and produce_init_code_in_memory le ce new_exp =
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_total_size, memory_offset] *)
   ce
-and codegen_function_call_exp le ce (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
+and codegen_function_call_exp (le : LocationEnv.location_env) ce alignment (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
   if function_call.call_head = "pre_ecdsarecover" then
-    codegen_ecdsarecover le ce function_call.call_args rettyp
+    let () = assert (alignment = RightAligned) in
+    codegen_ecdsarecover le ce function_call.call_args rettyp (* XXX: need to pass alignment *)
   else if function_call.call_head = "keccak256" then
-    codegen_keccak256 le ce function_call.call_args rettyp
+    let () = assert (alignment = RightAligned) in
+    codegen_keccak256 le ce function_call.call_args rettyp (* XXX: need to pass alignment *)
+  else if function_call.call_head = "iszero" then
+    codegen_iszero le ce alignment function_call.call_args rettyp
   else
     failwith "codegen_function_call_exp: unknown function head."
-and codegen_keccak256 le ce args rettyp =
+and codegen_iszero le ce alignment args rettype =
+  match args with
+  | [arg] ->
+     let () = assert (rettype = snd arg) in
+     let ce = codegen_exp le ce alignment arg in
+     let ce = append_instruction ce ISZERO in
+     ce
+  | _ ->
+     failwith "codegen_iszero: seeing a wrong number of arguments"
+and codegen_keccak256 le (ce : CodegenEnv.codegen_env) args rettyp =
   let original_stack_size = stack_size ce in
   let ce = peek_next_memory_allocation ce in
   (* stack: [..., offset] *)
@@ -383,7 +396,7 @@ and codegen_ecdsarecover le ce args rettyp =
      (* stack: [output] *)
      ce
   | _ -> failwith "pre_ecdsarecover has a wrong number of arguments"
-and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
+and codegen_new_exp (le : LocationEnv.location_env) ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
   let () = assert(is_throw_only new_exp.new_msg_info.message_reentrance_info)  in
@@ -410,7 +423,7 @@ and codegen_new_exp le ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : 
   let () = assert (stack_size ce = original_stack_size + 1) in
   ce
 
-and codegen_array_access le ce (aa : Syntax.typ Syntax.array_access) =
+and codegen_array_access (le : LocationEnv.location_env) ce (aa : Syntax.typ Syntax.array_access) =
   let array = aa.array_access_array in
   let index = aa.array_access_index in
   let ce = codegen_exp le ce RightAligned index in
@@ -540,7 +553,7 @@ and codegen_exp
   | NewExp new_e, _ ->
      failwith "exp code gen for new expression with unexpected type"
   | FunctionCallExp function_call, rettyp ->
-     codegen_function_call_exp le ce function_call rettyp
+     codegen_function_call_exp le ce alignment function_call rettyp
   | ParenthExp _, _ ->
      failwith "ParenthExp not expected."
   | SingleDereferenceExp (reference, ref_typ), value_typ ->
