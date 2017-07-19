@@ -1,6 +1,8 @@
 contract A () {
-  case (bool f(bool x)) {
+  case (bool f(bool x, bool y)) {
      if (x) return (true) then become A ();
-     else return (false) then become A ();
+     else if (y) { return (false) then become A (); }
+
+     abort;
   }
 }
