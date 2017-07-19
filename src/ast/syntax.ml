@@ -83,7 +83,7 @@ and 'exp_annot sentence =
   | ReturnSentence of 'exp_annot return
   | AssignmentSentence of 'exp_annot lexp * 'exp_annot exp
   | VariableInitSentence of 'exp_annot variable_init
-  | IfSingleSentence of 'exp_annot exp * 'exp_annot sentence
+  | IfThenOnly of 'exp_annot exp * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
 and 'exp_annot return =
   { return_exp : 'exp_annot exp
@@ -298,10 +298,12 @@ let rec sentence_might_become (s : typ sentence) : string list =
        (exp_might_become r)
   | VariableInitSentence v ->
      variable_init_might_become v
-  | IfSingleSentence (c, b) ->
-     (exp_might_become c)@(sentence_might_become b)
+  | IfThenOnly (c, block) ->
+     (exp_might_become c)@(sentences_might_become block)
   | SelfdestructSentence e ->
      exp_might_become e
+and sentences_might_become ss =
+  List.concat (List.map sentence_might_become ss)
 
 
 let case_might_become (case : typ case) : string list =

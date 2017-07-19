@@ -44,9 +44,11 @@ let rec collect_continuation_in_sentence (raw : 'exp Syntax.sentence) : string l
     | AssignmentSentence (_, _) -> []
     | VariableInitSentence _ -> []
     | SelfdestructSentence _ -> []
-    | IfSingleSentence (_, s) ->
-       collect_continuation_in_sentence s
+    | IfThenOnly (_, ss) ->
+       collect_continuation_in_sentences ss
   )
+and collect_continuation_in_sentences ss =
+  List.concat (List.map collect_continuation_in_sentence ss)
 
 let collect_continuation_in_case (raw : 'exp Syntax.case) : string list =
   List.concat Syntax.(List.map collect_continuation_in_sentence raw.case_body)
