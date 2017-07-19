@@ -9,13 +9,14 @@ dist: trusty
 cache:
   directories:
   - $HOME/.opam
+  - $HOME/.ccache
   - $HOME/build/pirapira/cpp-ethereum
   - $HOME/build/pirapira/cmake
 sudo: required
 before_install:
 - BAMBOO=`pwd`
 - sudo apt-get -qq update
-- sudo apt-get install aspcud
+- sudo apt-get install aspcud ccache
 # - git clone https://github.com/polyml/polyml.git
 # - cd polyml
 # - git checkout v5.6
