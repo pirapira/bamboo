@@ -1,0 +1,6 @@
+contract A () {
+  case (bool a(bytes32 x))
+  {
+      return (iszero(x)) then become A();
+  }
+}
