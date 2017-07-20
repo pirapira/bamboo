@@ -1326,6 +1326,11 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | IfThenElse (cond, bodyT, bodyF) ->
      add_if le ce layout cond bodyT bodyF
   | SelfdestructSentence exp -> add_self_destruct le ce layout exp
+  | ExpSentence exp -> add_exp_sentence le ce layout exp
+and add_exp_sentence le ce layout exp =
+  let ce = codegen_exp le ce RightAligned exp in
+  let ce = append_instruction ce POP in
+  le, ce
 and add_self_destruct le ce layout exp =
   let ce = codegen_exp le ce RightAligned exp in
   let ce = append_instruction ce SUICIDE in

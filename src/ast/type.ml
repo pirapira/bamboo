@@ -171,9 +171,9 @@ and assign_type_exp
      let msg_info' = assign_type_message_info contract_interfaces cname venv
                                            send.send_msg_info in
      let contract' = assign_type_exp contract_interfaces cname venv send.send_head_contract in
-     let contract_name = Syntax.contract_name_of_instance contract' in
      begin match send.send_head_method with
      | Some mtd ->
+        let contract_name = Syntax.contract_name_of_instance contract' in
         let method_sig : Ethereum.function_signature = begin
             match Contract.find_method_signature
                     contract_interfaces contract_name mtd with
@@ -195,7 +195,14 @@ and assign_type_exp
         (match types with
          | [single] -> (SingleDereferenceExp reference, single)
          | _ -> reference)
-     | None -> failwith "type checkign for the default case not implemented"
+     | None ->
+        let () = assert (send.send_args = []) in
+        ( SendExp
+            { send_head_contract = contract'
+            ; send_head_method = None
+            ; send_args = []
+            ; send_msg_info = msg_info'
+            }, VoidType )
      end
   | ValueExp ->
      (ValueExp, UintType)
@@ -298,6 +305,10 @@ and assign_type_sentence
   | VariableInitSentence vi ->
      let (vi', venv') =  type_variable_init contract_interfaces cname venv vi in
      (VariableInitSentence vi', venv')
+  | ExpSentence exp ->
+     let exp = assign_type_exp contract_interfaces cname venv exp in
+     let () = assert (snd exp = VoidType) in
+     (ExpSentence exp, venv)
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
           (cname : string)

@@ -1,4 +1,5 @@
 type typ =
+  | VoidType
   | UintType
   | Uint8Type
   | Bytes32Type
@@ -13,6 +14,7 @@ type typ =
 
 let rec string_of_typ t =
   match t with
+  | VoidType -> "void"
   | UintType -> "uint"
   | Uint8Type -> "uint8"
   | Bytes32Type -> "bytes32"
