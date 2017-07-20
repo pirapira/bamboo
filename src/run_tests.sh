@@ -17,3 +17,12 @@ do
   cat $f | ./codegen_test2.native || \
   exit 1
 done
+for f in `ls parse/not_working_examples/*.bbo`
+do
+  echo "trying" $f
+  if cat $f | ./codegen_test2.native
+  then
+    exit 1
+  fi
+done
+echo "what should succeed has succeeded; what should fail has failed."
