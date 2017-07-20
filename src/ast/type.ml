@@ -324,12 +324,28 @@ and assign_type_sentences
                                        cname
                                        updated_environment
                                        rest_ss
+let rec is_terminating_sentence (s : unit sentence) : bool =
+  match s with
+  | AbortSentence -> true
+  | ReturnSentence _ -> true
+  | AssignmentSentence _ -> false
+  | VariableInitSentence _ -> false
+  | IfThenOnly (_, _) -> false (* there is a continuation if the condition does not hold. *)
+  | IfThenElse (_, bT, bF) -> are_terminating bT && are_terminating bF
+  | SelfdestructSentence _ -> true
+  | ExpSentence _ -> false
 
+(** [check_termination sentences] make sure that the last sentence in [sentences]
+ *  cuts the continuation. *)
+and are_terminating sentences =
+  let last_sentence = BatList.last sentences in
+  is_terminating_sentence last_sentence
 
 let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
                      (contract_name : string)
                      (venv : TypeEnv.type_env)
                      (case : unit case) =
+  let () = assert (are_terminating case.case_body) in
   let case_arguments = case_header_arg_list case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
   ; case_body = assign_type_sentences
