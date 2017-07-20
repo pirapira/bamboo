@@ -338,7 +338,7 @@ let rec is_terminating_sentence (s : unit sentence) : termination list =
      end
   | AssignmentSentence _ -> [RunAway]
   | VariableInitSentence _ -> [RunAway]
-  | IfThenOnly (_, _) -> [RunAway] (* there is a continuation if the condition does not hold. *)
+  | IfThenOnly (_, b) -> (are_terminating b) @ [RunAway] (* there is a continuation if the condition does not hold. *)
   | IfThenElse (_, bT, bF) -> are_terminating bT @ (are_terminating bF)
   | SelfdestructSentence _ -> [JustStop]
   | ExpSentence _ -> [RunAway]
