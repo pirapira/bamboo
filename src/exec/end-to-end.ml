@@ -311,11 +311,11 @@ let reset_chain s acc =
   let () = assert (Big_int.gt_big_int balance (Big_int.big_int_of_int 10000000000000000)) in
   my_acc
 
-let deploy_code s my_acc code =
+let deploy_code s my_acc code value =
   let trans : eth_transaction =
     { from = my_acc
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
-    ; value = "0x0000000000000000000000000000000000000000000000000000000000000000"
+    ; value = value
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     ; data = code
     ; _to = "0x"
@@ -339,7 +339,7 @@ let testing_006 s my_acc =
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s (Some my_acc) in
-  let receipt = deploy_code s my_acc initcode in
+  let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -367,7 +367,7 @@ let constructor_arg_test s =
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s None in
-  let receipt = deploy_code s my_acc initcode in
+  let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (not (String.length deployed > 2)) in
@@ -384,7 +384,7 @@ let testing_00bb s acc =
     "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode in
+  let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -418,7 +418,7 @@ let testing_00b s acc =
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode in
+  let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -450,7 +450,7 @@ let testing_00b s acc =
 let testing_010 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/010_logical_and.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -471,7 +471,7 @@ let testing_010 s acc =
 let testing_011 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/011_keccak256.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -494,7 +494,7 @@ let testing_011 s acc =
 let random_ecdsa s acc =
   let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert(String.length deployed > 2) in (* XXX the procedure so far can be factored out *)
@@ -526,7 +526,7 @@ let correct_ecdsa s acc =
    *)
   let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert(String.length deployed > 2) in (* XXX the procedure so far can be factored out *)
@@ -552,7 +552,7 @@ let correct_ecdsa s acc =
 let testing_00i s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00i_local_bool.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -573,7 +573,7 @@ let testing_00i s acc =
 let testing_013 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/013_iszero.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -594,7 +594,7 @@ let testing_013 s acc =
 let testing_014 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/014_ifelse.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -615,7 +615,7 @@ let testing_014 s acc =
 let testing_016 s acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/016_void.bbo" in
   let my_acc = reset_chain s (Some acc) in
-  let receipt = deploy_code s my_acc initcode_compiled in
+  let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
   let () = assert (String.length deployed > 2) in
@@ -634,9 +634,52 @@ let testing_016 s acc =
   let () = assert (Big_int.(eq_big_int balance (big_int_of_int 1))) in
   ()
 
+let pad_to_word str =
+  let str = Ethereum.strip_0x str in
+  let len = String.length str in
+  let () = assert (len <= 64) in
+  let padded = 64 - len in
+  let pad = BatString.make padded '0' in
+  pad ^ str
+
+let testing_00h_timeout s acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00h_payment_channel.bbo" in
+  let my_acc = reset_chain s (Some acc) in
+  let sender = pad_to_word (Ethereum.strip_0x my_acc) in
+  let recipient = pad_to_word (Ethereum.strip_0x my_acc) in
+  let startDate = "0000000000000000000000000000000000000000000000000000000000010000" in
+  let endDate   = "0000000000000000000000000000000000000000000000000000000000020000" in
+  let initdata = initcode_compiled ^
+                   sender ^
+                     recipient ^
+                       startDate ^
+                         endDate
+  in
+  let receipt = deploy_code s my_acc initdata "300" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let balance = eth_getBalance s contract_address in
+  let () = assert (Big_int.(eq_big_int balance (big_int_of_int 300))) in
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = compute_signature_hash "ChannelTimeOut()"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let receipt = call s my_acc c in
+  let () = Printf.printf "timeout tx: %s\n%!" receipt.transactionHash in
+  let balance = eth_getBalance s contract_address in
+  let () = assert (Big_int.(eq_big_int balance zero_big_int)) in
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
+  let () = testing_00h_timeout s my_acc in
   let () = testing_00bb s my_acc in
   let () = testing_006 s my_acc in
   let () = testing_00b s my_acc in

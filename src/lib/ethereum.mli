@@ -49,6 +49,8 @@ val string_keccak : string -> string
  *  represented byte sequence, without the prefix [0x]. *)
 val hex_keccak : string -> string
 
+val strip_0x : string -> string
+
 (** [keccak_short "pay(address)"] returns the
  * method signature code (which is commonly used in the ABI.
  *)
