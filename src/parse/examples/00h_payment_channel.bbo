@@ -14,13 +14,13 @@ contract Channel
     if (iszero(signatures[proof]))
       signatures[proof] = signer;
     else if (signatures[proof] != signer) {
-      void = channelRecipient(h) with value(val) reentrance { abort; }; // failure throws.
+      void = channelRecipient.default() with val reentrance { abort; }; // failure throws.
       selfdestruct(channelSender);
     }
   }
 
   case(void ChannelTimeOut()) {
-    if (endDate > now)
+    if (endDate > now(block))
       abort;
     selfdestruct(channelSender);
   }
