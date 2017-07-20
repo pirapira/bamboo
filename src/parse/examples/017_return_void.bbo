@@ -1,5 +1,5 @@
 contract A () {
     case (void f()) {
-        return () then become A ();
+        return then become A ();
     }
 }
