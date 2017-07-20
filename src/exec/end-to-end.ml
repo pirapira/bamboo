@@ -611,6 +611,28 @@ let testing_014 s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
   ()
 
+let testing_016 s acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/016_void.bbo" in
+  let my_acc = reset_chain s (Some acc) in
+  let receipt = deploy_code s my_acc initcode_compiled in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode s contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "300"
+    ; data = (compute_signature_hash "pass(address,uint256)") ^ "000000000000000000000000000000000000000000000000000000000000aaaa" ^ "0000000000000000000000000000000000000000000000000000000000000001"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let tx = eth_sendTransaction s c in
+  let () = advance_block s in
+  let balance = eth_getBalance s "0x000000000000000000000000000000000000aaaa" in
+  let () = assert (Big_int.(eq_big_int balance (big_int_of_int 1))) in
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
@@ -624,6 +646,7 @@ let () =
   let () = testing_011 s my_acc in
   let () = testing_013 s my_acc in
   let () = testing_014 s my_acc in
+  let () = testing_016 s my_acc in
   let () = Unix.close s in
   ()
 
