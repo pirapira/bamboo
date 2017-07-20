@@ -1288,8 +1288,13 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
   let e = ret.return_exp in
   let c = ret.return_cont in
   let (le, ce) = set_continuation le ce layout c in
-  let (le, ce) = place_exp_in_memory le ce ABIPacking e in
-  let ce = return_mem_content le ce in
+  let ce = match e with
+    | Some e ->
+       let (le, ce) = place_exp_in_memory le ce ABIPacking e in
+       return_mem_content le ce
+    | None ->
+       append_instruction ce STOP
+  in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 

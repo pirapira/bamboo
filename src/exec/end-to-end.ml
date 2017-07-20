@@ -356,6 +356,7 @@ let testing_006 s my_acc =
     } in
   let receipt = call s my_acc tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
+  let () = Printf.printf "got storage %s\n" (Big_int.string_of_big_int n) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 

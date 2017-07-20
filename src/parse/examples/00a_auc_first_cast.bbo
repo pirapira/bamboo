@@ -16,7 +16,7 @@ bid new_bid =
 new bid(sender(msg), value(msg), this) with value(msg)
  reentrance { abort; }; // failure throws.
      _bids[sender(msg)] = true;
-     return (true) then become
+     return then become
          auction(_beneficiary, _bidding_time, _bids, value(msg));
    }
 }

@@ -109,6 +109,18 @@ case_header:
       ; case_arguments = args
       }
     }
+  | CASE; LPAR;
+    VOID;
+    name = IDENT;
+    LPAR;
+    args = argument_list;
+    RPAR;
+    RPAR { Syntax.UsualCaseHeader
+      { case_return_typ = []
+      ; Syntax.case_name = name
+      ; case_arguments = args
+      }
+    }
   ;
 
 argument_list:
@@ -163,7 +175,9 @@ rev_sentences:
 sentence :
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
+    { Syntax.ReturnSentence { Syntax. return_exp = Some value; return_cont = cont} }
+  | RETURN; THEN; BECOME; cont = exp; SEMICOLON
+    { Syntax.ReturnSentence { Syntax. return_exp = None; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;

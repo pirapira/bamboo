@@ -1,0 +1,6 @@
+contract A () {
+    default {
+        void = sender(msg);
+        abort;
+    }
+}

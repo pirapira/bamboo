@@ -90,7 +90,7 @@ and 'exp_annot sentence =
   | SelfdestructSentence of 'exp_annot exp
   | ExpSentence of 'exp_annot exp
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp
+  { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
   }
 
@@ -291,7 +291,9 @@ let rec sentence_might_become (s : typ sentence) : string list =
   match s with
   | AbortSentence -> []
   | ReturnSentence ret ->
-     (exp_might_become ret.return_exp)@
+     (match ret.return_exp with
+      | Some e -> exp_might_become e
+      | None -> []) @
        (exp_might_become ret.return_cont)@
          (match contract_name_of_return_cont ret.return_cont with
           | Some name -> [name]

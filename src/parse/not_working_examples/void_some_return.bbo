@@ -1,0 +1,5 @@
+contract A () {
+    case (void f(address a)) {
+        return (a) then become A ();
+    }
+}

@@ -251,8 +251,8 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : typ return =
-  { return_exp = assign_type_exp contract_interfaces
-                                   cname tenv src.return_exp
+  { return_exp = BatOption.map (assign_type_exp contract_interfaces
+                                   cname tenv) src.return_exp
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
@@ -324,16 +324,24 @@ and assign_type_sentences
                                        cname
                                        updated_environment
                                        rest_ss
-let rec is_terminating_sentence (s : unit sentence) : bool =
+
+type termination =
+  RunAway | ReturnValues of int | JustStop
+
+let rec is_terminating_sentence (s : unit sentence) : termination list =
   match s with
-  | AbortSentence -> true
-  | ReturnSentence _ -> true
-  | AssignmentSentence _ -> false
-  | VariableInitSentence _ -> false
-  | IfThenOnly (_, _) -> false (* there is a continuation if the condition does not hold. *)
-  | IfThenElse (_, bT, bF) -> are_terminating bT && are_terminating bF
-  | SelfdestructSentence _ -> true
-  | ExpSentence _ -> false
+  | AbortSentence -> [JustStop]
+  | ReturnSentence ret ->
+     begin match ret.return_exp with
+     | Some _ -> [ReturnValues 1]
+     | None -> [ReturnValues 0]
+     end
+  | AssignmentSentence _ -> [RunAway]
+  | VariableInitSentence _ -> [RunAway]
+  | IfThenOnly (_, _) -> [RunAway] (* there is a continuation if the condition does not hold. *)
+  | IfThenElse (_, bT, bF) -> are_terminating bT @ (are_terminating bF)
+  | SelfdestructSentence _ -> [JustStop]
+  | ExpSentence _ -> [RunAway]
 
 (** [check_termination sentences] make sure that the last sentence in [sentences]
  *  cuts the continuation. *)
@@ -341,11 +349,27 @@ and are_terminating sentences =
   let last_sentence = BatList.last sentences in
   is_terminating_sentence last_sentence
 
+let case_is_returning_void (case : unit case) : bool =
+  match case.case_header with
+  | DefaultCaseHeader -> true
+  | UsualCaseHeader u ->
+     u.case_return_typ = []
+
 let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
                      (contract_name : string)
                      (venv : TypeEnv.type_env)
                      (case : unit case) =
-  let () = assert (are_terminating case.case_body) in
+  let () = assert (List.for_all (fun t ->
+                       match t with
+                       | RunAway -> false
+                       | ReturnValues 0 ->
+                          case_is_returning_void case
+                       | ReturnValues 1 ->
+                          not (case_is_returning_void case)
+                       | ReturnValues _ ->
+                          failwith "returning multiple values not supported yet"
+                       | JustStop -> true
+                     ) (are_terminating case.case_body)) in
   let case_arguments = case_header_arg_list case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
   ; case_body = assign_type_sentences

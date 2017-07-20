@@ -75,7 +75,7 @@ and 'exp_annot sentence =
   | SelfdestructSentence of 'exp_annot exp
   | ExpSentence of 'exp_annot exp
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp
+  { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
   }
 
