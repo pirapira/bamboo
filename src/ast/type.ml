@@ -47,8 +47,8 @@ let assign_type_case_header contract_interfaces header =
   | DefaultCaseHeader ->
      DefaultCaseHeader
 
-let call_arg_expectations (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) call_head : typ list -> bool =
-  match call_head with
+let call_arg_expectations (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) mtd : typ list -> bool =
+  match mtd with
   | "pre_ecdsarecover" ->
      (fun x -> x = [Bytes32Type; Uint8Type; Bytes32Type; Bytes32Type])
   | "keccak256" ->
@@ -63,10 +63,16 @@ let call_arg_expectations (contract_interfaces : Contract.contract_interface Ass
 let type_check ((exp : typ), ((_,t) : typ exp)) =
   assert (exp = t)
 
-let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : typ exp list) call_head =
-  let expectations : typ list -> bool = call_arg_expectations contract_interfaces call_head in
-  let () = assert (expectations (List.map snd args)) in
-  ()
+let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : typ exp list) (call_head : string option) =
+  let expectations : typ list -> bool =
+    match call_head with
+    | Some mtd ->
+       call_arg_expectations contract_interfaces mtd
+    | None ->
+       (fun x -> x = [])
+  in
+  assert (expectations (List.map snd args))
+
 
 let rec assign_type_call
       contract_interfaces
@@ -74,7 +80,7 @@ let rec assign_type_call
       venv (src : unit function_call) : (typ function_call * typ) =
   let args' = List.map (assign_type_exp contract_interfaces cname venv)
                        src.call_args in
-  let () = check_args_match contract_interfaces args' src.call_head in
+  let () = check_args_match contract_interfaces args' (Some src.call_head) in
   let ret_typ =
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
@@ -165,28 +171,39 @@ and assign_type_exp
      let msg_info' = assign_type_message_info contract_interfaces cname venv
                                            send.send_msg_info in
      let contract' = assign_type_exp contract_interfaces cname venv send.send_head_contract in
-     let contract_name = Syntax.contract_name_of_instance contract' in
-     let method_sig : Ethereum.function_signature = begin
-         match Contract.find_method_signature
-                 contract_interfaces contract_name send.send_head_method with
-         | Some x -> x
-         | None -> failwith ("method "^send.send_head_method^" not found")
-       end
-     in
-     let types = Ethereum.(List.map to_typ (method_sig.sig_return)) in
-     let reference =
-       ( SendExp
-           { send_head_contract = contract'
-           ; send_head_method = send.send_head_method
-           ; send_args = List.map (assign_type_exp contract_interfaces cname venv)
-                                  send.send_args
-           ; send_msg_info = msg_info'
-           },
-         ReferenceType types
-       ) in
-     (match types with
-     | [single] -> (SingleDereferenceExp reference, single)
-     | _ -> reference)
+     begin match send.send_head_method with
+     | Some mtd ->
+        let contract_name = Syntax.contract_name_of_instance contract' in
+        let method_sig : Ethereum.function_signature = begin
+            match Contract.find_method_signature
+                    contract_interfaces contract_name mtd with
+            | Some x -> x
+            | None -> failwith ("method "^mtd^" not found")
+          end
+        in
+        let types = Ethereum.(List.map to_typ (method_sig.sig_return)) in
+        let reference =
+          ( SendExp
+              { send_head_contract = contract'
+              ; send_head_method = send.send_head_method
+              ; send_args = List.map (assign_type_exp contract_interfaces cname venv)
+                                     send.send_args
+              ; send_msg_info = msg_info'
+              },
+            ReferenceType types
+          ) in
+        (match types with
+         | [single] -> (SingleDereferenceExp reference, single)
+         | _ -> reference)
+     | None ->
+        let () = assert (send.send_args = []) in
+        ( SendExp
+            { send_head_contract = contract'
+            ; send_head_method = None
+            ; send_args = []
+            ; send_msg_info = msg_info'
+            }, VoidType )
+     end
   | ValueExp ->
      (ValueExp, UintType)
   | SingleDereferenceExp _
@@ -288,6 +305,10 @@ and assign_type_sentence
   | VariableInitSentence vi ->
      let (vi', venv') =  type_variable_init contract_interfaces cname venv vi in
      (VariableInitSentence vi', venv')
+  | ExpSentence exp ->
+     let exp = assign_type_exp contract_interfaces cname venv exp in
+     let () = assert (snd exp = VoidType) in
+     (ExpSentence exp, venv)
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
           (cname : string)

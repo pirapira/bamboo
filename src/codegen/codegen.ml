@@ -648,79 +648,124 @@ and obtain_return_values_from_memory ce =
 and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
   let original_stack_size = stack_size ce in
   let head_contract = s.send_head_contract in
-  let ContractInstanceType contract_name = snd head_contract in
-  let callee_contract_id =
-    try CodegenEnv.cid_lookup ce contract_name
-    with Not_found ->
-      let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
-      raise Not_found
-  in
-  let callee_contract : Syntax.typ Syntax.contract =
-    CodegenEnv.contract_lookup ce callee_contract_id in
-  let contract_lookup_by_name (name : string) : Syntax.typ Syntax.contract =
-    let contract_id =
-      try
-        CodegenEnv.cid_lookup ce name
-      with Not_found ->
-        let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
-        raise Not_found
-    in
-    CodegenEnv.contract_lookup ce contract_id in
-  let method_name = s.send_head_method in
-  let usual_header : usual_case_header =
-    Syntax.lookup_usual_case_header callee_contract method_name contract_lookup_by_name in
-  let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
-  let ce = swap_entrance_pc_with_zero ce in
-  (* stack : [entrance_pc_bkp] *)
-  let return_typ = usual_header.case_return_typ in
-  let return_size = Syntax.size_of_typs return_typ in
-  (* stack : [entrance_bkp] *)
-  let ce = append_instruction ce (PUSH1 (Int return_size)) in
-  (* stack : [entrance_bkp, out size] *)
-  let ce = append_instruction ce DUP1 in
-  (* stack : [entrance_bkp, out size, out size] *)
-  let () = assert (stack_size ce = original_stack_size + 3) in
-  let ce = push_allocated_memory ce in
-  (* stack : [entrance_bkp, out size, out offset] *)
-  let ce = append_instruction ce DUP2 in
-  (* stack : [entrance_bkp, out size, out offset, out size] *)
-  let ce = append_instruction ce DUP2 in
-  (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
-  let ce = prepare_input_in_memory le ce s usual_header in
-  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
-  let ce =
-    (match s.send_msg_info.message_value_info with
-     | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
-     | Some e -> codegen_exp le ce RightAligned e) in
-  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
-  let ce = codegen_exp le ce RightAligned s.send_head_contract in
-  let ce = append_instruction ce GAS in
-  let ce = append_instruction ce (PUSH4 (Int 3000)) in
-  let ce = append_instruction ce SUB in
-  (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
-  let ce = append_instruction ce CALL in
-  (* stack : [entrance_bkp, out size, out offset, success] *)
-  let () = assert (stack_size ce = original_stack_size + 4) in
-  let ce = append_instruction ce ISZERO in
-  let ce = append_instruction ce (PUSH1 (Int 0)) in
-  let ce = append_instruction ce JUMPI in
-  (* stack : [entrance_bkp, out size, out offset] *)
-  let () = assert (stack_size ce = original_stack_size + 3) in
-  let ce = append_instruction ce SWAP2 in
-  (* stack : [out offset, out size entrance_bkp] *)
-  let ce = restore_entrance_pc ce in
-  (* stack : [out offset, out size] *)
-  let ce = append_instruction ce SWAP1 in
-  (* stack : [out size, out offset] *)
-  let ce = obtain_return_values_from_memory ce in
-  (* stack : [outputs] *)
-  ce
-
-(* throw if failure *)
-
-(* reset the continuation *)
-
-(* fetch output onto the stack, maybe *)
+  match snd head_contract with
+  | ContractInstanceType contract_name ->
+     let callee_contract_id =
+       try CodegenEnv.cid_lookup ce contract_name
+       with Not_found ->
+         let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
+         raise Not_found
+     in
+     let callee_contract : Syntax.typ Syntax.contract =
+       CodegenEnv.contract_lookup ce callee_contract_id in
+     let contract_lookup_by_name (name : string) : Syntax.typ Syntax.contract =
+       let contract_id =
+         begin try
+           CodegenEnv.cid_lookup ce name
+         with Not_found ->
+           let () = Printf.eprintf "A contract of name %s is unknown.\n%!" contract_name in
+           raise Not_found
+         end
+       in
+       CodegenEnv.contract_lookup ce contract_id in
+     let Some method_name = s.send_head_method in
+     let usual_header : usual_case_header =
+       Syntax.lookup_usual_case_header callee_contract method_name contract_lookup_by_name in
+     let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
+     let ce = swap_entrance_pc_with_zero ce in
+     (* stack : [entrance_pc_bkp] *)
+     let return_typ = usual_header.case_return_typ in
+     let return_size = Syntax.size_of_typs return_typ in
+     (* stack : [entrance_bkp] *)
+     let ce = append_instruction ce (PUSH1 (Int return_size)) in
+     (* stack : [entrance_bkp, out size] *)
+     let ce = append_instruction ce DUP1 in
+     (* stack : [entrance_bkp, out size, out size] *)
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     let ce = push_allocated_memory ce in
+     (* stack : [entrance_bkp, out size, out offset] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, out size, out offset, out size] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset] *)
+     let ce = prepare_input_in_memory le ce s usual_header in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
+     let ce =
+       (match s.send_msg_info.message_value_info with
+        | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
+        | Some e -> codegen_exp le ce RightAligned e) in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
+     let ce = codegen_exp le ce RightAligned s.send_head_contract in
+     let ce = append_instruction ce GAS in
+     let ce = append_instruction ce (PUSH4 (Int 3000)) in
+     let ce = append_instruction ce SUB in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
+     let ce = append_instruction ce CALL in
+     (* stack : [entrance_bkp, out size, out offset, success] *)
+     let () = assert (stack_size ce = original_stack_size + 4) in
+     let ce = append_instruction ce ISZERO in
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     let ce = append_instruction ce JUMPI in
+     (* stack : [entrance_bkp, out size, out offset] *)
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     let ce = append_instruction ce SWAP2 in
+     (* stack : [out offset, out size entrance_bkp] *)
+     let ce = restore_entrance_pc ce in
+     (* stack : [out offset, out size] *)
+     let ce = append_instruction ce SWAP1 in
+     (* stack : [out size, out offset] *)
+     let ce = obtain_return_values_from_memory ce in
+     (* stack : [outputs] *)
+     ce
+  | AddressType ->
+     let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
+     let ce = swap_entrance_pc_with_zero ce in
+     (* stack : [entrance_pc_bkp] *)
+     let return_size = 0 in
+     (* stack : [entrance_bkp] *)
+     let ce = append_instruction ce (PUSH1 (Int return_size)) in
+     (* stack : [entrance_bkp, 0] *)
+     let ce = append_instruction ce DUP1 in
+     (* stack : [entrance_bkp, 0, 0] *)
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, 0, 0, 0] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, 0, 0, 0, 0] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, 0, 0, 0, 0, 0] *)
+     let ce = append_instruction ce DUP2 in
+     (* stack : [entrance_bkp, 0,        0,          0,        0,          0,       0] *)
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset] *)
+     let ce =
+       (match s.send_msg_info.message_value_info with
+        | None -> append_instruction ce (PUSH1 (Int 0)) (* no value info means value of zero *)
+        | Some e -> codegen_exp le ce RightAligned e) in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
+     let ce = codegen_exp le ce RightAligned s.send_head_contract in
+     let ce = append_instruction ce GAS in
+     let ce = append_instruction ce (PUSH4 (Int 3000)) in
+     let ce = append_instruction ce SUB in
+     (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
+     let ce = append_instruction ce CALL in
+     (* stack : [entrance_bkp, out size, out offset, success] *)
+     let () = assert (stack_size ce = original_stack_size + 4) in
+     let ce = append_instruction ce ISZERO in
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     let ce = append_instruction ce JUMPI in
+     (* stack : [entrance_bkp, out size, out offset] *)
+     let () = assert (stack_size ce = original_stack_size + 3) in
+     let ce = append_instruction ce SWAP2 in
+     (* stack : [out offset, out size entrance_bkp] *)
+     let ce = restore_entrance_pc ce in
+     (* stack : [0, 0] *)
+     let ce = append_instruction ce POP in (* XXX: Some optimizations possible. *)
+     (* stack : [0] *)
+     ce
+  | VoidType -> failwith "send expression with VoidType?"
+  | UintType -> failwith "send expression with UintType?"
+  | Uint8Type -> failwith "send expression with Uint8Type?"
+  | _ -> failwith "send expression with unknown type"
 
 
 let codegen_sentence
@@ -1326,6 +1371,11 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
   | IfThenElse (cond, bodyT, bodyF) ->
      add_if le ce layout cond bodyT bodyF
   | SelfdestructSentence exp -> add_self_destruct le ce layout exp
+  | ExpSentence exp -> add_exp_sentence le ce layout exp
+and add_exp_sentence le ce layout exp =
+  let ce = codegen_exp le ce RightAligned exp in
+  let ce = append_instruction ce POP in
+  le, ce
 and add_self_destruct le ce layout exp =
   let ce = codegen_exp le ce RightAligned exp in
   let ce = append_instruction ce SUICIDE in

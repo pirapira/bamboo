@@ -60,6 +60,7 @@ rule read =
   | "this" { THIS }
   | "now"  { NOW }
   | "block" { BLOCK }
+  | "void" { VOID }
   | "&&" { LAND }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

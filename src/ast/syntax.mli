@@ -1,4 +1,5 @@
 type typ =
+  | VoidType (** the result of calling address.default() *)
   | UintType
   | Uint8Type
   | Bytes32Type
@@ -25,7 +26,7 @@ and 'exp_annot new_exp =
   }
 and 'exp_annot send_exp =
   { send_head_contract : 'exp_annot exp
-  ; send_head_method : string
+  ; send_head_method : string option (* None means default *)
   ; send_args : 'exp_annot exp list
   ; send_msg_info : 'exp_annot message_info
   }
@@ -72,6 +73,7 @@ and 'exp_annot sentence =
   | IfThenOnly of 'exp_annot exp * 'exp_annot sentence list
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
+  | ExpSentence of 'exp_annot exp
 and 'exp_annot return =
   { return_exp : 'exp_annot exp
   ; return_cont : 'exp_annot exp

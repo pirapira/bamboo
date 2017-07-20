@@ -1,4 +1,5 @@
 type typ =
+  | VoidType
   | UintType
   | Uint8Type
   | Bytes32Type
@@ -13,6 +14,7 @@ type typ =
 
 let rec string_of_typ t =
   match t with
+  | VoidType -> "void"
   | UintType -> "uint"
   | Uint8Type -> "uint8"
   | Bytes32Type -> "bytes32"
@@ -39,7 +41,7 @@ and 'exp_annot new_exp =
   }
 and 'exp_annot send_exp =
   { send_head_contract : 'exp_annot exp
-  ; send_head_method : string
+  ; send_head_method : string option
   ; send_args : 'exp_annot exp list
   ; send_msg_info : 'exp_annot message_info
   }
@@ -86,6 +88,7 @@ and 'exp_annot sentence =
   | IfThenOnly of 'exp_annot exp * 'exp_annot sentence list
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
+  | ExpSentence of 'exp_annot exp
 and 'exp_annot return =
   { return_exp : 'exp_annot exp
   ; return_cont : 'exp_annot exp

@@ -40,6 +40,7 @@
 %token THIS
 %token LAND
 %token NOW
+%token VOID
 %token BLOCK
 %token EOF
 
@@ -175,6 +176,8 @@ sentence :
                 ; variable_init_value = value
                 }
               }
+  | VOID; SINGLE_EQ; value = exp; SEMICOLON
+    { Syntax.ExpSentence value }
   | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, [bodyT], [bodyF]) }
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, bodyT, [bodyF]) }
   | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = block { Syntax.IfThenElse (cond, [bodyT], bodyF) }
@@ -210,11 +213,15 @@ exp:
     lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
-    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
+                       ; send_args = []; send_msg_info = m }, () }
+  | contr = exp; DOT; DEFAULT;
+    LPAR; RPAR; m = msg_info
+    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
                        ; send_args = []; send_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info
-    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = mtd
+    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
                        ; send_args = (fst :: lst); send_msg_info = m }, () }
   | ADDRESS; e = exp { Syntax.AddressExp e, () }
   | NOT; e = exp { Syntax.NotExp e, () }
