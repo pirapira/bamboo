@@ -1292,7 +1292,9 @@ let add_return le ce (layout : LayoutInfo.layout_info) ret =
     | Some e ->
        let (le, ce) = place_exp_in_memory le ce ABIPacking e in
        return_mem_content le ce
-    | None -> ce in
+    | None ->
+       append_instruction ce STOP
+  in
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
 
