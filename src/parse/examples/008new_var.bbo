@@ -9,5 +9,6 @@ contract auction
    default
    {
        bool x = true;
+       abort;
    }
 }
