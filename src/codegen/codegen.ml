@@ -720,8 +720,8 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
         | Some e -> codegen_exp le ce RightAligned e) in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
      let ce = codegen_exp le ce RightAligned s.send_head_contract in
-     let ce = append_instruction ce GAS in
      let ce = append_instruction ce (PUSH4 (Int 3000)) in
+     let ce = append_instruction ce GAS in
      let ce = append_instruction ce SUB in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
      let ce = append_instruction ce CALL in
@@ -767,8 +767,8 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
         | Some e -> codegen_exp le ce RightAligned e) in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value] *)
      let ce = codegen_exp le ce RightAligned s.send_head_contract in
-     let ce = append_instruction ce GAS in
      let ce = append_instruction ce (PUSH4 (Int 3000)) in
+     let ce = append_instruction ce GAS in
      let ce = append_instruction ce SUB in
      (* stack : [entrance_bkp, out size, out offset, out size, out offset, in size, in offset, value, to, gas] *)
      let ce = append_instruction ce CALL in
