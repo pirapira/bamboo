@@ -205,7 +205,7 @@ let size_of_typ (* in bytes *) = function
      failwith "size_of_typ Tuple"
   | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
   | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
-  | ContractInstanceType _ -> 32 (* address as word *)
+  | ContractInstanceType _ -> 20 (* address as word *)
 
 let calldata_size_of_typ (typ : typ) =
   match typ with

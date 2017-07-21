@@ -167,6 +167,16 @@ let test_mineBlocks s (num : int) =
   let ()  = ignore (do_rpc_unix s call) in
   ()
 
+let test_rawSign s (addr : address) (data : string) =
+  let call : Rpc.call =
+    Rpc.({ name = "test_rawSign"
+         ; params = [rpc_of_address addr; rpc_of_string data]
+         }) in
+  let res = do_rpc_unix s call in
+  let json = pick_result res in
+  Rpc.string_of_rpc json
+
+
 let eth_getBalance s (addr : address) : Big_int.big_int =
   let call : Rpc.call =
     Rpc.({ name = "eth_getBalance"
@@ -326,7 +336,7 @@ let deploy_code s my_acc code value =
   let receipt = eth_getTransactionReceipt s tx in
   receipt
 
-let call s my_acc tr =
+let call s tr =
   let tx = eth_sendTransaction s tr in
   let () = advance_block s in
   eth_getTransactionReceipt s tx
@@ -354,7 +364,7 @@ let testing_006 s my_acc =
     ; data = ""
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
-  let receipt = call s my_acc tr in
+  let receipt = call s tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = Printf.printf "got storage %s\n" (Big_int.string_of_big_int n) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
@@ -401,7 +411,7 @@ let testing_00bb s acc =
     ; data = compute_signature_hash "bid()"
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
-  let receipt = call s my_acc tr in
+  let receipt = call s tr in
   let () = Printf.printf "used gas: %s\n%!" (Int64.to_string receipt.gasUsed) in
   let () = Printf.printf "transaction hash: %s\n%!" receipt.transactionHash in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 2) in
@@ -441,7 +451,7 @@ let testing_00b s acc =
     ; data = compute_signature_hash "bid()"
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
-  let receipt = call s my_acc tr in
+  let receipt = call s tr in
   let answer = eth_call s highest_bid in
   let () = Printf.printf "got answer: %s\n%!" answer in
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
@@ -670,15 +680,97 @@ let testing_00h_timeout s acc =
     ; data = compute_signature_hash "ChannelTimeOut()"
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
-  let receipt = call s my_acc c in
+  let receipt = call s c in
   let () = Printf.printf "timeout tx: %s\n%!" receipt.transactionHash in
   let balance = eth_getBalance s contract_address in
   let () = assert (Big_int.(eq_big_int balance zero_big_int)) in
   ()
 
+let testing_00h_early channel acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00h_payment_channel.bbo" in
+  let my_acc = reset_chain channel (Some acc) in
+  let sender = pad_to_word (Ethereum.strip_0x my_acc) in
+  let recv   = personal_newAccount channel in
+  let recipient = pad_to_word (Ethereum.strip_0x recv) in
+
+  (* give receiver some Ether so that she can send transactions *)
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = recv
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "1000000000000000000000000"
+    ; data = "0x00"
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let () = ignore (call channel c) in
+
+  let startDate = "0000000000000000000000000000000000000000000000000000000000010000" in
+  let endDate   = "0000000000000000000000000000000000000100000000000000000000020000" in
+  let initdata = initcode_compiled ^ sender ^ recipient ^ startDate ^ endDate in
+  let receipt = deploy_code channel my_acc initdata "300" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let balance = eth_getBalance channel contract_address in
+  let () = assert (Big_int.(eq_big_int balance (big_int_of_int 300))) in
+  let value = "0000000000000000000000000000000000000000000000000000000000000020" in
+  let concatenation = (Ethereum.strip_0x contract_address) ^ value in
+  let () = Printf.printf "concatenation: %s\n" concatenation in
+  let hash = Ethereum.hex_keccak concatenation in
+  let () = Printf.printf "hash:          %s\n" hash in
+
+  (* first call *)
+  let sign = test_rawSign channel recv hash in
+  let () = Printf.printf "sign:          %s\n" sign in
+  let sign = BatString.tail sign 2 in
+  let r = BatString.sub sign 0 64 in
+  let s = BatString.sub sign 64 64 in
+  let v = "00000000000000000000000000000000000000000000000000000000000000" ^ (BatString.sub sign 128 2) in
+  let () = Printf.printf "v: %s\n" v in
+  let c : eth_transaction =
+    { from = recv
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = "0x" ^ compute_signature_hash "CloseChannel(bytes32,uint8,bytes32,bytes32,uint256)" ^
+               hash ^ v ^ r ^ s ^ value
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let () = Printf.printf "sent data looks like this %s\n" c.data in
+  let () = assert (String.length c.data = (4 + 32 + 32 + 32 + 32 + 32) * 2  + 2) in
+  let receipt = call channel c in
+  let () = Printf.printf "timeout tx: %s\n%!" receipt.transactionHash in
+
+  (* second call *)
+  let sign = test_rawSign channel my_acc hash in
+  let () = Printf.printf "sign:          %s\n" sign in
+  let sign = BatString.tail sign 2 in
+  let r = BatString.sub sign 0 64 in
+  let s = BatString.sub sign 64 64 in
+  let v = "00000000000000000000000000000000000000000000000000000000000000" ^ (BatString.sub sign 128 2) in
+  let c : eth_transaction =
+    { from = recv
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = compute_signature_hash "CloseChannel(bytes32,uint8,bytes32,bytes32,uint256)" ^
+               hash ^ v ^ r ^ s ^ value
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let receipt = call channel c in
+  let () = Printf.printf "timeout tx: %s\n%!" receipt.transactionHash in
+
+  (* need to do a bit more *)
+  let balance = eth_getBalance channel contract_address in
+  let () = assert (Big_int.(eq_big_int balance zero_big_int)) in
+  ()
+
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
+  let () = testing_00h_early s my_acc in
   let () = testing_00h_timeout s my_acc in
   let () = testing_00bb s my_acc in
   let () = testing_006 s my_acc in
