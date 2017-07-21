@@ -36,6 +36,22 @@ let shift_stack_top_to_right ce bits =
     (* [x / (2 ** bits)] *)
     ce
 
+let shift_stack_top_to_left ce bits =
+  let () = assert (bits >= 0) in
+  let () = assert (bits < 256) in
+  if bits = 0 then ce
+  else
+    (* [x] *)
+    let ce = append_instruction ce (PUSH1 (Int bits)) in
+    (* [x, bits] *)
+    let ce = append_instruction ce (PUSH1 (Int 2)) in
+    (* [x, bits, 2] *)
+    let ce = append_instruction ce EXP in
+    (* [x, 2 ** bits] *)
+    let ce = append_instruction ce MUL in
+    (* [(2 ** bits) * x] *)
+    ce
+
 let copy_calldata_to_stack_top le ce (range : Location.calldata_range) =
   let () = assert (range.Location.calldata_size > 0) in
   let () = assert (range.Location.calldata_size <= 32) in
@@ -49,6 +65,12 @@ type alignment = LeftAligned | RightAligned
 let align_boolean ce alignment =
   let () = assert (alignment = RightAligned) in
   ce
+
+let align_address ce alignment =
+  match alignment with RightAligned -> ce
+                     | LeftAligned ->
+                        shift_stack_top_to_left ce (12 * 8)
+
 
 let align_from_right_aligned (ce : CodegenEnv.codegen_env) alignment typ =
   match alignment with
@@ -249,6 +271,7 @@ let keccak_cons le ce =
  *  according to the ABI.  This increases the stack top element by the size of the
  *  new allocation. *)
 let rec add_constructor_argument_to_memory le (packing : memoryPacking) ce (arg : Syntax.typ exp) =
+  let () = Printf.printf "it's about appending type %s\n" (Syntax.string_of_typ (snd arg)) in
   let original_stack_size = stack_size ce in
   let typ = snd arg in
   let () = assert (Syntax.fits_in_one_storage_slot typ) in
@@ -465,6 +488,7 @@ and codegen_exp
       ce
    | ThisExp,_ ->
       let ce = CodegenEnv.append_instruction ce ADDRESS in
+      let ce = align_address ce alignment in
       ce
    | IdentifierExp id, typ ->
       begin match LocationEnv.lookup le id with
