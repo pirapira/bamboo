@@ -30,6 +30,7 @@ let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.c
        is_known_contract contract_interfaces contract
     | ContractInstanceType contract ->
        is_known_contract contract_interfaces contract
+    | VoidType -> true
   )
 
 let arg_has_known_type contract_interfaces arg =

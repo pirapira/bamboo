@@ -175,6 +175,7 @@ let is_mapping (typ : typ) =
   | TupleType _
   | ContractArchType _
   | ContractInstanceType _
+  | VoidType
     -> false
   | MappingType _ -> true
 
@@ -193,6 +194,7 @@ let fits_in_one_storage_slot (typ : typ) =
   | ReferenceType _ -> false
   | TupleType _ -> false
   | ContractArchType _ -> false
+  | VoidType -> false
 
 let size_of_typ (* in bytes *) = function
   | UintType -> 32
@@ -206,6 +208,7 @@ let size_of_typ (* in bytes *) = function
   | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
   | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
   | ContractInstanceType _ -> 20 (* address as word *)
+  | VoidType -> failwith "size_of_typ VoidType should not be asked"
 
 let calldata_size_of_typ (typ : typ) =
   match typ with
@@ -306,8 +309,13 @@ let rec sentence_might_become (s : typ sentence) : string list =
      variable_init_might_become v
   | IfThenOnly (c, block) ->
      (exp_might_become c)@(sentences_might_become block)
+  | IfThenElse (c, b0, b1) ->
+     (exp_might_become c)@(sentences_might_become b0)@(sentences_might_become b1)
   | SelfdestructSentence e ->
      exp_might_become e
+  | ExpSentence e ->
+     exp_might_become e
+
 and sentences_might_become ss =
   List.concat (List.map sentence_might_become ss)
 
@@ -333,9 +341,14 @@ let lookup_usual_case_in_single_contract c case_name =
              let () = Printf.eprintf "case %s duplicated\n%!" case_name in
              failwith "case_lookup"
   in
-  let [a] = cases in
-  let UsualCaseHeader uc = a.case_header in
-  uc
+  match cases with
+  | [] -> raise Not_found
+  | _ :: _ :: _ -> failwith "should not happen"
+  | [a] ->
+     begin match a.case_header with
+     | UsualCaseHeader uc -> uc
+     | DefaultCaseHeader -> failwith "lookup_usual_case_in_single_contract: default case found"
+     end
 
 let rec lookup_usual_case_header_inner (already_seen : typ contract list)
                                    (c : typ contract)
