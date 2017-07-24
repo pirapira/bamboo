@@ -63,5 +63,7 @@ rule read =
   | "void" { VOID }
   | "&&" { LAND }
   | "=>" { RARROW }
+  | "+" { PLUS }
+  | "-" { MINUS }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }
