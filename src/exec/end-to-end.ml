@@ -707,14 +707,14 @@ let testing_00h_early channel acc =
   let startDate = "0000000000000000000000000000000000000000000000000000000000010000" in
   let endDate   = "0000000000000000000000000000000000000100000000000000000000020000" in
   let initdata = initcode_compiled ^ sender ^ recipient ^ startDate ^ endDate in
-  let receipt = deploy_code channel my_acc initdata "300" in
+  let receipt = deploy_code channel my_acc initdata "0x3000000000" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode channel contract_address in
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code!\n" in
   let balance = eth_getBalance channel contract_address in
-  let () = assert (Big_int.(eq_big_int balance (big_int_of_int 300))) in
-  let value = "0000000000000000000000000000000000000000000000000000000000000020" in
+  let () = assert (Big_int.(eq_big_int balance (big_int_of_string "0x3000000000"))) in
+  let value = "0000000000000000000000000000000000000000000000000000002000000000" in
   let concatenation = (Ethereum.strip_0x contract_address) ^ value in
   let () = Printf.printf "concatenation: %s\n" concatenation in
   let hash = Ethereum.hex_keccak concatenation in
@@ -764,6 +764,8 @@ let testing_00h_early channel acc =
   (* need to do a bit more *)
   let balance = eth_getBalance channel contract_address in
   let () = assert (Big_int.(eq_big_int balance zero_big_int)) in
+  let recv_balance = eth_getBalance channel recv in
+  let () = assert (Big_int.(gt_big_int recv_balance (big_int_of_string "0x2000000000"))) in
   ()
 
 
