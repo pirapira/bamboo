@@ -474,9 +474,8 @@ let testing_010 s my_acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
   ()
 
-let testing_011 s acc =
+let testing_011 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/011_keccak256.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -756,6 +755,58 @@ let testing_00h_early channel my_acc =
   ()
 
 
+let testing_mapmap_non_interference channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/018_mapmap.bbo" in
+
+  let receipt = deploy_code channel my_acc initcode_compiled "0" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let zero_word = "0000000000000000000000000000000000000000000000000000000000000000" in
+  let one_word =  "0000000000000000000000000000000000000000000000000000000000000001" in
+
+  let write_to_true : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "set(bool,address,bool)")^
+               one_word ^ zero_word ^ one_word
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let receipt = call channel write_to_true in
+
+  let read_from_true : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "get(bool,address)") ^
+               one_word ^ zero_word
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call channel read_from_true in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
+
+  let read_from_false : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "get(bool,address)") ^
+               zero_word ^ zero_word
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let answer = eth_call channel read_from_false in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
+
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
@@ -772,6 +823,7 @@ let () =
   let () = testing_013 s my_acc in
   let () = testing_014 s my_acc in
   let () = testing_016 s my_acc in
+  let () = testing_mapmap_non_interference s my_acc in
   let () = Unix.close s in
   ()
 
