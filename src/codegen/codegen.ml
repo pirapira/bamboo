@@ -249,10 +249,15 @@ let keccak_cons le ce =
   let ce = append_instruction ce (PUSH1 (Int 0x20)) in
   let ce = append_instruction ce MSTORE in
   (* take the sah3 of 0x00--0x40 *)
-  let ce = append_instruction ce (PUSH1 (Int 0x20)) in
+  let ce = append_instruction ce (PUSH1 (Int 0x40)) in
   let ce = append_instruction ce (PUSH1 (Int 0x0)) in
   let ce = append_instruction ce SHA3 in
   let () = assert (stack_size ce + 1 = original_stack_size) in
+  ce
+
+let increase_top ce (inc : int) =
+  let ce = append_instruction ce (PUSH32 (Int inc)) in
+  let ce = append_instruction ce ADD in
   ce
 
 (** [add_constructor_argument_to_memory ce arg] realizes [arg] on the memory
@@ -434,13 +439,53 @@ and codegen_new_exp (le : LocationEnv.location_env) ce (new_exp : Syntax.typ Syn
   let () = assert (stack_size ce = original_stack_size + 1) in
   ce
 
-and codegen_array_access (le : LocationEnv.location_env) ce (aa : Syntax.typ Syntax.array_access) =
+and generate_array_access_index le ce aa =
   let array = aa.array_access_array in
   let index = aa.array_access_index in
   let ce = codegen_exp le ce RightAligned index in
   let ce = codegen_exp le ce RightAligned array in
   let ce = keccak_cons le ce in
+  ce
+
+and codegen_array_access (le : LocationEnv.location_env) ce (aa : Syntax.typ Syntax.array_access) =
+  let ce = generate_array_access_index le ce aa in
   let ce = append_instruction ce SLOAD in
+  ce
+
+(* if the stack top is zero, set up an array seed at aa, and replace the zero with the new seed *)
+and setup_array_seed_at_array_access le ce aa =
+  let shortcut_label = Label.new_label () in
+  (* stack: [result, result] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [result, result] *)
+  let ce = append_instruction ce (PUSH32 (DestLabel shortcut_label)) in
+  (* stack: [result, result, shortcut] *)
+  let ce = append_instruction ce JUMPI in
+  (* stack: [result] *)
+  let ce = append_instruction ce POP in
+  (* stack: [] *)
+  let ce = generate_array_access_index le ce aa in
+  (* stack: [storage_index] *)
+  let ce = append_instruction ce (PUSH1 (Int 1)) in
+  (* stack: [storage_index, 1] *)
+  let ce = append_instruction ce SLOAD in
+  (* stack: [storage_index, orig_seed] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [storage_index, orig_seed, orig_seed] *)
+  let ce = increase_top ce 1 in
+  (* stack: [storage_index, orig_seed, orig_seed + 1] *)
+  let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
+  (* stack: [storage_index, orig_seed, orig_seed + 1, 1] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [storage_index, orig_seed] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [storage_index, orig_seed, orig_seed] *)
+  let ce = append_instruction ce SWAP2 in
+  (* stack: [orig_seed, orig_seed, storage_index] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [orig_seed] *)
+  let ce = append_instruction ce (JUMPDEST shortcut_label) in
+  (* stack: [result] *)
   ce
 
 (* le is not updated here.  It can be only updated in
@@ -471,9 +516,13 @@ and codegen_exp
       let ce = CodegenEnv.append_instruction ce CALLER in
       ce
    | SenderExp,_ -> failwith "codegen_exp: SenderExp of strange type"
-   | ArrayAccessExp aa, _ ->
+   | ArrayAccessExp aa, typ ->
       let ce = codegen_array_access le ce (read_array_access aa) in
-      ce
+      begin match typ with
+      | MappingType _ ->
+         setup_array_seed_at_array_access le ce (read_array_access aa)
+      | _ -> ce
+      end
    | ThisExp,_ ->
       let ce = CodegenEnv.append_instruction ce ADDRESS in
       let ce = align_address ce alignment in
@@ -864,11 +913,6 @@ let get_contract_pc ce =
   let ce = append_instruction ce (PUSH32 StorageProgramCounterIndex) in
   let ce = append_instruction ce SLOAD in
   let () = assert (stack_size ce = original_stack_size + 1) in
-  ce
-
-let increase_top ce (inc : int) =
-  let ce = append_instruction ce (PUSH32 (Int inc)) in
-  let ce = append_instruction ce ADD in
   ce
 
 (**

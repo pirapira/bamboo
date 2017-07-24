@@ -777,6 +777,7 @@ let testing_mapmap_non_interference channel my_acc =
     } in
 
   let receipt = call channel write_to_true in
+  let () = Printf.printf "write tx: %s\n" receipt.transactionHash in
 
   let read_from_true : eth_transaction =
     { from = my_acc
@@ -788,6 +789,8 @@ let testing_mapmap_non_interference channel my_acc =
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call channel read_from_true in
+  let receipt = call channel read_from_true in
+  let () = Printf.printf "read tx: %s\n" receipt.transactionHash in
   let () = Printf.printf "got answer: %s\n%!" answer in
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
 
