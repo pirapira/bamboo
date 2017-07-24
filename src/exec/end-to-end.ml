@@ -348,7 +348,6 @@ let testing_006 s my_acc =
     ^ "0000000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s (Some my_acc) in
   let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -388,12 +387,11 @@ let constructor_arg_test s =
 let compute_signature_hash (signature : string) : string =
   String.sub (Ethereum.string_keccak signature) 0 8
 
-let testing_00bb s acc =
+let testing_00bb s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00bbauction_first_named_case.bbo" in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -420,14 +418,13 @@ let testing_00bb s acc =
 
 
 (* showing not quite satisfactory results *)
-let testing_00b s acc =
+let testing_00b s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00b_auction_more.bbo" in
   let initcode_args : string =
     "0000000000000000000000000000000000000000000000000000000000000000"
     ^ "ff00000000000000000000000000000000000000000000000000000400000020"
     ^ "0000000000000000000000000000000000000000000000000000000000000000" in
   let initcode = initcode_compiled^initcode_args in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -457,9 +454,8 @@ let testing_00b s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000064") in
   ()
 
-let testing_010 s acc =
+let testing_010 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/010_logical_and.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -501,8 +497,7 @@ let testing_011 s acc =
   let () = assert (answer = expectation) in
   ()
 
-let random_ecdsa s acc =
-  let my_acc = reset_chain s (Some acc) in
+let random_ecdsa s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
@@ -530,11 +525,10 @@ let random_ecdsa s acc =
   ()
 
 
-let correct_ecdsa s acc =
+let correct_ecdsa s my_acc =
   (* The input data and the output data are cited from Parity:builtin.rs from commit
    * 3308c404400a2bc58b12489814e9f3cfd5c9d272
    *)
-  let my_acc = reset_chain s (Some acc) in
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00e_ecdsarecover.bbo" in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
@@ -558,10 +552,8 @@ let correct_ecdsa s acc =
   let () = assert(answer = "0x000000000000000000000000c08b5542d177ac6686946920409741463a15dddb") in
   ()
 
-(* showing not quite satisfactory results *)
-let testing_00i s acc =
+let testing_00i s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00i_local_bool.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -580,9 +572,8 @@ let testing_00i s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
   ()
 
-let testing_013 s acc =
+let testing_013 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/013_iszero.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -601,9 +592,8 @@ let testing_013 s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
   ()
 
-let testing_014 s acc =
+let testing_014 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/014_ifelse.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -622,9 +612,8 @@ let testing_014 s acc =
   let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
   ()
 
-let testing_016 s acc =
+let testing_016 s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/016_void.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode s contract_address in
@@ -652,9 +641,8 @@ let pad_to_word str =
   let pad = BatString.make padded '0' in
   pad ^ str
 
-let testing_00h_timeout s acc =
+let testing_00h_timeout s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00h_payment_channel.bbo" in
-  let my_acc = reset_chain s (Some acc) in
   let sender = pad_to_word (Ethereum.strip_0x my_acc) in
   let recipient = pad_to_word (Ethereum.strip_0x my_acc) in
   let startDate = "0000000000000000000000000000000000000000000000000000000000010000" in
@@ -686,9 +674,8 @@ let testing_00h_timeout s acc =
   let () = assert (Big_int.(eq_big_int balance zero_big_int)) in
   ()
 
-let testing_00h_early channel acc =
+let testing_00h_early channel my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00h_payment_channel.bbo" in
-  let my_acc = reset_chain channel (Some acc) in
   let sender = pad_to_word (Ethereum.strip_0x my_acc) in
   let recv   = personal_newAccount channel in
   let recipient = pad_to_word (Ethereum.strip_0x recv) in
