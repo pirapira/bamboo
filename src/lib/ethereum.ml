@@ -23,6 +23,7 @@ let interpret_interface_type (str : Syntax.typ) : interface_typ =
   | ContractInstanceType _ -> InterfaceAddress
   | ContractArchType _ -> failwith "contract arch-type does not appear in the ABI"
   | ReferenceType _ -> failwith "reference type does not appear in the ABI"
+  | VoidType -> failwith "VoidType should not appear in the ABI"
   )
 
 let to_typ (ityp : interface_typ) =
