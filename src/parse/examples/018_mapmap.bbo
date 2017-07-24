@@ -1,0 +1,12 @@
+contract A(bool => address => bool mat)
+{
+	case (void set(bool x, address y, bool v))
+	{
+		mat[x][y] = v;
+		return then become A(mat);
+	}
+	case (bool get(bool x, address y))
+	{
+		return (mat[x][y]) then become A(mat);
+	}
+}

@@ -62,17 +62,16 @@ and 'exp_annot exp_inner =
   | EqualityExp of 'exp_annot exp * 'exp_annot exp
   | AddressExp of 'exp_annot exp
   | NotExp of 'exp_annot exp
-  | ArrayAccessExp of 'exp_annot array_access
+  | ArrayAccessExp of 'exp_annot lexp
   | ValueExp
   | SenderExp
   | ThisExp
   | SingleDereferenceExp of 'exp_annot exp
   | TupleDereferenceExp of 'exp_annot exp
 and 'exp_annot lexp =
-  | IdentifierLExp of string
   | ArrayAccessLExp of 'exp_annot array_access
 and 'exp_annot array_access =
-  { array_access_array : string
+  { array_access_array : 'exp_annot exp
   ; array_access_index : 'exp_annot exp
   }
 and 'exp_annot variable_init =
@@ -93,6 +92,10 @@ and 'exp_annot return =
   { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
   }
+
+let read_array_access (l : 'a lexp) =
+  match l with
+  | ArrayAccessLExp a -> a
 
 type arg =
   { arg_typ : typ
@@ -272,7 +275,7 @@ and exp_might_become e : string list =
   | NotExp n ->
      exp_might_become n
   | ArrayAccessExp aa ->
-     array_access_might_become aa
+     lexp_might_become aa
   | ValueExp -> []
   | SenderExp -> []
   | ThisExp -> []
@@ -280,10 +283,8 @@ and exp_might_become e : string list =
      exp_might_become e
   | TupleDereferenceExp e ->
      exp_might_become e
-
-let lexp_might_become l =
+and lexp_might_become l =
   match l with
-  | IdentifierLExp _ -> []
   | ArrayAccessLExp aa ->
      array_access_might_become aa
 

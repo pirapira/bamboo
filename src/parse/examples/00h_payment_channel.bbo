@@ -5,7 +5,7 @@ contract Channel
 , address channelRecipient
 , uint startDate
 , uint endDate
-, address[bytes32] signatures
+, bytes32 => address signatures
 )
 {
   case(void CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint val)) {

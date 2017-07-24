@@ -7,6 +7,7 @@
 %token BOOL
 %token LPAR
 %token RPAR
+%token RARROW
 %token COMMA
 %token LSQBR
 %token RSQBR
@@ -154,10 +155,9 @@ typ:
   | BYTES32 { Syntax.Bytes32Type }
   | ADDRESS { Syntax.AddressType }
   | BOOL { Syntax.BoolType }
-  | value = typ;
-    LSQBR;
-    key = typ;
-    RSQBR;
+  | key = typ;
+    RARROW;
+    value = typ;
     { Syntax.MappingType (key, value) }
   | s = IDENT { Syntax.ContractInstanceType s }
 
@@ -237,15 +237,11 @@ exp:
     lst = comma_exp_list; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
                        ; send_args = (fst :: lst); send_msg_info = m }, () }
-  | ADDRESS; e = exp { Syntax.AddressExp e, () }
+  | ADDRESS; LPAR; e = exp; RPAR { Syntax.AddressExp e, () }
   | NOT; e = exp { Syntax.NotExp e, () }
   | THIS { Syntax.ThisExp, () }
-  | s = IDENT;
-    LSQBR;
-    idx = exp;
-    RSQBR
-    { Syntax.ArrayAccessExp {
-        Syntax.array_access_array = s; array_access_index = idx}, () }
+  | l = lexp;
+    { Syntax.ArrayAccessExp l, () }
   ;
 
 msg_info:
@@ -263,8 +259,7 @@ reentrance_info:
   ;
 
 lexp:
-  | s = IDENT { Syntax.IdentifierLExp s }
-  | s = IDENT;
+  | s = exp;
     LSQBR;
     idx = exp;
     RSQBR

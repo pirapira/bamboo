@@ -240,18 +240,6 @@ let prepare_function_signature ce usual_header =
   let () = assert (stack_size ce = original_stack_size + 2) in
   ce
 
-(* TODO: refactor with codegen_exp *)
-let codegen_array_seed le ce array =
-  begin match LocationEnv.lookup le array with
-  (** if things are just DUP'ed, location env should not be
-   * updated.  If they are SLOADED, the location env should be
-   * updated. *)
-  | Some location ->
-     let (le, ce) = copy_to_stack_top le ce RightAligned UintType location in
-     ce
-  | None -> failwith ("codegen_array_seed: identifier's location not found: "^array)
-  end
-
 let keccak_cons le ce =
   let original_stack_size = stack_size ce in
   (* put the top into 0x00 *)
@@ -450,7 +438,7 @@ and codegen_array_access (le : LocationEnv.location_env) ce (aa : Syntax.typ Syn
   let array = aa.array_access_array in
   let index = aa.array_access_index in
   let ce = codegen_exp le ce RightAligned index in
-  let ce = codegen_array_seed le ce array in
+  let ce = codegen_exp le ce RightAligned array in
   let ce = keccak_cons le ce in
   let ce = append_instruction ce SLOAD in
   ce
@@ -484,7 +472,7 @@ and codegen_exp
       ce
    | SenderExp,_ -> failwith "codegen_exp: SenderExp of strange type"
    | ArrayAccessExp aa, _ ->
-      let ce = codegen_array_access le ce aa in
+      let ce = codegen_array_access le ce (read_array_access aa) in
       ce
    | ThisExp,_ ->
       let ce = CodegenEnv.append_instruction ce ADDRESS in
@@ -1327,7 +1315,7 @@ let put_stacktop_into_array_access le ce layout (aa : Syntax.typ Syntax.array_ac
   let index = aa.Syntax.array_access_index in
   let ce = codegen_exp le ce RightAligned index in
   (* stack : [value, index] *)
-  let ce = codegen_array_seed le ce array in
+  let ce = codegen_exp le ce RightAligned array in
   (* stack : [value, index, array_seed] *)
   let ce = keccak_cons le ce in
   (* stack : [value, kec(array_seed ^ index)] *)
@@ -1338,7 +1326,6 @@ let put_stacktop_into_lexp le ce layout l =
   let original_stack_size = stack_size ce in
   let ce =
     match l with
-    | IdentifierLExp ident -> failwith "put into identifier"
     | ArrayAccessLExp aa -> put_stacktop_into_array_access le ce layout aa
     in
   let () = assert (original_stack_size = stack_size ce + 1) in

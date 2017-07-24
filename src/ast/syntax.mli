@@ -47,17 +47,16 @@ and 'exp_annot exp_inner =
   | EqualityExp of 'exp_annot exp * 'exp_annot exp
   | AddressExp of 'exp_annot exp
   | NotExp of 'exp_annot exp
-  | ArrayAccessExp of 'exp_annot array_access
+  | ArrayAccessExp of 'exp_annot lexp
   | ValueExp
   | SenderExp
   | ThisExp
   | SingleDereferenceExp of 'exp_annot exp
   | TupleDereferenceExp of 'exp_annot exp
 and 'exp_annot lexp =
-  | IdentifierLExp of string
   | ArrayAccessLExp of 'exp_annot array_access
 and 'exp_annot array_access =
-  { array_access_array : string
+  { array_access_array : 'exp_annot exp
   ; array_access_index : 'exp_annot exp
   }
 and 'exp_annot variable_init =
@@ -78,6 +77,8 @@ and 'exp_annot return =
   { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
   }
+
+val read_array_access : 'exp_annot lexp -> 'exp_annot array_access
 
 type arg =
   { arg_typ : typ
