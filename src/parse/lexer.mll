@@ -65,5 +65,7 @@ rule read =
   | "=>" { RARROW }
   | "+" { PLUS }
   | "-" { MINUS }
+  | "event" { EVENT }
+  | "log" { LOG }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

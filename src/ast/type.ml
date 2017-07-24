@@ -406,7 +406,21 @@ let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_as
       List.map (assign_type_case env raw.contract_name tenv) raw.contract_cases
   }
 
-let assign_types (raw : unit Syntax.contract Assoc.contract_id_assoc) :
-      Syntax.typ Syntax.contract Assoc.contract_id_assoc =
-  let interfaces = Assoc.assoc_map Contract.contract_interface_of raw in
-  Assoc.assoc_map (assign_type_contract interfaces) raw
+let assign_type_toplevel (env : Contract.contract_interface Assoc.contract_id_assoc)
+                         (raw : unit Syntax.toplevel) :
+      Syntax.typ Syntax.toplevel =
+  match raw with
+  | Contract c ->
+     Contract (assign_type_contract env c)
+  | _ -> failwith "unknown toplevel"
+
+let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
+      Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =
+  let raw_contracts : unit Syntax.contract Assoc.contract_id_assoc =
+    Assoc.filter_map (fun x ->
+                          match x with
+                          | Contract c -> Some c
+                          | _ -> None
+                        ) raw in
+  let interfaces = Assoc.map Contract.contract_interface_of raw_contracts in
+  Assoc.map (assign_type_toplevel interfaces) raw

@@ -8,8 +8,9 @@ type 'a contract_id_assoc = (contract_id * 'a) list
  *)
 val list_to_contract_id_assoc : 'a list -> 'a contract_id_assoc
 
-val assoc_map : ('a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc
-val assoc_pair_map : (contract_id -> 'a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc
+val map : ('a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc
+val pair_map : (contract_id -> 'a -> 'b) -> 'a contract_id_assoc -> 'b contract_id_assoc
+val filter_map : ('a -> 'b option) -> 'a contract_id_assoc -> 'b contract_id_assoc
 
 val choose_contract : contract_id -> 'x contract_id_assoc -> 'x
 

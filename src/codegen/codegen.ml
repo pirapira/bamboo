@@ -1144,7 +1144,7 @@ let compile_constructor ((lst, cid) : (Syntax.typ Syntax.contract Assoc.contract
 
 let compile_constructors (contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc)
     : constructor_compiled Assoc.contract_id_assoc =
-  Assoc.assoc_pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
+  Assoc.pair_map (fun cid _ -> compile_constructor (contracts, cid)) contracts
 
 let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) layouts : runtime_compiled =
   let ce = CodegenEnv.empty_env cid_lookup layouts in
@@ -1508,7 +1508,7 @@ let layout_info_from_constructor_compiled (cc : constructor_compiled) : LayoutIn
   LayoutInfo.layout_info_of_contract cc.constructor_contract (CodegenEnv.ce_program cc.constructor_codegen_env)
 
 let sizes_of_constructors (constructors : constructor_compiled Assoc.contract_id_assoc) : int list =
-  let lengths = Assoc.assoc_map (fun cc -> CodegenEnv.code_length cc.constructor_codegen_env) constructors in
+  let lengths = Assoc.map (fun cc -> CodegenEnv.code_length cc.constructor_codegen_env) constructors in
   let lengths = List.sort (fun a b -> compare (fst a) (fst b)) lengths in
   List.map snd lengths
 
@@ -1541,7 +1541,7 @@ let programs_concat_reverse_order (programs : 'imm Evm.program list) =
  *  Since the code is stored in the reverse order, the concatenation is also reversed.
  *)
 let constructors_packed layout (constructors : constructor_compiled Assoc.contract_id_assoc) =
-  let programs = Assoc.assoc_map (fun cc -> CodegenEnv.ce_program cc.constructor_codegen_env) constructors in
+  let programs = Assoc.map (fun cc -> CodegenEnv.ce_program cc.constructor_codegen_env) constructors in
   let programs = List.sort (fun a b -> compare (fst a) (fst b)) programs in
   let programs = List.map snd programs in
   programs_concat_reverse_order programs

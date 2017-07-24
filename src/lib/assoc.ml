@@ -10,11 +10,16 @@ let list_to_contract_id_assoc (lst : 'a list) =
       BatList.(range 0 `To (List.length lst - 1)) in
   List.combine ids lst
 
-let assoc_map f lst =
+let map f lst =
   List.map (fun (id, x) -> (id, f x)) lst
 
-let assoc_pair_map f lst =
+let pair_map f lst =
   List.map (fun (id, x) -> (id, f id x)) lst
+
+let filter_map f lst =
+  BatList.filter_map (
+      fun (id, x) ->
+      BatOption.map (fun ret -> (id, ret)) (f x)) lst
 
 let choose_contract (id : contract_id) lst =
   try

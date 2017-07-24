@@ -1,4 +1,4 @@
-event E(uint indexed a)
+event E(uint indexed a);
 
 contract A ()
 {

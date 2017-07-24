@@ -90,6 +90,7 @@ and 'exp_annot sentence =
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
   | ExpSentence of 'exp_annot exp
+  | LogSentence of string * 'exp_annot exp list
 and 'exp_annot return =
   { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
@@ -127,6 +128,15 @@ type 'exp_annot contract =
   ; contract_arguments : arg list
   ; contract_cases : 'exp_annot case list
   }
+
+type 'exp_annot event =
+  { event_name : string
+  ; event_arguments : arg list
+  }
+
+type 'exp_annot toplevel =
+  | Contract of 'exp_annot contract
+  | Event of 'exp_annot event
 
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with

@@ -31,6 +31,8 @@
 %token LT
 %token GT
 %token SINGLE_EQ
+%token EVENT
+%token LOG
 %token NEW
 %token ALONG
 %token REENTRANCE
@@ -48,7 +50,7 @@
 %token EOF
 
 
-%start <unit Syntax.contract list> file
+%start <unit Syntax.toplevel list> file
 %%
 
 file:
@@ -70,9 +72,20 @@ rev_contracts:
     LBRACE;
     css = cases;
     RBRACE;
-    { { Syntax.contract_cases = css
-      ; contract_name = name
-      ; contract_arguments = args} :: cs }
+    { Syntax.Contract
+      ({ Syntax.contract_cases = css
+       ; contract_name = name
+       ; contract_arguments = args}) :: cs }
+  | cs = rev_contracts;
+    EVENT;
+    name = IDENT;
+    LPAR;
+    args = argument_list;
+    RPAR;
+    SEMICOLON;
+    { Syntax.Event { Syntax.event_arguments = args
+      ; event_name = name
+      } :: cs }
   ;
 
 cases:
@@ -174,7 +187,7 @@ rev_sentences:
     { s :: scs }
   ;
 
-sentence :
+sentence: 
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
     { Syntax.ReturnSentence { Syntax. return_exp = Some value; return_cont = cont} }
@@ -200,6 +213,7 @@ sentence :
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
+  | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [])}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 
