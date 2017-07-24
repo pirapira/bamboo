@@ -592,6 +592,20 @@ and codegen_exp
      let ce = align_boolean ce alignment in
      ce
   | LtExp _, _ -> failwith "codegen_exp: LtExp of unexpected type"
+  | PlusExp (l, r), UintType ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce ADD in
+     ce
+  | PlusExp (l, r), _ ->
+     failwith "codegen_exp PlusExp of unexpected type"
+  | MinusExp (l, r), UintType ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce SUB in
+     ce
+  | MinusExp (l, r), _ ->
+     failwith "codegen_exp MinusExp of unexpected type"
   | GtExp (l, r), BoolType ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in

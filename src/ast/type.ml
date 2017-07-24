@@ -137,10 +137,12 @@ and assign_type_exp
   | LtExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (snd l' = snd r') in
      (LtExp (l', r'), BoolType)
   | GtExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (snd l' = snd r') in
      (GtExp (l', r'), BoolType)
   | NeqExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
@@ -150,6 +152,19 @@ and assign_type_exp
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
      (EqualityExp (l', r'), BoolType)
+  | PlusExp (l, r) ->
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = if (snd l <> snd r) then
+                (Printf.printf "%s %s\n%!" (string_of_typ (snd l)) (string_of_typ (snd r)))
+     in
+     let () = assert (snd l = snd r) in
+     (PlusExp (l, r), snd l)
+  | MinusExp (l, r) ->
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (snd l = snd r) in
+     (MinusExp (l, r), snd l)
   | NotExp negated ->
      let negated' = assign_type_exp contract_interfaces cname venv negated in
      (NotExp negated', BoolType)
@@ -161,6 +176,7 @@ and assign_type_exp
      begin match snd atyped with
      | MappingType (key_type, value_type) ->
         let (idx', idx_typ') = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
+        let () = assert (idx_typ' = key_type) in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
         (ArrayAccessExp (ArrayAccessLExp
            { array_access_array = atyped

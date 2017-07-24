@@ -53,6 +53,8 @@ and 'exp_annot exp_inner =
   | ThisExp
   | SingleDereferenceExp of 'exp_annot exp
   | TupleDereferenceExp of 'exp_annot exp
+  | PlusExp of 'exp_annot exp * 'exp_annot exp
+  | MinusExp of 'exp_annot exp * 'exp_annot exp
 and 'exp_annot lexp =
   | ArrayAccessLExp of 'exp_annot array_access
 and 'exp_annot array_access =
