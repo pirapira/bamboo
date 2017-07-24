@@ -62,5 +62,6 @@ rule read =
   | "block" { BLOCK }
   | "void" { VOID }
   | "&&" { LAND }
+  | "=>" { RARROW }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

@@ -3,12 +3,12 @@
 contract auction
   (address _beneficiary
   ,uint _bidding_time
-,bool[address] _bids
+,address => bool _bids
 	,uint _highest_bid)
 {
    default
    {
-     _bids[sender(msg)] = true;
+     _bids[_beneficiary] = true;
      return then become
          auction(_beneficiary, _bidding_time, _bids, value(msg));
    }

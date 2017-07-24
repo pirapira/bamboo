@@ -1,7 +1,7 @@
 contract auction
 	(address _beneficiary
 	,uint _bidding_time
-	,bool[address] _bids
+	,address => bool _bids
 	,uint _highest_bid)
 {
 	case (bool bid())
@@ -37,7 +37,7 @@ _bids[address(new_bid)] = true;
 }
 contract auction_done
 (address _bene,
- bool[address] _bids,
+ address => bool _bids,
  uint _highest_bid)
 {
 }

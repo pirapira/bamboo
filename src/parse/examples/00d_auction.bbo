@@ -5,7 +5,7 @@
 contract auction
 	(address _beneficiary
 	,uint _bidding_time
-	,bool[address] _bids /// When the contract is created, this must be empty.
+	,address => bool _bids /// When the contract is created, this must be empty.
 	,uint _highest_bid)
 {
 	case (bool bid())
@@ -72,7 +72,7 @@ contract bid
 	}
 }
 
-contract auction_done(address _beneficiary, bool[address] _bids, uint _highest_bid)
+contract auction_done(address _beneficiary, address => bool _bids, uint _highest_bid)
 {
 	case (bool bid_is_highest(uint _cand))
 	{

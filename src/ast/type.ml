@@ -157,16 +157,16 @@ and assign_type_exp
      let inner' = assign_type_exp contract_interfaces cname venv inner in
      (AddressExp inner', AddressType)
   | ArrayAccessExp aa ->
-     let atyp = TypeEnv.lookup venv aa.array_access_array in
-     begin match atyp with
-     | Some (MappingType (key_type, value_type)) ->
-        let (idx', idx_typ') = assign_type_exp contract_interfaces cname venv aa.array_access_index in
+     let atyped = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_array in
+     begin match snd atyped with
+     | MappingType (key_type, value_type) ->
+        let (idx', idx_typ') = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
-        (ArrayAccessExp
-           { array_access_array = aa.array_access_array
+        (ArrayAccessExp (ArrayAccessLExp
+           { array_access_array = atyped
            ; array_access_index = (idx', idx_typ')
-           }, value_type)
-     | _ -> failwith "index access haa to be on mappings"
+           }), value_type)
+     | _ -> failwith "index access has to be on mappings"
      end
   | SendExp send ->
      let msg_info' = assign_type_message_info contract_interfaces cname venv
@@ -233,19 +233,18 @@ and assign_type_lexp
       venv (src : unit lexp) : typ lexp =
   (* no need to type the left hand side? *)
   match src with
-  | IdentifierLExp s -> IdentifierLExp s
   | ArrayAccessLExp aa ->
-     let atyp = TypeEnv.lookup venv aa.array_access_array in
-     begin match atyp with
-     | Some (MappingType (key_type, value_type)) ->
+     let atyped = assign_type_exp contract_interfaces cname venv aa.array_access_array in
+     begin match snd atyped with
+     | MappingType (key_type, value_type) ->
         let (idx', idx_typ') = assign_type_exp contract_interfaces
                                                cname venv
                                                aa.array_access_index in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
         (ArrayAccessLExp
-           { array_access_array = aa.array_access_array
+           { array_access_array = atyped
            ; array_access_index = (idx', idx_typ')})
-     | _ -> failwith ("unknown array"^aa.array_access_array)
+     | _ -> failwith ("unknown array")
      end
 and assign_type_return
       (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
