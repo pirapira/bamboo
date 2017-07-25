@@ -54,6 +54,10 @@ contract Token
         log Approval(sender(msg), _spender, _amount);
         return true then become Token(totalSupply, balances, allowances);
     }
+    case(uint allowance(address _owner, address _spender))
+    {
+        return allowances[_owner][_spender] then become Token(totalSupply, balances, allowances);
+    }
     case(bool transferFrom(address _from, address _to, uint _amount))
     {
         if (balances[_from] < _amount) abort;
