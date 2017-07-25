@@ -18,6 +18,9 @@ let copy_stack_to_stack_top le ce (s : int) =
   let () = assert (stack_size ce = original_stack_size + 1) in
   le, ce
 
+let append_label ce label =
+  append_instruction ce (PUSH4 (DestLabel label))
+
 let shift_stack_top_to_right ce bits =
   let () = assert (bits >= 0) in
   let () = assert (bits < 256) in
@@ -458,7 +461,7 @@ and setup_array_seed_at_array_access le ce aa =
   (* stack: [result, result] *)
   let ce = append_instruction ce DUP1 in
   (* stack: [result, result] *)
-  let ce = append_instruction ce (PUSH32 (DestLabel shortcut_label)) in
+  let ce = append_label ce shortcut_label in
   (* stack: [result, result, shortcut] *)
   let ce = append_instruction ce JUMPI in
   (* stack: [result] *)
@@ -601,7 +604,7 @@ and codegen_exp
      (* stack: [..., l, l] *)
      let ce = append_instruction ce ISZERO in
      (* stack: [..., l, !l] *)
-     let ce = append_instruction ce (PUSH32 (DestLabel shortcut_label)) in
+     let ce = append_label ce shortcut_label in
      (* stack: [..., l, !l, shortcut] *)
      let ce = append_instruction ce JUMPI in
      (* stack: [..., l] *)
@@ -1008,7 +1011,7 @@ let bulk_sstore_from_memory ce =
   (* stack [..., size, memory_src_start, storage_target_start, size] *)
   let ce = append_instruction ce ISZERO in
   (* stack [..., size, memory_src_start, storage_target_start, size is zero] *)
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_exit)) in
+  let ce = append_label ce jump_label_exit in
   (* stack [..., size, memory_src_start, storage_target_start, size is zero, jump_label_exit] *)
   let () = assert (stack_size ce = original_stack_size + 2) in
   let ce = append_instruction ce JUMPI in
@@ -1043,7 +1046,7 @@ let bulk_sstore_from_memory ce =
   (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
   let () = assert (stack_size ce = original_stack_size) in
   (** add create a combinatino of jump and reset_stack_size *)
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_continue)) in
+  let ce = append_label ce jump_label_continue in
   let ce = append_instruction ce JUMP in
   (* stack [..., new_size, new_memory_src_start, new_storage_target_start] *)
   let ce = set_stack_size ce (original_stack_size) in
@@ -1113,7 +1116,7 @@ let setup_seed (le, ce) (loc : Storage.storage_location) =
   let original_stack_size = stack_size ce in
   let ce = append_instruction ce (PUSH4 (PseudoImm.Int loc)) in
   (* stack: [seed] *)
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_label ce jump_label_skip in
   let ce = append_instruction ce JUMPI in
   let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
   (* stack: [1] *)
@@ -1140,7 +1143,7 @@ let setup_array_seed_counter_to_one_if_not_initialized ce =
   let jump_label_skip = Label.new_label () in
   let ce = append_instruction ce (PUSH1 (Int 1)) in
   let ce = append_instruction ce SLOAD in
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_label ce jump_label_skip in
   let ce = append_instruction ce JUMPI in
   (* the case where it has to be changed *)
   let ce = append_instruction ce (PUSH1 (Int 1)) in
@@ -1513,7 +1516,7 @@ let rec add_if_single le ce (layout : LayoutInfo.layout_info) cond body =
   let original_stack_size = stack_size ce in
   let ce = codegen_exp le ce RightAligned cond in
   let ce = append_instruction ce ISZERO in
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_label ce jump_label_skip in
   let ce = append_instruction ce JUMPI in
   let le, ce = add_sentences le ce layout body in
   let ce = append_instruction ce (JUMPDEST jump_label_skip) in
@@ -1525,10 +1528,10 @@ and add_if le ce (layout : LayoutInfo.layout_info) cond bodyT bodyF =
   let original_stack_size = stack_size ce in
   let ce = codegen_exp le ce RightAligned cond in
   let ce = append_instruction ce ISZERO in
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_false)) in
+  let ce = append_label ce jump_label_false in
   let ce = append_instruction ce JUMPI in
   let _, ce = add_sentences le ce layout bodyT in (* location env needs to be discarded *)
-  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_end)) in
+  let ce = append_label ce jump_label_end in
   let ce = append_instruction ce JUMP in
   let ce = append_instruction ce (JUMPDEST jump_label_false) in
   let _, ce = add_sentences le ce layout bodyF in (* location env needs to be discarded *)
