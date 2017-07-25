@@ -868,6 +868,8 @@ let testing_01a channel my_acc =
 
   let receipt = call channel write_to_true in
   let () = assert (List.length receipt.logs = 1) in
+  let [log] = receipt.logs in
+  let () = assert (List.length log.topics = 2) in
 
   ()
 
