@@ -90,7 +90,7 @@ let rec assign_type_call
     | "pre_ecdsarecover" -> AddressType
     | "keccak256" -> Bytes32Type
     | "iszero" -> (match args' with
-                   | [arg] -> snd arg
+                   | [arg] -> BoolType
                    | _ -> failwith "should not happen")
     | contract_name
       when true (* check the contract exists*) -> ContractArchType contract_name
@@ -173,8 +173,9 @@ and assign_type_exp
      let () = assert (snd l = snd r) in
      (MultExp (l, r), snd l)
   | NotExp negated ->
-     let negated' = assign_type_exp contract_interfaces cname venv negated in
-     (NotExp negated', BoolType)
+     let negated = assign_type_exp contract_interfaces cname venv negated in
+     let () = assert (snd negated = BoolType) in
+     (NotExp negated, BoolType)
   | AddressExp inner ->
      let inner' = assign_type_exp contract_interfaces cname venv inner in
      (AddressExp inner', AddressType)
