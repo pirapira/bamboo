@@ -7,3 +7,4 @@ val add_pair : type_env -> string -> Syntax.typ -> type_env
 val lookup : type_env -> string -> Syntax.typ option
 val add_block : Syntax.arg list -> type_env -> type_env
 val lookup_event : type_env -> string -> Syntax.typ list
+val add_events : Syntax.event Assoc.contract_id_assoc -> type_env -> type_env

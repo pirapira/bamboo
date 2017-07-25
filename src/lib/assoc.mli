@@ -23,3 +23,5 @@ val lookup_id : ('x -> bool) -> 'x contract_id_assoc -> contract_id
 val empty : 'x contract_id_assoc
 
 val cids : 'x contract_id_assoc -> contract_id list
+
+val values : 'x contract_id_assoc -> 'x list

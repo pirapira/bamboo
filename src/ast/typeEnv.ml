@@ -1,7 +1,7 @@
 (** The first element is the context for the innermost block *)
 type type_env =
   { identifiers: Syntax.arg list list
-  ; events: (string * Syntax.typ list) list
+  ; events: Syntax.event list
   }
 
 let empty_type_env : type_env =
@@ -43,7 +43,13 @@ let add_block (h : Syntax.arg list) (t : type_env) : type_env =
 
 let lookup_event (env : type_env) (name : string) : Syntax.typ list =
   try
-    List.assoc name env.events
+    let event = BatList.find (fun e -> e.Syntax.event_name = name) env.events in
+    List.map (fun ea -> Syntax.(ea.event_arg_body.arg_typ)) event.Syntax.event_arguments
   with Not_found ->
     let () = Printf.eprintf "event %s not found\n" name in
     raise Not_found
+
+let add_events (events : Syntax.event Assoc.contract_id_assoc) (orig : type_env) : type_env =
+  { identifiers = orig.identifiers
+  ; events = (Assoc.values events) @ orig.events
+  }

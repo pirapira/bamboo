@@ -405,21 +405,23 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
 
 
 let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_assoc)
+                         (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
       Syntax.typ Syntax.contract =
-  let tenv = TypeEnv.(add_block raw.contract_arguments empty_type_env) in
+  let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   { contract_name = raw.contract_name
   ; contract_arguments = raw.contract_arguments
   ; contract_cases =
       List.map (assign_type_case env raw.contract_name tenv) raw.contract_cases
   }
 
-let assign_type_toplevel (env : Contract.contract_interface Assoc.contract_id_assoc)
+let assign_type_toplevel (interfaces : Contract.contract_interface Assoc.contract_id_assoc)
+                         (events : event Assoc.contract_id_assoc)
                          (raw : unit Syntax.toplevel) :
       Syntax.typ Syntax.toplevel =
   match raw with
   | Contract c ->
-     Contract (assign_type_contract env c)
+     Contract (assign_type_contract interfaces events c)
   | Event e ->
      Event e
 
@@ -432,4 +434,9 @@ let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
                           | _ -> None
                         ) raw in
   let interfaces = Assoc.map Contract.contract_interface_of raw_contracts in
-  Assoc.map (assign_type_toplevel interfaces) raw
+  let events : event Assoc.contract_id_assoc =
+    Assoc.filter_map (fun x ->
+        match x with
+        | Event e -> Some e
+        | _ -> None) raw in
+  Assoc.map (assign_type_toplevel interfaces events) raw
