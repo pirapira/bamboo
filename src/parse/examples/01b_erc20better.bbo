@@ -81,9 +81,7 @@ contract Token
         if ((balances[sender(msg)] + _amount) < balances[sender(msg)]) abort;
 
         uint old_eth_balance = balance(this) - value(msg);
-        uint old_product = old_eth_balance * balances[this];
-        uint new_product = balance(this) * (balances[this] - _amount);
-        if (not (new_product > old_product)) abort;
+        if (balance(this) * _amount > (balances[this] - _amount) * value(msg)) abort;
 
         balances[this] = balances[this] - _amount;
         balances[sender(msg)] = balances[sender(msg)] + _amount;
@@ -99,11 +97,9 @@ contract Token
         if (not (iszero(value(msg)))) abort;
 
         uint old_eth_balance = balance(this);
-        uint old_product = old_eth_balance * balances[this];
         uint new_eth_balance = balance(this) - _value;
         uint new_amount = balances[this] + _amount;
-        uint new_product = new_eth_balance * new_amount;
-        if (not (new_product > old_product)) abort;
+        if (new_eth_balance * _amount < new_amount * _value) abort;
 
         balances[this] = new_amount;
         balances[sender(msg)] = balances[sender(msg)] - _amount;
