@@ -58,6 +58,7 @@ rule read =
   | "value" { VALUE }
   | "sender" { SENDER }
   | "this" { THIS }
+  | "balance" { BALANCE }
   | "now"  { NOW }
   | "block" { BLOCK }
   | "void" { VOID }
@@ -65,6 +66,7 @@ rule read =
   | "=>" { RARROW }
   | "+" { PLUS }
   | "-" { MINUS }
+  | "*" { MULT }
   | "event" { EVENT }
   | "log" { LOG }
   | "indexed" { INDEXED }

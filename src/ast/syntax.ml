@@ -86,6 +86,8 @@ and 'exp_annot exp_inner =
   | TupleDereferenceExp of 'exp_annot exp
   | PlusExp of 'exp_annot exp * 'exp_annot exp
   | MinusExp of 'exp_annot exp * 'exp_annot exp
+  | MultExp of 'exp_annot exp * 'exp_annot exp
+  | BalanceExp of 'exp_annot exp
 and 'exp_annot lexp =
   | ArrayAccessLExp of 'exp_annot array_access
 and 'exp_annot array_access =
@@ -413,3 +415,9 @@ let lookup_usual_case_header (c : typ contract) (case_name : string) f : usual_c
 
 let size_of_typs (typs : typ list) =
   BatList.sum (List.map size_of_typ typs)
+
+let acceptable_as t0 t1 =
+  (t0 = t1) ||
+    match t0, t1 with
+    | AddressType, ContractInstanceType _ -> true
+    | _, _ -> false

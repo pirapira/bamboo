@@ -167,18 +167,27 @@ and assign_type_exp
      let r = assign_type_exp contract_interfaces cname venv r in
      let () = assert (snd l = snd r) in
      (MinusExp (l, r), snd l)
+  | MultExp (l, r) ->
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (snd l = snd r) in
+     (MultExp (l, r), snd l)
   | NotExp negated ->
      let negated' = assign_type_exp contract_interfaces cname venv negated in
      (NotExp negated', BoolType)
   | AddressExp inner ->
      let inner' = assign_type_exp contract_interfaces cname venv inner in
      (AddressExp inner', AddressType)
+  | BalanceExp inner ->
+     let inner = assign_type_exp contract_interfaces cname venv inner in
+     let () = assert (acceptable_as AddressType (snd inner)) in
+     (BalanceExp inner, UintType)
   | ArrayAccessExp aa ->
      let atyped = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_array in
      begin match snd atyped with
      | MappingType (key_type, value_type) ->
         let (idx', idx_typ') = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
-        let () = assert (idx_typ' = key_type) in
+        let () = assert (acceptable_as key_type idx_typ') in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
         (ArrayAccessExp (ArrayAccessLExp
            { array_access_array = atyped
