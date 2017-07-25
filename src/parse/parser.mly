@@ -52,6 +52,9 @@
 %token BALANCE
 %token EOF
 
+%right RARROW
+
+%left LT GT
 %left PLUS MINUS
 %left MULT
 
