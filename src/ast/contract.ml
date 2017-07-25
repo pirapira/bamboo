@@ -49,6 +49,7 @@ let rec collect_continuation_in_sentence (raw : 'exp Syntax.sentence) : string l
     | IfThenElse (_, s, t) ->
        (collect_continuation_in_sentences) s @ (collect_continuation_in_sentences t)
     | ExpSentence _ -> []
+    | LogSentence _ -> []
   )
 and collect_continuation_in_sentences ss =
   List.concat (List.map collect_continuation_in_sentence ss)

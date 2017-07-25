@@ -74,6 +74,8 @@ let check_args_match (contract_interfaces : Contract.contract_interface Assoc.co
   in
   assert (expectations (List.map snd args))
 
+let typecheck_multiple (exps : typ list) (actual : typ exp list) =
+  List.for_all2 (fun e (_, a) -> e = a) exps actual
 
 let rec assign_type_call
       contract_interfaces
@@ -325,6 +327,12 @@ and assign_type_sentence
      let exp = assign_type_exp contract_interfaces cname venv exp in
      let () = assert (snd exp = VoidType) in
      (ExpSentence exp, venv)
+  | LogSentence (name, args) ->
+     let args = List.map (assign_type_exp contract_interfaces cname venv) args in
+     let type_expectations = TypeEnv.lookup_event venv name in
+     let () = assert (typecheck_multiple type_expectations args) in
+     (LogSentence (name, args), venv)
+
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
           (cname : string)
@@ -412,7 +420,8 @@ let assign_type_toplevel (env : Contract.contract_interface Assoc.contract_id_as
   match raw with
   | Contract c ->
      Contract (assign_type_contract env c)
-  | _ -> failwith "unknown toplevel"
+  | Event e ->
+     Event e
 
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =

@@ -139,14 +139,14 @@ type 'exp_annot contract =
   ; contract_cases : 'exp_annot case list
   }
 
-type 'exp_annot event =
+type event =
   { event_name : string
   ; event_arguments : event_arg list
   }
 
 type 'exp_annot toplevel =
   | Contract of 'exp_annot contract
-  | Event of 'exp_annot event
+  | Event of event
 
 let contract_name_of_return_cont ((r, _) : 'exp exp) : string option =
   match r with
