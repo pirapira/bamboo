@@ -1048,7 +1048,12 @@ let cid_lookup_in_assoc (contracts : Syntax.typ Syntax.contract Assoc.contract_i
   Assoc.lookup_id (fun c -> c.contract_name = name) contracts
 
 let setup_seed (le, ce) (loc : Storage.storage_location) =
+  let jump_label_skip = Label.new_label () in
   let original_stack_size = stack_size ce in
+  let ce = append_instruction ce (PUSH4 (PseudoImm.Int loc)) in
+  (* stack: [seed] *)
+  let ce = append_instruction ce (PUSH32 (DestLabel jump_label_skip)) in
+  let ce = append_instruction ce JUMPI in
   let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
   (* stack: [1] *)
   let ce = append_instruction ce SLOAD in
@@ -1064,6 +1069,7 @@ let setup_seed (le, ce) (loc : Storage.storage_location) =
   let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
   (* stack: [orig_seed + 1, 1] *)
   let ce = append_instruction ce SSTORE in
+  let ce = append_instruction ce (JUMPDEST jump_label_skip) in
   (* stack: [] *)
   let () = assert (stack_size ce = original_stack_size) in
   (le, ce)
