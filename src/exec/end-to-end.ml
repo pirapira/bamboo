@@ -222,6 +222,10 @@ let rich_config (accounts : address list) : Rpc.t =
          ]
   )
 
+type log =
+  { topics : string list
+  } [@@ deriving rpc]
+
 type transaction_receipt =
   { blockHash : string
   ; blockNumber : int64
@@ -230,7 +234,7 @@ type transaction_receipt =
   ; cumulativeGasUsed : int64
   ; gasUsed : int64
   ; contractAddress : address
-  ; logs : unit list (* XXX actually more structured *)
+  ; logs : log list
   } [@@ deriving rpc]
 
 let eth_getTransactionReceipt s (tx : string) : transaction_receipt =
@@ -843,6 +847,30 @@ let testing_019 channel my_acc =
   ()
 
 
+let testing_01a channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/01a_event.bbo" in
+
+  let receipt = deploy_code channel my_acc initcode_compiled "0" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let one_word =  "0000000000000000000000000000000000000000000000000000000000000001" in
+
+  let write_to_true : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "e(uint256)")^one_word
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let receipt = call channel write_to_true in
+  let () = assert (List.length receipt.logs = 1) in
+
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
@@ -861,6 +889,7 @@ let () =
   let () = testing_016 s my_acc in
   let () = testing_mapmap_non_interference s my_acc in
   let () = testing_019 s my_acc in
+  let () = testing_01a s my_acc in
   let () = Unix.close s in
   ()
 
