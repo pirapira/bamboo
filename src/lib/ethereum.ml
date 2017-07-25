@@ -195,3 +195,80 @@ let event_signature_hash (e : Syntax.event) : string =
 
 let hex_to_big_int h =
   BatBig_int.big_int_of_string ("0x"^h)
+
+let print_default_header =
+  "{\"type\":\"fallback\",\"inputs\": [],\"outputs\": [],\"payable\": true}"
+
+let print_input_abi (arg : Syntax.arg) : string =
+  Printf.sprintf "{\"name\": \"%s\", \"type\": \"%s\"}"
+                 (arg.Syntax.arg_ident)
+                 (string_of_interface_type (interpret_interface_type arg.Syntax.arg_typ))
+
+let print_inputs_abi (args : Syntax.arg list) : string =
+  let strings = List.map print_input_abi args in
+  BatString.concat "," strings
+
+let print_output_abi (typ : Syntax.typ) : string =
+  Printf.sprintf "{\"name\": \"\", \"type\": \"%s\"}"
+                 (string_of_interface_type (interpret_interface_type typ))
+
+let print_outputs_abi (typs : Syntax.typ list) : string =
+  let strings = List.map print_output_abi typs in
+  BatString.concat "," strings
+
+let print_usual_case_abi u =
+  Printf.sprintf
+    "{\"type\":\"function\",\"inputs\": [%s],\"outputs\": [%s],\"payable\": true}"
+    (print_inputs_abi u.Syntax.case_arguments)
+    (print_outputs_abi u.Syntax.case_return_typ)
+
+let print_case_abi (c : Syntax.typ Syntax.case) : string =
+  match c.Syntax.case_header with
+  | Syntax.UsualCaseHeader u ->
+     print_usual_case_abi u
+  | Syntax.DefaultCaseHeader ->
+     print_default_header
+
+let print_constructor_abi (c : Syntax.typ Syntax.contract) : string =
+  Printf.sprintf
+    "{\"type\": \"constructor\", \"inputs\":[%s], \"name\": \"%s\", \"outputs\":[], \"payable\": true}"
+    (print_inputs_abi (List.filter Syntax.non_mapping_arg c.Syntax.contract_arguments))
+    (c.Syntax.contract_name)
+
+let print_contract_abi seen_constructor (c : Syntax.typ Syntax.contract) : string =
+  let cases = c.Syntax.contract_cases in
+  let strings : string list = List.map print_case_abi cases in
+  let strings = if !seen_constructor then strings
+                else (print_constructor_abi c) :: strings in
+  let () = (seen_constructor := true) in
+  BatString.concat "," strings
+
+let print_event_arg (a : Syntax.event_arg) : string =
+  Printf.sprintf "{\"name\":\"%s\",\"type\":\"%s\",\"indexed\":%s}"
+                 Syntax.(a.event_arg_body.arg_ident)
+                 (string_of_interface_type (interpret_interface_type Syntax.(a.event_arg_body.arg_typ)))
+                 (string_of_bool a.Syntax.event_arg_indexed)
+
+let print_event_inputs (is : Syntax.event_arg list) : string =
+  let strings : string list = List.map print_event_arg is in
+  BatString.concat "," strings
+
+let print_event_abi (e : Syntax.event) : string =
+  Printf.sprintf
+    "{\"type\":\"event\",\"inputs\":[%s],\"name\":\"%s\"}"
+    (print_event_inputs e.event_arguments)
+    (e.Syntax.event_name)
+
+let print_toplevel_abi seen_constructor (t : Syntax.typ Syntax.toplevel) : string =
+  match t with
+  | Syntax.Contract c ->
+     print_contract_abi seen_constructor c
+  | Syntax.Event e ->
+     print_event_abi e
+
+let print_abi (tops : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc) : unit =
+  let seen_constructor = ref false in
+  let () = Printf.printf "[" in
+  let strings : string list = List.map (print_toplevel_abi seen_constructor) (Assoc.values tops) in
+  let () = Printf.printf "%s" (BatString.concat "," strings) in
+  Printf.printf "]"

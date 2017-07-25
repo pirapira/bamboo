@@ -267,6 +267,11 @@ let is_throw_only (ss : typ sentence list) : bool =
   | [AbortSentence] -> true
   | _ -> false
 
+let non_mapping_arg (arg : arg) =
+  match arg.arg_typ with
+  | MappingType _ -> false
+  | _ -> true
+
 let rec functioncall_might_become f =
   List.concat (List.map exp_might_become f.call_args)
 and new_exp_might_become n =

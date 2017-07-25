@@ -25,7 +25,21 @@ let parse_with_error lexbuf =
     fprintf stderr "%a: syntax error\n" print_position lexbuf;
     exit (-1)
 
+let abi_option = BatOptParse.StdOpt.store_true ()
+
+let optparser : BatOptParse.OptParser.t = BatOptParse.OptParser.make ()
+
 let () =
+  let () = BatOptParse.OptParser.add optparser ~long_names:["abi"] abi_option in
+  let files = BatOptParse.OptParser.parse_argv optparser in
+  let () =
+    if files <> [] then
+      (Printf.eprintf "This compiler accepts input from stdin.\n";
+       exit 1)
+  in
+
+  let abi : bool = (Some true = abi_option.BatOptParse.Opt.option_get ()) in
+
   let lexbuf = Lexing.from_channel stdin in
   let toplevels : unit Syntax.toplevel list = parse_with_error lexbuf in
   let toplevels = Assoc.list_to_contract_id_assoc toplevels in
@@ -44,6 +58,11 @@ let () =
      let runtime_compiled = compile_runtime layout contracts in
      let bytecode : Big_int.big_int Evm.program =
        compose_bytecode constructors runtime_compiled (fst (List.hd contracts)) in
-     let () = Evm.print_imm_program bytecode in
+     let () =
+       if abi then
+         Ethereum.print_abi toplevels
+       else
+         Evm.print_imm_program bytecode
+     in
      () in
   ()
