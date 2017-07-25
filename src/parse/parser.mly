@@ -31,6 +31,8 @@
 %token LT
 %token GT
 %token SINGLE_EQ
+%token EVENT
+%token LOG
 %token NEW
 %token ALONG
 %token REENTRANCE
@@ -45,10 +47,11 @@
 %token NOW
 %token VOID
 %token BLOCK
+%token INDEXED
 %token EOF
 
 
-%start <unit Syntax.contract list> file
+%start <unit Syntax.toplevel list> file
 %%
 
 file:
@@ -70,9 +73,20 @@ rev_contracts:
     LBRACE;
     css = cases;
     RBRACE;
-    { { Syntax.contract_cases = css
-      ; contract_name = name
-      ; contract_arguments = args} :: cs }
+    { Syntax.Contract
+      ({ Syntax.contract_cases = css
+       ; contract_name = name
+       ; contract_arguments = args}) :: cs }
+  | cs = rev_contracts;
+    EVENT;
+    name = IDENT;
+    LPAR;
+    args = event_argument_list;
+    RPAR;
+    SEMICOLON;
+    { Syntax.Event { Syntax.event_arguments = args
+      ; event_name = name
+      } :: cs }
   ;
 
 cases:
@@ -143,11 +157,41 @@ non_empty_rev_argument_list:
     { a :: args }
   ;
 
+event_argument_list:
+  | args = rev_event_argument_list { List.rev args }
+
+rev_event_argument_list:
+  | (* empty *) { [] }
+  | args = non_empty_rev_event_argument_list;
+    { args }
+  ;
+
+non_empty_rev_event_argument_list:
+  | a = event_arg { [ a ] }
+  | args = non_empty_rev_event_argument_list;
+    COMMA;
+    a = event_arg
+    { a :: args }
+  ;
+
 arg:
   | t = typ;
     i = IDENT
     { { Syntax.arg_typ = t
       ; Syntax.arg_ident = i
+      }
+    }
+
+event_arg:
+  | a = arg { Syntax.event_arg_of_arg a false }
+  | t = typ;
+    INDEXED;
+    i = IDENT
+    { { Syntax.event_arg_body =
+        { arg_typ = t
+        ; arg_ident = i
+        }
+      ; Syntax.event_arg_indexed = true
       }
     }
 
@@ -174,7 +218,7 @@ rev_sentences:
     { s :: scs }
   ;
 
-sentence :
+sentence: 
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
     { Syntax.ReturnSentence { Syntax. return_exp = Some value; return_cont = cont} }
@@ -200,6 +244,8 @@ sentence :
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
+  | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [], None)}
+  | LOG; name = IDENT; LPAR; x = exp; lst = comma_exp_list; RPAR; SEMICOLON { Syntax.LogSentence (name, x :: lst, None)}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 

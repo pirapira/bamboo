@@ -173,8 +173,23 @@ let case_header_signature_string (h : Syntax.usual_case_header) : string =
   let args = String.concat "," list_of_types in
   name_of_case ^ "(" ^ args ^ ")"
 
+(* XXX: refactor with the above function *)
+let event_signature_string (e : Syntax.event) : string =
+  (* do I consider indexed no? *)
+  let name = e.Syntax.event_name in
+  let arguments = get_interface_typs (List.map Syntax.arg_of_event_arg e.Syntax.event_arguments) in
+  let arg_typs = List.map snd arguments in
+  let list_of_types = List.map string_of_interface_type arg_typs in
+  let args = String.concat "," list_of_types in
+  name ^ "(" ^ args ^ ")"
+
 let case_header_signature_hash (h : Syntax.usual_case_header) : string =
   let sign = case_header_signature_string h in
+  let () = Printf.printf "for signature %s\n" sign in
+  keccak_signature sign
+
+let event_signature_hash (e : Syntax.event) : string =
+  let sign = event_signature_string e in
   let () = Printf.printf "for signature %s\n" sign in
   keccak_signature sign
 

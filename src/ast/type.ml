@@ -74,6 +74,8 @@ let check_args_match (contract_interfaces : Contract.contract_interface Assoc.co
   in
   assert (expectations (List.map snd args))
 
+let typecheck_multiple (exps : typ list) (actual : typ exp list) =
+  List.for_all2 (fun e (_, a) -> e = a) exps actual
 
 let rec assign_type_call
       contract_interfaces
@@ -325,6 +327,14 @@ and assign_type_sentence
      let exp = assign_type_exp contract_interfaces cname venv exp in
      let () = assert (snd exp = VoidType) in
      (ExpSentence exp, venv)
+  | LogSentence (name, args, _) ->
+     let args = List.map (assign_type_exp contract_interfaces cname venv) args in
+     let event = TypeEnv.lookup_event venv name in
+     let type_expectations =
+       List.map (fun ea -> Syntax.(ea.event_arg_body.arg_typ)) event.Syntax.event_arguments in
+     let () = assert (typecheck_multiple type_expectations args) in
+     (LogSentence (name, args, Some event), venv)
+
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
           (cname : string)
@@ -397,16 +407,38 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
 
 
 let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_assoc)
+                         (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
       Syntax.typ Syntax.contract =
-  let tenv = TypeEnv.(add_block raw.contract_arguments empty_type_env) in
+  let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   { contract_name = raw.contract_name
   ; contract_arguments = raw.contract_arguments
   ; contract_cases =
       List.map (assign_type_case env raw.contract_name tenv) raw.contract_cases
   }
 
-let assign_types (raw : unit Syntax.contract Assoc.contract_id_assoc) :
-      Syntax.typ Syntax.contract Assoc.contract_id_assoc =
-  let interfaces = Assoc.assoc_map Contract.contract_interface_of raw in
-  Assoc.assoc_map (assign_type_contract interfaces) raw
+let assign_type_toplevel (interfaces : Contract.contract_interface Assoc.contract_id_assoc)
+                         (events : event Assoc.contract_id_assoc)
+                         (raw : unit Syntax.toplevel) :
+      Syntax.typ Syntax.toplevel =
+  match raw with
+  | Contract c ->
+     Contract (assign_type_contract interfaces events c)
+  | Event e ->
+     Event e
+
+let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
+      Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =
+  let raw_contracts : unit Syntax.contract Assoc.contract_id_assoc =
+    Assoc.filter_map (fun x ->
+                          match x with
+                          | Contract c -> Some c
+                          | _ -> None
+                        ) raw in
+  let interfaces = Assoc.map Contract.contract_interface_of raw_contracts in
+  let events : event Assoc.contract_id_assoc =
+    Assoc.filter_map (fun x ->
+        match x with
+        | Event e -> Some e
+        | _ -> None) raw in
+  Assoc.map (assign_type_toplevel interfaces events) raw
