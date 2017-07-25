@@ -6,9 +6,12 @@ open Codegen
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let contracts : unit Syntax.contract list = Parse.parse_with_error lexbuf in
+  let contracts : unit Syntax.toplevel list = Parse.parse_with_error lexbuf in
   let contracts = Assoc.list_to_contract_id_assoc contracts in
-  let contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc = Type.assign_types contracts in
+  let contracts : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc = Type.assign_types contracts in
+  let contracts = Assoc.filter_map (fun x -> match x with
+                                             | Contract x -> Some x
+                                             | _ -> None) contracts in
   let () = match contracts with
   | [] -> ()
   | _ ->

@@ -54,7 +54,7 @@ before_install:
 - cd -
 - cmake --version
 - cd cpp-ethereum
-- git pull
+- git fetch
 - git checkout test-raw-sign
 - git submodule update --recursive
 - mkdir -p build

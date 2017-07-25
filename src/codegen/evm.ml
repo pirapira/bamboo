@@ -385,6 +385,14 @@ let hex_of_instruction (i : Big_int.big_int instruction) : Hexa.hex =
   | DUP6 -> h "85"
   | DUP7 -> h "86"
 
+let log (n : int) =
+  match n with
+  | 0 -> LOG0
+  | 1 -> LOG1
+  | 2 -> LOG2
+  | 3 -> LOG3
+  | 4 -> LOG4
+
 let rev_append_op (h : Hexa.hex) (i : Big_int.big_int instruction) : Hexa.hex =
   Hexa.concat_hex (hex_of_instruction i) h
 

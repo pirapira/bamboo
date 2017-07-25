@@ -71,6 +71,8 @@ type 'imm instruction =
   | DUP6
   | DUP7
 
+val log : int -> 'a instruction
+
 
 val dup_suc_n : int -> 'imm instruction
 
