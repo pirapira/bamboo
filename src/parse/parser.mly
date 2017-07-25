@@ -47,6 +47,7 @@
 %token NOW
 %token VOID
 %token BLOCK
+%token INDEXED
 %token EOF
 
 
@@ -80,7 +81,7 @@ rev_contracts:
     EVENT;
     name = IDENT;
     LPAR;
-    args = argument_list;
+    args = event_argument_list;
     RPAR;
     SEMICOLON;
     { Syntax.Event { Syntax.event_arguments = args
@@ -156,11 +157,41 @@ non_empty_rev_argument_list:
     { a :: args }
   ;
 
+event_argument_list:
+  | args = rev_event_argument_list { List.rev args }
+
+rev_event_argument_list:
+  | (* empty *) { [] }
+  | args = non_empty_rev_event_argument_list;
+    { args }
+  ;
+
+non_empty_rev_event_argument_list:
+  | a = event_arg { [ a ] }
+  | args = non_empty_rev_event_argument_list;
+    COMMA;
+    a = event_arg
+    { a :: args }
+  ;
+
 arg:
   | t = typ;
     i = IDENT
     { { Syntax.arg_typ = t
       ; Syntax.arg_ident = i
+      }
+    }
+
+event_arg:
+  | a = arg { Syntax.event_arg_of_arg a false }
+  | t = typ;
+    INDEXED;
+    i = IDENT
+    { { Syntax.event_arg_body =
+        { arg_typ = t
+        ; arg_ident = i
+        }
+      ; Syntax.event_arg_indexed = true
       }
     }
 
@@ -214,6 +245,7 @@ sentence:
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
   | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [])}
+  | LOG; name = IDENT; LPAR; x = exp; lst = comma_exp_list; RPAR; SEMICOLON { Syntax.LogSentence (name, x :: lst)}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 

@@ -2,8 +2,8 @@ event E(uint indexed a);
 
 contract A ()
 {
-	case(void e(uint v)) {
-			log E(v);
-			return then become A();
-	}
+    case(void e(uint v)) {
+            log E(v);
+            return then become A();
+    }
 }

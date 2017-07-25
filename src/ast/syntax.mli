@@ -88,6 +88,13 @@ type arg =
   ; arg_ident : string
   }
 
+type event_arg =
+  { event_arg_body : arg
+  ; event_arg_indexed : bool
+  }
+
+val event_arg_of_arg: arg -> bool -> event_arg
+
 type 'exp_annot case_body =
   'exp_annot sentence list
 
@@ -114,7 +121,7 @@ type 'exp_annot contract =
 
 type 'exp_annot event =
   { event_name : string
-  ; event_arguments : arg list
+  ; event_arguments : event_arg list
   }
 
 type 'exp_annot toplevel =

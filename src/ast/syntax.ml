@@ -105,6 +105,16 @@ type arg =
   ; arg_ident : string
   }
 
+type event_arg =
+  { event_arg_body : arg
+  ; event_arg_indexed : bool
+  }
+
+let event_arg_of_arg (a : arg) (indexed : bool) : event_arg =
+  { event_arg_body = a
+  ; event_arg_indexed = indexed
+  }
+
 type 'exp_annot case_body =
   'exp_annot sentence list
 
@@ -131,7 +141,7 @@ type 'exp_annot contract =
 
 type 'exp_annot event =
   { event_name : string
-  ; event_arguments : arg list
+  ; event_arguments : event_arg list
   }
 
 type 'exp_annot toplevel =
