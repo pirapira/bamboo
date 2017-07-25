@@ -352,7 +352,7 @@ and codegen_function_call_exp (le : LocationEnv.location_env) ce alignment (func
 and codegen_iszero le ce alignment args rettype =
   match args with
   | [arg] ->
-     let () = assert (rettype = snd arg) in
+     let () = assert (rettype = BoolType) in
      let ce = codegen_exp le ce alignment arg in
      let ce = append_instruction ce ISZERO in
      ce
@@ -569,10 +569,12 @@ and codegen_exp
      ce
   | LandExp (_, _), _ ->
      failwith "codegen_exp: LandExp of unexpected type"
-  | NotExp sub,_ -> (* perhaps, better to check types *)
+  | NotExp sub, BoolType ->
      let ce = codegen_exp le ce alignment sub in
-     let ce = append_instruction ce NOT in
+     let ce = append_instruction ce ISZERO in
      ce
+  | NotExp sub, _ ->
+     failwith "codegen_exp: NotExp of unexpected type"
   | NowExp,UintType ->
      append_instruction ce TIMESTAMP
   | NowExp,_ -> failwith "codegen_exp: NowExp of unexpected type"

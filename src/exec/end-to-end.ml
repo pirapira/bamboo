@@ -815,7 +815,7 @@ let testing_mapmap_non_interference channel my_acc =
   ()
 
 let testing_019 channel my_acc =
-  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/019_erc20.bbo" in
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/019_something.bbo" in
   let initdata = initcode_compiled ^ "00000000000000000000000000000000000000000000000000005af3107a4000" ^ (pad_to_word (Ethereum.strip_0x my_acc)) in
   let receipt = deploy_code channel my_acc initdata "0" in
   let contract_address = receipt.contractAddress in
@@ -873,6 +873,55 @@ let testing_01a channel my_acc =
 
   ()
 
+let test_erc20 channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/01b_erc20better.bbo" in
+  let initial_amount : string = "0000000000000000000000000000000000000000000000010000000000000000" in
+
+  let receipt = deploy_code channel my_acc (initcode_compiled ^ initial_amount) "100000000000000000" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+
+  let initialize : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = ""
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let receipt = call channel initialize in
+
+  let less_than_half_amount : string = "00000000000000000000000000000000000000000000000007f0000000000000" in
+  let buying : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "100000000000000000"
+    ; data = (compute_signature_hash "buy(uint256)")^less_than_half_amount
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let receipt = call channel buying in
+  let () = Printf.printf "consumed gas: %s\n" (Int64.to_string receipt.gasUsed) in
+  let () = Printf.printf "tx id: %s\n" receipt.transactionHash in
+
+  let check_balance : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "balanceOf(address)")^(pad_to_word (Ethereum.strip_0x my_acc))
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let answer = eth_call channel check_balance in
+  let () = Printf.printf "got answer: %s\n%!" answer in
+  let () = assert (answer = "0x" ^ less_than_half_amount) in
+
+  ()
+
 let () =
   let s = Utils.open_connection_unix_fd filename in
   let my_acc = constructor_arg_test s in
@@ -892,6 +941,7 @@ let () =
   let () = testing_mapmap_non_interference s my_acc in
   let () = testing_019 s my_acc in
   let () = testing_01a s my_acc in
+  let () = test_erc20 s my_acc in
   let () = Unix.close s in
   ()
 
