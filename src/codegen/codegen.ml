@@ -1347,6 +1347,32 @@ let place_exp_in_memory le ce packing ((e, typ) : typ exp) =
   le, ce
 
 (*
+ * When called on [a, b, c], a shoud occupy the smallest address, and c should occupy the largest address.
+ * after this, the stack contains
+ * ..., size, offset_in_memory
+ *)
+let rec place_exps_in_memory le ce packing (exps : typ exp list) =
+  match exps with
+  | [] ->
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     le, ce
+  | exp :: rest ->
+     let le, ce = place_exp_in_memory le ce packing exp in
+     (* stack : [size, offset] *)
+     let ce = append_instruction ce SWAP1 in
+     (* stack : [offset, size] *)
+     let le, ce = place_exps_in_memory le ce packing rest in (* this recursion is a bit awkward *)
+     (* stack : [offset, size, size', offset] *)
+     let ce = append_instruction ce POP in
+     (* stack : [offset, size, size'] *)
+     let ce = append_instruction ce ADD in
+     (* stack : [offset, size_sum] *)
+     let ce = append_instruction ce SWAP1 in
+     (* stack : [size_sum, offset] *)
+     le, ce
+
+(*
  * return_mem_content assumes the stack left after place_exp_in_memory
  * ..., size, offset_in_memory
  *)
@@ -1398,6 +1424,12 @@ let add_assignment le ce layout l r =
   let () = assert (original_stack_size = stack_size ce) in
   (le, ce)
 
+let push_event_signature ce event =
+  let hash = Ethereum.event_signature_hash event in
+  let () = Printf.printf "computed hash of signature %s\n%!" hash in
+  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
+  ce
+
 let add_variable_init le ce layout i =
   let position = stack_size ce in
   let ce = codegen_exp le ce RightAligned i.Syntax.variable_init_value in
@@ -1446,6 +1478,24 @@ and add_sentence le ce (layout : LayoutInfo.layout_info) sent =
      add_if le ce layout cond bodyT bodyF
   | SelfdestructSentence exp -> add_self_destruct le ce layout exp
   | ExpSentence exp -> add_exp_sentence le ce layout exp
+  | LogSentence (name, args, Some event) -> add_log_sentence le ce layout name args event
+  | LogSentence (name, args, None) -> failwith "add_sentence: type check first"
+and add_log_sentence le ce layout name (args : Syntax.typ Syntax.exp list) event =
+  let orig_stack_size = stack_size ce in
+  (* get the indexed *)
+  let (indexed_args, non_indexed_args) = Syntax.split_event_args event args in
+  (* prepare indexed arguments on the stack *)
+  let (le, ce) = prepare_words_on_stack le ce indexed_args in
+  (* prepare the event signature on the stack *)
+  let ce = push_event_signature ce event in
+  (* prepare non-indexed arguments in the memory *)
+  let (le, ce) = place_exps_in_memory le ce ABIPacking non_indexed_args in
+  (* stack : [..., size, offset] *)
+  let n = List.length indexed_args + 1 in
+  let ce = append_instruction ce (log n) in
+  (* decide N in logN *)
+  let () = assert (stack_size ce = orig_stack_size) in
+  le, ce
 and add_exp_sentence le ce layout exp =
   let ce = codegen_exp le ce RightAligned exp in
   let ce = append_instruction ce POP in

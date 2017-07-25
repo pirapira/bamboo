@@ -11,6 +11,21 @@ type typ =
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
 
+type arg =
+  { arg_typ : typ
+  ; arg_ident : string
+  }
+
+type event_arg =
+  { event_arg_body : arg
+  ; event_arg_indexed : bool
+  }
+
+type event =
+  { event_name : string
+  ; event_arguments : event_arg list
+  }
+
 type 'exp_annot function_call =
   {  call_head : string
   ;  call_args : ('exp_annot exp) list
@@ -75,7 +90,7 @@ and 'exp_annot sentence =
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
   | ExpSentence of 'exp_annot exp
-  | LogSentence of string * 'exp_annot exp list
+  | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
   { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
@@ -83,17 +98,8 @@ and 'exp_annot return =
 
 val read_array_access : 'exp_annot lexp -> 'exp_annot array_access
 
-type arg =
-  { arg_typ : typ
-  ; arg_ident : string
-  }
-
-type event_arg =
-  { event_arg_body : arg
-  ; event_arg_indexed : bool
-  }
-
 val event_arg_of_arg: arg -> bool -> event_arg
+val arg_of_event_arg: event_arg -> arg
 
 type 'exp_annot case_body =
   'exp_annot sentence list
@@ -103,6 +109,9 @@ type usual_case_header =
   ; case_name : string
   ; case_arguments : arg list
   }
+
+(** [split_event_args event args] returns [(indexed_args, unindexed_args)] *)
+val split_event_args : event -> 'a exp list -> ('a exp list * 'a exp list)
 
 type case_header =
   | UsualCaseHeader of usual_case_header
@@ -117,11 +126,6 @@ type 'exp_annot contract =
   { contract_name : string
   ; contract_arguments : arg list
   ; contract_cases : 'exp_annot case list
-  }
-
-type event =
-  { event_name : string
-  ; event_arguments : event_arg list
   }
 
 type 'exp_annot toplevel =

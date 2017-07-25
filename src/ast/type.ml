@@ -327,11 +327,13 @@ and assign_type_sentence
      let exp = assign_type_exp contract_interfaces cname venv exp in
      let () = assert (snd exp = VoidType) in
      (ExpSentence exp, venv)
-  | LogSentence (name, args) ->
+  | LogSentence (name, args, _) ->
      let args = List.map (assign_type_exp contract_interfaces cname venv) args in
-     let type_expectations = TypeEnv.lookup_event venv name in
+     let event = TypeEnv.lookup_event venv name in
+     let type_expectations =
+       List.map (fun ea -> Syntax.(ea.event_arg_body.arg_typ)) event.Syntax.event_arguments in
      let () = assert (typecheck_multiple type_expectations args) in
-     (LogSentence (name, args), venv)
+     (LogSentence (name, args, Some event), venv)
 
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)

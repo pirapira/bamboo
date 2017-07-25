@@ -26,6 +26,22 @@ let rec string_of_typ t =
   | ReferenceType _ -> "pointer to ..."
   | TupleType _ -> "tuple"
 
+type arg =
+  { arg_typ : typ
+  ; arg_ident : string
+  }
+
+type event_arg =
+  { event_arg_body : arg
+  ; event_arg_indexed : bool
+  }
+
+type event =
+  { event_name : string
+  ; event_arguments : event_arg list
+  }
+
+
 type 'exp_annot function_call =
   { call_head : string
   ; call_args : ('exp_annot exp) list
@@ -90,7 +106,7 @@ and 'exp_annot sentence =
   | IfThenElse of 'exp_annot exp * 'exp_annot sentence list * 'exp_annot sentence list
   | SelfdestructSentence of 'exp_annot exp
   | ExpSentence of 'exp_annot exp
-  | LogSentence of string * 'exp_annot exp list
+  | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
   { return_exp : 'exp_annot exp option
   ; return_cont : 'exp_annot exp
@@ -100,20 +116,22 @@ let read_array_access (l : 'a lexp) =
   match l with
   | ArrayAccessLExp a -> a
 
-type arg =
-  { arg_typ : typ
-  ; arg_ident : string
-  }
-
-type event_arg =
-  { event_arg_body : arg
-  ; event_arg_indexed : bool
-  }
-
 let event_arg_of_arg (a : arg) (indexed : bool) : event_arg =
   { event_arg_body = a
   ; event_arg_indexed = indexed
   }
+
+let arg_of_event_arg e =
+  e.event_arg_body
+
+let split_event_args (e : event) (args : 'a exp list) =
+  let indexed : bool list =
+    List.map (fun (a : event_arg) ->
+        a.event_arg_indexed) e.event_arguments in
+  let combined : ('a exp * bool) list =
+    List.combine args indexed in
+  let (is, ns) = BatList.partition snd combined in
+  (List.map fst is, List.map fst ns)
 
 type 'exp_annot case_body =
   'exp_annot sentence list
@@ -137,11 +155,6 @@ type 'exp_annot contract =
   { contract_name : string
   ; contract_arguments : arg list
   ; contract_cases : 'exp_annot case list
-  }
-
-type event =
-  { event_name : string
-  ; event_arguments : event_arg list
   }
 
 type 'exp_annot toplevel =

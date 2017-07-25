@@ -244,8 +244,8 @@ sentence:
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
-  | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [])}
-  | LOG; name = IDENT; LPAR; x = exp; lst = comma_exp_list; RPAR; SEMICOLON { Syntax.LogSentence (name, x :: lst)}
+  | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [], None)}
+  | LOG; name = IDENT; LPAR; x = exp; lst = comma_exp_list; RPAR; SEMICOLON { Syntax.LogSentence (name, x :: lst, None)}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 

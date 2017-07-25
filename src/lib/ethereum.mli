@@ -70,4 +70,7 @@ val case_header_signature_string : Syntax.usual_case_header -> string
 val case_header_signature_hash :
   Syntax.usual_case_header -> string
 
+val event_signature_hash :
+  Syntax.event -> string
+
 val hex_to_big_int : string -> Big_int.big_int
