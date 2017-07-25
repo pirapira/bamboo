@@ -235,9 +235,12 @@ let print_constructor_abi (c : Syntax.typ Syntax.contract) : string =
     (print_inputs_abi (List.filter Syntax.non_mapping_arg c.Syntax.contract_arguments))
     (c.Syntax.contract_name)
 
-let print_contract_abi (c : Syntax.typ Syntax.contract) : string =
+let print_contract_abi seen_constructor (c : Syntax.typ Syntax.contract) : string =
   let cases = c.Syntax.contract_cases in
-  let strings : string list = (print_constructor_abi c) :: List.map print_case_abi cases in
+  let strings : string list = List.map print_case_abi cases in
+  let strings = if !seen_constructor then strings
+                else (print_constructor_abi c) :: strings in
+  let () = (seen_constructor := true) in
   BatString.concat "," strings
 
 let print_event_arg (a : Syntax.event_arg) : string =
@@ -256,15 +259,16 @@ let print_event_abi (e : Syntax.event) : string =
     (print_event_inputs e.event_arguments)
     (e.Syntax.event_name)
 
-let print_toplevel_abi (t : Syntax.typ Syntax.toplevel) : string =
+let print_toplevel_abi seen_constructor (t : Syntax.typ Syntax.toplevel) : string =
   match t with
   | Syntax.Contract c ->
-     print_contract_abi c
+     print_contract_abi seen_constructor c
   | Syntax.Event e ->
      print_event_abi e
 
 let print_abi (tops : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc) : unit =
+  let seen_constructor = ref false in
   let () = Printf.printf "[" in
-  let strings : string list = List.map print_toplevel_abi (Assoc.values tops) in
+  let strings : string list = List.map (print_toplevel_abi seen_constructor) (Assoc.values tops) in
   let () = Printf.printf "%s" (BatString.concat "," strings) in
   Printf.printf "]"
