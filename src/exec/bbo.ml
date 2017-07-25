@@ -27,9 +27,13 @@ let parse_with_error lexbuf =
 
 let () =
   let lexbuf = Lexing.from_channel stdin in
-  let contracts : unit Syntax.contract list = parse_with_error lexbuf in
-  let contracts = Assoc.list_to_contract_id_assoc contracts in
-  let contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc = Type.assign_types contracts in
+  let toplevels : unit Syntax.toplevel list = parse_with_error lexbuf in
+  let toplevels = Assoc.list_to_contract_id_assoc toplevels in
+  let toplevels : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc = Type.assign_types toplevels in
+  let contracts = Assoc.filter_map (fun x ->
+                      match x with
+                      | Contract c -> Some c
+                      | _ -> None) toplevels in
   let () = match contracts with
   | [] -> ()
   | _ ->
