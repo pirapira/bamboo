@@ -352,7 +352,7 @@ and codegen_function_call_exp (le : LocationEnv.location_env) ce alignment (func
 and codegen_iszero le ce alignment args rettype =
   match args with
   | [arg] ->
-     let () = assert (rettype = snd arg) in
+     let () = assert (rettype = BoolType) in
      let ce = codegen_exp le ce alignment arg in
      let ce = append_instruction ce ISZERO in
      ce
@@ -488,6 +488,48 @@ and setup_array_seed_at_array_access le ce aa =
   (* stack: [result] *)
   ce
 
+(* if the stack top is zero, set up an array seed at aa, and replace the zero with the new seed *)
+and setup_array_seed_at_location le ce loc =
+  let storage_idx =
+    match loc with
+    | Location.Storage str_range ->
+       let () = assert (str_range.Location.storage_size = (Int 1)) in
+       str_range.Location.storage_start
+    | _ -> failwith "setup array seed at non-storage" in
+  let shortcut_label = Label.new_label () in
+  (* stack: [result, result] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [result, result] *)
+  let ce = append_instruction ce (PUSH32 (DestLabel shortcut_label)) in
+  (* stack: [result, result, shortcut] *)
+  let ce = append_instruction ce JUMPI in
+  (* stack: [result] *)
+  let ce = append_instruction ce POP in
+  (* stack: [] *)
+  let ce = append_instruction ce (PUSH32 storage_idx) in
+  (* stack: [storage_index] *)
+  let ce = append_instruction ce (PUSH1 (Int 1)) in
+  (* stack: [storage_index, 1] *)
+  let ce = append_instruction ce SLOAD in
+  (* stack: [storage_index, orig_seed] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [storage_index, orig_seed, orig_seed] *)
+  let ce = increase_top ce 1 in
+  (* stack: [storage_index, orig_seed, orig_seed + 1] *)
+  let ce = append_instruction ce (PUSH1 (PseudoImm.Int 1)) in
+  (* stack: [storage_index, orig_seed, orig_seed + 1, 1] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [storage_index, orig_seed] *)
+  let ce = append_instruction ce DUP1 in
+  (* stack: [storage_index, orig_seed, orig_seed] *)
+  let ce = append_instruction ce SWAP2 in
+  (* stack: [orig_seed, orig_seed, storage_index] *)
+  let ce = append_instruction ce SSTORE in
+  (* stack: [orig_seed] *)
+  let ce = append_instruction ce (JUMPDEST shortcut_label) in
+  (* stack: [result] *)
+  ce
+
 (* le is not updated here.  It can be only updated in
  * a variable initialization *)
 and codegen_exp
@@ -534,7 +576,11 @@ and codegen_exp
        * updated. *)
       | Some location ->
          let (le, ce) = copy_to_stack_top le ce alignment typ location in
-         ce
+         begin match typ with
+         | MappingType _ ->
+            setup_array_seed_at_location le ce location
+         | _ -> ce
+         end
       | None ->
          failwith ("codegen_exp: identifier's location not found: "^id)
       end
@@ -569,10 +615,12 @@ and codegen_exp
      ce
   | LandExp (_, _), _ ->
      failwith "codegen_exp: LandExp of unexpected type"
-  | NotExp sub,_ -> (* perhaps, better to check types *)
+  | NotExp sub, BoolType ->
      let ce = codegen_exp le ce alignment sub in
-     let ce = append_instruction ce NOT in
+     let ce = append_instruction ce ISZERO in
      ce
+  | NotExp sub, _ ->
+     failwith "codegen_exp: NotExp of unexpected type"
   | NowExp,UintType ->
      append_instruction ce TIMESTAMP
   | NowExp,_ -> failwith "codegen_exp: NowExp of unexpected type"
@@ -1419,6 +1467,9 @@ let put_stacktop_into_array_access le ce layout (aa : Syntax.typ Syntax.array_ac
   let ce = codegen_exp le ce RightAligned index in
   (* stack : [value, index] *)
   let ce = codegen_exp le ce RightAligned array in
+
+
+
   (* stack : [value, index, array_seed] *)
   let ce = keccak_cons le ce in
   (* stack : [value, kec(array_seed ^ index)] *)
