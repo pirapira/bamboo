@@ -37,12 +37,10 @@ before_install:
 - eval `opam config env`
 - opam update
 - opam upgrade -y
-- opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc
 - git clone https://github.com/xavierleroy/cryptokit.git cryptokit
 - cd cryptokit
-- ocaml setup.ml -configure
-- ocaml setup.ml -build
-- ocaml setup.ml -install || echo "It fails the second time.  It's ok."
+- ocaml setup.ml -uninstall || echo "It fails the second time.  It's ok."
+- opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc cryptokit
 - cd ../..
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
 - sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
