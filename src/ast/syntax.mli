@@ -157,6 +157,8 @@ val size_of_typs : typ list -> int
 
 val is_throw_only : typ sentence list -> bool
 
+val non_mapping_arg : arg -> bool
+
 (** [lookup_usual_case_header c name f] looks up a case called
     [name] in the contract [c].  [f] is a function that looks up a contract by its name. *)
 val lookup_usual_case_header : typ contract -> string -> (string -> typ contract) -> usual_case_header

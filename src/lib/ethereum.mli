@@ -74,3 +74,5 @@ val event_signature_hash :
   Syntax.event -> string
 
 val hex_to_big_int : string -> Big_int.big_int
+
+val print_abi : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc -> unit

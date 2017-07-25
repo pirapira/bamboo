@@ -27,6 +27,14 @@ builds a compiler `bbo.native`.
 ```
 produces a bytecode.
 
+```
+./bbo.native --abi < src/parse/examples/006auction_first_case.bbo
+```
+prints ABI.
+```
+[{"type": "constructor", "inputs":[{"name": "_beneficiary", "type": "address"},{"name": "_bidding_time", "type": "uint256"},{"name": "_highest_bid", "type": "uint256"}], "name": "auction", "outputs":[], "payable": true},{"type":"fallback","inputs": [],"outputs": [],"payable": true}]
+```
+
 You can continue [testing the bytecode](doc/testing-bytecode.md).
 
 ## How to Contribute
