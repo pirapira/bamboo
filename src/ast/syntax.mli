@@ -70,6 +70,8 @@ and 'exp_annot exp_inner =
   | TupleDereferenceExp of 'exp_annot exp
   | PlusExp of 'exp_annot exp * 'exp_annot exp
   | MinusExp of 'exp_annot exp * 'exp_annot exp
+  | MultExp of 'exp_annot exp * 'exp_annot exp
+  | BalanceExp of 'exp_annot exp
 and 'exp_annot lexp =
   | ArrayAccessLExp of 'exp_annot array_access
 and 'exp_annot array_access =
@@ -161,3 +163,6 @@ val lookup_usual_case_header : typ contract -> string -> (string -> typ contract
 
 (** [might_become c] lists the name of the contracts that [c] might become, except [c] itself. *)
 val might_become : typ contract -> string list
+
+(** [acceptable_as t0 t1] is true when [t1] is acceptable as [t0]. *)
+val acceptable_as : typ -> typ -> bool

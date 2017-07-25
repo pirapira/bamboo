@@ -9,6 +9,7 @@
 %token RPAR
 %token PLUS
 %token MINUS
+%token MULT
 %token RARROW
 %token COMMA
 %token LSQBR
@@ -48,8 +49,11 @@
 %token VOID
 %token BLOCK
 %token INDEXED
+%token BALANCE
 %token EOF
 
+%left PLUS MINUS
+%left MULT
 
 %start <unit Syntax.toplevel list> file
 %%
@@ -255,9 +259,11 @@ exp:
   | FALSE { Syntax.FalseExp, () }
   | VALUE LPAR MSG RPAR { Syntax.ValueExp, () }
   | SENDER LPAR MSG RPAR { Syntax.SenderExp, () }
+  | BALANCE; LPAR; e = exp; RPAR { Syntax.BalanceExp e, () }
   | NOW LPAR BLOCK RPAR { Syntax.NowExp, () }
   | lhs = exp; PLUS; rhs = exp { Syntax.PlusExp (lhs, rhs), () }
   | lhs = exp; MINUS; rhs = exp { Syntax.MinusExp (lhs, rhs), () }
+  | lhs = exp; MULT; rhs = exp { Syntax.MultExp (lhs, rhs), () }
   | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs), () }
   | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs), () }
   | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs), () }
