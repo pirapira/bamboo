@@ -40,6 +40,8 @@ before_install:
 - git clone https://github.com/xavierleroy/cryptokit.git cryptokit
 - cd cryptokit
 - ocaml setup.ml -configure
+- ocaml setup.ml -build
+- ocaml setup.ml -install || echo "It fails the second time.  It's fine."
 - ocaml setup.ml -uninstall || echo "It fails the second time.  It's ok."
 - opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc cryptokit
 - cd ../..
