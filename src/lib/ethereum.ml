@@ -218,7 +218,8 @@ let print_outputs_abi (typs : Syntax.typ list) : string =
 
 let print_usual_case_abi u =
   Printf.sprintf
-    "{\"type\":\"function\",\"inputs\": [%s],\"outputs\": [%s],\"payable\": true}"
+    "{\"type\":\"function\",\"name\":\"%s\",\"inputs\": [%s],\"outputs\": [%s],\"payable\": true}"
+    (u.Syntax.case_name)
     (print_inputs_abi u.Syntax.case_arguments)
     (print_outputs_abi u.Syntax.case_return_typ)
 
