@@ -1002,6 +1002,24 @@ let test_erc20 channel my_acc =
   let () = Printf.printf "got answer: %s\n%!" answer in
   let () = assert (answer = "0x" ^ zero_word) in
 
+  let weis = "0000000000000000000000000000000000000000000000000010000000000000" in
+
+  let second_orig_balance = eth_getBalance channel second in
+  let selling : eth_transaction =
+    { from = second
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "sell(uint256,uint256)")^less_than_half_amount^weis
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let receipt = call channel selling in
+  let second_new_balance = eth_getBalance channel second in
+
+  let () = assert (Big_int.gt_big_int second_new_balance second_orig_balance) in
+  let answer = eth_call channel check_balance in
+  let () = assert (answer = "0x" ^ zero_word) in
   ()
 
 let () =
