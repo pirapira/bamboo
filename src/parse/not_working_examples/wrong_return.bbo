@@ -1,0 +1,5 @@
+contract A () {
+   case(bool f(uint x)) {
+       return x then become A();
+   }
+}
