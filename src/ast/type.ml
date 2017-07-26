@@ -279,8 +279,9 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : typ return =
-  { return_exp = BatOption.map (assign_type_exp contract_interfaces
-                                   cname tenv) src.return_exp
+  let exps = BatOption.map (assign_type_exp contract_interfaces
+                                   cname tenv) src.return_exp in
+  { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
