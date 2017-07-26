@@ -37,7 +37,7 @@ before_install:
 - eval `opam config env`
 - opam update
 - opam upgrade -y
-- ocamlfind remove cryptokit
+- opam reinstall cryptokit
 # - git clone https://github.com/xavierleroy/cryptokit.git cryptokit
 # - cd cryptokit
 #- ocaml setup.ml -configure
