@@ -25,7 +25,7 @@ let choose_contract (id : contract_id) lst =
   try
     List.assoc id lst
   with Not_found ->
-       let () = Printf.printf "not_found\n%!" in
+       let () = Printf.eprintf "choose_contract: not_found\n%!" in
        raise Not_found
 
 let print_int_for_cids (f : contract_id -> int) (cids : contract_id list) : unit =

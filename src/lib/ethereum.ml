@@ -90,7 +90,6 @@ let arguments_with_locations (c : Syntax.typ Syntax.case) : (string * Location.l
        let locations : Location.location list = List.map (fun (o, s) -> Location.(Calldata {calldata_offset = o; calldata_size = s})) size_pos in
        let names : string list = List.map (fun a -> a.Syntax.arg_ident) h.Syntax.case_arguments in
        let ret = List.combine names locations in
-       let () = print_arg_loc ret in
        ret
   )
 
@@ -185,12 +184,10 @@ let event_signature_string (e : Syntax.event) : string =
 
 let case_header_signature_hash (h : Syntax.usual_case_header) : string =
   let sign = case_header_signature_string h in
-  let () = Printf.printf "for signature %s\n" sign in
   keccak_signature sign
 
 let event_signature_hash (e : Syntax.event) : string =
   let sign = event_signature_string e in
-  let () = Printf.printf "for signature %s\n" sign in
   keccak_signature sign
 
 let hex_to_big_int h =
