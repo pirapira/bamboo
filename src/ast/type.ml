@@ -281,6 +281,7 @@ and assign_type_return
       (src : unit return) : typ return =
   let exps = BatOption.map (assign_type_exp contract_interfaces
                                    cname tenv) src.return_exp in
+  (* how to obtain the current case name? *)
   { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont

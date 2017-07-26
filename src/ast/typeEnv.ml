@@ -2,29 +2,25 @@
 type type_env =
   { identifiers: Syntax.arg list list
   ; events: Syntax.event list
+  ; expected_returns : Syntax.typ list option
   }
 
 let empty_type_env : type_env =
   { identifiers = []
   ; events = []
+  ; expected_returns = None
   }
 
 let forget_innermost (orig : type_env) : type_env =
-  { identifiers = List.tl (orig.identifiers)
-  ; events = orig.events
-  }
+  { orig with identifiers = List.tl (orig.identifiers) }
 
 let add_empty_block (orig : type_env) : type_env =
-  { identifiers = [] :: orig.identifiers
-  ; events = orig.events
-  }
+  { orig with identifiers = [] :: orig.identifiers }
 
 let add_pair (orig : type_env) (ident : string) (typ : Syntax.typ) : type_env =
   match orig.identifiers with
   | h :: t ->
-     { identifiers = (Syntax.{ arg_ident = ident; arg_typ = typ} :: h) :: t
-     ; events = orig.events
-     }
+     { orig with identifiers = (Syntax.{ arg_ident = ident; arg_typ = typ} :: h) :: t }
   | _ -> failwith "no current scope in type env"
 
 let lookup_block (name : string) (block : Syntax.arg list) =
@@ -36,10 +32,8 @@ let lookup_block (name : string) (block : Syntax.arg list) =
 let lookup (env : type_env) (name : string) : Syntax.typ option =
   Misc.first_some (lookup_block name) env.identifiers
 
-let add_block (h : Syntax.arg list) (t : type_env) : type_env =
-  { identifiers = h :: t.identifiers
-  ; events = t.events
-  }
+let add_block (h : Syntax.arg list) (orig : type_env) : type_env =
+  { orig with identifiers = h :: orig.identifiers }
 
 let lookup_event (env : type_env) (name : string) : Syntax.event =
   try
@@ -49,6 +43,12 @@ let lookup_event (env : type_env) (name : string) : Syntax.event =
     raise Not_found
 
 let add_events (events : Syntax.event Assoc.contract_id_assoc) (orig : type_env) : type_env =
-  { identifiers = orig.identifiers
-  ; events = (Assoc.values events) @ orig.events
-  }
+  { orig with events = (Assoc.values events) @ orig.events }
+
+let remember_expected_returns (orig : type_env) (lst : Syntax.typ list) =
+  match orig.expected_returns with
+  | Some _ -> failwith "Trying to overwrite the expectations about the return values"
+  | None -> { orig with expected_returns = Some lst }
+
+let lookup_expected_returns t =
+  t.expected_returns
