@@ -2,7 +2,7 @@
 type type_env =
   { identifiers: Syntax.arg list list
   ; events: Syntax.event list
-  ; expected_returns : Syntax.typ list option
+  ; expected_returns : (Syntax.typ option -> bool) option
   }
 
 let empty_type_env : type_env =
@@ -45,10 +45,12 @@ let lookup_event (env : type_env) (name : string) : Syntax.event =
 let add_events (events : Syntax.event Assoc.contract_id_assoc) (orig : type_env) : type_env =
   { orig with events = (Assoc.values events) @ orig.events }
 
-let remember_expected_returns (orig : type_env) (lst : Syntax.typ list) =
+let remember_expected_returns (orig : type_env) f =
   match orig.expected_returns with
   | Some _ -> failwith "Trying to overwrite the expectations about the return values"
-  | None -> { orig with expected_returns = Some lst }
+  | None -> { orig with expected_returns = Some f }
 
 let lookup_expected_returns t =
-  t.expected_returns
+  match t.expected_returns with
+  | None -> failwith "undefined"
+  | Some f -> f

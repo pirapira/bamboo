@@ -8,5 +8,5 @@ val lookup : type_env -> string -> Syntax.typ option
 val add_block : Syntax.arg list -> type_env -> type_env
 val lookup_event : type_env -> string -> Syntax.event
 val add_events : Syntax.event Assoc.contract_id_assoc -> type_env -> type_env
-val remember_expected_returns : type_env -> Syntax.typ list -> type_env
-val lookup_expected_returns : type_env -> Syntax.typ list option
+val remember_expected_returns : type_env -> (Syntax.typ option -> bool) -> type_env
+val lookup_expected_returns : type_env -> (Syntax.typ option -> bool)
