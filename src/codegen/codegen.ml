@@ -218,7 +218,6 @@ let push_signature_code (ce : CodegenEnv.codegen_env)
                         (case_signature : usual_case_header)
   =
   let hash = Ethereum.case_header_signature_hash case_signature in
-  let () = Printf.printf "computed hash of signature %s\n%!" hash in
   let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
   ce
 
@@ -1499,7 +1498,6 @@ let add_assignment le ce layout l r =
 
 let push_event_signature ce event =
   let hash = Ethereum.event_signature_hash event in
-  let () = Printf.printf "computed hash of signature %s\n%!" hash in
   let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
   ce
 
