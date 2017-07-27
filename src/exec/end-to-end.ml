@@ -760,6 +760,7 @@ let testing_00h_early channel my_acc =
 
 
 let zero_word = "0000000000000000000000000000000000000000000000000000000000000000"
+let one_word =  "0000000000000000000000000000000000000000000000000000000000000001"
 
 let testing_mapmap_non_interference channel my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/018_mapmap.bbo" in
@@ -769,7 +770,6 @@ let testing_mapmap_non_interference channel my_acc =
   let deployed = eth_getCode channel contract_address in
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code!\n" in
-  let one_word =  "0000000000000000000000000000000000000000000000000000000000000001" in
 
   let write_to_true : eth_transaction =
     { from = my_acc
@@ -845,6 +845,28 @@ let testing_019 channel my_acc =
   let answer = eth_call channel ask_my_balance in
   let () = assert (answer = "0x00000000000000000000000000000000000000000000000000005af3107a4000") in
   let () = Printf.printf "balance match!\n" in
+  ()
+
+
+let testing_land_neq channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/021_land_neq.bbo" in
+  let receipt = deploy_code channel my_acc initcode_compiled "0" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+
+  let initial_trans : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "f()")
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+  let answer = eth_call channel initial_trans in
+  let () = Printf.printf "got answer %s\n%!" answer in
+  let () = assert (answer = "0x" ^ one_word) in
   ()
 
 
@@ -1070,6 +1092,7 @@ let () =
   let () = testing_01a s my_acc in
   let () = test_erc20 s my_acc in
   let () = test_plus_mult s my_acc in
+  let () = testing_land_neq s my_acc in
   let () = Unix.close s in
   ()
 

@@ -9,7 +9,7 @@ contract auction
    default
    {
 bid new_bid =
-new bid(sender(msg), value(msg), address(this)) with value(msg)
+deploy bid(sender(msg), value(msg), address(this)) with value(msg)
 reentrance { abort; }; // failure throws.
      _bids[sender(msg)] = true;
      return then become
