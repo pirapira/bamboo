@@ -60,7 +60,7 @@ let get_interface_typ (raw : Syntax.arg) : (string * interface_typ) option =
   | _ -> Some (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
 
 let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
-  Misc.filter_map get_interface_typ
+  BatList.filter_map get_interface_typ
 
 let rec argument_sizes_to_positions_inner ret used sizes =
   match sizes with
@@ -99,14 +99,15 @@ let get_array (raw : Syntax.arg) : (string * Syntax.typ * Syntax.typ) option =
   | _ -> None
 
 let arrays_in_contract c : (string * Syntax.typ * Syntax.typ) list =
-  Misc.filter_map get_array (c.Syntax.contract_arguments)
+  BatList.filter_map get_array (c.Syntax.contract_arguments)
 
 let constructor_arguments (contract : Syntax.typ Syntax.contract)
     : (string * interface_typ) list
   = get_interface_typs (contract.Syntax.contract_arguments)
 
 let total_size_of_interface_args lst : int =
-  Misc.int_sum (List.map interface_typ_size lst)
+  try BatList.sum (List.map interface_typ_size lst) with
+        Invalid_argument _ -> 0
 
 module Hash = Cryptokit.Hash
 
