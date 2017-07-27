@@ -40,7 +40,7 @@ contract Token
             return true then become Token(totalSupply, balances, allowances);
         }
         balances[sender(msg)] = balances[sender(msg)] - _amount;
-        if ((balances[_to] + _amount) < balances[_to]) abort;
+        if (balances[_to] + _amount < balances[_to]) abort;
         balances[_to] = balances[_to] + _amount;
         log Transfer(sender(msg), _to, _amount);
         return true then become Token(totalSupply, balances, allowances);
@@ -78,7 +78,7 @@ contract Token
     case(bool buy(uint _amount))
     {
         if (balances[this] < _amount) abort;
-        if ((balances[sender(msg)] + _amount) < balances[sender(msg)]) abort;
+        if (balances[sender(msg)] + _amount < balances[sender(msg)]) abort;
 
         uint old_eth_balance = balance(this) - value(msg);
         if (balance(this) * _amount > (balances[this] - _amount) * value(msg)) abort;
