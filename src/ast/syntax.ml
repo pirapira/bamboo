@@ -203,6 +203,10 @@ let string_of_exp_inner e =
   | AddressExp _ -> "address"
   | SingleDereferenceExp _ -> "dereference of ..."
   | TupleDereferenceExp _ -> "dereference of tuple..."
+  | PlusExp (a, b) -> "... + ..."
+  | MinusExp (a, b) -> "... - ..."
+  | MultExp (a, b) -> "... * ..."
+  | BalanceExp _ -> "balance"
 
 let is_mapping (typ : typ) =
   match typ with
@@ -325,6 +329,12 @@ and exp_might_become e : string list =
      exp_might_become e
   | TupleDereferenceExp e ->
      exp_might_become e
+  | MinusExp (a, b)
+  | MultExp (a, b)
+  | PlusExp (a, b) ->
+     (exp_might_become a)@(exp_might_become b)
+  | BalanceExp a ->
+     exp_might_become a
 and lexp_might_become l =
   match l with
   | ArrayAccessLExp aa ->
@@ -358,6 +368,11 @@ let rec sentence_might_become (s : typ sentence) : string list =
      exp_might_become e
   | ExpSentence e ->
      exp_might_become e
+  | LogSentence (_, lst, _) ->
+     exps_might_become lst
+
+and exps_might_become (lst : typ exp list) : string list =
+  List.concat (List.map exp_might_become lst)
 
 and sentences_might_become ss =
   List.concat (List.map sentence_might_become ss)

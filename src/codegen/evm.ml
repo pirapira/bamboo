@@ -392,6 +392,7 @@ let log (n : int) =
   | 2 -> LOG2
   | 3 -> LOG3
   | 4 -> LOG4
+  | _ -> failwith "too many indexed arguments for an event"
 
 let rev_append_op (h : Hexa.hex) (i : Big_int.big_int instruction) : Hexa.hex =
   Hexa.concat_hex (hex_of_instruction i) h

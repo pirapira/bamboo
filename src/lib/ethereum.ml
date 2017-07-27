@@ -254,7 +254,7 @@ let print_event_inputs (is : Syntax.event_arg list) : string =
 let print_event_abi (e : Syntax.event) : string =
   Printf.sprintf
     "{\"type\":\"event\",\"inputs\":[%s],\"name\":\"%s\"}"
-    (print_event_inputs e.event_arguments)
+    (print_event_inputs e.Syntax.event_arguments)
     (e.Syntax.event_name)
 
 let print_toplevel_abi seen_constructor (t : Syntax.typ Syntax.toplevel) : string =
