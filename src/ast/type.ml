@@ -101,7 +101,7 @@ let rec assign_type_call
    ret_typ)
 and assign_type_message_info contract_interfaces cname tenv
                              (orig : unit message_info) : typ message_info =
-  let v' = Misc.option_map (assign_type_exp contract_interfaces cname tenv)
+  let v' = BatOption.map (assign_type_exp contract_interfaces cname tenv)
                             orig.message_value_info in
   let block' = assign_type_sentences contract_interfaces cname tenv orig.message_reentrance_info in
   { message_value_info = v'
