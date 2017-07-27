@@ -437,6 +437,7 @@ let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_as
                          (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
       Syntax.typ Syntax.contract =
+  let () = assert (BatList.for_all (arg_has_known_type env) raw.contract_arguments) in
   let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   { contract_name = raw.contract_name
   ; contract_arguments = raw.contract_arguments
