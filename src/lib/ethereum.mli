@@ -7,6 +7,7 @@ type interface_typ =
   | InterfaceAddress
   | InterfaceBool
 
+(** size of values of the interface type in bytes *)
 val interface_typ_size : interface_typ -> int
 
 type interface_arg = string * interface_typ

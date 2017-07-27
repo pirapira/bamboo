@@ -555,6 +555,9 @@ let correct_ecdsa s my_acc =
   let () = assert(answer = "0x000000000000000000000000c08b5542d177ac6686946920409741463a15dddb") in
   ()
 
+let zero_word = "0000000000000000000000000000000000000000000000000000000000000000"
+let one_word =  "0000000000000000000000000000000000000000000000000000000000000001"
+
 let testing_00i s my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/00i_local_bool.bbo" in
   let receipt = deploy_code s my_acc initcode_compiled "0" in
@@ -567,12 +570,12 @@ let testing_00i s my_acc =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "f(uint8)") ^ "00000000000000000000000000000000000000000000000000000000000000"
+    ; data = (compute_signature_hash "f(uint8)") ^ zero_word
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call s c in
   let () = Printf.printf "got answer: %s\n%!" answer in
-  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000001") in
+  let () = assert (answer = "0x" ^ one_word) in
   ()
 
 let testing_013 s my_acc =
@@ -587,7 +590,7 @@ let testing_013 s my_acc =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "a(bytes32)") ^ "00000000000000000000000000000000000000000000000000000000000000"
+    ; data = (compute_signature_hash "a(bytes32)") ^ zero_word
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call s c in
@@ -607,12 +610,12 @@ let testing_014 s my_acc =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "f(bool,bool)") ^ "00000000000000000000000000000000000000000000000000000000000000" ^ "00000000000000000000000000000000000000000000000000000000000001"
+    ; data = (compute_signature_hash "f(bool,bool)") ^ zero_word ^ one_word
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call s c in
   let () = Printf.printf "got answer: %s\n%!" answer in
-  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
+  let () = assert (answer = "0x" ^ zero_word) in
   ()
 
 let testing_016 s my_acc =
@@ -878,7 +881,6 @@ let testing_01a channel my_acc =
   let deployed = eth_getCode channel contract_address in
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code!\n" in
-  let one_word =  "0000000000000000000000000000000000000000000000000000000000000001" in
 
   let write_to_true : eth_transaction =
     { from = my_acc
