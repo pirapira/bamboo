@@ -48,7 +48,7 @@ rule read =
   | "<" { LT }
   | ">" { GT }
   | "="  { SINGLE_EQ }
-  | "new" { NEW }
+  | "deploy" { DEPLOY }
   | "with" { ALONG }
   | "reentrance" { REENTRANCE }
   | "selfdestruct" { SELFDESTRUCT }
