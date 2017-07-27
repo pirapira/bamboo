@@ -444,12 +444,23 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
                   case.case_body
   }
 
+let has_distinct_signatures (c : unit Syntax.contract) : bool =
+  let cases = c.contract_cases in
+  let signatures = List.map
+                     (fun c ->
+                       match c.case_header with
+                       | UsualCaseHeader u -> Some (Ethereum.case_header_signature_string u)
+                       | DefaultCaseHeader -> None) cases in
+  let unique_sig = BatList.unique signatures in
+  List.length signatures = List.length unique_sig
+
 
 let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_assoc)
                          (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
       Syntax.typ Syntax.contract =
   let () = assert (BatList.for_all (arg_has_known_type env) raw.contract_arguments) in
+  let () = assert (has_distinct_signatures raw) in
   let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   let () =
     if BatString.starts_with raw.contract_name "pre_" then

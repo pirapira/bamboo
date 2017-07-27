@@ -34,7 +34,7 @@
 %token SINGLE_EQ
 %token EVENT
 %token LOG
-%token NEW
+%token DEPLOY
 %token ALONG
 %token REENTRANCE
 %token ABORT
@@ -54,7 +54,8 @@
 
 %right RARROW
 
-%left LT GT
+%left LAND
+%left NEQ EQUALITY LT GT
 %left PLUS MINUS
 %left MULT
 
@@ -281,8 +282,8 @@ exp:
   | s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR { Syntax.FunctionCallExp {
                                    Syntax.call_head = s; call_args = fst :: lst }, () }
-  | NEW; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m }, () }
-  | NEW; s = IDENT; LPAR; fst = exp;
+  | DEPLOY; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m }, () }
+  | DEPLOY; s = IDENT; LPAR; fst = exp;
     lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
