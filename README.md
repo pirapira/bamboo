@@ -50,20 +50,6 @@ You can continue [testing the bytecode](doc/testing-bytecode.md).
 * join the [Gitter channel](https://gitter.im/bbo-dev/Lobby).
 * spread a rumor to your friends who are into programming languages.
 
-## FAQ
-
-### Unbound value Hash.keccak
-
-```
-File "src/lib/ethereum.ml", line 98, characters 17-28:
-Error: Unbound value Hash.keccak
-```
-
-*Answer*: probably you have cryptokit installed from opam.
-You need to install cryptokit from master branch of https://github.com/xavierleroy/cryptokit
-because my PR was recently merged into this project.
-After cryptokit 1.12 (or any new version) is released, you will be able to use cryptokit from opam, I believe.
-
 ## Related Work
 
 ### Linden Scripting Language

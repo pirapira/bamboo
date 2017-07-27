@@ -195,8 +195,8 @@ event_arg:
     INDEXED;
     i = IDENT
     { { Syntax.event_arg_body =
-        { arg_typ = t
-        ; arg_ident = i
+        { Syntax.arg_typ = t
+        ; Syntax.arg_ident = i
         }
       ; Syntax.event_arg_indexed = true
       }
