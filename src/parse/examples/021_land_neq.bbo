@@ -1,0 +1,5 @@
+contract A () {
+   case (bool f()) {
+      return true && false != true then become A();
+   }
+}
