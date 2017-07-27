@@ -590,7 +590,7 @@ let testing_013 s my_acc =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "a(bytes32)") ^ "00000000000000000000000000000000000000000000000000000000000000"
+    ; data = (compute_signature_hash "a(bytes32)") ^ zero_word
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call s c in
@@ -610,12 +610,12 @@ let testing_014 s my_acc =
     ; _to = contract_address
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
-    ; data = (compute_signature_hash "f(bool,bool)") ^ "00000000000000000000000000000000000000000000000000000000000000" ^ "00000000000000000000000000000000000000000000000000000000000001"
+    ; data = (compute_signature_hash "f(bool,bool)") ^ zero_word ^ one_word
     ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
     } in
   let answer = eth_call s c in
   let () = Printf.printf "got answer: %s\n%!" answer in
-  let () = assert (answer = "0x0000000000000000000000000000000000000000000000000000000000000000") in
+  let () = assert (answer = "0x" ^ zero_word) in
   ()
 
 let testing_016 s my_acc =
