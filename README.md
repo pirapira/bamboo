@@ -23,7 +23,8 @@ As preparattion,
 
 Then,
 ```
-make
+ocaml setup.ml -configure
+ocaml setup.ml -build
 ```
 builds a compiler `bbo.native`.
 
