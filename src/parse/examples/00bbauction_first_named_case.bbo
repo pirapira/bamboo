@@ -6,7 +6,7 @@ contract auction
    case(bool bid())
    {
 	bid new_bid =
-		new bid(sender(msg)) with value(msg)
+		deploy bid(sender(msg)) with value(msg)
 			 reentrance { abort; }; // failure throws.
      return (true) then become
      auction(value(msg));
