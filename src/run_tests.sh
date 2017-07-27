@@ -17,7 +17,7 @@ do
   cat $f | ./codegen_test2.native || \
   exit 1
 done
-for f in `ls parse/not_working_examples/*.bbo`
+for f in `ls parse/negative_examples/*.bbo`
 do
   echo "trying" $f
   if cat $f | ./codegen_test2.native
