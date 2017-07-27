@@ -9,7 +9,7 @@ contract auction
    default
    {
 if (now(block) > _bidding_time)
-return (false) then become auction_done(_beneficiary, _bids, _highest_bid);
+return then become auction_done(_beneficiary, _bids, _highest_bid);
 if (value(msg) < _highest_bid)
 			abort;
 bid new_bid =
