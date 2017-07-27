@@ -874,6 +874,33 @@ let testing_01a channel my_acc =
 
   ()
 
+let test_plus_mult channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/020_plus_mult.bbo" in
+
+  let receipt = deploy_code channel my_acc initcode_compiled "0" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let one_word =  "0000000000000000000000000000000000000000000000000000000000000001" in
+  let two_word =  "0000000000000000000000000000000000000000000000000000000000000002" in
+  let three_word =  "0000000000000000000000000000000000000000000000000000000000000003" in
+  let seven_word =  "0000000000000000000000000000000000000000000000000000000000000007" in
+
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (compute_signature_hash "f(uint256,uint256,uint256)")^one_word^two_word^three_word
+    ; gasprice = "0x00000000000000000000000000000000000000000000000000005af3107a4000"
+    } in
+
+  let answer = eth_call channel c in
+  let () = assert (answer = "0x" ^ seven_word) in
+
+  ()
+
 let test_erc20 channel my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/01b_erc20better.bbo" in
   let initial_amount : string = "0000000000000000000000000000000000000000000000010000000000000000" in
@@ -1042,6 +1069,7 @@ let () =
   let () = testing_019 s my_acc in
   let () = testing_01a s my_acc in
   let () = test_erc20 s my_acc in
+  let () = test_plus_mult s my_acc in
   let () = Unix.close s in
   ()
 
