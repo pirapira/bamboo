@@ -1,0 +1,5 @@
+contract A () {
+   case (uint f(uint a, uint b, uint c)) {
+      return a + b * c then become A();
+   }
+}
