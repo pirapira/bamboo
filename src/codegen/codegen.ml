@@ -1585,8 +1585,27 @@ let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.t
   let ret = LocationEnv.add_pairs le additions in
   ret
 
+let calldatasize_of_usual_header us =
+  let args = us.case_arguments in
+  4 (* for signature *) +
+    try BatList.sum (List.map (fun x -> Ethereum.(interface_typ_size (interpret_interface_type x.arg_typ))) args) with
+      Invalid_argument _ -> 0
+
+let add_case_argument_length_check ce case_header =
+  match case_header with
+  | DefaultCaseHeader -> (* no check, the choice is arguable *) ce
+  | UsualCaseHeader us ->
+     let ce = append_instruction ce (PUSH4 (Int (calldatasize_of_usual_header us))) in
+     let ce = append_instruction ce CALLDATASIZE in
+     let ce = append_instruction ce EQ in
+     let ce = append_instruction ce ISZERO in
+     let ce = append_instruction ce (PUSH1 (Int 0)) in
+     let ce = append_instruction ce JUMPI in
+     ce
+
 let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
+  let ce = add_case_argument_length_check ce case.case_header in
   let le = LocationEnv.add_empty_block le in
   let le = add_case_argument_locations le case in
   let ((le : LocationEnv.location_env), ce) =
