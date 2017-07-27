@@ -54,7 +54,8 @@
 
 %right RARROW
 
-%left LT GT
+%left LAND
+%left NEQ EQUALITY LT GT
 %left PLUS MINUS
 %left MULT
 
