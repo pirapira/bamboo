@@ -381,6 +381,7 @@ let rec is_terminating_sentence (s : unit sentence) : termination list =
   | IfThenElse (_, bT, bF) -> are_terminating bT @ (are_terminating bF)
   | SelfdestructSentence _ -> [JustStop]
   | ExpSentence _ -> [RunAway]
+  | LogSentence _ -> [RunAway]
 
 (** [check_termination sentences] make sure that the last sentence in [sentences]
  *  cuts the continuation. *)
