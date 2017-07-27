@@ -166,5 +166,5 @@ val lookup_usual_case_header : typ contract -> string -> (string -> typ contract
 (** [might_become c] lists the name of the contracts that [c] might become, except [c] itself. *)
 val might_become : typ contract -> string list
 
-(** [acceptable_as t0 t1] is true when [t1] is acceptable as [t0]. *)
+(** [acceptable_as wanted actual] is true when [actual] is acceptable as [wanted]. *)
 val acceptable_as : typ -> typ -> bool

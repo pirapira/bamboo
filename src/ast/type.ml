@@ -279,8 +279,11 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : typ return =
-  { return_exp = BatOption.map (assign_type_exp contract_interfaces
-                                   cname tenv) src.return_exp
+  let exps = BatOption.map (assign_type_exp contract_interfaces
+                                   cname tenv) src.return_exp in
+  let f = TypeEnv.lookup_expected_returns tenv in
+  let () = assert (f (BatOption.map snd exps)) in
+  { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
@@ -391,6 +394,18 @@ let case_is_returning_void (case : unit case) : bool =
   | UsualCaseHeader u ->
      u.case_return_typ = []
 
+let return_expectation_of_case (h : Syntax.case_header) (actual : Syntax.typ option) : bool =
+  match h, actual with
+  | DefaultCaseHeader, Some _ -> false
+  | DefaultCaseHeader, None -> true
+  | UsualCaseHeader u, _ ->
+     begin match u.case_return_typ, actual with
+     | _ :: _ :: _, _ -> false
+     | [x], Some y -> Syntax.acceptable_as x y
+     | [], None -> true
+     | _, _ ->false
+     end
+
 let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
                      (contract_name : string)
                      (venv : TypeEnv.type_env)
@@ -407,11 +422,12 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
                        | JustStop -> true
                      ) (are_terminating case.case_body)) in
   let case_arguments = case_header_arg_list case.case_header in
+  let returns : Syntax.typ option -> bool = return_expectation_of_case case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
   ; case_body = assign_type_sentences
                   contract_interfaces
                   contract_name
-                  (TypeEnv.add_block case_arguments venv)
+                  (TypeEnv.remember_expected_returns (TypeEnv.add_block case_arguments venv) returns)
                   case.case_body
   }
 
