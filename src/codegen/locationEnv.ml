@@ -1,12 +1,12 @@
 open PseudoImm
 
-type location_env =
+type t =
   (string * Location.location) list list
 
 let size l =
   BatList.sum (List.map List.length l)
 
-let empty_location_env = []
+let empty_env = []
 
 let forget_innermost = function
   | (_ :: older) -> older
@@ -19,8 +19,8 @@ let update_block (str : string) (new_loc : Location.location)
       (string * Location.location) list option
   = failwith "update_block"
 
-let update (orig : location_env) (str : string) (new_loc : Location.location)
-    : location_env option =
+let update (orig : t) (str : string) (new_loc : Location.location)
+    : t option =
   Misc.change_first (update_block str new_loc) orig
 
 let lookup_block (search : string) (lst : (string * Location.location) list)
@@ -30,16 +30,16 @@ let lookup_block (search : string) (lst : (string * Location.location) list)
   with
     Not_found -> None
 
-let lookup (le : location_env) (search : string) : Location.location option =
+let lookup (le : t) (search : string) : Location.location option =
   Misc.first_some (lookup_block search) le
 
-let add_pair (le : location_env) (key : string) (loc : Location.location)
-             : location_env =
+let add_pair (le : t) (key : string) (loc : Location.location)
+             : t =
   match le with
   | [] -> failwith "add_pair: no block"
   | h :: t -> ((key, loc) :: h) :: t
 
-let add_pairs (le : location_env) (lst : (string * Location.location) list) : location_env =
+let add_pairs (le : t) (lst : (string * Location.location) list) : t =
   List.fold_left (fun le' (str, loc) -> add_pair le' str loc) le lst
 
 let add_empty_block orig = [] :: orig
@@ -47,13 +47,13 @@ let add_empty_block orig = [] :: orig
 let stack_story_block (block : (string * Location.location) list) : int option =
   failwith "stack_story_block"
 
-let last_stack_element_recorded (le : location_env) =
+let last_stack_element_recorded (le : t) =
   match Misc.first_some stack_story_block le with
   | Some n -> n
   | None -> -1
 
 let constructor_args_locations (cid : Assoc.contract_id) (args : (string * Ethereum.interface_typ) list)
-    : location_env
+    : t
   =
   let total = Ethereum.total_size_of_interface_args (List.map snd args) in
   let one_arg ((name : string), (offset : int), (size : int)) :
@@ -73,21 +73,19 @@ let constructor_args_locations (cid : Assoc.contract_id) (args : (string * Ether
   in
   [List.map one_arg (name_offset_size_list [] 0 args)]
 
-let constructor_initial_location_env (cid : Assoc.contract_id)
-                                     (contract : Syntax.typ Syntax.contract) :
-  location_env =
+let constructor_initial_env (cid : Assoc.contract_id)
+                            (contract : Syntax.typ Syntax.contract) : t =
   let args = Ethereum.constructor_arguments contract in
   constructor_args_locations cid args
 
-(** [runtime_initial_location_env contract]
+(** [runtime_initial_t contract]
  * is a location environment that contains
  * the constructor arguments
  * after StorageConstrutorArgumentBegin *)
-let runtime_initial_location_env
-      (contract : Syntax.typ Syntax.contract) :
-        location_env =
+let runtime_initial_env
+      (contract : Syntax.typ Syntax.contract) : t =
   let plain = Ethereum.constructor_arguments contract in
-  let init = add_empty_block empty_location_env in
+  let init = add_empty_block empty_env in
   let f (lenv, word_idx) (name, typ) =
     let size_in_word = Ethereum.interface_typ_size typ / 32 in
     let loc = Location.(Storage {

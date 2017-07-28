@@ -1,15 +1,15 @@
 (* codegenEnv remembers the current stack size,
    initial storage assumtion, and
    accumulated instructions. *)
-type codegen_env
+type t
 
-val empty_env : (string -> Assoc.contract_id) -> (Syntax.typ Syntax.contract Assoc.contract_id_assoc) -> codegen_env
+val empty_env : (string -> Assoc.contract_id) -> (Syntax.typ Syntax.contract Assoc.contract_id_assoc) -> t
 
-val ce_program : codegen_env -> PseudoImm.pseudo_imm Evm.program
-val code_length : codegen_env -> int
+val ce_program : t -> PseudoImm.pseudo_imm Evm.program
+val code_length : t -> int
 
-val stack_size : codegen_env -> int
-val set_stack_size : codegen_env -> int -> codegen_env
+val stack_size : t -> int
+val set_stack_size : t -> int -> t
 
 (* for each instruction,
  * create an interface function.
@@ -17,8 +17,8 @@ val set_stack_size : codegen_env -> int -> codegen_env
  *)
 
 val append_instruction :
-  codegen_env -> PseudoImm.pseudo_imm Evm.instruction -> codegen_env
+  t -> PseudoImm.pseudo_imm Evm.instruction -> t
 
-val cid_lookup : codegen_env -> string -> Assoc.contract_id
+val cid_lookup : t -> string -> Assoc.contract_id
 
-val contract_lookup : codegen_env -> Assoc.contract_id -> Syntax.typ Syntax.contract
+val contract_lookup : t -> Assoc.contract_id -> Syntax.typ Syntax.contract
