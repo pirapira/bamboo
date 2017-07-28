@@ -4,7 +4,7 @@ type alignment = LeftAligned | RightAligned
  * is a new codegenEnv where a stack element is pushed, whose
  * value is the evaluation of exp *)
 val codegen_exp :
-  LocationEnv.location_env ->
+  LocationEnv.t ->
   CodegenEnv.codegen_env ->
   alignment ->
   Syntax.typ Syntax.exp ->
@@ -59,7 +59,7 @@ val codegen_bytecode :
 
 val move_info_around :
   (* assumption *) CodegenEnv.codegen_env ->
-  (* goal *)       LocationEnv.location_env ->
+  (* goal *)       LocationEnv.t ->
                    CodegenEnv.codegen_env
 
 

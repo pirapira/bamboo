@@ -306,7 +306,7 @@ and add_constructor_arguments_to_memory le (packing : memoryPacking) ce (args : 
                           ce args in
   let () = assert (original_stack_size + 1 = stack_size ce) in
   ce
-and produce_init_code_in_memory (le : LocationEnv.location_env) ce new_exp =
+and produce_init_code_in_memory (le : LocationEnv.t) ce new_exp =
   let name = new_exp.new_head in
   let contract_id =
     try CodegenEnv.cid_lookup ce name
@@ -340,7 +340,7 @@ and produce_init_code_in_memory (le : LocationEnv.location_env) ce new_exp =
   let ce = append_instruction ce SWAP1 in
   (* stack: [memory_total_size, memory_offset] *)
   ce
-and codegen_function_call_exp (le : LocationEnv.location_env) ce alignment (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
+and codegen_function_call_exp (le : LocationEnv.t) ce alignment (function_call : Syntax.typ Syntax.function_call) (rettyp : Syntax.typ) =
   if function_call.call_head = "pre_ecdsarecover" then
     let () = assert (alignment = RightAligned) in
     codegen_ecdsarecover le ce function_call.call_args rettyp (* XXX: need to pass alignment *)
@@ -414,7 +414,7 @@ and codegen_ecdsarecover le ce args rettyp =
      (* stack: [output] *)
      ce
   | _ -> failwith "pre_ecdsarecover has a wrong number of arguments"
-and codegen_new_exp (le : LocationEnv.location_env) ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
+and codegen_new_exp (le : LocationEnv.t) ce (new_exp : Syntax.typ Syntax.new_exp) (contractname : string) =
   let original_stack_size = stack_size ce in
   (* assert that the reentrance info is throw *)
   let () = assert(is_throw_only new_exp.new_msg_info.message_reentrance_info)  in
@@ -449,7 +449,7 @@ and generate_array_access_index le ce aa =
   let ce = keccak_cons le ce in
   ce
 
-and codegen_array_access (le : LocationEnv.location_env) ce (aa : Syntax.typ Syntax.array_access) =
+and codegen_array_access (le : LocationEnv.t) ce (aa : Syntax.typ Syntax.array_access) =
   let ce = generate_array_access_index le ce aa in
   let ce = append_instruction ce SLOAD in
   ce
@@ -535,7 +535,7 @@ and setup_array_seed_at_location le ce loc =
 (* le is not updated here.  It can be only updated in
  * a variable initialization *)
 and codegen_exp
-      (le : LocationEnv.location_env)
+      (le : LocationEnv.t)
       (ce : CodegenEnv.codegen_env)
       (alignment : alignment)
       ((e,t) : Syntax.typ Syntax.exp) :
@@ -929,7 +929,7 @@ let codegen_sentence
 
 let move_info_around
   (assumption : CodegenEnv.codegen_env)
-  (goal : LocationEnv.location_env) :
+  (goal : LocationEnv.t) :
       CodegenEnv.codegen_env = failwith "move_info_around"
 
 let codegen_bytecode
@@ -954,7 +954,7 @@ let initialize_memory_allocator (ce : CodegenEnv.codegen_env) =
  *  Output [rest of the stack, mem_size, mem_begin].
  *)
 let copy_arguments_from_code_to_memory
-      (le : LocationEnv.location_env)
+      (le : LocationEnv.t)
       (ce : CodegenEnv.codegen_env)
       (contract : Syntax.typ Syntax.contract) :
       (CodegenEnv.codegen_env) =
@@ -1178,8 +1178,8 @@ let codegen_constructor_bytecode
     :
       (CodegenEnv.codegen_env (* containing the program *)
        ) =
-  let le = LocationEnv.constructor_initial_location_env contract_id
-                                                        (Assoc.choose_contract contract_id contracts) in
+  let le = LocationEnv.constructor_initial_env contract_id
+                                               (Assoc.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contracts in
   let ce = initialize_memory_allocator ce in
   (* implement some kind of fold function over the argument list
@@ -1589,7 +1589,7 @@ and add_self_destruct le ce layout exp =
   let ce = append_instruction ce SUICIDE in
   le, ce
 
-let add_case_argument_locations (le : LocationEnv.location_env) (case : Syntax.typ Syntax.case) =
+let add_case_argument_locations (le : LocationEnv.t) (case : Syntax.typ Syntax.case) =
   let additions : (string * Location.location) list = Ethereum.arguments_with_locations case in
   let ret = LocationEnv.add_pairs le additions in
   ret
@@ -1612,14 +1612,14 @@ let add_case_argument_length_check ce case_header =
      let ce = append_instruction ce JUMPI in
      ce
 
-let add_case (le : LocationEnv.location_env) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
+let add_case (le : LocationEnv.t) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
   let ce = add_case_argument_length_check ce case.case_header in
   let le = LocationEnv.add_empty_block le in
   let le = add_case_argument_locations le case in
-  let ((le : LocationEnv.location_env), ce) =
+  let ((le : LocationEnv.t), ce) =
     List.fold_left
-      (fun ((le : LocationEnv.location_env), ce) sent -> add_sentence le ce layout sent)
+      (fun ((le : LocationEnv.t), ce) sent -> add_sentence le ce layout sent)
       (le, ce) case.case_body in
   (le, ce)
 
@@ -1649,7 +1649,7 @@ let codegen_append_contract_bytecode
 let append_runtime layout (prev : runtime_compiled)
                    ((cid : Assoc.contract_id), (contract : Syntax.typ Syntax.contract))
                    : runtime_compiled =
-  { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_location_env contract) prev.runtime_codegen_env layout (cid, contract)
+  { runtime_codegen_env = codegen_append_contract_bytecode (LocationEnv.runtime_initial_env contract) prev.runtime_codegen_env layout (cid, contract)
   ; runtime_contract_offsets = Assoc.insert cid (CodegenEnv.code_length prev.runtime_codegen_env) prev.runtime_contract_offsets
   }
 
