@@ -1,6 +1,6 @@
-.PHONY: test bbo end-to-end clean
+.PHONY: test bamboo end-to-end clean
 
-bbo:
+bamboo:
 	ocaml setup.ml -configure
 	ocaml setup.ml -build
 
