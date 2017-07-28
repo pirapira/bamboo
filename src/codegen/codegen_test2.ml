@@ -15,7 +15,7 @@ let _ =
   let () = match contracts with
   | [] -> ()
   | _ ->
-     let (env : CodegenEnv.codegen_env)
+     let (env : CodegenEnv.t)
        = codegen_constructor_bytecode (contracts, fst (List.hd contracts)) in
      let constructor_program = CodegenEnv.ce_program env in
      let () = Printf.printf "=====constructor for first contract=====\n" in
