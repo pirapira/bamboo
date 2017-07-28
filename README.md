@@ -31,7 +31,7 @@ builds a compiler `bamboo.native`.
 ```
 ./bamboo.native < src/parse/examples/006auction_first_case.bbo
 ```
-produces a bytecode.
+produces a bytecode. Do not trust the output as the compiler still contains bugs probably.
 
 ```
 ./bamboo.native --abi < src/parse/examples/006auction_first_case.bbo
