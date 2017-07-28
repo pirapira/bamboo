@@ -5,20 +5,20 @@ type alignment = LeftAligned | RightAligned
  * value is the evaluation of exp *)
 val codegen_exp :
   LocationEnv.t ->
-  CodegenEnv.codegen_env ->
+  CodegenEnv.t ->
   alignment ->
   Syntax.typ Syntax.exp ->
-  CodegenEnv.codegen_env
+  CodegenEnv.t
 
 val codegen_sentence :
-  CodegenEnv.codegen_env ->
+  CodegenEnv.t ->
   Syntax.typ Syntax.sentence -> (* is this enough? also add sentence Id's around?
                    * I think this is enough.
                    *)
-  CodegenEnv.codegen_env
+  CodegenEnv.t
 
 type constructor_compiled =
-  { constructor_codegen_env : CodegenEnv.codegen_env
+  { constructor_codegen_env : CodegenEnv.t
   ; constructor_interface : Contract.contract_interface
   ; constructor_contract : Syntax.typ Syntax.contract
   }
@@ -28,7 +28,7 @@ val compile_constructor :
    Assoc.contract_id) -> constructor_compiled
 
 type runtime_compiled =
-  { runtime_codegen_env : CodegenEnv.codegen_env
+  { runtime_codegen_env : CodegenEnv.t
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
   }
 
@@ -42,7 +42,7 @@ val codegen_constructor_bytecode :
   (Syntax.typ Syntax.contract Assoc.contract_id_assoc *
    Assoc.contract_id) ->
   ((* LocationEnv.location_env * *)
-     CodegenEnv.codegen_env (* containing the program *))
+     CodegenEnv.t (* containing the program *))
 
 val compile_constructors :
   Syntax.typ Syntax.contract Assoc.contract_id_assoc ->
@@ -58,9 +58,9 @@ val codegen_bytecode :
   PseudoImm.pseudo_imm Evm.program
 
 val move_info_around :
-  (* assumption *) CodegenEnv.codegen_env ->
+  (* assumption *) CodegenEnv.t ->
   (* goal *)       LocationEnv.t ->
-                   CodegenEnv.codegen_env
+                   CodegenEnv.t
 
 
 val compose_bytecode : constructor_compiled Assoc.contract_id_assoc ->

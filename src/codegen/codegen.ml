@@ -75,7 +75,7 @@ let align_address ce alignment =
                         shift_stack_top_to_left ce (12 * 8)
 
 
-let align_from_right_aligned (ce : CodegenEnv.codegen_env) alignment typ =
+let align_from_right_aligned (ce : CodegenEnv.t) alignment typ =
   match alignment with
   | RightAligned -> ce
   | LeftAligned ->
@@ -138,7 +138,7 @@ let throw_if_zero ce =
  * that takes a desired memory size as an argument.
  * This pushes the allocated address.
  *)
-let push_allocated_memory (ce : CodegenEnv.codegen_env) =
+let push_allocated_memory (ce : CodegenEnv.t) =
   let original_stack_size = stack_size ce in
   (* [desired_length] *)
   let ce = append_instruction ce (PUSH1 (Int 64)) in
@@ -159,7 +159,7 @@ let push_allocated_memory (ce : CodegenEnv.codegen_env) =
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
-let peek_next_memory_allocation (ce : CodegenEnv.codegen_env) =
+let peek_next_memory_allocation (ce : CodegenEnv.t) =
   let original_stack_size = stack_size ce in
   (* [] *)
   let ce = append_instruction ce (PUSH1 (Int 64)) in
@@ -214,7 +214,7 @@ let copy_whole_current_code_to_memory ce =
   let () = assert(original_stack_size + 2 = stack_size ce) in
   ce
 
-let push_signature_code (ce : CodegenEnv.codegen_env)
+let push_signature_code (ce : CodegenEnv.t)
                         (case_signature : usual_case_header)
   =
   let hash = Ethereum.case_header_signature_hash case_signature in
@@ -360,7 +360,7 @@ and codegen_iszero le ce alignment args rettype =
      ce
   | _ ->
      failwith "codegen_iszero: seeing a wrong number of arguments"
-and codegen_keccak256 le (ce : CodegenEnv.codegen_env) args rettyp =
+and codegen_keccak256 le ce args rettyp =
   let original_stack_size = stack_size ce in
   let ce = peek_next_memory_allocation ce in
   (* stack: [..., offset] *)
@@ -536,10 +536,10 @@ and setup_array_seed_at_location le ce loc =
  * a variable initialization *)
 and codegen_exp
       (le : LocationEnv.t)
-      (ce : CodegenEnv.codegen_env)
+      (ce : CodegenEnv.t)
       (alignment : alignment)
       ((e,t) : Syntax.typ Syntax.exp) :
-      CodegenEnv.codegen_env =
+      CodegenEnv.t =
   let ret =
   Syntax.
   (match e,t with
@@ -751,7 +751,7 @@ and prepare_arguments le ce args =
 (** [prepare_input_in_memory] prepares the input for CALL instruction in the memory.
  *  That leaves "..., in size, in offset" (top) on the stack.
  *)
-and prepare_input_in_memory le ce s usual_header : CodegenEnv.codegen_env =
+and prepare_input_in_memory le ce s usual_header : CodegenEnv.t =
   let original_stack_size = stack_size ce in
   let ce = prepare_function_signature ce usual_header in
   (* stack : [signature size, signature offset] *)
@@ -920,24 +920,24 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
 
 
 let codegen_sentence
-  (orig : CodegenEnv.codegen_env)
+  (orig : CodegenEnv.t)
   (s : Syntax.typ Syntax.sentence)
   (* is this enough? also add sentence Id's around?
    * I think this is enough.
    *)
-  : CodegenEnv.codegen_env = failwith "codegen_sentence"
+  : CodegenEnv.t = failwith "codegen_sentence"
 
 let move_info_around
-  (assumption : CodegenEnv.codegen_env)
+  (assumption : CodegenEnv.t)
   (goal : LocationEnv.t) :
-      CodegenEnv.codegen_env = failwith "move_info_around"
+      CodegenEnv.t = failwith "move_info_around"
 
 let codegen_bytecode
   (src : Syntax.typ Syntax.contract) :
       PseudoImm.pseudo_imm Evm.program = failwith "codegen_bytecode"
 
 (** [initialize_memory_allocator] initializes memory position 64 as 96 *)
-let initialize_memory_allocator (ce : CodegenEnv.codegen_env) =
+let initialize_memory_allocator (ce : CodegenEnv.t) =
   let ce = append_instruction ce (PUSH1 (Int 96)) in
   let ce = append_instruction ce (PUSH1 (Int 64)) in
   let ce = append_instruction ce MSTORE in
@@ -955,9 +955,9 @@ let initialize_memory_allocator (ce : CodegenEnv.codegen_env) =
  *)
 let copy_arguments_from_code_to_memory
       (le : LocationEnv.t)
-      (ce : CodegenEnv.codegen_env)
+      (ce : CodegenEnv.t)
       (contract : Syntax.typ Syntax.contract) :
-      (CodegenEnv.codegen_env) =
+      (CodegenEnv.t) =
   let total_size = Ethereum.total_size_of_interface_args
                      (List.map snd (Ethereum.constructor_arguments contract)) in
   let original_stack_size = stack_size ce in
@@ -1165,7 +1165,7 @@ let setup_array_seed_counter_to_one_if_not_initialized ce =
   let () = assert (stack_size ce = original_stack_size) in
   ce
 
-let setup_array_seeds le ce (contract: Syntax.typ Syntax.contract) : CodegenEnv.codegen_env =
+let setup_array_seeds le ce (contract: Syntax.typ Syntax.contract) : CodegenEnv.t =
   let ce = setup_array_seed_counter_to_one_if_not_initialized ce in
   let array_locations = LayoutInfo.array_locations contract in
   let (_, ce) =
@@ -1176,7 +1176,7 @@ let codegen_constructor_bytecode
       ((contracts : Syntax.typ Syntax.contract Assoc.contract_id_assoc),
        (contract_id : Assoc.contract_id))
     :
-      (CodegenEnv.codegen_env (* containing the program *)
+      (CodegenEnv.t (* containing the program *)
        ) =
   let le = LocationEnv.constructor_initial_env contract_id
                                                (Assoc.choose_contract contract_id contracts) in
@@ -1187,10 +1187,10 @@ let codegen_constructor_bytecode
   let ce = copy_arguments_from_code_to_memory le ce
              (Assoc.choose_contract contract_id contracts) in
   (* stack: [arg_mem_size, arg_mem_begin] *)
-  let (ce: CodegenEnv.codegen_env) = copy_arguments_from_memory_to_storage le ce contract_id in
+  let (ce: CodegenEnv.t) = copy_arguments_from_memory_to_storage le ce contract_id in
   (* stack: [] *)
   (* set up array seeds *)
-  let (ce :CodegenEnv.codegen_env) = setup_array_seeds le ce (Assoc.choose_contract contract_id contracts) in
+  let (ce :CodegenEnv.t) = setup_array_seeds le ce (Assoc.choose_contract contract_id contracts) in
   let ce = set_contract_pc ce contract_id in
   (* stack: [] *)
   let ce = copy_runtime_code_to_memory ce contracts contract_id in
@@ -1199,13 +1199,13 @@ let codegen_constructor_bytecode
   ce
 
 type constructor_compiled =
-  { constructor_codegen_env : CodegenEnv.codegen_env
+  { constructor_codegen_env : CodegenEnv.t
   ; constructor_interface : Contract.contract_interface
   ; constructor_contract : Syntax.typ Syntax.contract
   }
 
 type runtime_compiled =
-  { runtime_codegen_env : CodegenEnv.codegen_env
+  { runtime_codegen_env : CodegenEnv.t
   ; runtime_contract_offsets : int Assoc.contract_id_assoc
   (* what form should the constructor code be encoded?
      1. pseudo program.  easy
@@ -1236,7 +1236,7 @@ let initial_runtime_compiled (cid_lookup : string -> Assoc.contract_id) layouts 
   ; runtime_contract_offsets = []
   }
 
-let push_destination_for (ce : CodegenEnv.codegen_env)
+let push_destination_for (ce : CodegenEnv.t)
                          (cid : Assoc.contract_id)
                          (case_signature : case_header) =
   append_instruction ce
@@ -1612,7 +1612,7 @@ let add_case_argument_length_check ce case_header =
      let ce = append_instruction ce JUMPI in
      ce
 
-let add_case (le : LocationEnv.t) (ce : CodegenEnv.codegen_env) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
+let add_case (le : LocationEnv.t) (ce : CodegenEnv.t) layout (cid : Assoc.contract_id) (case : Syntax.typ Syntax.case) =
   let ce = add_case_destination ce cid case.case_header in
   let ce = add_case_argument_length_check ce case.case_header in
   let le = LocationEnv.add_empty_block le in

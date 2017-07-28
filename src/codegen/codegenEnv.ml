@@ -1,4 +1,4 @@
-type codegen_env =
+type t =
   { ce_stack_size: int
   ; ce_program: PseudoImm.pseudo_imm Evm.program
   ; ce_cid_lookup : string -> Assoc.contract_id
@@ -23,7 +23,7 @@ let set_stack_size ce i =
   { ce with ce_stack_size = i }
 
 let append_instruction
-  (orig : codegen_env) (i : PseudoImm.pseudo_imm Evm.instruction) : codegen_env =
+  (orig : t) (i : PseudoImm.pseudo_imm Evm.instruction) : t =
   if orig.ce_stack_size < Evm.stack_eaten i then
     failwith "stack underflow"
   else
@@ -45,7 +45,7 @@ let append_instruction
 
 let cid_lookup ce = ce.ce_cid_lookup
 
-let contract_lookup (ce : codegen_env) (cid : Assoc.contract_id) : Syntax.typ Syntax.contract
+let contract_lookup (ce : t) (cid : Assoc.contract_id) : Syntax.typ Syntax.contract
   =
   try Assoc.choose_contract cid ce.ce_contracts
   with e ->
