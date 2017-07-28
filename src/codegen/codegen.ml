@@ -558,10 +558,12 @@ and codegen_exp
    | ValueExp,_ -> failwith "ValueExp of strange type"
    | SenderExp,AddressType ->
       let ce = CodegenEnv.append_instruction ce CALLER in
+      let ce = align_address ce alignment in
       ce
    | SenderExp,_ -> failwith "codegen_exp: SenderExp of strange type"
    | ArrayAccessExp aa, typ ->
       let ce = codegen_array_access le ce (read_array_access aa) in
+      let () = assert (alignment = RightAligned) in
       begin match typ with
       | MappingType _ ->
          setup_array_seed_at_array_access le ce (read_array_access aa)
@@ -589,14 +591,17 @@ and codegen_exp
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction
                 ce (Evm.PUSH1 (Big Big_int.zero_big_int)) in
+     let () = assert (alignment = RightAligned) in
      ce
   | FalseExp, _ -> failwith "codegen_exp: FalseExp of unexpected type"
   | TrueExp,BoolType ->
      let ce = append_instruction ce (PUSH1 (Big Big_int.unit_big_int)) in
+     let () = assert (alignment = RightAligned) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
+     let () = assert (alignment = RightAligned) in
      let ce = codegen_exp le ce RightAligned l in
      (* stack: [..., l] *)
      let ce = append_instruction ce DUP1 in
@@ -620,6 +625,7 @@ and codegen_exp
   | NotExp sub, BoolType ->
      let ce = codegen_exp le ce alignment sub in
      let ce = append_instruction ce ISZERO in
+     let ce = align_boolean ce alignment in
      ce
   | NotExp sub, _ ->
      failwith "codegen_exp: NotExp of unexpected type"
@@ -685,8 +691,10 @@ and codegen_exp
   | EqualityExp _, _ ->
      failwith "codegen_exp EqualityExp of unexpected type"
   | SendExp s, _ ->
+     let () = assert (alignment = RightAligned) in
      codegen_send_exp le ce s
   | NewExp new_e, ContractInstanceType ctyp ->
+     let () = assert (alignment = RightAligned) in
      codegen_new_exp le ce new_e ctyp
   | NewExp new_e, _ ->
      failwith "exp code gen for new expression with unexpected type"
@@ -700,6 +708,7 @@ and codegen_exp
      let () = assert (size <= 32) in (* assuming word-size *)
      let ce = codegen_exp le ce RightAligned (reference, ref_typ) in (* pushes the pointer *)
      let ce = append_instruction ce MLOAD in
+     let () = assert (alignment = RightAligned) in
      ce
   | TupleDereferenceExp _, _ ->
      failwith "code generation for TupleDereferenceExp should not happen.  Instead, try to decompose it into several assignments."
