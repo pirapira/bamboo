@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 2e106430db9584949d35aa4446f7cbeb)
+# DO NOT EDIT (digest: 25c73d5a4474f82f8d1d433d49b1ad5b)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -42,15 +42,15 @@ true: annot, bin_annot
 <src/codegen/*.ml{,i,y}>: use_ast
 <src/codegen/*.ml{,i,y}>: use_basics
 <src/codegen/*.ml{,i,y}>: use_parse
-# Executable bbo
-<src/exec/bbo.{native,byte}>: pkg_batteries
-<src/exec/bbo.{native,byte}>: pkg_cryptokit
-<src/exec/bbo.{native,byte}>: pkg_hex
-<src/exec/bbo.{native,byte}>: pkg_rope
-<src/exec/bbo.{native,byte}>: use_ast
-<src/exec/bbo.{native,byte}>: use_basics
-<src/exec/bbo.{native,byte}>: use_codegen
-<src/exec/bbo.{native,byte}>: use_parse
+# Executable bamboo
+<src/exec/bamboo.{native,byte}>: pkg_batteries
+<src/exec/bamboo.{native,byte}>: pkg_cryptokit
+<src/exec/bamboo.{native,byte}>: pkg_hex
+<src/exec/bamboo.{native,byte}>: pkg_rope
+<src/exec/bamboo.{native,byte}>: use_ast
+<src/exec/bamboo.{native,byte}>: use_basics
+<src/exec/bamboo.{native,byte}>: use_codegen
+<src/exec/bamboo.{native,byte}>: use_parse
 <src/exec/*.ml{,i,y}>: pkg_batteries
 <src/exec/*.ml{,i,y}>: pkg_cryptokit
 <src/exec/*.ml{,i,y}>: pkg_hex

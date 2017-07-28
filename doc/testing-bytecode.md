@@ -7,7 +7,7 @@ Getting a Bytecode
 After following the [readme](../README.md),
 
 ```
-./bbo.native < src/parse/examples/006auction_first_case.bbo
+./bamboo.native < src/parse/examples/006auction_first_case.bbo
 ```
 should produce something like
 ```

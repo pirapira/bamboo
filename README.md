@@ -26,15 +26,15 @@ Then,
 ocaml setup.ml -configure
 ocaml setup.ml -build
 ```
-builds a compiler `bbo.native`.
+builds a compiler `bamboo.native`.
 
 ```
-./bbo.native < src/parse/examples/006auction_first_case.bbo
+./bamboo.native < src/parse/examples/006auction_first_case.bbo
 ```
 produces a bytecode.
 
 ```
-./bbo.native --abi < src/parse/examples/006auction_first_case.bbo
+./bamboo.native --abi < src/parse/examples/006auction_first_case.bbo
 ```
 prints ABI.
 ```
