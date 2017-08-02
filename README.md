@@ -6,7 +6,7 @@
 
 Bamboo is a programming language for Ethereum contracts.
 Bamboo makes state transition explicit and avoids reentrance problems by default.
-See [manifest](doc/manifest.md) for the motivation.
+See [manifest](doc/manifest.md) for the motivation, or [tutorial](doc/tutorial.md) if you want to deploy something first.
 
 ## Example Bamboo Code
 
