@@ -6,47 +6,40 @@
 
 Bamboo is a programming language for Ethereum contracts.
 Bamboo makes state transition explicit and avoids reentrance problems by default.
-See [manifest](doc/manifest.md) for the motivation.
+See [manifest](doc/manifest.md) for the motivation, or [tutorial](doc/tutorial.md) if you want to deploy something first.
 
 ## Example Bamboo Code
 
 * [A payment channel](./src/parse/examples/00h_payment_channel.bbo)
 * [An ERC20 contract](./src/parse/examples/01b_erc20better.bbo)
 
-## Compiler in development
+## Compiler
 
 The Bamboo compiler sometimes produces bytecode, which needs to be tested.
 
 As preparattion,
 * install [opam](http://opam.ocaml.org/doc/Install.html) with OCaml 4.04.1
-* and then use `opam install zarith ocamlfind menhir batteries rope hex cryptokit` to install some of the dependencies.
+* `opam install bamboo`
+should intall `bamboo`.
 
-Then,
+When you check out this repository,
 ```
-ocaml setup.ml -configure
-ocaml setup.ml -build
-```
-builds a compiler `bamboo.native`.
-
-```
-./bamboo.native < src/parse/examples/006auction_first_case.bbo
+bamboo < src/parse/examples/006auction_first_case.bbo
 ```
 produces a bytecode. Do not trust the output as the compiler still contains bugs probably.
 
 ```
-./bamboo.native --abi < src/parse/examples/006auction_first_case.bbo
+bamboo --abi < src/parse/examples/006auction_first_case.bbo
 ```
 prints ABI.
 ```
 [{"type": "constructor", "inputs":[{"name": "_beneficiary", "type": "address"},{"name": "_bidding_time", "type": "uint256"},{"name": "_highest_bid", "type": "uint256"}], "name": "auction", "outputs":[], "payable": true},{"type":"fallback","inputs": [],"outputs": [],"payable": true}]
 ```
 
-You can continue [testing the bytecode](doc/testing-bytecode.md).
-
 ## How to Contribute
 
 * notice problems and point them out. [create issues](https://github.com/pirapira/bamboo/issues/new).
-* test the bytecode like [this](doc/testing-bytecode.md), but using other examples.  You might find bugs in the compiler.
+* test the bytecode like [this](doc/tutorial.md), but using other examples.  You might find bugs in the compiler.
 * write new Bamboo code and test the compiler.
 * join the [Gitter channel](https://gitter.im/bbo-dev/Lobby).
 * spread a rumor to your friends who are into programming languages.
