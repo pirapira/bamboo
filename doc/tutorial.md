@@ -30,19 +30,19 @@ If anything goes wrong, poke @pirapira on [the Gitter channel](https://gitter.im
 Let's deploy [this ERC20 contract](https://github.com/pirapira/bamboo/blob/master/src/parse/examples/01b_erc20better.bbo) on the Ropsten test network.
 
 ```
-wget https://raw.githubusercontent.com/pirapira/bamboo/master/src/parse/examples/01b_erc20better.bbo
+$ wget https://raw.githubusercontent.com/pirapira/bamboo/master/src/parse/examples/01b_erc20better.bbo
 ```
 will get you a file `01b_erc20better.bbo`.  You can have a look now, but I'll explain the contents when we interact with the contract.
 
 Now,
 ```
-bamboo < 01b_erc20better.bbo > compiled.hex
+$ bamboo < 01b_erc20better.bbo > compiled.hex
 ```
 should store something in `compiled.hex` file.  You can have a look.  If you use it for anything serious, you should investigate `compiled.hex` here.  Since we are just playing on the test network, we go ahead deploying the compiled code.
 
 Also,
 ```
-bamboo --abi < 01b_erc20better.bbo > abi.json
+$ bamboo --abi < 01b_erc20better.bbo > abi.json
 ```
 will get you a JSON file `abi.json` that describes the interface of this Ethereum contract.
 
@@ -54,7 +54,7 @@ The Ropsten network is a test network for Ethereum.  The balances and accounts a
 
 We use `go-ethereum`.  [Install go-ethereum](https://ethereum.github.io/go-ethereum/install/) somehow and run
 ```
-build/bin/geth console --testnet --fast --bootnodes "enode://20c9ad97c081d63397d7b685a412227a40e23c8bdc6688c6f37e97cfbc22d2b4d1db1510d8f61e6a8866ad7f0e17c02b14182d37ea7c3c8b9c2683aeb6b733a1@52.169.14.227:30303,enode://6ce05930c72abc632c58e2e4324f7c7ea478cec0ed4fa2528982cf34483094e9cbc9216e7aa349691242576d552a2a56aaeae426c5303ded677ce455ba1acd9d@13.84.180.240:30303"
+$ build/bin/geth console --testnet --fast --bootnodes "enode://20c9ad97c081d63397d7b685a412227a40e23c8bdc6688c6f37e97cfbc22d2b4d1db1510d8f61e6a8866ad7f0e17c02b14182d37ea7c3c8b9c2683aeb6b733a1@52.169.14.227:30303,enode://6ce05930c72abc632c58e2e4324f7c7ea478cec0ed4fa2528982cf34483094e9cbc9216e7aa349691242576d552a2a56aaeae426c5303ded677ce455ba1acd9d@13.84.180.240:30303"
 ```
 
 When you are still seeing something like
