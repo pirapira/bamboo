@@ -167,12 +167,27 @@ Otherwise, when the evaluation point in the current pending execution state is a
 
 Otherwise, when the evaluation point in the current pending execution state is an `if (C) then B0 else B1` sentence, where `C` is an expression, `B0` is a block and `B1` is another block, the evaluation point is set to `C` if the annotating function does not map `C` to anything.  Otherwise, when the annotation function maps `C` to zero, the evaluation point advances into `B1` (TODO: define what it is that the evaluation point advances into a block).  Even otherwise, when the annotation function maps `C` to a non-zero value, the evaluation point advances into `B0`.  When the annotation function maps `C` to something else, the Bamboo compiler is broken.
 
+Otherwise, when the evaluation point in the current pending execution state is a `log E(e0, e1, ..., en)` sentence, if the annotation function maps any `ek` to nothing, the first such argument becomes the evaluation point.  Otherwise, the evaluation point moves advances from this sentence.  (TODO: define what it is for an evaluation point to advance.)
+
 Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.
 
 Otherwise, when the evaluation point in the currrent pending execution is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating function now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
 
-(WARNING: maybe polish the existing contents before adding more syntactic elements listed below.)
+## Adding Mappings
 
-(TODO: add mapping assignments)
+Sometimes, a contract contains a mapping.  For example, when a contract in the source code looks like
+```
+A(address => uint256 balances) { ... }
+```
+The permapnent state associates a value for `balances`.  Moreover, the permanent state contains a grand mapping that takes two values and return a value.  This grand mapping `M` is common to all mappings in the permanent state.  When `balances[3]` is looked up, actually, `M(balances, 3)` is looked up.  When a program is deployed, the grand mapping in the permanent state maps everything to zero.  Moreover, the permanent state contains a value called the array seed.
 
-(TODO: add `LOG`)
+When the program is deployed, the initial permanent state associates `balances` to one, and the array seed is two.  In general, when a contract contains `n` mappings, the initial permanent state associates these mappings to `1`, `2`, ..., `n`.  Moreover, the initial permanent state has the array seed `n + 1`.
+
+When the evaluation point is an assignment to a mapping `m[idx0][idx1]...[idx_k] = V`, the program looks up the annotating function for `m[idx0][idx1]...[idx_k - 1]`.  If the annotating function does not map this part to anything, `m[idx0][idx1]...[idx_k - 1]` becomes the evaluation point.  Otherwise, if the annotating function does not map `idx_k` to anything, `idx_k` becomes the evaluation point.  Otherwise, if the annotating function does not map `V` to anything, `V` becomes the evaluation point.  Otherwise, when all of these are mapped to some value, the grand mapping is updated to map the evaluation of `m[idx0]...[idx_k - 1]` and `idx_k` into the evaluation of `V`, and the evaluation point advances from the assignment sentence.
+
+When the evaluation point is a mapping lookup `m[idx]`, the program looks up the annotating function for `m`. If the annotating function does not map `m` to anything, `m` becomes the evaluation point.
+Otherwise, if the annotating function maps `m` to zero, the program assigns a seed to `m` (see below for what it is for a program to assign a seed to `m`).
+Otherwise, if the annotating function does not map `idx` to anything, the evaluation point becomes `idx`.
+Otherwise, the annotating funciton is updated to map `m[idx]` to `M(<<m>>, <<idx>>)` where `<<m>>` and `<<idx>>` are the values that the annotation function returns for `m` and `idx`, and the evaluation point is set to the surrounding expression or sentence.
+
+When the program assigns a new array seed to `m[idx]`, the grand mapping function is updated so that `M(<<m>>, <<idx>>)` is the array seed, where `<<m>>` and `<<idx>>` represents the values that the annotation function maps `m` and `idx` into.  Then, the array seed is incremented.  When the annotation function does not map `m` or `idx` to any value, the Bamboo compiler is broken.
