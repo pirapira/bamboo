@@ -36,7 +36,7 @@ In general, a program needs to decide on a move after any sequence of moves that
 
 The program's state has three components: a persistent state, a `killed` flag, and pending execution states.  When the game is `n`-running, the program's state contains `n` pending execution states.
 
-A persistent state is a name of the contract followed by its arguments.
+A persistent state is either the special aborting element or a name of the contract followed by its arguments.
 
 In the simple case, when the source code says
 ```
@@ -170,18 +170,26 @@ Otherwise, when the evaluation point in the current pending execution state is a
 
 Otherwise, when the evaluation point in the current pending execution state is a `log E(e0, e1, ..., en)` sentence, if the annotation function maps any `ek` to nothing, the last such argument becomes the evaluation point.  Otherwise, the evaluation point moves advances from this sentence (see below for what it is for an evaluation point to advance).
 
-Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.
+Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.  (When the program has been called from a Bamboo program, the world then returns into that Bamboo program, not failing into it.)
 
 Otherwise, when the evaluation point in the currrent pending execution state is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating functio
 n now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
 
-Otherwise, when the evaluation point in the current pending execution state is a call `C.m(E1, E2, ...,E_n)`, if the annotating function does not map `C` to anything, the evaluation point is set to `C`.  Otherwise, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program calls an accout of address, specified by the annotation of `C`.  The call is on a named case `m` (TODO: for completing this clause, we need some information about the types of arguments of `m`.  We need some information in the persistent state), together with annotations of `E1`, ... `E_n`.
+Otherwise, when the evaluation point in the current pending execution state is a call `C.m(E1, E2, ...,E_n) reentrance { abort; }`, if the annotating function does not map `C` to anything, the evaluation point is set to `C`.  Otherwise, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program calls an accout of address, specified by the annotation of `C`.  The call is on a named case `m` (TODO: for completing this clause, we need some information about the types of arguments of `m`.  We need some information in the persistent state), together with annotations of `E1`, ... `E_n`.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
 
-Otherwise, when the evaluation point in the current pending execution state is a deployment `deploy C(E1, E2, E_n)`, if the annotation funciton maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program deploys the contract `C` with a packing of annotations of `E_k`s.  If the contract `C` does not appear in the source code, the Bamboo compiler is broken.
+Otherwise, when the evaluation point in the current pending execution state is a deployment `deploy C(E1, E2, E_n) reentrance { abort; }`, if the annotation funciton maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program deploys the contract `C` with a packing of annotations of `E_k`s.  If the contract `C` does not appear in the source code, the Bamboo compiler is broken.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
 
 ## How to advance an evaluation point
 
 When an evaluation point advances from a sentence, if the sentence belongs to a case's body, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, if the sentence belongs to a case's body but there is no next sentence, the Bamboo compiler has an error. Otherwise, when the sentence belongs to a block, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, when the sentence belongs to a block and there is no next sentence, the evaluation point advances from the sentence containing the block.
+
+## When the World returns into the Program
+
+When the world returns into the program but the program's state does not contain any pending execution state, something is very wrong in this document.  Otherwise, the program can find the last element in the list of pending execution state in the program's state.  This element is removed from the program's state and becomes the current pending execution state.  The execution continues according to the execution point in the current pending execution state.
+
+## When the World fails into the Program
+
+The program fails as well.
 
 ## Adding Mappings
 
