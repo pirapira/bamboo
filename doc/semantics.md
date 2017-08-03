@@ -19,17 +19,17 @@ The program can make the following four kinds of moves:
 * failing
 * destroying itself
 
-The game is somehow structured.  After a move, the program can be running with `n`-times nesting.
+A sequence of moves can be equipped with a number called the nesting.
 
-Initially, when the program is deployed, the program is not running (or running with 0-times nesting).  When the program is not running, the world can only call the account.
+Initially, when the program is deployed, the program is not running (or running with 0-times nesting).  When the program is not running, the world can only call the program.
 
-When the world calls the account, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
+When the world calls the program, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
 
 From the above sentences, you should be able to prove that the nesting never goes below zero.
 
 ### Bamboo's Strategy
 
-In general, a program needs to specify its move after any sequence of moves.  However, Bamboo does not remember the history as a whole, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the remaining program's state for the later use.
+In general, a program needs to decide on a move after any sequence of moves that ends with a world's move.  However, Bamboo does not remember the whole sequence of moves, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the stored program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the remaining program's state for the later use.
 
 ### Bamboo's Program State
 
@@ -50,7 +50,7 @@ contract B (uint totalSupply)
 ```
 the program's state can be `B(0)`, `B(3000)` or `B(<any uint256 value>)`.  However, `B()` is not a program state.  `B(1,2)` is not a persistent state either.
 
-#### An example of Persistent States
+### An example of Persistent States
 
 Let's consider one Bamboo source code, which contains three contracts:
 ```
@@ -73,11 +73,11 @@ contract C() {
 
 When this souce code is compiled and deployed, we get a program whose state consists of a persistent state and no pending execution states.  The initial persistent state is `A()`.  The initial `killed` flag is `false`.
 
-When the world calls the program, the program returns, leaving the program's state `B()`.  This is described in `return then become B()`.
+When the world calls the program, the program might return, leaving the persistent state `B()`; intuitively, that's the meaning of `return then become B()`.  Otherwise, the program fails, leaving the persistent state as `A()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program returns, leaving the program's state `C()`.  This is described in `return then become C()`.
+When the world again calls the program, the program might return, leaving the persistent state `C()`; intuitively, that's the meaning of `return then become C()`. Otherwise, the prorgram fails, leaving the persistent state as `B()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program destroys itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag remains `true`.
+When the world again calls the program, the program might destroy itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag remains `true`.  Again, there is a possibility that the program fails, leaving the persistent state as `C()` and the `killed` flag `false` (this possibility comes from EVM's out-of-gas).
 
 ### What happens after selfdestruction
 
@@ -121,7 +121,7 @@ Anyway, when the world calls the program, the program first looks up the source 
 
 Moreover, if the persistent state of the program contains `killed` flag being true, the program returns or fails at random (the EVM knows if there is enough gas to execute `STOP`, but Bamboo semantics is not aware of the EVM's choice).
 
-### The world can call the default case.
+### The world can call the default case
 
 If such a contract is found in the source code, and if the world has called the default case, the program then looks for the `default` case in the contract.  If there is none, the program fails.  If there are more than one `default` case, the Bamboo compiler is broken (TODO: make sure that the compiler refused multiple `default` cases: issue [#171](https://github.com/pirapira/bamboo/issues/171)).  If there is one such `default` case, the `default` case contains a list of sentences.  If the list of sentences is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.
 
@@ -141,11 +141,11 @@ These types are just meaningless symbols.
 
 A value is a sequence of 32 bytes.
 
-When the world calls a named case, the program looks up the source code for the contract specified in the permanent state.  If the contract is not found, the Bamboo compiler is broken.  If multiple contracts are found, the Bamboo compiler is also broken.
+When the world calls a named case, the program looks up the source code for the contract specified in the permanent state.  If the contract is not found, the Bamboo compiler is broken.  If multiple contracts are found matching the permanent state, the Bamboo compiler is also broken.
 
 The program searches the contract in the source code for a case that matches the world's call.  For instance, when the world specified a named case `f(uint256, bool, address)`, the case `case (f (uint256 x, bool y, address z))` is a matching case.  When there are no cases that match the world's call, the program proceeds as if the world specified the default case.  If there are multiple cases that match the world's call, the Bamboo compiler is broken.
 
-The case contains a list of sentences.  If the list is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.
+The case contains a list of sentences.  If the list is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.  To clarify the first-last direction, the first sentence is the closest to the case's header.
 
 If the world's call contains more values than ABI types, the program fails.  If the world's call contains fewer values then ABI types, the program also fails.  Otherwise, a variable environment is formed in a straightforward way (TODO: explain).
 
@@ -155,15 +155,15 @@ The combination of the evaluation point, the variable environment, and the empty
 
 When there is a current pending execution, there is always a possibility that the program fails immediately.  This is because of the underlying EVM mechanism can run out of gas, but Bamboo is not aware of this mechanism.  From this document, the program just fails at any moment randomly.
 
-Moreover, when the evaluation point in the current pending execution is `abort;` sentence, the program certainly fails.
+Moreover, when the evaluation point in the current pending execution is an `abort;` sentence, the program certainly fails.
 
-Otherwise, when the evaluation point in the current pending execution is `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leave the persistent state specified by the annotation function.
+Otherwise, when the evaluation point in the current pending execution is a `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leave the persistent state specified by the annotation function.
 
-Otherwise, when the evaluation point in the current pending execution is `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
+Otherwise, when the evaluation point in the current pending execution is a `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
 
-Otherwise, when the evaluation point in the current pending execution is `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (TODO: define how an evaluation point advances from a sentence in the source code).
+Otherwise, when the evaluation point in the current pending execution is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (TODO: define how an evaluation point advances from a sentence in the source code).
 
-Otherwise, when the evaluation point in the current pending execution is `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution is discarded.  The `killed` flag is set in the persistent state.
+Otherwise, when the evaluation point in the current pending execution is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution is discarded.  The `killed` flag is set in the persistent state.
 
 Otherwise, when the evaluation point in the currrent pending execution is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating function now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
 
