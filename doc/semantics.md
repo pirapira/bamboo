@@ -1,6 +1,6 @@
 # Bamboo Semantics Sketch
 
-This document describes the semantics of the Bamboo language.  This is an informal sketch written as a preparation for the coming Coq code.
+This document describes the semantics of the Bamboo language.  This is an informal sketch written as a preparation for the coming Coq or K code.
 
 ## Overview
 
@@ -13,8 +13,9 @@ The world can make the following three kinds of moves:
 * returning into the program
 * failing into the program
 
-The program can make the following four kinds of moves:
+The program can make the following five kinds of moves:
 * calling an account
+* deploying code
 * returning
 * failing
 * destroying itself
@@ -23,7 +24,7 @@ A sequence of moves can be equipped with a number called the nesting.
 
 Initially, when the program is deployed, the program is not running (or running with 0-times nesting).  When the program is not running, the world can only call the program.
 
-When the world calls the program, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
+When the world calls the program or deploys code, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
 
 From the above sentences, you should be able to prove that the nesting never goes below zero.
 
@@ -161,17 +162,26 @@ Otherwise, when the evaluation point in the current pending execution state is a
 
 Otherwise, when the evaluation point in the current pending execution state is a `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
 
-Otherwise, when the evaluation point in the current pending execution state is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (TODO: define how an evaluation point advances from a sentence in the source code).
+Otherwise, when the evaluation point in the current pending execution state is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (see below for how an evaluation point advances from a sentence in the source code).
 
-Otherwise, when the evaluation point in the current pending execution state is a `TYPE V = X` where `TYPE` is a name of a type, `V` is an identifier and `X` is an expression, if the annotating functiohn does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, if the annotating function maps `X` to a value, the variable environment is updated to map `V` to the value, and the evaluation point advances from this sentence.  (TODO: define what it is that the evaluation point advances.)
+Otherwise, when the evaluation point in the current pending execution state is a `TYPE V = X` where `TYPE` is a name of a type, `V` is an identifier and `X` is an expression, if the annotating functiohn does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, if the annotating function maps `X` to a value, the variable environment is updated to map `V` to the value, and the evaluation point advances from this sentence (see below for  what it is that the evaluation point advances).
 
-Otherwise, when the evaluation point in the current pending execution state is an `if (C) then B0 else B1` sentence, where `C` is an expression, `B0` is a block and `B1` is another block, the evaluation point is set to `C` if the annotating function does not map `C` to anything.  Otherwise, when the annotation function maps `C` to zero, the evaluation point advances into `B1` (TODO: define what it is that the evaluation point advances into a block).  Even otherwise, when the annotation function maps `C` to a non-zero value, the evaluation point advances into `B0`.  When the annotation function maps `C` to something else, the Bamboo compiler is broken.
+Otherwise, when the evaluation point in the current pending execution state is an `if (C) then B0 else B1` sentence, where `C` is an expression, `B0` is a block and `B1` is another block, the evaluation point is set to `C` if the annotating function does not map `C` to anything.  Otherwise, when the annotation function maps `C` to zero, the evaluation point advances into `B1` (see below for what it is that the evaluation point advances into a block).  Even otherwise, when the annotation function maps `C` to a non-zero value, the evaluation point advances into `B0`.  When the annotation function maps `C` to something else, the Bamboo compiler is broken.
 
-Otherwise, when the evaluation point in the current pending execution state is a `log E(e0, e1, ..., en)` sentence, if the annotation function maps any `ek` to nothing, the first such argument becomes the evaluation point.  Otherwise, the evaluation point moves advances from this sentence.  (TODO: define what it is for an evaluation point to advance.)
+Otherwise, when the evaluation point in the current pending execution state is a `log E(e0, e1, ..., en)` sentence, if the annotation function maps any `ek` to nothing, the last such argument becomes the evaluation point.  Otherwise, the evaluation point moves advances from this sentence (see below for what it is for an evaluation point to advance).
 
 Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.
 
-Otherwise, when the evaluation point in the currrent pending execution is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating function now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
+Otherwise, when the evaluation point in the currrent pending execution state is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating functio
+n now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
+
+Otherwise, when the evaluation point in the current pending execution state is a call `C.m(E1, E2, ...,E_n)`, if the annotating function does not map `C` to anything, the evaluation point is set to `C`.  Otherwise, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program calls an accout of address, specified by the annotation of `C`.  The call is on a named case `m` (TODO: for completing this clause, we need some information about the types of arguments of `m`.  We need some information in the persistent state), together with annotations of `E1`, ... `E_n`.
+
+Otherwise, when the evaluation point in the current pending execution state is a deployment `deploy C(E1, E2, E_n)`, if the annotation funciton maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program deploys the contract `C` with a packing of annotations of `E_k`s.  If the contract `C` does not appear in the source code, the Bamboo compiler is broken.
+
+## How to advance an evaluation point
+
+When an evaluation point advances from a sentence, if the sentence belongs to a case's body, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, if the sentence belongs to a case's body but there is no next sentence, the Bamboo compiler has an error. Otherwise, when the sentence belongs to a block, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, when the sentence belongs to a block and there is no next sentence, the evaluation point advances from the sentence containing the block.
 
 ## Adding Mappings
 
