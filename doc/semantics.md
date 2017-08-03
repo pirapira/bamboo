@@ -125,7 +125,7 @@ Moreover, if the persistent state of the program contains `killed` flag being tr
 
 If such a contract is found in the source code, and if the world has called the default case, the program then looks for the `default` case in the contract.  If there is none, the program fails.  If there are more than one `default` case, the Bamboo compiler is broken (TODO: make sure that the compiler refused multiple `default` cases: issue [#171](https://github.com/pirapira/bamboo/issues/171)).  If there is one such `default` case, the `default` case contains a list of sentences.  If the list of sentences is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.
 
-The combination of the evaluation point, the empty variable environment, and the empty annotating function is kept as the current pending execution.
+The combination of the evaluation point, the empty variable environment, and the empty annotating function is kept as the current pending execution state.
 
 ### The world can call a named case
 
@@ -149,33 +149,29 @@ The case contains a list of sentences.  If the list is empty, the Bamboo compile
 
 If the world's call contains more values than ABI types, the program fails.  If the world's call contains fewer values then ABI types, the program also fails.  Otherwise, a variable environment is formed in a straightforward way (TODO: explain).
 
-The combination of the evaluation point, the variable environment, and the empty annotating function is kept as the current pending execution.
+The combination of the evaluation point, the variable environment, and the empty annotating function is kept as the current pending execution state.
 
-## When there is a current pending execution
+## When there is a current pending execution state
 
-When there is a current pending execution, there is always a possibility that the program fails immediately.  This is because of the underlying EVM mechanism can run out of gas, but Bamboo is not aware of this mechanism.  From this document, the program just fails at any moment randomly.
+When there is a current pending execution state, there is always a possibility that the program fails immediately.  This is because of the underlying EVM mechanism can run out of gas, but Bamboo is not aware of this mechanism.  From this document, the program just fails at any moment randomly.
 
-Moreover, when the evaluation point in the current pending execution is an `abort;` sentence, the program certainly fails.
+Moreover, when the evaluation point in the current pending execution state is an `abort;` sentence, the program certainly fails.
 
-Otherwise, when the evaluation point in the current pending execution is a `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leave the persistent state specified by the annotation function.
+Otherwise, when the evaluation point in the current pending execution state is a `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leave the persistent state specified by the annotation function.
 
-Otherwise, when the evaluation point in the current pending execution is a `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
+Otherwise, when the evaluation point in the current pending execution state is a `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
 
-Otherwise, when the evaluation point in the current pending execution is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (TODO: define how an evaluation point advances from a sentence in the source code).
+Otherwise, when the evaluation point in the current pending execution state is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (TODO: define how an evaluation point advances from a sentence in the source code).
 
-Otherwise, when the evaluation point in the current pending execution is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution is discarded.  The `killed` flag is set in the persistent state.
+Otherwise, when the evaluation point in the current pending execution state is a `TYPE V = X` where `TYPE` is a name of a type, `V` is an identifier and `X` is an expression, if the annotating functiohn does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, if the annotating function maps `X` to a value, the variable environment is updated to map `V` to the value, and the evaluation point advances from this sentence.  (TODO: define what it is that the evaluation point advances.)
+
+Otherwise, when the evaluation point in the current pending execution state is an `if (C) then B0 else B1` sentence, where `C` is an expression, `B0` is a block and `B1` is another block, the evaluation point is set to `C` if the annotating function does not map `C` to anything.  Otherwise, when the annotation function maps `C` to zero, the evaluation point advances into `B1` (TODO: define what it is that the evaluation point advances into a block).  Even otherwise, when the annotation function maps `C` to a non-zero value, the evaluation point advances into `B0`.  When the annotation function maps `C` to something else, the Bamboo compiler is broken.
+
+Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.
 
 Otherwise, when the evaluation point in the currrent pending execution is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating function now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
 
 (WARNING: maybe polish the existing contents before adding more syntactic elements listed below.)
-
-(TODO: add other kinds of expressions)
-
-(TODO: add `if`)
-
-(TODO: add `void = e;`)
-
-(TODO: add `uint x = e;`)
 
 (TODO: add mapping assignments)
 
