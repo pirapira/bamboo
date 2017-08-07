@@ -6,7 +6,7 @@ This document describes the semantics of the Bamboo language.  This is an inform
 
 ### Arena of the Game
 
-A program written in Bamboo, after deployed, participates in a game between the program and the world.  In this game, the world makes the first move, the program makes the second move, and so on alternatively.  Neither the world or the program makes two moves in a row.  This document aims at the choice of the program's move, given a sequence of earlier moves.
+A program written in Bamboo, after deployed, participates in a game between the program and the world.  In this game, the world makes the first move, the program makes the second move, and so on alternatively.  Neither the world or the program makes two moves in a row.  This document aims at  defining the choice of the program's move, given a sequence of earlier moves.
 
 The world can make the following three kinds of moves:
 * calling the program
@@ -22,15 +22,15 @@ The program can make the following five kinds of moves:
 
 A sequence of moves can be equipped with a number called the nesting.
 
-Initially, when the program is deployed, the program is not running (or running with 0-times nesting).  When the program is not running, the world can only call the program.
+The empty sequence is associated with zero-nesting.  Initially, when the program is deployed, the program is not running (or running with zero-nesting).  When the program is not running, the world can only call the program.
 
-When the world calls the program or deploys code, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
+When the world calls the program, the nesting increases by one.  When the program returns, fails, or destroys itself, the nesting decreases by one.
 
 From the above sentences, you should be able to prove that the nesting never goes below zero.
 
 ### Bamboo's Strategy
 
-In general, a program needs to decide on a move after any sequence of moves that ends with a world's move.  However, Bamboo does not remember the whole sequence of moves, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the stored program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the remaining program's state for the later use.
+In general, a program needs to decide on a move after any sequence of moves that ends with the world's move.  However, Bamboo does not remember the whole sequence of moves, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the stored program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the remaining program's state for the later use.
 
 ### Bamboo's Program State
 
@@ -49,7 +49,7 @@ In a more complicated example, when the source code says
 ```
 contract B (uint totalSupply)
 ```
-the program's state can be `B(0)`, `B(3000)` or `B(<any uint256 value>)`.  However, `B()` is not a program state.  `B(1,2)` is not a persistent state either.
+the program's state can be `B(0)`, `B(3000)` or `B(<any uint256 value>)`.  However, `B()` is not a program state.  `B(1,2)` is not a persistent state either because the number of arguments do not match the number of parameters in the source code.
 
 ### An example of Persistent States
 
@@ -74,11 +74,11 @@ contract C() {
 
 When this souce code is compiled and deployed, we get a program whose state consists of a persistent state and no pending execution states.  The initial persistent state is `A()`.  The initial `killed` flag is `false`.
 
-When the world calls the program, the program might return, leaving the persistent state `B()`; intuitively, that's the meaning of `return then become B()`.  Otherwise, the program fails, leaving the persistent state as `A()` (this possibility comes from EVM's out-of-gas).
+When the world calls the program, the program might return, leaving the persistent state `B()`; intuitively, that's the meaning of `return then become B()`.  Otherwise, there is a possibility that the program fails, leaving the persistent state as `A()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program might return, leaving the persistent state `C()`; intuitively, that's the meaning of `return then become C()`. Otherwise, the prorgram fails, leaving the persistent state as `B()` (this possibility comes from EVM's out-of-gas).
+When the world again calls the program, the program might return, leaving the persistent state `C()`; intuitively, that's the meaning of `return then become C()`. Otherwise, there is a possibility that the prorgram fails, leaving the persistent state as `B()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program might destroy itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag remains `true`.  Again, there is a possibility that the program fails, leaving the persistent state as `C()` and the `killed` flag `false` (this possibility comes from EVM's out-of-gas).
+When the world again calls the program, the program might destroy itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag `true`.  Again, there is a possibility that the program fails, leaving the persistent state as `C()` and the `killed` flag `false` (this possibility comes from EVM's out-of-gas).
 
 ### What happens after selfdestruction
 
@@ -88,6 +88,8 @@ After the program destroys itself, if the world calls the program, the program s
 
 People familiar with EVM semantics might ask what happens when the state changes are reverted.  The Bamboo semantics does not see the state reversion.  From a history in the EVM, you can pick up unreverted executions, and the Bamboo semantics can run there.
 
+(TODO: maybe I should not mention the possibilites that the program fails because of out-of-gas in EVM?)
+
 ## Pending Execution State
 
 As mentioned, a program's state contains a list of pending execution states.  Moreover, after the world makes a move and before the program makes a move, the abstract machine keeps track of the current pending execution state.
@@ -96,9 +98,9 @@ A pending execution state contains a evaluation point, a variable environment an
 
 ### An evaluation point
 
-Any pending execution state contains an evaluation point.  An evaluation point is either a sentence or an expression in the source code.  When identically looking expressions (or sentences) appear in the source code, they are considered different expressions (or sentences) if their locations are different.
+Any pending execution state contains an evaluation point.  An evaluation point is either a sentence or an expression in the source code.  When identically looking expressions (resp. sentences) appear in the source code, they are considered different expressions (resp. sentences) if their locations are different.
 
-A Bamboo source code is a list of contracts.  A contract contains a list of cases.  A list contains a list of sentences.  A sentence contains sentences and/or expressions.  An expression contains sentences and/or expressions.  The current evaluation point is either a sentence or an expression in the source code.  (TODO: there should be a separate document called Bamboo Syntax.)
+A Bamboo source code is a list of contracts.  A contract contains a list of cases.  A case contains a list of sentences.  A sentence contains sentences and/or expressions.  An expression contains sentences and/or expressions.  The current evaluation point is either a sentence or an expression in the source code.  (TODO: there should be a separate document called Bamboo Syntax.)
 
 ### A variable environment
 
@@ -154,7 +156,7 @@ The combination of the evaluation point, the variable environment, and the empty
 
 ## When there is a current pending execution state
 
-When there is a current pending execution state, there is always a possibility that the program fails immediately.  This is because of the underlying EVM mechanism can run out of gas, but Bamboo is not aware of this mechanism.  From this document, the program just fails at any moment randomly.
+When there is a current pending execution state, there is always a possibility that the program fails immediately.  This is because of the underlying EVM mechanism can run out of gas, but Bamboo is not aware of this mechanism.  From this document's view, the program just fails at any moment randomly.
 
 Moreover, when the evaluation point in the current pending execution state is an `abort;` sentence, the program certainly fails.
 
@@ -181,7 +183,7 @@ Otherwise, when the evaluation point in the current pending execution state is a
 
 ## How to advance an evaluation point
 
-When an evaluation point advances from a sentence, if the sentence belongs to a case's body, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, if the sentence belongs to a case's body but there is no next sentence, the Bamboo compiler has an error. Otherwise, when the sentence belongs to a block, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, when the sentence belongs to a block and there is no next sentence, the evaluation point advances from the sentence containing the block.
+When an evaluation point advances from a sentence, if the sentence belongs to a case's body, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, if the sentence belongs to a case's body but there is no next sentence, the Bamboo compiler has an error. Otherwise, when the sentence belongs to a block, and there is a next sentence, the next sentence becomes the evaluation point.  Otherwise, when the sentence belongs to a block and there is no next sentence, the evaluation point advances from the sentence containing the block.  Otherwise, when the sentence belongs to a sentence, the evaluation point advances from the containing sentence.
 
 ## When the World returns into the Program
 
@@ -197,7 +199,7 @@ Sometimes, a contract contains a mapping.  For example, when a contract in the s
 ```
 A(address => uint256 balances) { ... }
 ```
-The permapnent state associates a value for `balances`.  Moreover, the permanent state contains a grand mapping that takes two values and return a value.  This grand mapping `M` is common to all mappings in the permanent state.  When `balances[3]` is looked up, actually, `M(balances, 3)` is looked up.  When a program is deployed, the grand mapping in the permanent state maps everything to zero.  Moreover, the permanent state contains a value called the array seed.
+The permanent state associates a value for `balances`.  Moreover, the permanent state contains a grand mapping that takes two values and return a value.  This grand mapping `M` is common to all mappings in the permanent state.  When `balances[3]` is looked up, actually, `M(<<balances>>, 3)` is looked up (where `<<balances>>` is the value that he permanent state associates to `balances`).  When a program is deployed, the grand mapping in the permanent state maps everything to zero.  Moreover, the permanent state contains a value called the array seed.
 
 When the program is deployed, the initial permanent state associates `balances` to one, and the array seed is two.  In general, when a contract contains `n` mappings, the initial permanent state associates these mappings to `1`, `2`, ..., `n`.  Moreover, the initial permanent state has the array seed `n + 1`.
 
