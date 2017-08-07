@@ -1,0 +1,9 @@
+contract A() {
+   default {
+     abort;
+   }
+
+   default {
+     abort;
+   }
+}
