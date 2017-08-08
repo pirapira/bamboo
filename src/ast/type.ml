@@ -3,9 +3,10 @@ open Syntax
 
 let ident_lookup_type
       (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
-      (tenv : TypeEnv.type_env) id : typ exp =
+      (tenv : TypeEnv.type_env) id : (typ * SideEffect.t list) exp =
   match TypeEnv.lookup tenv id with
-  | Some typ -> (IdentifierExp id, typ)
+  | Some (typ, Some loc) -> (IdentifierExp id, (typ, [loc, SideEffect.Read]))
+  | Some (typ, None) -> (IdentifierExp id, (typ, []))
   | None -> failwith ("unknown identifier "^id)
   (* what should it return when it is a method name? *)
 
@@ -61,10 +62,10 @@ let call_arg_expectations (contract_interfaces : Contract.contract_interface Ass
      let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
      (fun x -> x = interface.Contract.contract_interface_args)
 
-let type_check ((exp : typ), ((_,t) : typ exp)) =
+let type_check ((exp : typ), ((_,(t, _)) : (typ * 'a) exp)) =
   assert (exp = t)
 
-let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : typ exp list) (call_head : string option) =
+let check_args_match (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (args : (typ * 'x) exp list) (call_head : string option) =
   let expectations : typ list -> bool =
     match call_head with
     | Some mtd ->
@@ -72,18 +73,28 @@ let check_args_match (contract_interfaces : Contract.contract_interface Assoc.co
     | None ->
        (fun x -> x = [])
   in
-  assert (expectations (List.map snd args))
+  assert (expectations (List.map (fun x -> (fst (snd x))) args))
 
-let typecheck_multiple (exps : typ list) (actual : typ exp list) =
-  List.for_all2 (fun e (_, a) -> e = a) exps actual
+let typecheck_multiple (exps : typ list) (actual : (typ * 'a) exp list) =
+  List.for_all2 (fun e (_, (a, _)) -> e = a) exps actual
+
+let check_only_one_side_effect (llst : SideEffect.t list list)  =
+  if List.length (List.filter (fun x -> x <> []) llst) > 1 then
+    failwith "more than one sub-expressions have side-effects"
+
+let has_no_side_effects (e : (typ * SideEffect.t list) exp) =
+  snd (snd e) = []
 
 let rec assign_type_call
       contract_interfaces
       cname
-      venv (src : unit function_call) : (typ function_call * typ) =
+      venv (src : unit function_call) : ((typ * SideEffect.t list) function_call * (typ * SideEffect.t list)) =
   let args' = List.map (assign_type_exp contract_interfaces cname venv)
                        src.call_args in
   let () = check_args_match contract_interfaces args' (Some src.call_head) in
+  let args_side_effects : SideEffect.t list list = List.map (fun (_, (_, s)) -> s) args' in
+  let () = check_only_one_side_effect args_side_effects in
+  let side_effects = (SideEffect.External, SideEffect.Write) :: List.concat args_side_effects in
   let ret_typ =
     match src.call_head with
     | "value" when true (* check the argument is 'msg' *) -> UintType
@@ -98,9 +109,9 @@ let rec assign_type_call
     in
   ({ call_head = src.call_head
      ; call_args = args' },
-   ret_typ)
+   (ret_typ, side_effects))
 and assign_type_message_info contract_interfaces cname tenv
-                             (orig : unit message_info) : typ message_info =
+                             (orig : unit message_info) : (typ * SideEffect.t list) message_info =
   let v' = BatOption.map (assign_type_exp contract_interfaces cname tenv)
                             orig.message_value_info in
   let block' = assign_type_sentences contract_interfaces cname tenv orig.message_reentrance_info in
@@ -110,13 +121,13 @@ and assign_type_message_info contract_interfaces cname tenv
 and assign_type_exp
       (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
       (cname : string)
-      (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : typ exp =
+      (venv : TypeEnv.type_env) ((exp_inner, ()) : unit exp) : (typ * SideEffect.t list) exp =
   match exp_inner with
-  | ThisExp -> (ThisExp, ContractInstanceType cname)
-  | TrueExp -> (TrueExp, BoolType)
-  | FalseExp -> (FalseExp, BoolType)
-  | SenderExp -> (SenderExp, AddressType)
-  | NowExp -> (NowExp, UintType)
+  | ThisExp -> (ThisExp, (ContractInstanceType cname, []))
+  | TrueExp -> (TrueExp, (BoolType, []))
+  | FalseExp -> (FalseExp, (BoolType, []))
+  | SenderExp -> (SenderExp, (AddressType, []))
+  | NowExp -> (NowExp, (UintType, []))
   | FunctionCallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
      (FunctionCallExp c', typ)
@@ -135,44 +146,61 @@ and assign_type_exp
      let () =
        if BatString.starts_with contract_name "pre_" then
          failwith "names that start with pre_ are reserved" in
-     (NewExp n', ContractInstanceType contract_name)
+     (NewExp n', (ContractInstanceType contract_name, [SideEffect.External, SideEffect.Write]))
   | LandExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let () = type_check (BoolType, l) in
      let r = assign_type_exp contract_interfaces cname venv r in
      let () = type_check (BoolType, r) in
-     (LandExp (l, r), BoolType)
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     (LandExp (l, r), (BoolType, List.concat sides))
   | LtExp (l, r) ->
-     let l' = assign_type_exp contract_interfaces cname venv l in
-     let r' = assign_type_exp contract_interfaces cname venv r in
-     let () = assert (snd l' = snd r') in
-     (LtExp (l', r'), BoolType)
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     let () = assert (fst (snd l) = fst (snd r)) in
+     (LtExp (l, r), (BoolType, List.concat sides))
   | GtExp (l, r) ->
      let l' = assign_type_exp contract_interfaces cname venv l in
      let r' = assign_type_exp contract_interfaces cname venv r in
-     let () = assert (snd l' = snd r') in
-     (GtExp (l', r'), BoolType)
+     let () = assert (fst (snd l') = fst (snd r')) in
+     let sides = (List.map (fun (_, (_, x)) -> x) [l'; r']) in
+     let () = check_only_one_side_effect sides in
+     (GtExp (l', r'), (BoolType, List.concat sides))
   | NeqExp (l, r) ->
-     let l' = assign_type_exp contract_interfaces cname venv l in
-     let r' = assign_type_exp contract_interfaces cname venv r in
-     (NeqExp (l', r'), BoolType)
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (fst (snd l) = fst (snd r)) in
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     (NeqExp (l, r), (BoolType, List.concat sides))
   | EqualityExp (l, r) ->
-     let l' = assign_type_exp contract_interfaces cname venv l in
-     let r' = assign_type_exp contract_interfaces cname venv r in
-     (EqualityExp (l', r'), BoolType)
+     let l = assign_type_exp contract_interfaces cname venv l in
+     let r = assign_type_exp contract_interfaces cname venv r in
+     let () = assert (fst (snd l) = fst (snd r)) in
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     (EqualityExp (l, r), (BoolType, List.concat sides))
   | PlusExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
      let () = if (snd l <> snd r) then
-                (Printf.printf "%s %s\n%!" (string_of_typ (snd l)) (string_of_typ (snd r)))
+                (Printf.printf "%s %s\n%!" (string_of_typ (fst (snd l)))
+                               (string_of_typ (fst (snd r))))
      in
-     let () = assert (snd l = snd r) in
-     (PlusExp (l, r), snd l)
+     let () = assert (fst (snd l) = fst (snd r)) in
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     (PlusExp (l, r), (fst (snd l), List.concat sides))
   | MinusExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
      let () = assert (snd l = snd r) in
-     (MinusExp (l, r), snd l)
+     let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
+     let () = check_only_one_side_effect sides in
+     (MinusExp (l, r), (fst (snd l), List.concat sides))
   | MultExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
@@ -180,26 +208,28 @@ and assign_type_exp
      (MultExp (l, r), snd l)
   | NotExp negated ->
      let negated = assign_type_exp contract_interfaces cname venv negated in
-     let () = assert (snd negated = BoolType) in
-     (NotExp negated, BoolType)
+     let () = assert (fst (snd negated) = BoolType) in
+     (NotExp negated, (BoolType, snd (snd negated)))
   | AddressExp inner ->
      let inner' = assign_type_exp contract_interfaces cname venv inner in
-     (AddressExp inner', AddressType)
+     (AddressExp inner', (AddressType, snd (snd inner')))
   | BalanceExp inner ->
      let inner = assign_type_exp contract_interfaces cname venv inner in
-     let () = assert (acceptable_as AddressType (snd inner)) in
-     (BalanceExp inner, UintType)
+     let () = assert (acceptable_as AddressType (fst (snd inner))) in
+     let () = assert (snd (snd inner) = []) in
+     (BalanceExp inner, (UintType, [SideEffect.External, SideEffect.Read]))
   | ArrayAccessExp aa ->
      let atyped = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_array in
-     begin match snd atyped with
+     begin match fst (snd atyped) with
      | MappingType (key_type, value_type) ->
-        let (idx', idx_typ') = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
+        let (idx', (idx_typ', idx_side')) = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
         let () = assert (acceptable_as key_type idx_typ') in
+        let () = assert (BatList.for_all (fun x -> x = (SideEffect.Storage, SideEffect.Read)) idx_side') in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
         (ArrayAccessExp (ArrayAccessLExp
            { array_access_array = atyped
-           ; array_access_index = (idx', idx_typ')
-           }), value_type)
+           ; array_access_index = (idx', (idx_typ', idx_side'))
+           }), (value_type, [SideEffect.Storage, SideEffect.Read]))
      | _ -> failwith "index access has to be on mappings"
      end
   | SendExp send ->
@@ -217,18 +247,20 @@ and assign_type_exp
           end
         in
         let types = Ethereum.(List.map to_typ (method_sig.sig_return)) in
-        let reference =
+        let args = List.map (assign_type_exp contract_interfaces cname venv)
+                                     send.send_args in
+        let () = assert (BatList.for_all has_no_side_effects args) in
+        let reference : (Syntax.typ * SideEffect.t list) exp =
           ( SendExp
               { send_head_contract = contract'
               ; send_head_method = send.send_head_method
-              ; send_args = List.map (assign_type_exp contract_interfaces cname venv)
-                                     send.send_args
+              ; send_args = args
               ; send_msg_info = msg_info'
               },
-            ReferenceType types
+            (ReferenceType types, [SideEffect.External, SideEffect.Write])
           ) in
         (match types with
-         | [single] -> (SingleDereferenceExp reference, single)
+         | [single] -> (SingleDereferenceExp reference, (single, [SideEffect.External, SideEffect.Write]))
          | _ -> reference)
      | None ->
         let () = assert (send.send_args = []) in
@@ -237,10 +269,10 @@ and assign_type_exp
             ; send_head_method = None
             ; send_args = []
             ; send_msg_info = msg_info'
-            }, VoidType )
+            }, (VoidType, [SideEffect.External, SideEffect.Write]) )
      end
   | ValueExp ->
-     (ValueExp, UintType)
+     (ValueExp, (UintType, []))
   | SingleDereferenceExp _
   | TupleDereferenceExp _ ->
      failwith "DereferenceExp not supposed to appear in the raw tree for now"
@@ -248,7 +280,7 @@ and assign_type_new_exp
       contract_interfaces
       (cname : string)
       (tenv : TypeEnv.type_env)
-      (e : unit new_exp) : (typ new_exp * string (* name of the contract just created *)) =
+      (e : unit new_exp) : ((typ * SideEffect.t list) new_exp * string (* name of the contract just created *)) =
   let msg_info' = assign_type_message_info contract_interfaces
                                            cname tenv e.new_msg_info in
   let args' = List.map (assign_type_exp contract_interfaces cname tenv) e.new_args in
@@ -264,12 +296,12 @@ and assign_type_new_exp
 and assign_type_lexp
       contract_interfaces
       (cname : string)
-      venv (src : unit lexp) : typ lexp =
+      venv (src : unit lexp) : (typ * SideEffect.t list) lexp =
   (* no need to type the left hand side? *)
   match src with
   | ArrayAccessLExp aa ->
      let atyped = assign_type_exp contract_interfaces cname venv aa.array_access_array in
-     begin match snd atyped with
+     begin match fst (snd atyped) with
      | MappingType (key_type, value_type) ->
         let (idx', idx_typ') = assign_type_exp contract_interfaces
                                                cname venv
@@ -284,18 +316,18 @@ and assign_type_return
       (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
       (cname : string)
       (tenv : TypeEnv.type_env)
-      (src : unit return) : typ return =
+      (src : unit return) : (typ * SideEffect.t list) return =
   let exps = BatOption.map (assign_type_exp contract_interfaces
                                    cname tenv) src.return_exp in
   let f = TypeEnv.lookup_expected_returns tenv in
-  let () = assert (f (BatOption.map snd exps)) in
+  let () = assert (f (BatOption.map (fun x -> (fst (snd x))) exps)) in
   { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
 and type_variable_init
       contract_interfaces cname tenv (vi : unit variable_init) :
-      (typ variable_init * TypeEnv.type_env) =
+      ((typ * SideEffect.t list) variable_init * TypeEnv.type_env) =
   (* This function has to enlarge the type environment *)
   let value' = assign_type_exp contract_interfaces
                                cname tenv vi.variable_init_value in
@@ -305,7 +337,7 @@ and type_variable_init
       failwith "names that start with pre_ are reserved" in
   let added_typ = vi.variable_init_type in
   let () = assert (is_known_type contract_interfaces added_typ) in
-  let new_env = TypeEnv.add_pair tenv added_name added_typ in
+  let new_env = TypeEnv.add_pair tenv added_name added_typ None in
   let new_init =
     { variable_init_type = added_typ
     ; variable_init_name = added_name
@@ -317,7 +349,7 @@ and assign_type_sentence
       (cname : string)
       (venv : TypeEnv.type_env)
       (src : unit sentence) :
-      (typ sentence * TypeEnv.type_env (* updated environment *)) =
+      ((typ * SideEffect.t list) sentence * TypeEnv.type_env (* updated environment *)) =
   match src with
   | AbortSentence -> (AbortSentence, venv)
   | ReturnSentence r ->
@@ -347,7 +379,8 @@ and assign_type_sentence
      (VariableInitSentence vi', venv')
   | ExpSentence exp ->
      let exp = assign_type_exp contract_interfaces cname venv exp in
-     let () = assert (snd exp = VoidType) in
+     let () = assert (fst (snd exp) = VoidType) in
+     let () = assert (BatList.exists (fun (_, x) -> x = SideEffect.Write) (snd (snd exp))) in
      (ExpSentence exp, venv)
   | LogSentence (name, args, _) ->
      let args = List.map (assign_type_exp contract_interfaces cname venv) args in
@@ -355,13 +388,15 @@ and assign_type_sentence
      let type_expectations =
        List.map (fun ea -> Syntax.(ea.event_arg_body.arg_typ)) event.Syntax.event_arguments in
      let () = assert (typecheck_multiple type_expectations args) in
+     let side_effects = List.map (fun (_, (_, a)) -> a) args in
+     let () = check_only_one_side_effect side_effects in
      (LogSentence (name, args, Some event), venv)
 
 and assign_type_sentences
           (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
           (cname : string)
           (type_environment : TypeEnv.type_env)
-          (ss : unit sentence list) : typ sentence list =
+          (ss : unit sentence list) : (typ * SideEffect.t list) sentence list =
   match ss with
   | [] -> []
   | first_s :: rest_ss ->
@@ -458,7 +493,7 @@ let has_distinct_signatures (c : unit Syntax.contract) : bool =
 let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_assoc)
                          (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
-      Syntax.typ Syntax.contract =
+      (Syntax.typ * SideEffect.t list) Syntax.contract =
   let () = assert (BatList.for_all (arg_has_known_type env) raw.contract_arguments) in
   let () = assert (has_distinct_signatures raw) in
   let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
@@ -477,12 +512,138 @@ let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_as
 let assign_type_toplevel (interfaces : Contract.contract_interface Assoc.contract_id_assoc)
                          (events : event Assoc.contract_id_assoc)
                          (raw : unit Syntax.toplevel) :
-      Syntax.typ Syntax.toplevel =
+      (Syntax.typ * SideEffect.t list) Syntax.toplevel =
   match raw with
   | Contract c ->
      Contract (assign_type_contract interfaces events c)
   | Event e ->
      Event e
+
+(* XXX: these [strip_side_effects_X] should be generalized over any f : 'a -> 'b *)
+
+let rec strip_side_effects_sentence (raw : (typ * 'a) sentence) : typ sentence =
+  match raw with
+  | AbortSentence -> AbortSentence
+  | ReturnSentence ret -> ReturnSentence (strip_side_effects_return ret)
+  | AssignmentSentence (l, r) ->
+     AssignmentSentence (strip_side_effects_lexp l, strip_side_effects_exp r)
+  | VariableInitSentence v ->
+     VariableInitSentence (strip_side_effects_variable_init v)
+  | IfThenOnly (e, block) ->
+     IfThenOnly (strip_side_effects_exp e, strip_side_effects_case_body block)
+  | IfThenElse (e, b0, b1) ->
+     IfThenElse ((strip_side_effects_exp e), (strip_side_effects_case_body b0),
+                 (strip_side_effects_case_body b1))
+  | SelfdestructSentence e ->
+     SelfdestructSentence (strip_side_effects_exp e)
+  | ExpSentence e ->
+     ExpSentence (strip_side_effects_exp e)
+  | LogSentence (str, args, eopt) ->
+     LogSentence (str, List.map strip_side_effects_exp args, eopt)
+and strip_side_effects_variable_init v =
+  { variable_init_type = v.variable_init_type
+  ; variable_init_name = v.variable_init_name
+  ; variable_init_value = strip_side_effects_exp v.variable_init_value
+  }
+and strip_side_effects_aa aa =
+  { array_access_array = strip_side_effects_exp aa.array_access_array
+  ; array_access_index = strip_side_effects_exp aa.array_access_index
+  }
+and strip_side_effects_lexp lexp =
+  match lexp with
+  | ArrayAccessLExp aa ->
+     ArrayAccessLExp (strip_side_effects_aa aa)
+and strip_side_effects_exp (i, (t, _)) =
+  (strip_side_effects_exp_inner i, t)
+and strip_side_effects_function_call fc =
+  { call_head = fc.call_head
+  ; call_args = List.map strip_side_effects_exp fc.call_args
+  }
+and strip_side_effects_msg_info m =
+  { message_value_info = BatOption.map strip_side_effects_exp m.message_value_info
+  ; message_reentrance_info =
+      List.map strip_side_effects_sentence m.message_reentrance_info
+  }
+and strip_side_effects_send s =
+  { send_head_contract = strip_side_effects_exp s.send_head_contract
+  ; send_head_method = s.send_head_method
+  ; send_args = List.map strip_side_effects_exp s.send_args
+  ; send_msg_info = strip_side_effects_msg_info s.send_msg_info
+  }
+and strip_side_effects_new_exp n =
+  { new_head = n.new_head
+  ; new_args = List.map strip_side_effects_exp n.new_args
+  ; new_msg_info = strip_side_effects_msg_info n.new_msg_info
+  }
+and strip_side_effects_exp_inner i =
+  match i with
+  | TrueExp -> TrueExp
+  | FalseExp -> FalseExp
+  | NowExp -> NowExp
+  | FunctionCallExp fc ->
+     FunctionCallExp (strip_side_effects_function_call fc)
+  | IdentifierExp str ->
+     IdentifierExp str
+  | ParenthExp e ->
+     ParenthExp (strip_side_effects_exp e)
+  | NewExp e ->
+     NewExp (strip_side_effects_new_exp e)
+  | SendExp send ->
+     SendExp (strip_side_effects_send send)
+  | LandExp (a, b) ->
+     LandExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | LtExp (a, b) ->
+     LtExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | GtExp (a, b) ->
+     GtExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | NeqExp (a, b) ->
+     NeqExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | EqualityExp (a, b) ->
+     EqualityExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | AddressExp a ->
+     AddressExp (strip_side_effects_exp a)
+  | NotExp e ->
+     NotExp (strip_side_effects_exp e)
+  | ArrayAccessExp l ->
+     ArrayAccessExp (strip_side_effects_lexp l)
+  | ValueExp -> ValueExp
+  | SenderExp -> SenderExp
+  | ThisExp -> ThisExp
+  | SingleDereferenceExp e ->
+     SingleDereferenceExp (strip_side_effects_exp e)
+  | TupleDereferenceExp e ->
+     TupleDereferenceExp (strip_side_effects_exp e)
+  | PlusExp (a, b) ->
+     PlusExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | MinusExp (a, b) ->
+     MinusExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | MultExp (a, b) ->
+     MultExp (strip_side_effects_exp a, strip_side_effects_exp b)
+  | BalanceExp e ->
+     BalanceExp (strip_side_effects_exp e)
+and strip_side_effects_return ret =
+  { return_exp = BatOption.map strip_side_effects_exp ret.return_exp
+  ; return_cont = strip_side_effects_exp ret.return_cont
+  }
+and strip_side_effects_case_body (raw : (typ * 'a) case_body) : typ case_body =
+  List.map strip_side_effects_sentence raw
+
+let strip_side_effects_case (raw : (typ * 'a) case) : typ case =
+  { case_header = raw.case_header
+  ; case_body = strip_side_effects_case_body raw.case_body
+  }
+
+let strip_side_effects_contract (raw : (typ * 'a) contract) : typ contract =
+  { contract_name = raw.contract_name
+  ; contract_arguments = raw.contract_arguments
+  ; contract_cases = List.map strip_side_effects_case raw.contract_cases
+  }
+
+let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel =
+  match raw with
+  | Contract c ->
+     Contract (strip_side_effects_contract c)
+  | Event e -> Event e
 
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =
@@ -498,4 +659,5 @@ let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
         match x with
         | Event e -> Some e
         | _ -> None) raw in
-  Assoc.map (assign_type_toplevel interfaces events) raw
+  Assoc.map strip_side_effects
+    (Assoc.map (assign_type_toplevel interfaces events) raw)

@@ -17,19 +17,19 @@ let forget_innermost (orig : type_env) : type_env =
 let add_empty_block (orig : type_env) : type_env =
   { orig with identifiers = [] :: orig.identifiers }
 
-let add_pair (orig : type_env) (ident : string) (typ : Syntax.typ) : type_env =
+let add_pair (orig : type_env) (ident : string) (typ : Syntax.typ) (loc : SideEffect.location option) : type_env =
   match orig.identifiers with
   | h :: t ->
-     { orig with identifiers = (Syntax.{ arg_ident = ident; arg_typ = typ} :: h) :: t }
+     { orig with identifiers = (Syntax.{ arg_ident = ident; arg_typ = typ; arg_location = loc} :: h) :: t }
   | _ -> failwith "no current scope in type env"
 
 let lookup_block (name : string) (block : Syntax.arg list) =
   Misc.first_some
     (fun (a : Syntax.arg) ->
-      if a.Syntax.arg_ident = name then Some a.Syntax.arg_typ else None)
+      if a.Syntax.arg_ident = name then Some (a.Syntax.arg_typ, a.Syntax.arg_location) else None)
     block
 
-let lookup (env : type_env) (name : string) : Syntax.typ option =
+let lookup (env : type_env) (name : string) : (Syntax.typ * SideEffect.location option) option =
   Misc.first_some (lookup_block name) env.identifiers
 
 let add_block (h : Syntax.arg list) (orig : type_env) : type_env =
