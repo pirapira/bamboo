@@ -79,7 +79,10 @@ let typecheck_multiple (exps : typ list) (actual : (typ * 'a) exp list) =
   List.for_all2 (fun e (_, (a, _)) -> e = a) exps actual
 
 let check_only_one_side_effect (llst : SideEffect.t list list)  =
-  if List.length (List.filter (fun x -> x <> []) llst) > 1 then
+  (* write-write *)
+  if List.length (List.filter (fun x ->
+                      BatList.exists (fun s -> snd s = SideEffect.Write) x
+                    ) llst) > 1 then
     failwith "more than one sub-expressions have side-effects"
 
 let has_no_side_effects (e : (typ * SideEffect.t list) exp) =
@@ -197,14 +200,14 @@ and assign_type_exp
   | MinusExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
-     let () = assert (snd l = snd r) in
+     let () = assert (fst (snd l) = fst (snd r)) in
      let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
      let () = check_only_one_side_effect sides in
      (MinusExp (l, r), (fst (snd l), List.concat sides))
   | MultExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
-     let () = assert (snd l = snd r) in
+     let () = assert (fst (snd l) = fst (snd r)) in
      (MultExp (l, r), snd l)
   | NotExp negated ->
      let negated = assign_type_exp contract_interfaces cname venv negated in
