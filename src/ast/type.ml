@@ -83,7 +83,16 @@ let check_only_one_side_effect (llst : SideEffect.t list list)  =
   if List.length (List.filter (fun x ->
                       BatList.exists (fun s -> snd s = SideEffect.Write) x
                     ) llst) > 1 then
-    failwith "more than one sub-expressions have side-effects"
+    failwith "more than one sub-expressions have side-effects";
+  (* read-write *)
+  if List.length (List.filter (fun x ->
+                      BatList.exists (fun s -> snd s = SideEffect.Write) x
+                    ) llst) = 0 then ()
+  else
+  if List.length (List.filter (fun x ->
+                      BatList.exists (fun s -> snd s = SideEffect.Read) x
+                    ) llst) > 0 then
+    failwith "some sub-expressions have write effects and some have read effects"
 
 let has_no_side_effects (e : (typ * SideEffect.t list) exp) =
   snd (snd e) = []
