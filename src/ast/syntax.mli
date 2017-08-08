@@ -14,6 +14,7 @@ type typ =
 type arg =
   { arg_typ : typ
   ; arg_ident : string
+  ; arg_location : SideEffect.location option
   }
 
 type event_arg =
@@ -138,7 +139,7 @@ val contract_name_of_return_cont : 'exp exp -> string option
 
 val case_header_arg_list : case_header -> arg list
 
-val contract_name_of_instance : typ exp -> string
+val contract_name_of_instance : (typ * 'x) exp -> string
 
 val string_of_typ : typ -> string
 val string_of_exp_inner : 'a exp_inner -> string

@@ -4,14 +4,14 @@ let case1_case : Syntax.usual_case_header =
   Syntax.(
   { case_return_typ = []
   ; case_name = "pay"
-  ; case_arguments = [{arg_typ = AddressType; arg_ident = "addr"}]
+  ; case_arguments = [{arg_typ = AddressType; arg_ident = "addr"; arg_location = None}]
   })
 
 let case2_case : Syntax.usual_case_header =
   Syntax.(
     { case_return_typ = [UintType]
     ; case_name = "f"
-    ; case_arguments = [{arg_typ = UintType; arg_ident = "x"}]
+    ; case_arguments = [{arg_typ = UintType; arg_ident = "x"; arg_location = None}]
     })
 
 let case2_hash :string = "b3de648b"

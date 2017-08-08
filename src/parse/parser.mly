@@ -187,6 +187,7 @@ arg:
     i = IDENT
     { { Syntax.arg_typ = t
       ; Syntax.arg_ident = i
+      ; Syntax.arg_location = None
       }
     }
 
@@ -198,6 +199,7 @@ event_arg:
     { { Syntax.event_arg_body =
         { Syntax.arg_typ = t
         ; Syntax.arg_ident = i
+        ; Syntax.arg_location = None
         }
       ; Syntax.event_arg_indexed = true
       }

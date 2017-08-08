@@ -29,6 +29,7 @@ let rec string_of_typ t =
 type arg =
   { arg_typ : typ
   ; arg_ident : string
+  ; arg_location : SideEffect.location option
   }
 
 type event_arg =
@@ -174,7 +175,7 @@ let case_header_arg_list (c : case_header) : arg list =
      uch.case_arguments
   | DefaultCaseHeader -> []
 
-let contract_name_of_instance ((_, t) : typ exp) =
+let contract_name_of_instance ((_, (t, _)) : (typ * 'a) exp) =
   match t with
   | ContractInstanceType s -> s
   | typ -> failwith
