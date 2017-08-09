@@ -1,8 +1,8 @@
-event E(uint indexed a);
+event E(uint256 indexed a);
 
 contract A ()
 {
-    case(void e(uint v)) {
+    case(void e(uint256 v)) {
             log E(v);
             return then become A();
     }

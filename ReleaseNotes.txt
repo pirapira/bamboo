@@ -1,3 +1,4 @@
 Version 0.0.02 (not released yet)
 
 * detecting racing side-effects #186
+* banning the keyword uint in favor of uint256

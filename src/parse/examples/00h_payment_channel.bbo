@@ -3,12 +3,12 @@
 contract Channel
 ( address channelSender
 , address channelRecipient
-, uint startDate
-, uint endDate
+, uint256 startDate
+, uint256 endDate
 , bytes32 => address signatures
 )
 {
-  case(void CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint val)) {
+  case(void CloseChannel(bytes32 h, uint8 v, bytes32 r, bytes32 s, uint256 val)) {
     address signer = pre_ecdsarecover(h, v, r, s);
     if ((signer != channelSender) && (signer != channelRecipient)) abort;
     bytes32 proof = keccak256(this, val);

@@ -1,6 +1,6 @@
 type typ =
   | VoidType
-  | UintType
+  | Uint256Type
   | Uint8Type
   | Bytes32Type
   | AddressType
@@ -15,7 +15,7 @@ type typ =
 let rec string_of_typ t =
   match t with
   | VoidType -> "void"
-  | UintType -> "uint"
+  | Uint256Type -> "uint256"
   | Uint8Type -> "uint8"
   | Bytes32Type -> "bytes32"
   | AddressType -> "address"
@@ -211,7 +211,7 @@ let string_of_exp_inner e =
 
 let is_mapping (typ : typ) =
   match typ with
-  | UintType
+  | Uint256Type
   | Uint8Type
   | Bytes32Type
   | AddressType
@@ -229,7 +229,7 @@ let count_plain_args (typs : typ list) =
 
 let fits_in_one_storage_slot (typ : typ) =
   match typ with
-  | UintType
+  | Uint256Type
   | Uint8Type
   | Bytes32Type
   | AddressType
@@ -242,7 +242,7 @@ let fits_in_one_storage_slot (typ : typ) =
   | VoidType -> false
 
 let size_of_typ (* in bytes *) = function
-  | UintType -> 32
+  | Uint256Type -> 32
   | Uint8Type -> 1
   | Bytes32Type -> 32
   | AddressType -> 20

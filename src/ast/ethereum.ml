@@ -13,7 +13,7 @@ type interface_arg = string * interface_typ
 let interpret_interface_type (str : Syntax.typ) : interface_typ =
   Syntax.
   (match str with
-  | UintType -> InterfaceUint 256
+  | Uint256Type -> InterfaceUint 256
   | Uint8Type -> InterfaceUint 8
   | Bytes32Type -> InterfaceBytes 32
   | AddressType -> InterfaceAddress
@@ -32,7 +32,7 @@ let to_typ (ityp : interface_typ) =
     | InterfaceUint x ->
        let () = if (x < 0 || x > 256) then
                   failwith "too small or too big integer" in
-       UintType
+       Uint256Type
     | InterfaceBytes x ->
        let () = assert (x = 32) in
        Bytes32Type

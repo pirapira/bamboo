@@ -1,8 +1,8 @@
 contract auction
 	(address _beneficiary
-	,uint _bidding_time
+	,uint256 _bidding_time
 	,address => bool _bids
-	,uint _highest_bid)
+	,uint256 _highest_bid)
 {
 	case (bool bid())
 	{
@@ -17,12 +17,12 @@ contract auction
 		return (true) then become
 			auction(_beneficiary, _bidding_time, _bids, value(msg));
 	}
-	case (uint highest_bid())
+	case (uint256 highest_bid())
 	{
 		return (_highest_bid) then become
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
-	case (uint bidding_time())
+	case (uint256 bidding_time())
 	{
 		return (_bidding_time) then become
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
@@ -44,7 +44,7 @@ contract auction
 
 contract bid
 	(address _bidder
-	,uint _value
+	,uint256 _value
 	,auction _auction)
 {
 	case (bool refund())
@@ -70,12 +70,12 @@ address beneficiary = _auction.beneficiary() reentrance { abort; };
 contract auction_done
 (address _bene,
  address => bool _bids,
- uint _highest_bid)
+ uint256 _highest_bid)
 {
 }
 contract bid
   (address _sender
-  ,uint _value
+  ,uint256 _value
   ,address _auction
   )
 {

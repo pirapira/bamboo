@@ -1,7 +1,7 @@
 contract PreToken
-(uint totalSupply
-,address => uint balances
-,address => address => uint allowances
+(uint256 totalSupply
+,address => uint256 balances
+,address => address => uint256 allowances
 )
 {
     default
@@ -11,27 +11,27 @@ contract PreToken
     }
 }
 
-event Transfer(address indexed _from, address indexed _to, uint _amount);
-event Buy(address indexed _buyer, uint _amount, uint _value);
-event Sell(address indexed _buyer, uint _amount, uint _value);
-event Approval(address indexed _owner, address indexed _spender, uint _value);
+event Transfer(address indexed _from, address indexed _to, uint256 _amount);
+event Buy(address indexed _buyer, uint256 _amount, uint256 _value);
+event Sell(address indexed _buyer, uint256 _amount, uint256 _value);
+event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
 contract Token
-(uint totalSupply
-,address => uint balances
-,address => address => uint allowances
+(uint256 totalSupply
+,address => uint256 balances
+,address => address => uint256 allowances
 )
 {
-    case(uint totalSupply())
+    case(uint256 totalSupply())
     {
         return totalSupply then become Token(totalSupply, balances, allowances);
     }
-    case(uint balanceOf(address a))
+    case(uint256 balanceOf(address a))
     {
         return balances[a] then become Token(totalSupply, balances, allowances);
     }
 
-    case(bool transfer(address _to, uint _amount))
+    case(bool transfer(address _to, uint256 _amount))
     {
         if (balances[sender(msg)] < _amount) abort;
         if (sender(msg) == _to)
@@ -46,7 +46,7 @@ contract Token
         return true then become Token(totalSupply, balances, allowances);
     }
 
-    case(bool approve(address _spender, uint _amount))
+    case(bool approve(address _spender, uint256 _amount))
     {
         if (balances[sender(msg)] < _amount) abort;
         if (sender(msg) == _spender) abort;
@@ -54,11 +54,11 @@ contract Token
         log Approval(sender(msg), _spender, _amount);
         return true then become Token(totalSupply, balances, allowances);
     }
-    case(uint allowance(address _owner, address _spender))
+    case(uint256 allowance(address _owner, address _spender))
     {
         return allowances[_owner][_spender] then become Token(totalSupply, balances, allowances);
     }
-    case(bool transferFrom(address _from, address _to, uint _amount))
+    case(bool transferFrom(address _from, address _to, uint256 _amount))
     {
         if (balances[_from] < _amount) abort;
         if (allowances[_from][sender(msg)] < _amount) abort;
@@ -75,12 +75,12 @@ contract Token
         return true then become Token(totalSupply, balances, allowances);
     }
 
-    case(bool buy(uint _amount))
+    case(bool buy(uint256 _amount))
     {
         if (balances[this] < _amount) abort;
         if (balances[sender(msg)] + _amount < balances[sender(msg)]) abort;
 
-        uint old_eth_balance = balance(this) - value(msg);
+        uint256 old_eth_balance = balance(this) - value(msg);
         if (balance(this) * _amount > (balances[this] - _amount) * value(msg)) abort;
 
         balances[this] = balances[this] - _amount;
@@ -89,16 +89,16 @@ contract Token
         log Buy(sender(msg), _amount, value(msg));
         return true then become Token(totalSupply, balances, allowances);
     }
-    case (bool sell(uint _amount, uint _value))
+    case (bool sell(uint256 _amount, uint256 _value))
     {
         if (balance(this) < _value) abort;
         if (balances[sender(msg)] < _amount) abort;
         if (balances[this] + _amount < balances[this]) abort;
         if (not (iszero(value(msg)))) abort;
 
-        uint old_eth_balance = balance(this);
-        uint new_eth_balance = balance(this) - _value;
-        uint new_amount = balances[this] + _amount;
+        uint256 old_eth_balance = balance(this);
+        uint256 new_eth_balance = balance(this) - _value;
+        uint256 new_amount = balances[this] + _amount;
         if (new_eth_balance * _amount < new_amount * _value) abort;
 
         balances[this] = new_amount;

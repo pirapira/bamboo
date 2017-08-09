@@ -1,7 +1,7 @@
 %token CONTRACT
 %token <string> IDENT
 %token ADDRESS
-%token UINT
+%token UINT256
 %token UINT8
 %token BYTES32
 %token BOOL
@@ -206,7 +206,7 @@ event_arg:
     }
 
 typ:
-  | UINT { Syntax.UintType }
+  | UINT256 { Syntax.Uint256Type }
   | UINT8 { Syntax.Uint8Type }
   | BYTES32 { Syntax.Bytes32Type }
   | ADDRESS { Syntax.AddressType }

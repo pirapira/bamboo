@@ -23,8 +23,8 @@ rule read =
   | "default"  { DEFAULT }
   | "case"     { CASE }
   | "abort"    { ABORT }
-  | "uint"     { UINT }
   | "uint8"    { UINT8 }
+  | "uint256"  { UINT256 }
   | "bytes32"  { BYTES32 }
   | "address"  { ADDRESS }
   | "bool"     { BOOL }

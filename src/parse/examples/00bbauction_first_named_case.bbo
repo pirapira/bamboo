@@ -1,7 +1,7 @@
 
 
 contract auction
-  (uint _highest_bid)
+  (uint256 _highest_bid)
 {
    case(bool bid())
    {

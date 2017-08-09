@@ -1,6 +1,6 @@
 type typ =
   | VoidType (** the result of calling address.default() *)
-  | UintType
+  | Uint256Type
   | Uint8Type
   | Bytes32Type
   | AddressType
