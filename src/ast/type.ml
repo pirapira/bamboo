@@ -16,7 +16,7 @@ let is_known_contract contract_interfaces name =
 let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (t : typ) =
   Syntax.(
     match t with
-    | UintType -> true
+    | Uint256Type -> true
     | Uint8Type -> true
     | Bytes32Type -> true
     | AddressType -> true
@@ -35,7 +35,9 @@ let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.c
   )
 
 let arg_has_known_type contract_interfaces arg =
-  is_known_type contract_interfaces arg.arg_typ
+  let ret = is_known_type contract_interfaces arg.arg_typ in
+  if not ret then Printf.eprintf "argument has an unknown type %s\n" (Syntax.string_of_typ arg.arg_typ);
+  ret
 
 let ret_type_is_known contract_interfaces header =
   BatList.for_all (is_known_type contract_interfaces) header.case_return_typ
@@ -56,7 +58,7 @@ let call_arg_expectations (contract_interfaces : Contract.contract_interface Ass
   | "keccak256" ->
      (fun _ -> true)
   | "iszero" ->
-     (fun x -> x = [Bytes32Type] || x = [Uint8Type] || x = [UintType] || x = [BoolType] || x = [AddressType])
+     (fun x -> x = [Bytes32Type] || x = [Uint8Type] || x = [Uint256Type] || x = [BoolType] || x = [AddressType])
   | name ->
      let cid = Assoc.lookup_id (fun c -> c.Contract.contract_interface_name = name) contract_interfaces in
      let interface : Contract.contract_interface = Assoc.choose_contract cid contract_interfaces in
@@ -109,7 +111,7 @@ let rec assign_type_call
   let side_effects = (SideEffect.External, SideEffect.Write) :: List.concat args_side_effects in
   let ret_typ =
     match src.call_head with
-    | "value" when true (* check the argument is 'msg' *) -> UintType
+    | "value" when true (* check the argument is 'msg' *) -> Uint256Type
     | "pre_ecdsarecover" -> AddressType
     | "keccak256" -> Bytes32Type
     | "iszero" -> (match args' with
@@ -139,7 +141,7 @@ and assign_type_exp
   | TrueExp -> (TrueExp, (BoolType, []))
   | FalseExp -> (FalseExp, (BoolType, []))
   | SenderExp -> (SenderExp, (AddressType, []))
-  | NowExp -> (NowExp, (UintType, []))
+  | NowExp -> (NowExp, (Uint256Type, []))
   | FunctionCallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
      (FunctionCallExp c', typ)
@@ -229,7 +231,7 @@ and assign_type_exp
      let inner = assign_type_exp contract_interfaces cname venv inner in
      let () = assert (acceptable_as AddressType (fst (snd inner))) in
      let () = assert (snd (snd inner) = []) in
-     (BalanceExp inner, (UintType, [SideEffect.External, SideEffect.Read]))
+     (BalanceExp inner, (Uint256Type, [SideEffect.External, SideEffect.Read]))
   | ArrayAccessExp aa ->
      let atyped = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_array in
      begin match fst (snd atyped) with
@@ -284,7 +286,7 @@ and assign_type_exp
             }, (VoidType, [SideEffect.External, SideEffect.Write]) )
      end
   | ValueExp ->
-     (ValueExp, (UintType, []))
+     (ValueExp, (Uint256Type, []))
   | SingleDereferenceExp _
   | TupleDereferenceExp _ ->
      failwith "DereferenceExp not supposed to appear in the raw tree for now"

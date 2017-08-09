@@ -9,9 +9,9 @@ let case1_case : Syntax.usual_case_header =
 
 let case2_case : Syntax.usual_case_header =
   Syntax.(
-    { case_return_typ = [UintType]
+    { case_return_typ = [Uint256Type]
     ; case_name = "f"
-    ; case_arguments = [{arg_typ = UintType; arg_ident = "x"; arg_location = None}]
+    ; case_arguments = [{arg_typ = Uint256Type; arg_ident = "x"; arg_location = None}]
     })
 
 let case2_hash :string = "b3de648b"

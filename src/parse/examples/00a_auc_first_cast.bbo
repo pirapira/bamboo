@@ -2,9 +2,9 @@
 
 contract auction
   (address _beneficiary
-  ,uint _bidding_time
+  ,uint256 _bidding_time
 ,address => bool _bids
-	,uint _highest_bid)
+	,uint256 _highest_bid)
 {
    default
    {
@@ -23,12 +23,12 @@ deploy bid(sender(msg), value(msg), this) with value(msg)
 contract auction_done
 (address _bene,
  address => bool _bids,
- uint _highest_bid)
+ uint256 _highest_bid)
 {
 }
 contract bid
   (address _sender
-  ,uint _value
+  ,uint256 _value
   ,address _auction
   )
 {

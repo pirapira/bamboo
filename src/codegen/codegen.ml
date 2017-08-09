@@ -552,7 +552,7 @@ and codegen_exp
       ce
    | AddressExp _, _ ->
       failwith "codegen_exp: AddressExp of unexpected type"
-   | ValueExp,UintType ->
+   | ValueExp,Uint256Type ->
       let ce = CodegenEnv.append_instruction ce CALLVALUE in
       ce
    | ValueExp,_ -> failwith "ValueExp of strange type"
@@ -629,7 +629,7 @@ and codegen_exp
      ce
   | NotExp sub, _ ->
      failwith "codegen_exp: NotExp of unexpected type"
-  | NowExp,UintType ->
+  | NowExp,Uint256Type ->
      append_instruction ce TIMESTAMP
   | NowExp,_ -> failwith "codegen_exp: NowExp of unexpected type"
   | NeqExp (l, r), BoolType ->
@@ -648,21 +648,21 @@ and codegen_exp
      let ce = align_boolean ce alignment in
      ce
   | LtExp _, _ -> failwith "codegen_exp: LtExp of unexpected type"
-  | PlusExp (l, r), UintType ->
+  | PlusExp (l, r), Uint256Type ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce ADD in
      ce
   | PlusExp (l, r), _ ->
      failwith "codegen_exp PlusExp of unexpected type"
-  | MinusExp (l, r), UintType ->
+  | MinusExp (l, r), Uint256Type ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce SUB in
      ce
   | MinusExp (l, r), _ ->
      failwith "codegen_exp MinusExp of unexpected type"
-  | MultExp (l, r), UintType ->
+  | MultExp (l, r), Uint256Type ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce MUL in
@@ -676,7 +676,7 @@ and codegen_exp
      let ce = align_boolean ce alignment in (* XXX there should be some type system making sure this line exists *)
      ce
   | GtExp _, _ -> failwith "codegen_exp GtExp of unexpected type"
-  | BalanceExp inner, UintType ->
+  | BalanceExp inner, Uint256Type ->
      let ce = codegen_exp le ce RightAligned inner in
      let ce = append_instruction ce BALANCE in
      ce
@@ -914,7 +914,7 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
      (* stack : [0] *)
      ce
   | VoidType -> failwith "send expression with VoidType?"
-  | UintType -> failwith "send expression with UintType?"
+  | Uint256Type -> failwith "send expression with Uint256Type?"
   | Uint8Type -> failwith "send expression with Uint8Type?"
   | _ -> failwith "send expression with unknown type"
 

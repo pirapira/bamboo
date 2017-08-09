@@ -12,5 +12,5 @@ let _ =
   let _ = codegen_exp dummy_l dummy_env RightAligned (FalseExp, BoolType) in
   let _ = codegen_exp dummy_l dummy_env RightAligned (TrueExp, BoolType) in
   let _ = codegen_exp dummy_l dummy_env RightAligned (NotExp (TrueExp, BoolType), BoolType) in
-  let _ = codegen_exp dummy_l dummy_env RightAligned (NowExp, UintType) in
+  let _ = codegen_exp dummy_l dummy_env RightAligned (NowExp, Uint256Type) in
   Printf.printf "Finished codgen_test.\n"

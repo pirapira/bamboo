@@ -1,12 +1,12 @@
-// The contract signature auction(address,uint,bool[address],uint) can be used as a continuation
+// The contract signature auction(address,uint256,bool[address],uint256) can be used as a continuation
 // of a contract.  When the auction contract is created, bool[address] cannot be passed,
 // so the array is initizilly zeroed out.
 
 contract auction
 	(address _beneficiary
-	,uint _bidding_time
+	,uint256 _bidding_time
 	,address => bool _bids /// When the contract is created, this must be empty.
-	,uint _highest_bid)
+	,uint256 _highest_bid)
 {
 	case (bool bid())
 	{
@@ -21,12 +21,12 @@ contract auction
 		return (true) then become
 			auction(_beneficiary, _bidding_time, _bids, value(msg));
 	}
-	case (uint highest_bid())
+	case (uint256 highest_bid())
 	{
 		return (_highest_bid) then become
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
 	}
-	case (uint bidding_time())
+	case (uint256 bidding_time())
 	{
 		return (_bidding_time) then become
 			auction(_beneficiary, _bidding_time, _bids, _highest_bid);
@@ -48,7 +48,7 @@ contract auction
 
 contract bid
 	(address _bidder
-	,uint _value
+	,uint256 _value
 	,auction _auction) // the compiler is aware that an `auction` account can become an `auction_done` account.
 {
 	case (bool refund())
@@ -72,9 +72,9 @@ contract bid
 	}
 }
 
-contract auction_done(address _beneficiary, address => bool _bids, uint _highest_bid)
+contract auction_done(address _beneficiary, address => bool _bids, uint256 _highest_bid)
 {
-	case (bool bid_is_highest(uint _cand))
+	case (bool bid_is_highest(uint256 _cand))
 	{
 		if (not _bids[sender(msg)]) abort;
 		return (_highest_bid == _cand) then become auction_done(_beneficiary, _bids, _highest_bid);

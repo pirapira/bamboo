@@ -1,7 +1,7 @@
 contract PreToken
-(uint totalSupply
+(uint256 totalSupply
 ,address initialOwner
-,address => uint balances
+,address => uint256 balances
 )
 {
 	default
@@ -12,18 +12,18 @@ contract PreToken
 }
 
 contract Token
-(uint totalSupply
-,address => uint balances)
+(uint256 totalSupply
+,address => uint256 balances)
 {
-	case(uint totalSupply())
+	case(uint256 totalSupply())
 	{
 		return totalSupply then become Token(totalSupply, balances);
 	}
-	case(uint balanceOf(address a))
+	case(uint256 balanceOf(address a))
 	{
 		return balances[a] then become Token(totalSupply, balances);
 	}
-	case(bool transfer(address _to, uint _value))
+	case(bool transfer(address _to, uint256 _value))
 	{
 		if (balances[sender(msg)] < _value) abort;
 		if (sender(msg) == _to) return true then become Token(totalSupply, balances);
