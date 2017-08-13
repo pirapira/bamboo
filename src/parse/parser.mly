@@ -62,6 +62,10 @@
 %start <unit Syntax.toplevel list> file
 %%
 
+
+%inline plist(X):
+   xs = delimited(LPAR, separated_list(COMMA, X), RPAR) {xs}
+
 file:
   | cs = contracts; EOF; { cs }
   ;
@@ -75,9 +79,7 @@ rev_contracts:
   | cs = rev_contracts;
     CONTRACT;
     name = IDENT;
-    LPAR;
-    args = argument_list;
-    RPAR;
+    args = plist(arg);
     LBRACE;
     css = cases;
     RBRACE;
@@ -88,9 +90,7 @@ rev_contracts:
   | cs = rev_contracts;
     EVENT;
     name = IDENT;
-    LPAR;
-    args = event_argument_list;
-    RPAR;
+    args = plist(event_arg);
     SEMICOLON;
     { Syntax.Event { Syntax.event_arguments = args
       ; event_name = name
@@ -125,9 +125,7 @@ case_header:
   | CASE; LPAR;
     return_typ = typ;
     name = IDENT;
-    LPAR;
-    args = argument_list;
-    RPAR;
+    args = plist(arg);
     RPAR { Syntax.UsualCaseHeader
       { case_return_typ = [return_typ] (* multi returns not supported *)
       ; Syntax.case_name = name
@@ -137,49 +135,13 @@ case_header:
   | CASE; LPAR;
     VOID;
     name = IDENT;
-    LPAR;
-    args = argument_list;
-    RPAR;
+    args = plist(arg);
     RPAR { Syntax.UsualCaseHeader
       { case_return_typ = []
       ; Syntax.case_name = name
       ; case_arguments = args
       }
     }
-  ;
-
-argument_list:
-  | args = rev_argument_list { List.rev args }
-
-rev_argument_list:
-  | (* empty *) { [] }
-  | args = non_empty_rev_argument_list;
-    { args }
-  ;
-
-non_empty_rev_argument_list:
-  | a = arg { [ a ] }
-  | args = non_empty_rev_argument_list;
-    COMMA;
-    a = arg
-    { a :: args }
-  ;
-
-event_argument_list:
-  | args = rev_event_argument_list { List.rev args }
-
-rev_event_argument_list:
-  | (* empty *) { [] }
-  | args = non_empty_rev_event_argument_list;
-    { args }
-  ;
-
-non_empty_rev_event_argument_list:
-  | a = event_arg { [ a ] }
-  | args = non_empty_rev_event_argument_list;
-    COMMA;
-    a = event_arg
-    { a :: args }
   ;
 
 arg:
@@ -228,7 +190,7 @@ rev_sentences:
     { s :: scs }
   ;
 
-sentence: 
+sentence:
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
     { Syntax.ReturnSentence { Syntax. return_exp = Some value; return_cont = cont} }
