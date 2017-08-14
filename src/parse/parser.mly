@@ -67,55 +67,42 @@
    xs = delimited(LPAR, separated_list(COMMA, X), RPAR) {xs}
 
 file:
-  | cs = contracts; EOF; { cs }
+  | cs = list(contract); EOF; { cs }
   ;
 
-contracts:
-  | cs = rev_contracts { List.rev cs }
-  ;
-
-rev_contracts:
-  | (* empty *) { [] }
-  | cs = rev_contracts;
-    CONTRACT;
+contract:
+  | CONTRACT;
     name = IDENT;
     args = plist(arg);
     LBRACE;
-    css = cases;
+    css = list(case);
     RBRACE;
     { Syntax.Contract
       ({ Syntax.contract_cases = css
        ; contract_name = name
-       ; contract_arguments = args}) :: cs }
-  | cs = rev_contracts;
-    EVENT;
+       ; contract_arguments = args}) }
+  | EVENT;
     name = IDENT;
     args = plist(event_arg);
     SEMICOLON;
     { Syntax.Event { Syntax.event_arguments = args
       ; event_name = name
-      } :: cs }
+      }}
   ;
 
-cases:
-  | css = rev_cases { List.rev css }
-  ;
-
-rev_cases:
-  | (* empty *) { [] }
-  | css = rev_cases;
-    ch  = case_header;
+case:
+  | ch  = case_header;
     cb  = block;
     {
       { Syntax.case_header = ch
       ; Syntax.case_body = cb
       }
-      :: css }
+     }
   ;
 
 block:
   | LBRACE;
-    scs = sentences;
+    scs = list(sentence);
     RBRACE
     { scs }
   ;
@@ -179,17 +166,6 @@ typ:
     { Syntax.MappingType (key, value) }
   | s = IDENT { Syntax.ContractInstanceType s }
 
-sentences:
-  | scs = rev_sentences { List.rev scs }
-  ;
-
-rev_sentences:
-  | (* empty *) { [] }
-  | scs = rev_sentences;
-    s = sentence;
-    { s :: scs }
-  ;
-
 sentence:
   | ABORT; SEMICOLON { Syntax.AbortSentence }
   | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
@@ -216,8 +192,7 @@ sentence:
   | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
   | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
   | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
-  | LOG; name = IDENT; LPAR; RPAR; SEMICOLON { Syntax.LogSentence (name, [], None)}
-  | LOG; name = IDENT; LPAR; x = exp; lst = comma_exp_list; RPAR; SEMICOLON { Syntax.LogSentence (name, x :: lst, None)}
+  | LOG; name = IDENT; lst = exp_list; SEMICOLON { Syntax.LogSentence (name, lst, None)}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
   ;
 
@@ -242,13 +217,8 @@ exp:
     e = exp;
     RPAR
     { Syntax.ParenthExp e, () }
-  | s = IDENT; LPAR; RPAR { Syntax.FunctionCallExp { Syntax.call_head = s; call_args = [] }, () }
-  | s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR { Syntax.FunctionCallExp {
-                                   Syntax.call_head = s; call_args = fst :: lst }, () }
-  | DEPLOY; s = IDENT; LPAR; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = []; new_msg_info = m }, () }
-  | DEPLOY; s = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = fst :: lst; new_msg_info = m }, () }
+  | s = IDENT; lst = exp_list { Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () }
+  | DEPLOY; s = IDENT; lst = exp_list; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = lst; new_msg_info = m }, () }
   | contr = exp; DOT; mtd = IDENT;
     LPAR; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
@@ -257,16 +227,19 @@ exp:
     LPAR; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
                        ; send_args = []; send_msg_info = m }, () }
-  | contr = exp; DOT; mtd = IDENT; LPAR; fst = exp;
-    lst = comma_exp_list; RPAR; m = msg_info
+  | contr = exp; DOT; mtd = IDENT; lst = exp_list; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
-                       ; send_args = (fst :: lst); send_msg_info = m }, () }
+                       ; send_args = (lst); send_msg_info = m }, () }
   | ADDRESS; LPAR; e = exp; RPAR { Syntax.AddressExp e, () }
   | NOT; e = exp { Syntax.NotExp e, () }
   | THIS { Syntax.ThisExp, () }
   | l = lexp;
     { Syntax.ArrayAccessExp l, () }
   ;
+
+
+%inline exp_list:
+   lst = plist(exp) {lst}
 
 msg_info:
   | v = value_info; r = reentrance_info { { Syntax.message_value_info = v;
@@ -289,17 +262,4 @@ lexp:
     RSQBR
     { Syntax.ArrayAccessLExp {
        Syntax.array_access_array = s; array_access_index = idx} }
-  ;
-
-comma_exp_list:
-  | lst = rev_comma_exp_list
-    { List.rev lst }
-  ;
-
-rev_comma_exp_list:
-  | (* empty *) { [] }
-  | lst = rev_comma_exp_list;
-    COMMA;
-    e = exp
-    { e :: lst }
   ;
