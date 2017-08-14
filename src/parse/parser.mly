@@ -139,6 +139,7 @@ arg:
       ; Syntax.arg_location = None
       }
     }
+  ;
 
 event_arg:
   | a = arg { Syntax.event_arg_of_arg a false }
@@ -153,6 +154,7 @@ event_arg:
       ; Syntax.event_arg_indexed = true
       }
     }
+    ;
 
 typ:
   | UINT256 { Syntax.Uint256Type }
@@ -165,13 +167,17 @@ typ:
     value = typ;
     { Syntax.MappingType (key, value) }
   | s = IDENT { Syntax.ContractInstanceType s }
+  ;
+
+%inline body:
+  | s = sentence {[s]}
+  | b = block {b}
+  ;
 
 sentence:
   | ABORT; SEMICOLON { Syntax.AbortSentence }
-  | RETURN; value = exp; THEN; BECOME; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_exp = Some value; return_cont = cont} }
-  | RETURN; THEN; BECOME; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_exp = None; return_cont = cont} }
+  | RETURN; value = option(exp); THEN; BECOME; cont = exp; SEMICOLON
+    { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;
@@ -186,14 +192,20 @@ sentence:
               }
   | VOID; SINGLE_EQ; value = exp; SEMICOLON
     { Syntax.ExpSentence value }
-  | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, [bodyT], [bodyF]) }
-  | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = sentence { Syntax.IfThenElse (cond, bodyT, [bodyF]) }
-  | IF; LPAR; cond = exp; RPAR; bodyT =sentence; ELSE; bodyF = block { Syntax.IfThenElse (cond, [bodyT], bodyF) }
-  | IF; LPAR; cond = exp; RPAR; bodyT =block; ELSE; bodyF = block { Syntax.IfThenElse (cond, bodyT, bodyF) }
-  | IF; LPAR; cond = exp; RPAR; body =sentence { Syntax.IfThenOnly (cond, [body]) }
-  | IF; LPAR; cond = exp; RPAR; body = block { Syntax.IfThenOnly (cond, body) }
+  | IF; LPAR; cond = exp; RPAR; bodyT = body; ELSE; bodyF = body { Syntax.IfThenElse (cond, bodyT, bodyF) }
+  | IF; LPAR; cond = exp; RPAR; body = body { Syntax.IfThenOnly (cond, body) }
   | LOG; name = IDENT; lst = exp_list; SEMICOLON { Syntax.LogSentence (name, lst, None)}
   | SELFDESTRUCT; e = exp; SEMICOLON { Syntax.SelfdestructSentence e }
+  ;
+
+%inline op:
+  | PLUS {fun (l, r) -> Syntax.PlusExp(l, r)}
+  | MINUS {fun (l, r)  -> Syntax.MinusExp(l, r)}
+  | MULT {fun (l, r) -> Syntax.MultExp(l, r)}
+  | LT {fun (l, r) -> Syntax.LtExp(l, r)}
+  | GT {fun (l, r) -> Syntax.GtExp(l, r)}
+  | NEQ {fun (l, r) -> Syntax.NeqExp(l, r)}
+  | EQUALITY {fun (l, r) -> Syntax.EqualityExp(l, r)}
   ;
 
 exp:
@@ -204,13 +216,7 @@ exp:
   | SENDER LPAR MSG RPAR { Syntax.SenderExp, () }
   | BALANCE; LPAR; e = exp; RPAR { Syntax.BalanceExp e, () }
   | NOW LPAR BLOCK RPAR { Syntax.NowExp, () }
-  | lhs = exp; PLUS; rhs = exp { Syntax.PlusExp (lhs, rhs), () }
-  | lhs = exp; MINUS; rhs = exp { Syntax.MinusExp (lhs, rhs), () }
-  | lhs = exp; MULT; rhs = exp { Syntax.MultExp (lhs, rhs), () }
-  | lhs = exp; LT; rhs = exp { Syntax.LtExp (lhs, rhs), () }
-  | lhs = exp; GT; rhs = exp { Syntax.GtExp (lhs, rhs), () }
-  | lhs = exp; NEQ; rhs = exp { Syntax.NeqExp (lhs, rhs), () }
-  | lhs = exp; EQUALITY; rhs = exp { Syntax.EqualityExp (lhs, rhs), () }
+  | lhs = exp; o = op; rhs = exp { (o (lhs, rhs)), () }
   | s = IDENT
     { Syntax.IdentifierExp s, () }
   | LPAR;
@@ -219,10 +225,6 @@ exp:
     { Syntax.ParenthExp e, () }
   | s = IDENT; lst = exp_list { Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () }
   | DEPLOY; s = IDENT; lst = exp_list; m = msg_info { Syntax.NewExp { Syntax.new_head = s; new_args = lst; new_msg_info = m }, () }
-  | contr = exp; DOT; mtd = IDENT;
-    LPAR; RPAR; m = msg_info
-    { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
-                       ; send_args = []; send_msg_info = m }, () }
   | contr = exp; DOT; DEFAULT;
     LPAR; RPAR; m = msg_info
     { Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
