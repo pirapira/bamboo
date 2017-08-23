@@ -20,7 +20,7 @@ The Bamboo compiler sometimes produces bytecode, which needs to be tested.
 As preparattion,
 * install [opam](http://opam.ocaml.org/doc/Install.html) with OCaml 4.04.1
 * `opam install bamboo`
-should intall `bamboo`.
+should install `bamboo`.
 
 When you check out this repository,
 ```
