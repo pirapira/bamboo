@@ -1,9 +1,15 @@
 \documentclass{book}
 
 \usepackage{stmaryrd}
+\usepackage{amsmath}
+
 
 \newcommand{\todo}[1]{\underline{#1}}
 \newcommand{\sem}[1]{\llbracket{#1}\rrbracket}
+\newcommand{\evalE}[1]{E_\mathrm{e}\left({#1}\right)}
+\newcommand{\evalS}[1]{E_\mathrm{s}\left({#1}\right)}
+
+\newcommand{\expressionsentence}[1]{\mathsf{void}={#1}\mathsf{;}}
 
 \begin{document}
 
@@ -164,5 +170,15 @@ and returns
 \item a variable environment and
 \item a world oracle.
 \end{itemize}
+
+\subsubsection{Evaluation of an Expression Sentence}
+
+\[
+\evalS{\boxed{\expressionsentence{e}}, c, \sigma, w} := (\sigma', w')
+\]
+where
+\[
+\evalE{\boxed{\expressionsentence{e}}, c, \sigma, w} = (v, \sigma', w')
+\]
 
 \end{document}
