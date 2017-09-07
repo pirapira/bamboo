@@ -82,6 +82,14 @@ A \textit{variable environment} is a partial map that takes identifiers and may 
 \sigma(i) = v
 \]
 
+\subsection{Current Call}
+
+A \textit{currrent call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a tuple of
+\begin{itemize}
+\item a value $c_\mathrm{s}$ called the \textit{sender},
+\item a value $c_\mathrm{v}$ called the \textit{transferred ammount} and
+\item a value $c_\mathrm{t}$ called the \textit{timestamp}.
+\end{itemize}
 
 \subsection{World Oracle}
 
@@ -90,9 +98,6 @@ A \textit{variable environment} is a partial map that takes identifiers and may 
 \subsubsection{Create Queries}
 
 \subsubsection{Balance Queries}
-
-
-\todo{Think whether to add sender-query, and value-query here.  Maybe it's better to have a call-oracle}.
 
 \subsubsection{World Oracle}
 
@@ -109,6 +114,7 @@ When a world oracle~$w$ takes a query~$q$ and returns a pair of a value~$v$ and 
 The evaluation for expressions takes
 \begin{itemize}
 \item an expression,
+\item a current call,
 \item a world oracle and
 \item a variable environment.
 \end{itemize}
@@ -149,12 +155,12 @@ balance(x) sends a balance query on the world oracle.
 The evaluation function for sentences take
 \begin{itemize}
 \item a sentence,
+\item a current call,
 \item a variable environment and
 \item a world oracle
 \end{itemize}
 and returns
 \begin{itemize}
-\item a sentence,
 \item a variable environment and
 \item a world oracle.
 \end{itemize}
