@@ -1,0 +1,162 @@
+\documentclass{book}
+
+\usepackage{stmaryrd}
+
+\newcommand{\todo}[1]{\underline{#1}}
+\newcommand{\sem}[1]{\llbracket{#1}\rrbracket}
+
+\begin{document}
+
+\chapter{Syntax}
+
+\section{Identifier}
+
+\todo{define identifier}
+
+Excercise: which of the following are identifiers? \\
+\todo{complete}
+
+\section{Syntactic Types}
+
+Bamboo has some \textit{syntactic types}.
+\begin{itemize}
+\item \texttt{void}
+\item \texttt{uint256}
+\item \texttt{bool}
+\end{itemize}
+\todo{complete the list}.
+
+Every syntactic type except \texttt{void} is a \textit{non-\texttt{void} syntactic type}.
+
+\section{Expressions}
+
+\section{Sentences}
+
+\section{Blocks}
+
+\section{Contracts}
+
+\subsection{Contract's Signature}
+
+$(\mathtt{auction}, [\mathtt{address}, \mathtt{uint256}, \mathtt{address}, \mathtt{uint256}])$.
+
+Excercise: what is the signature of the following contract?
+\todo{complete the question}
+
+\chapter{Semantics}
+
+\section{Notations}
+
+\todo{describe $\in$}
+
+\todo{describe pi}
+
+\section{States}
+
+\subsection{Interpretation of Syntactic Types}
+Each syntactic type~$T$ is associated with a set~$\sem{T}$.
+
+Excercise: determine if each of the following is true.
+\begin{enumerate}
+  \item $0 \in\sem{\mathtt{address}}$?
+\end{enumerate}
+
+A \textit{value} is a union of all $\sem{T}$ for $T \in \{\ldots\}$.
+
+\subsection{A Contract's States}
+A contract has \textit{states}.
+
+When a contract has a signature $(x, [T_1, T_2, \ldots, T_n])$ ($n \ge 0$),
+the set of the states of the contract is
+$\Pi_0^{n} \sem{T_i}$.
+
+\subsection{A Program's Account States}
+A program determines a set of \textit{account states}.
+
+\section{Dynamics}
+
+\subsection{Variable Environment}
+
+A \textit{variable environment} is a partial map that takes identifiers and may or may not return a value.  When a variable environemtent $\sigma$ maps and identifier~$i$ to a value~$v$, we write
+\[
+\sigma(i) = v
+\]
+
+
+\subsection{World Oracle}
+
+\subsubsection{Call Queries}
+
+\subsubsection{Create Queries}
+
+\subsubsection{Balance Queries}
+
+
+\todo{Think whether to add sender-query, and value-query here.  Maybe it's better to have a call-oracle}.
+
+\subsubsection{World Oracle}
+
+Both call queries and create queries are \textit{oracle queries}.
+
+A \textit{world oracle} is defined coinductively as a function that takes an oracle query and returns a pair of a value and a world oracle.
+
+When a world oracle~$w$ takes a query~$q$ and returns a pair of a value~$v$ and a world oracle~$w'$, we write $w(q) = (v, w')$.
+
+\todo{Add a possibility that the world oracle calls into the program again.}
+
+\subsection{Evaluation of an Expression}
+
+The evaluation for expressions takes
+\begin{itemize}
+\item an expression,
+\item a world oracle and
+\item a variable environment.
+\end{itemize}
+It returns
+\begin{itemize}
+\item a value and
+\item a world oracle
+\end{itemize}
+
+\subsubsection{Evaluation of Literals}
+
+true
+
+false
+
+now
+
+this
+
+msg.sender
+
+msg.value
+
+balance(x) sends a balance query on the world oracle.
+
+\subsubsection{Evaluation of an Identifier}
+
+\subsubsection{Evaluation of a new-expression}
+
+\todo{Consider new-expressions with nontrivial continuation later.  That requires an interaction between the program and the world oracle. }
+
+\subsubsection{Evaluation of a call-expression}
+
+\todo{Consider call-expressions with nontrivial continuation later.  That requires an interaction between the program and the world oracle. }
+
+\subsection{Evaluation of a Sentence}
+
+The evaluation function for sentences take
+\begin{itemize}
+\item a sentence,
+\item a variable environment and
+\item a world oracle
+\end{itemize}
+and returns
+\begin{itemize}
+\item a sentence,
+\item a variable environment and
+\item a world oracle.
+\end{itemize}
+
+\end{document}
