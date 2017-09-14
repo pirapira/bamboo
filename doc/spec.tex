@@ -4,27 +4,69 @@
 \usepackage{amsmath}
 
 
-\newcommand{\todo}[1]{\underline{#1}}
+\newcommand{\todo}[1]{\underline{TODO: {#1}}}
 \newcommand{\sem}[1]{\llbracket{#1}\rrbracket}
 \newcommand{\evalE}[1]{E_\mathrm{e}\left({#1}\right)}
 \newcommand{\evalS}[1]{E_\mathrm{s}\left({#1}\right)}
 
 \newcommand{\expressionsentence}[1]{\mathsf{void}={#1}\mathsf{;}}
 
+\title{Bamboo Specification---An Early Draft}
+
 \begin{document}
+
+\maketitle
+
+This specification contains some exercises.  Please try to solve them at least mentally.  Your solutions are welcome at \texttt{https://gitter.im/bbo-dev/Lobby}.  \todo{use url}
 
 \chapter{Syntax}
 
+\section{Keywords}
+
+\newcommand{\true}{\text{\texttt{true}}}
+\newcommand{\false}{\text{\texttt{false}}}
+\newcommand{\msgsender}{\text{\texttt{msg.sender}}}
+\newcommand{\msgvalue}{\text{\texttt{msg.value}}}
+\newcommand{\this}{\text{\texttt{this}}}
+\newcommand{\now}{\text{\texttt{now}}}
+\newcommand{\paren}[1]{\mathtt{(}{#1}\mathtt{)}}
+\newcommand{\logicalAnd}[2]{{#1}\mathbin{\text{\texttt{\&\&}}{#2}}}
+\newcommand{\logicalNot}[1]{\mathop{\text{\texttt{not}}}{#1}}
+\newcommand{\lt}[2]{{#1} \mathop{\text{\texttt{<}}} {#2}}
+\newcommand{\gt}[2]{{#1} \mathop{\text{\texttt{>}}} {#2}}
+\newcommand{\eq}[2]{{#1} \mathop{\text{\texttt{==}}} {#2}}
+\newcommand{\notEq}[2]{{#1} \mathop{\text{\texttt{!=}}} {#2}}
+
+The following sequences of characters are \textit{keywords}.
+\begin{itemize}
+\item $\true$
+\item $\false$
+\item $\this$
+\item $\now$
+\item \texttt{not}
+\end{itemize}
+
+\todo{Use a maththm like environment for exercises.}
+
+Exercise: which of the following are keywords?
+\begin{enumerate}
+\item \texttt{True}
+\item \texttt{true}
+\end{enumerate}
+
 \section{Identifier}
+
+An \textit{identifier} is a sequence of characters of the following form (but is not a keyword).
 
 \todo{define identifier}
 
-Excercise: which of the following are identifiers? \\
+
+Exercise: which of the following are identifiers? \\
 \todo{complete}
 
 \section{Syntactic Types}
 
-Bamboo has some \textit{syntactic types}.
+The following sequences of characters are \textit{syntactic types}.
 \begin{itemize}
 \item \texttt{void}
 \item \texttt{uint256}
@@ -34,7 +76,38 @@ Bamboo has some \textit{syntactic types}.
 
 Every syntactic type except \texttt{void} is a \textit{non-\texttt{void} syntactic type}.
 
+Exercise: which of the following is true?
+\begin{enumerate}
+\item \texttt{uint256} is the set of integers at least zero and at most $2^{256} - 1$.
+\item \texttt{uint256} is the set of 256-bit words.
+\item none of the above.
+\end{enumerate}
+
 \section{Expressions}
+
+Expressions are inductively defined as follows.
+
+\begin{itemize}
+\item $\true$ is an expression.
+\item $\false$ is an expression.
+\item $\msgsender$ is an expression.
+\item $\msgvalue$ is an expression.
+\item $\this$ is an expression.
+\item $\now$ is an expression.
+\item An identifier is an expression.
+\item When $e$ is an expression, $\paren{e}$ is an expression.
+\item When $e$ is an expression, $\logicalNot{e}$ is an expression.
+\item When $e_0$ and $e_1$ are expressions, the following are expressions
+\begin{itemize}
+\item $\logicalAnd{e_0}{e_1}$
+\item $\lt{e_0}{e_1}$
+\item $\gt{e_0}{e_1}$
+\item $\notEq{e_0}{e_1}$
+\item $\eq{e_0}{e_1}$
+\end{itemize}
+\end{itemize}
+
+Exercise: prove that \texttt{99a} is not an expression.
 
 \section{Sentences}
 
@@ -46,7 +119,7 @@ Every syntactic type except \texttt{void} is a \textit{non-\texttt{void} syntact
 
 $(\mathtt{auction}, [\mathtt{address}, \mathtt{uint256}, \mathtt{address}, \mathtt{uint256}])$.
 
-Excercise: what is the signature of the following contract?
+Exercise: what is the signature of the following contract?
 \todo{complete the question}
 
 \chapter{Semantics}
@@ -62,7 +135,7 @@ Excercise: what is the signature of the following contract?
 \subsection{Interpretation of Syntactic Types}
 Each syntactic type~$T$ is associated with a set~$\sem{T}$.
 
-Excercise: determine if each of the following is true.
+Exercise: determine if each of the following is true.
 \begin{enumerate}
   \item $0 \in\sem{\mathtt{address}}$?
 \end{enumerate}
@@ -83,17 +156,17 @@ A program determines a set of \textit{account states}.
 
 \subsection{Variable Environment}
 
-A \textit{variable environment} is a partial map that takes identifiers and may or may not return a value.  When a variable environemtent $\sigma$ maps and identifier~$i$ to a value~$v$, we write
+A \textit{variable environment} is a partial map that takes identifiers and may or may not return a value.  When a variable environment $\sigma$ maps and identifier~$i$ to a value~$v$, we write
 \[
 \sigma(i) = v
 \]
 
 \subsection{Current Call}
 
-A \textit{currrent call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a tuple of
+A \textit{current call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a tuple of
 \begin{itemize}
 \item a value $c_\mathrm{s}$ called the \textit{sender},
-\item a value $c_\mathrm{v}$ called the \textit{transferred ammount} and
+\item a value $c_\mathrm{v}$ called the \textit{transferred amount} and
 \item a value $c_\mathrm{t}$ called the \textit{timestamp}.
 \end{itemize}
 
@@ -104,6 +177,11 @@ A \textit{currrent call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a t
 \subsubsection{Create Queries}
 
 \subsubsection{Balance Queries}
+
+\subsection{Timestamp query}
+
+\newcommand{\timestampQuery}{\text{\texttt{timestamp?}}}
+The time stamp query~$\timestampQuery$ is something different from any query that appears above.
 
 \subsubsection{World Oracle}
 
@@ -132,11 +210,14 @@ It returns
 
 \subsubsection{Evaluation of Literals}
 
-true
+\textit{Literals} are those keywords whose evaluation is defined below.
 
-false
-
-now
+\begin{itemize}
+  \item $\evalE{\boxed{\true}, c, \sigma, w} := (1, w)$
+  \item $\evalE{\boxed{\false}, c, \sigma, w} := (0, w)$
+  \item $\evalE{\boxed{\now}, c, \sigma, w} := (v, w')$ where\\
+    $(v, w') = w(\timestampQuery)$
+\end{itemize}
 
 this
 
@@ -178,7 +259,7 @@ and returns
 \]
 where
 \[
-\evalE{\boxed{\expressionsentence{e}}, c, \sigma, w} = (v, \sigma', w')
+\evalE{\boxed{e}, c, \sigma, w} = (v, \sigma', w')
 \]
 
 \end{document}
