@@ -142,6 +142,8 @@ Exercise: determine if each of the following is true.
 
 A \textit{value} is a union of all $\sem{T}$ for $T \in \{\ldots\}$.
 
+We pick something called $\bot$ (pronounced ``bottom'') which is not a value.  The choice should not affect the meaning of a Bamboo program.
+
 \subsection{A Contract's States}
 A contract has \textit{states}.
 
@@ -181,11 +183,29 @@ A \textit{current call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a tu
 \subsection{Timestamp query}
 
 \newcommand{\timestampQuery}{\text{\texttt{timestamp?}}}
-The time stamp query~$\timestampQuery$ is something different from any query that appears above.
+The time stamp query~$\timestampQuery$ is something different from any query that appears above. Apart from that, $\timestampQuery$ can be anything, and the behavior of Bamboo programs should not be affected by the concrete choice of $\timestampQuery$ (with some adaptations on world oracles).
+
+\subsection{Current Account Query}
+
+\newcommand{\thisQuery}[0]{\text{\texttt{this?}}}
+
+The current account query~$\thisQuery$ is something different from any query that appears above.
+
+\subsection{Sender Query}
+
+\newcommand{\senderQuery}{\text{\texttt{sender?}}}
+
+The sender query~$\senderQuery$ is something different from any query that appears above.
+
+\subsection{Value Query}
+
+\newcommand{\valueQuery}{\text{\texttt{value?}}}
+
+The value query~$\valueQuery$ is something different from any query that appears above.
 
 \subsubsection{World Oracle}
 
-Both call queries and create queries are \textit{oracle queries}.
+Call queries, create queries, \todo{fill in} are \textit{oracle queries}.
 
 A \textit{world oracle} is defined coinductively as a function that takes an oracle query and returns a pair of a value and a world oracle.
 
@@ -204,30 +224,37 @@ The evaluation for expressions takes
 \end{itemize}
 It returns
 \begin{itemize}
-\item a value and
+\item a value or $\bot$ and
 \item a world oracle
 \end{itemize}
+
+
+
+\todo{say it's inductively defined over the definition of expressions}.
 
 \subsubsection{Evaluation of Literals}
 
 \textit{Literals} are those keywords whose evaluation is defined below.
 
 \begin{itemize}
-  \item $\evalE{\boxed{\true}, c, \sigma, w} := (1, w)$
-  \item $\evalE{\boxed{\false}, c, \sigma, w} := (0, w)$
-  \item $\evalE{\boxed{\now}, c, \sigma, w} := (v, w')$ where\\
-    $(v, w') = w(\timestampQuery)$
+  \item $\evalE{\boxed{\true}, c, w, \Gamma} := (1, w)$
+  \item $\evalE{\boxed{\false}, c, w, \Gamma} := (0, w)$
+  \item $\evalE{\boxed{\now}, c, w, \Gamma} := w(\timestampQuery)$
+  \item $\evalE{\boxed{\this}, c, w, \Gamma} := w(\thisQuery)$
+  \item $\evalE{\boxed{\msgsender}, c, w, \Gamma} := w(\senderQuery)$
+  \item $\evalE{\boxed{\msgvalue}, c, w, \Gamma} := w(\valueQuery)$
 \end{itemize}
-
-this
-
-msg.sender
-
-msg.value
 
 balance(x) sends a balance query on the world oracle.
 
 \subsubsection{Evaluation of an Identifier}
+
+An identifier~$i$ is evaluated as follows:
+\[
+\evalE{\boxed{i}, c, w, \Gamma} := (\Gamma(i), w)
+\]
+
+Note that $\Gamma(i)$ can be $\bot$.
 
 \subsubsection{Evaluation of a new-expression}
 
@@ -236,6 +263,24 @@ balance(x) sends a balance query on the world oracle.
 \subsubsection{Evaluation of a call-expression}
 
 \todo{Consider call-expressions with nontrivial continuation later.  That requires an interaction between the program and the world oracle. }
+
+\subsubsection{Evaluation of Binary Operators}
+
+\[
+\evalE{\boxed{\logicalAnd{e_0}{e_1}}, c, w, \Gamma} :=
+\begin{cases}
+  (v_0, w_0) & \text{if}\ v_0 = 0\ \text{or}\ v_0 = \bot \\
+  (v_1, w_1) & \text{otherwise}
+\end{cases}
+\]
+where
+\[
+\evalE{\boxed{e_0}, c, w, \Gamma} = (v_0, w_0)
+\]
+and
+\[
+\evalE{\boxed{e_1}, c, w_0, \Gamma} = (v_1, w_1)
+\]
 
 \subsection{Evaluation of a Sentence}
 
@@ -248,9 +293,12 @@ The evaluation function for sentences take
 \end{itemize}
 and returns
 \begin{itemize}
-\item a variable environment and
-\item a world oracle.
+\item a variable environment,
+\item a world oracle
+\item and optionally an account state.
 \end{itemize}
+
+\todo{Show two forms of equations: one without an account state, the other with an account state.}
 
 \subsubsection{Evaluation of an Expression Sentence}
 
@@ -261,5 +309,32 @@ where
 \[
 \evalE{\boxed{e}, c, \sigma, w} = (v, \sigma', w')
 \]
+
+\subsection{Evaluation of a Contract}
+
+The evaluation function of a contract takes
+\begin{itemize}
+\item A contract state
+\end{itemize}
+and returns
+\begin{itemize}
+\item An account state
+\end{itemize}
+
+\subsection{Evaluation of a Program}
+
+
+
+\section{Account Initialization}
+
+\subsection{Account Deployment Query}
+
+\subsection{Initial Variable Environment}
+
+\chapter{Connection to EVM}
+
+\section{Bamboo Account State as an EVM Account State}
+
+\section{Queries as EVM instructions}
 
 \end{document}
