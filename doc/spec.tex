@@ -282,6 +282,23 @@ and
 \evalE{\boxed{e_1}, c, w_0, \Gamma} = (v_1, w_1)
 \]
 
+\[
+\evalE{\boxed{\lt{e_0}{e_1}}, c, w, \Gamma} :=
+\begin{cases}
+  (1, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 < v_1 \\
+  (0, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 \ge v_1 \\
+  (\bot, w) &\text{if}\ v_0 = \bot \ \text{or}\ v_1 = \bot
+\end{cases}
+\]
+where
+\[
+\evalE{\boxed{e_1}, c, w, \Gamma} = (v_1, w_1)
+\]
+and
+\[
+\evalE{\boxed{e_0}, c, w, \Gamma} = (v_0, w_0)
+\]
+
 \subsection{Evaluation of a Sentence}
 
 The evaluation function for sentences take
