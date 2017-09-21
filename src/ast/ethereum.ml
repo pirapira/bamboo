@@ -191,6 +191,9 @@ let event_signature_hash (e : Syntax.event) : string =
   let sign = event_signature_string e in
   keccak_signature sign
 
+let compute_signature_hash (signature : string) : string =
+  String.sub (string_keccak signature) 0 8
+
 let hex_to_big_int h =
   BatBig_int.big_int_of_string ("0x"^h)
 
