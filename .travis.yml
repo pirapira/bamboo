@@ -51,6 +51,7 @@ before_install:
 - cd cpp-ethereum
 - git fetch
 - git checkout test-raw-sign
+- git show | head -n 3
 - git submodule update --recursive
 - mkdir -p build
 - cd build
