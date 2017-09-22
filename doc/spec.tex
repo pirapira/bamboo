@@ -237,12 +237,12 @@ It returns
 \textit{Literals} are those keywords whose evaluation is defined below.
 
 \begin{itemize}
-  \item $\evalE{\boxed{\true}, c, w, \Gamma} := (1, w)$
-  \item $\evalE{\boxed{\false}, c, w, \Gamma} := (0, w)$
-  \item $\evalE{\boxed{\now}, c, w, \Gamma} := w(\timestampQuery)$
-  \item $\evalE{\boxed{\this}, c, w, \Gamma} := w(\thisQuery)$
-  \item $\evalE{\boxed{\msgsender}, c, w, \Gamma} := w(\senderQuery)$
-  \item $\evalE{\boxed{\msgvalue}, c, w, \Gamma} := w(\valueQuery)$
+  \item $\evalE{\boxed{\true}, c, w, \sigma} := (1, w)$
+  \item $\evalE{\boxed{\false}, c, w, \sigma} := (0, w)$
+  \item $\evalE{\boxed{\now}, c, w, \sigma} := w(\timestampQuery)$
+  \item $\evalE{\boxed{\this}, c, w, \sigma} := w(\thisQuery)$
+  \item $\evalE{\boxed{\msgsender}, c, w, \sigma} := w(\senderQuery)$
+  \item $\evalE{\boxed{\msgvalue}, c, w, \sigma} := w(\valueQuery)$
 \end{itemize}
 
 balance(x) sends a balance query on the world oracle.
@@ -251,10 +251,10 @@ balance(x) sends a balance query on the world oracle.
 
 An identifier~$i$ is evaluated as follows:
 \[
-\evalE{\boxed{i}, c, w, \Gamma} := (\Gamma(i), w)
+\evalE{\boxed{i}, c, w, \sigma} := (\sigma(i), w)
 \]
 
-Note that $\Gamma(i)$ can be $\bot$.
+Note that $\sigma(i)$ can be $\bot$.
 
 \subsubsection{Evaluation of a new-expression}
 
@@ -267,7 +267,7 @@ Note that $\Gamma(i)$ can be $\bot$.
 \subsubsection{Evaluation of Binary Operators}
 
 \[
-\evalE{\boxed{\logicalAnd{e_0}{e_1}}, c, w, \Gamma} :=
+\evalE{\boxed{\logicalAnd{e_0}{e_1}}, c, w, \sigma} :=
 \begin{cases}
   (v_0, w_0) & \text{if}\ v_0 = 0\ \text{or}\ v_0 = \bot \\
   (v_1, w_1) & \text{otherwise}
@@ -275,15 +275,15 @@ Note that $\Gamma(i)$ can be $\bot$.
 \]
 where
 \[
-\evalE{\boxed{e_0}, c, w, \Gamma} = (v_0, w_0)
+\evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
 \]
 and
 \[
-\evalE{\boxed{e_1}, c, w_0, \Gamma} = (v_1, w_1)
+\evalE{\boxed{e_1}, c, w_0, \sigma} = (v_1, w_1)
 \]
 
 \[
-\evalE{\boxed{\lt{e_0}{e_1}}, c, w, \Gamma} :=
+\evalE{\boxed{\lt{e_0}{e_1}}, c, w, \sigma} :=
 \begin{cases}
   (1, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 < v_1 \\
   (0, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 \ge v_1 \\
@@ -292,11 +292,11 @@ and
 \]
 where
 \[
-\evalE{\boxed{e_1}, c, w, \Gamma} = (v_1, w_1)
+\evalE{\boxed{e_1}, c, w, \sigma} = (v_1, w_1)
 \]
 and
 \[
-\evalE{\boxed{e_0}, c, w, \Gamma} = (v_0, w_0)
+\evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
 \]
 
 \subsection{Evaluation of a Sentence}
