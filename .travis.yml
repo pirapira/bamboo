@@ -67,8 +67,8 @@ script:
 - eth --version
 - mkdir -p /tmp/test
 - eth --test -d /tmp/test &> eth.log &
-- until grep JSONRPC eth.log; do sleep 1; echo "waiting for eth"; cat eth.log; done
-- ./endToEnd.native
 - PID=$!
+- sleep 4
+- ./endToEnd.native
 - kill $PID
 - cat eth.log
