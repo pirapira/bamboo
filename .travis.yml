@@ -37,7 +37,6 @@ before_install:
 - eval `opam config env`
 - opam update
 - opam upgrade -y
-- opam reinstall cryptokit
 - opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc cryptokit
 - cd ../..
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
@@ -51,7 +50,8 @@ before_install:
 - cmake --version
 - cd cpp-ethereum
 - git fetch
-- git checkout test-raw-sign
+- git checkout origin/test-raw-sign
+- git show | head -n 3
 - git submodule update --recursive
 - mkdir -p build
 - cd build
@@ -67,8 +67,8 @@ script:
 - eth --version
 - mkdir -p /tmp/test
 - eth --test -d /tmp/test &> eth.log &
-- until grep JSONRPC eth.log; do sleep 1; echo "waiting for eth"; done
-- ./endToEnd.native
 - PID=$!
+- sleep 4
+- ./endToEnd.native
 - kill $PID
 - cat eth.log

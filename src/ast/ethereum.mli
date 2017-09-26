@@ -64,6 +64,10 @@ val keccak_signature : string -> string
  *)
 val case_header_signature_string : Syntax.usual_case_header -> string
 
+(** [compute_singature_hash] takes a string like `f(uint8,address)` and
+ returns a 4byte signature hash commonly used in Ethereum ABI. *)
+val compute_signature_hash : string -> string
+
 (** [case_header_signature_hash h] returns the
  * method signature used in the common ABI.
  * The hex hash comes without 0x
