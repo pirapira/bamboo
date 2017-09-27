@@ -1,0 +1,35 @@
+// Based on http://www.blunderingcode.com/ether-vaults/
+
+// The argument unvaultPeriod should disappear and instead a constant four weeks should be used.
+contract Vault(address hotwallet, address vaultKey, address recoveryKey, uint256 unvaultPeriod) {
+  case(void unvault(uint256 amount)) {
+    if (sender(msg) != vaultKey) abort;
+    return then become UnVaulting(now(block) + unvaultPeriod, amount, hotwallet, vaultKey, recoveryKey, unvaultPeriod);
+  }
+  case(void recover(address _newHotWallet)) {
+    if (sender(msg) != recoveryKey) abort;
+    return then become Vault(_newHotWallet, vaultKey, recoveryKey, unvaultPeriod);
+  }
+  case(void destroy()) {
+    return then become Destroyed();
+  }
+}
+
+contract UnVaulting(uint256 redeemtime, uint256 amount, address hotwallet, address vaultKey, address recoveryKey, uint256 unvaultPeriod) {
+  case(void redeem()) {
+    if (amount > balance(this)) abort;
+    void = hotwallet.default() with amount reentrance { abort; };
+    return then become Vault(hotwallet, vaultKey, recoveryKey, unvaultPeriod);
+  }
+  case(void recover(address _newHotWallet)) {
+    if (sender(msg) != recoveryKey) abort;
+    return then become Vault(_newHotWallet, vaultKey, recoveryKey, unvaultPeriod);
+  }
+  case(void destroy()) {
+    return then become Destroyed();
+  }
+}
+
+contract Destroyed() {
+  // any call just throws;
+}
