@@ -13,21 +13,21 @@ the calls, but this ordering can only be enforced by careful timestamp
 checking or global state tracking in the body of the functions.
 ```
 contract CrowdFund() {
-case(void toBeCalledDuringFunding()) {
-    // ...
-}
+    case(void toBeCalledDuringFunding()) {
+        // ...
+    }
 
-case(void toBeCalledAfterFailure()) {
-    // ...
-}
+    case(void toBeCalledAfterFailure()) {
+        // ...
+    }
 
-case(void toBeCalledAfterSuccess()) {
-    // ...
-}
+    case(void toBeCalledAfterSuccess()) {
+        // ...
+    }
 
-case(void notSureWhatThisDoes()) {
-    // ...
-}
+    case(void notSureWhatThisDoes()) {
+        // ...
+    }
 }
 ```
 To make my point clearer, I added the last function
@@ -44,26 +44,28 @@ a contract changes its signature.
 
 ```
 contract Funding() {
-	function toBeCalledDuringFunding() {
-		// something something
-		return true then Funding();
-	}
-	function endFunding() {
-		if (something)
-			return (true) then FundingSuccess();
-		else
-			return (false) then FundingFailure();
-	}
+    case(bool toBeCalledDuringFunding()) {
+        // something something
+        return true then become Funding();
+    }
+    case(bool endFunding()) {
+        if (something)
+            return (true) then become FundingSuccess();
+        else
+            return (false) then become FundingFailure();
+    }
 }
+
 contract FundingSuccess() {
-	function toBeCalledAfterSuccess() {
-		// something
-	}
+    case(void toBeCalledAfterSuccess()) {
+        // something
+    }
 }
+
 contract FundingFailure() {
-	function toBeCalledAfterFailure() {
-		// something
-	}
+    case(void toBeCalledAfterFailure()) {
+        // something
+    }
 }
 ```
 
