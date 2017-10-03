@@ -12,19 +12,22 @@ In the following example, the names of functions suggest the timing of
 the calls, but this ordering can only be enforced by careful timestamp
 checking or global state tracking in the body of the functions.
 ```
-contract CrowdFund {
-	function toBeCalledDuringFunding() {
-		...
-	}
-	function toBeCalledAfterFailure() {
-		...
-	}
-	function toBeCalledAfterSuccess() {
-		...
-	}
-	function notSureWhatThisDoes() {
-		...
-	}
+contract CrowdFund() {
+case(void toBeCalledDuringFunding()) {
+    // ...
+}
+
+case(void toBeCalledAfterFailure()) {
+    // ...
+}
+
+case(void toBeCalledAfterSuccess()) {
+    // ...
+}
+
+case(void notSureWhatThisDoes()) {
+    // ...
+}
 }
 ```
 To make my point clearer, I added the last function
