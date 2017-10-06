@@ -145,6 +145,7 @@ and assign_type_exp
   | FunctionCallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
      (FunctionCallExp c', typ)
+  | DecLitExp d -> (DecLitExp d, (Uint256Type, []))
   | IdentifierExp s ->
      (* Now something is strange. This might not need a type anyway. *)
      (* Maybe introduce a type called CallableType *)
@@ -593,6 +594,7 @@ and strip_side_effects_exp_inner i =
   match i with
   | TrueExp -> TrueExp
   | FalseExp -> FalseExp
+  | DecLitExp d -> DecLitExp d
   | NowExp -> NowExp
   | FunctionCallExp fc ->
      FunctionCallExp (strip_side_effects_function_call fc)

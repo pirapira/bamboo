@@ -1,0 +1,7 @@
+contract A ()
+{
+	case(bool f(uint256 a))
+	{
+		return a < 5 then become A();
+	}
+}

@@ -71,4 +71,5 @@ rule read =
   | "log" { LOG }
   | "indexed" { INDEXED }
   | id  { IDENT (lexeme lexbuf) }
+  | digit+ as i { DECLIT (Big_int.big_int_of_string i) }
   | eof { EOF }

@@ -573,6 +573,9 @@ and codegen_exp
       let ce = CodegenEnv.append_instruction ce ADDRESS in
       let ce = align_address ce alignment in
       ce
+   | DecLitExp d, typ ->
+      failwith ("codegen_exp: decimal literals not yet implemented. Got:
+          "^(Big_int.string_of_big_int d))
    | IdentifierExp id, typ ->
       begin match LocationEnv.lookup le id with
       (** if things are just DUP'ed, location env should not be
