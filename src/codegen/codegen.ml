@@ -573,9 +573,6 @@ and codegen_exp
       let ce = CodegenEnv.append_instruction ce ADDRESS in
       let ce = align_address ce alignment in
       ce
-   | DecLitExp d, typ ->
-      failwith ("codegen_exp: decimal literals not yet implemented. Got:
-          "^(Big_int.string_of_big_int d))
    | IdentifierExp id, typ ->
       begin match LocationEnv.lookup le id with
       (** if things are just DUP'ed, location env should not be
@@ -602,6 +599,16 @@ and codegen_exp
      let () = assert (alignment = RightAligned) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
+  | DecLitExp d, Uint256Type ->
+     let ce = append_instruction ce (PUSH32 (Big d)) in
+     let () = assert (alignment = RightAligned) in
+     ce
+  | DecLitExp d, Uint8Type ->
+     let ce = append_instruction ce (PUSH1 (Big d)) in
+     let () = assert (alignment = RightAligned) in
+     ce
+  | DecLitExp d, _ ->
+      failwith ("codegen_exp: DecLitExp of unexpected type: "^(Big_int.string_of_big_int d))
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
      let () = assert (alignment = RightAligned) in
