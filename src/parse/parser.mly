@@ -110,25 +110,21 @@ block:
 case_header:
   | DEFAULT { Syntax.DefaultCaseHeader }
   | CASE; LPAR;
-    return_typ = typ;
+    return_types = return_types;
     name = IDENT;
     args = plist(arg);
     RPAR { Syntax.UsualCaseHeader
-      { case_return_typ = [return_typ] (* multi returns not supported *)
+      { case_return_typ = return_types
       ; Syntax.case_name = name
       ; case_arguments = args
       }
     }
-  | CASE; LPAR;
-    VOID;
-    name = IDENT;
-    args = plist(arg);
-    RPAR { Syntax.UsualCaseHeader
-      { case_return_typ = []
-      ; Syntax.case_name = name
-      ; case_arguments = args
-      }
-    }
+  ;
+
+return_types:
+  | typ = typ {[typ]}
+  | types = plist(typ) { types }
+  | VOID {[]}
   ;
 
 arg:
