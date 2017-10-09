@@ -32,6 +32,8 @@ This specification contains some exercises.  Please try to solve them at least m
 \newcommand{\paren}[1]{\mathtt{(}{#1}\mathtt{)}}
 \newcommand{\logicalAnd}[2]{{#1}\mathbin{\text{\texttt{\&\&}}{#2}}}
 \newcommand{\logicalNot}[1]{\mathop{\text{\texttt{not}}}{#1}}
+\newcommand{\balance}[1]{\text{\texttt{balance}}\mathtt{(}{#1}\mathtt{)}}
+\newcommand{\arrayAccess}[2]{{#1}[{#2}]}
 \newcommand{\lt}[2]{{#1} \mathop{\text{\texttt{<}}} {#2}}
 \newcommand{\gt}[2]{{#1} \mathop{\text{\texttt{>}}} {#2}}
 \newcommand{\eq}[2]{{#1} \mathop{\text{\texttt{==}}} {#2}}
@@ -101,6 +103,9 @@ Expressions are inductively defined as follows.
 \item An identifier is an expression.
 \item When $e$ is an expression, $\paren{e}$ is an expression.
 \item When $e$ is an expression, $\logicalNot{e}$ is an expression.
+\item When $e$ is an expression, $\balance{e}$ is an expression.
+\item A deploy-expression is an expression.
+\item AddressExp?  What is an AddressExp?
 \item When $e_0$ and $e_1$ are expressions, the following are expressions
 \begin{itemize}
 \item $\logicalAnd{e_0}{e_1}$
@@ -108,6 +113,10 @@ Expressions are inductively defined as follows.
 \item $\gt{e_0}{e_1}$
 \item $\notEq{e_0}{e_1}$
 \item $\eq{e_0}{e_1}$
+\item $\arrayAccess{e_0}{e_1}$
+\item $e_0 + e_1$
+\item $e_0 - e_1$
+\item $e_0 \times e_1$
 \end{itemize}
 \end{itemize}
 
