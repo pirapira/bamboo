@@ -340,20 +340,47 @@ where
 \evalE{\boxed{e}, c, \sigma, w} = (v, \sigma', w')
 \]
 
+\subsection{Evaluation of a Case}
+
+The evaluation function of a case takes
+\begin{itemize}
+\item A contract state
+\item a world oracle
+\item a case call
+\end{itemize}
+and returns
+\begin{itemize}
+\item an account state
+\item a world oracle
+\end{itemize}
+
 \subsection{Evaluation of a Contract}
 
 The evaluation function of a contract takes
 \begin{itemize}
 \item A contract state
+\item a world oracle
+\item a contract call
 \end{itemize}
 and returns
 \begin{itemize}
 \item An account state
+\item a world oracle
 \end{itemize}
 
 \subsection{Evaluation of a Program}
 
-
+The evaluation function of a program takes
+\begin{itemize}
+\item an account state
+\item a world oracle
+\item a program call
+\end{itemize}
+and returns
+\begin{itemize}
+\item an account state
+\item a world oracle
+\end{itemize}
 
 \section{Account Initialization}
 
