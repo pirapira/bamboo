@@ -665,6 +665,11 @@ and codegen_exp
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce ADD in
      ce
+  | PlusExp (l, r), Uint8Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce ADD in
+     ce
   | PlusExp (l, r), _ ->
      failwith "codegen_exp PlusExp of unexpected type"
   | MinusExp (l, r), Uint256Type ->
@@ -672,9 +677,19 @@ and codegen_exp
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce SUB in
      ce
+  | MinusExp (l, r), Uint8Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce SUB in
+     ce
   | MinusExp (l, r), _ ->
      failwith "codegen_exp MinusExp of unexpected type"
   | MultExp (l, r), Uint256Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce MUL in
+     ce
+  | MultExp (l, r), Uint8Type ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce MUL in
