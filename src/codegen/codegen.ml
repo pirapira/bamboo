@@ -599,16 +599,18 @@ and codegen_exp
      let () = assert (alignment = RightAligned) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
-  | DecLitExp d, Uint256Type ->
+  | DecLit256Exp d, Uint256Type ->
      let ce = append_instruction ce (PUSH32 (Big d)) in
      let () = assert (alignment = RightAligned) in
      ce
-  | DecLitExp d, Uint8Type ->
+  | DecLit256Exp d, _ ->
+      failwith ("codegen_exp: DecLit256Exp of unexpected type: "^(Big_int.string_of_big_int d))
+  | DecLit8Exp d, Uint8Type ->
      let ce = append_instruction ce (PUSH1 (Big d)) in
      let () = assert (alignment = RightAligned) in
      ce
-  | DecLitExp d, _ ->
-      failwith ("codegen_exp: DecLitExp of unexpected type: "^(Big_int.string_of_big_int d))
+  | DecLit8Exp d, _ ->
+      failwith ("codegen_exp: DecLit8Exp of unexpected type: "^(Big_int.string_of_big_int d))
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
      let () = assert (alignment = RightAligned) in

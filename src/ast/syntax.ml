@@ -66,7 +66,8 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
-  | DecLitExp of Big_int.big_int
+  | DecLit256Exp of Big_int.big_int
+  | DecLit8Exp of Big_int.big_int
   | NowExp
   | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string
@@ -195,7 +196,8 @@ let string_of_exp_inner e =
   | SenderExp -> "sender"
   | TrueExp -> "true"
   | FalseExp -> "false"
-  | DecLitExp d -> "declit "^(Big_int.string_of_big_int d)
+  | DecLit256Exp d -> "declit "^(Big_int.string_of_big_int d)
+  | DecLit8Exp d -> "declit "^(Big_int.string_of_big_int d)
   | NotExp _ -> "not"
   | NeqExp _ -> "neq"
   | LandExp _ -> "_ && _"
@@ -299,7 +301,8 @@ and exp_might_become e : string list =
   match fst e with
   | TrueExp -> []
   | FalseExp -> []
-  | DecLitExp _ -> []
+  | DecLit256Exp _ -> []
+  | DecLit8Exp _ -> []
   | NowExp -> []
   | FunctionCallExp f ->
      functioncall_might_become f

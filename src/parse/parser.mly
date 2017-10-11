@@ -1,6 +1,7 @@
 %token CONTRACT
 %token <string> IDENT
-%token <Big_int.big_int> DECLIT
+%token <Big_int.big_int> DECLIT256
+%token <Big_int.big_int> DECLIT8
 %token ADDRESS
 %token UINT256
 %token UINT8
@@ -213,7 +214,8 @@ exp:
   | lhs = exp; LAND; rhs = exp { Syntax.LandExp (lhs, rhs), () }
   | TRUE { Syntax.TrueExp, () }
   | FALSE { Syntax.FalseExp, () }
-  | d = DECLIT { Syntax.DecLitExp d, ()}
+  | d = DECLIT256 { Syntax.DecLit256Exp d, ()}
+  | d = DECLIT8 { Syntax.DecLit8Exp d, ()}
   | VALUE LPAR MSG RPAR { Syntax.ValueExp, () }
   | SENDER LPAR MSG RPAR { Syntax.SenderExp, () }
   | BALANCE; LPAR; e = exp; RPAR { Syntax.BalanceExp e, () }

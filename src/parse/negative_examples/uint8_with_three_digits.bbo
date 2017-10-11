@@ -1,0 +1,7 @@
+contract A ()
+{
+    case(bool f(uint256 a))
+    {
+        return a < 129u8 then become A();
+    }
+}
