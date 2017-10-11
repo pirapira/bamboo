@@ -36,4 +36,12 @@ contract A ()
     {
         return a < 5u8 then become A();
     }
+    case(uint8 multiply5(uint8 a))
+    {
+        return a * 5u8 then become A();
+    }
+    case(uint256 multiply7(uint256 a))
+    {
+        return a * 7 then become A();
+    }
 }
