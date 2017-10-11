@@ -1,4 +1,5 @@
-Version 0.0.02 (not released yet)
+Version 0.0.02 (2017-10-11)
 
 * detecting racing side-effects #186
 * banning the keyword uint in favor of uint256
+* More elegant parser using Menhir libraries
