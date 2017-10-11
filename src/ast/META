@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: b3399e04cabf564e8891dc57a30b69f3)
-version = "0.0.01"
+# DO NOT EDIT (digest: dc6506595c9b5cdfa33a17ce1985fe6e)
+version = "0.0.02"
 description = "A compiler targetting Ethereum Virtual Machine"
 requires = "basics cryptokit hex"
 archive(byte) = "ast.cma"

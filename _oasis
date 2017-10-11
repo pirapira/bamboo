@@ -1,6 +1,6 @@
 OASISFormat: 0.4
 Name:        bamboo
-Version:     0.0.01
+Version:     0.0.02
 Synopsis:    A compiler targetting Ethereum Virtual Machine
 Authors:     Yoichi Hirai
 License:     Apache-2.0
