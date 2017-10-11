@@ -12,7 +12,7 @@ build: [
   ["ocaml" "setup.ml" "-build"]
 ]
 install: ["ocaml" "setup.ml" "-install"]
-remove: ["ocamlfind" "remove" "bamboo"]
+remove: ["ocaml" "setup.ml" "-uninstall"]
 depends: [
   "ocamlbuild" {build}
   "ocamlfind" {build}
