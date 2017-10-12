@@ -28,6 +28,10 @@ contract A ()
     {
         return 12u8 - 5u8 then become A();
     }
+    case(uint8 jjjj())
+    {
+        return 120u8 + 255u8 then become A();
+    }
     case(bool k())
     {
         return 12u8 > 5u8 then become A();

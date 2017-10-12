@@ -1,7 +1,7 @@
 contract A ()
 {
-    case(bool f(uint256 a))
+    case(bool f(uint8 a))
     {
-        return a < 20u8 then become A();
+        return a < 300u8 then become A();
     }
 }
