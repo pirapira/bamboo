@@ -42,4 +42,4 @@ Library parse
   Install:    false
   BuildTools: ocamlbuild
   Modules:    Lexer
-  BuildDepends: ast, menhir
+  BuildDepends: ast, menhirLib
