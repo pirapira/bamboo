@@ -1,5 +1,6 @@
 Version 0.0.02 (2017-10-11)
 
+* decimal literals #208 by @aupiff
 * detecting racing side-effects #186
 * banning the keyword uint in favor of uint256
 * More elegant parser using Menhir libraries
