@@ -1,4 +1,4 @@
-A compiler targetting Ethereum Virtual Machine
+A compiler targeting Ethereum Virtual Machine
 
 Bamboo compiles a simple language to Ethereum Virtual Machine. The
 language is designed to keep programmers away from common mistakes. It
