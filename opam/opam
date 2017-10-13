@@ -6,7 +6,7 @@ authors: [ "Yoichi Hirai <i@yoichihirai.com>" ]
 license: "Apache-2.0"
 homepage: "https://github.com/pirapira/bamboo"
 dev-repo: "https://github.com/pirapira/bamboo.git"
-bug-reports: "https://github.com/pirapira/bamboo/issues"
+bug-reports: "https://github.com/pirapira/bamboo/issues/new"
 build: [
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
   ["ocaml" "setup.ml" "-build"]
