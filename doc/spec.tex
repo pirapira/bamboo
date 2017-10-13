@@ -23,6 +23,7 @@ This specification contains some exercises.  Please try to solve them at least m
 
 \section{Keywords}
 
+\newcommand{\abort}{\text{\texttt{abort;}}}
 \newcommand{\true}{\text{\texttt{true}}}
 \newcommand{\false}{\text{\texttt{false}}}
 \newcommand{\msgsender}{\text{\texttt{msg.sender}}}
@@ -124,6 +125,20 @@ Expressions are inductively defined as follows.
 Exercise: prove that \texttt{99a} is not an expression.
 
 \section{Sentences}
+
+Sentences are inductively defined as follows.
+
+\begin{itemize}
+\item $\abort$ is a sentence.
+\item a return sentence is a sentence.
+\item an assignment sentnece is a sentence.
+\item a variable initialization sentence is a sentence.
+\item an expression-only sentence is a sentence.
+\item an if sentence is a sentence.
+\item an if-then-else sentence is a sentence.
+\item a logging sentence is a sentence.
+\item a self-destruct sentence is a sentence.
+\end{itemize}
 
 \section{Blocks}
 
