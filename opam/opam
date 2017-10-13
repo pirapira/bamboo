@@ -6,7 +6,7 @@ authors: [ "Yoichi Hirai <i@yoichihirai.com>" ]
 license: "Apache-2.0"
 homepage: "https://github.com/pirapira/bamboo"
 dev-repo: "https://github.com/pirapira/bamboo.git"
-bug-reports: "https://github.com/pirapira/bamboo/issues/new"
+bug-reports: "https://github.com/pirapira/bamboo/issues"
 build: [
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
   ["ocaml" "setup.ml" "-build"]
@@ -24,6 +24,7 @@ depends: [
   "batteries" {build}
   "cryptokit" {build & >= "1.12"}
   ("hex" {build & = "1.0.0"} | "hex" {build & = "0.2.0"} | "hex" {build & = "0.1.0"})
+  "menhir" {build}
   "ocamlbuild" {build}
   "ocamlfind" {build}
   "rope" {build}
