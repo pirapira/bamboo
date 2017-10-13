@@ -599,6 +599,18 @@ and codegen_exp
      let () = assert (alignment = RightAligned) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"
+  | DecLit256Exp d, Uint256Type ->
+     let ce = append_instruction ce (PUSH32 (Big d)) in
+     let () = assert (alignment = RightAligned) in
+     ce
+  | DecLit256Exp d, _ ->
+      failwith ("codegen_exp: DecLit256Exp of unexpected type: "^(Big_int.string_of_big_int d))
+  | DecLit8Exp d, Uint8Type ->
+     let ce = append_instruction ce (PUSH1 (Big d)) in
+     let () = assert (alignment = RightAligned) in
+     ce
+  | DecLit8Exp d, _ ->
+      failwith ("codegen_exp: DecLit8Exp of unexpected type: "^(Big_int.string_of_big_int d))
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
      let () = assert (alignment = RightAligned) in
@@ -653,6 +665,11 @@ and codegen_exp
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce ADD in
      ce
+  | PlusExp (l, r), Uint8Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce ADD in
+     ce
   | PlusExp (l, r), _ ->
      failwith "codegen_exp PlusExp of unexpected type"
   | MinusExp (l, r), Uint256Type ->
@@ -660,9 +677,19 @@ and codegen_exp
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce SUB in
      ce
+  | MinusExp (l, r), Uint8Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce SUB in
+     ce
   | MinusExp (l, r), _ ->
      failwith "codegen_exp MinusExp of unexpected type"
   | MultExp (l, r), Uint256Type ->
+     let ce = codegen_exp le ce RightAligned r in
+     let ce = codegen_exp le ce RightAligned l in
+     let ce = append_instruction ce MUL in
+     ce
+  | MultExp (l, r), Uint8Type ->
      let ce = codegen_exp le ce RightAligned r in
      let ce = codegen_exp le ce RightAligned l in
      let ce = append_instruction ce MUL in

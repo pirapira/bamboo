@@ -1,0 +1,51 @@
+contract A ()
+{
+    case(bool f(uint256 a))
+    {
+        return a < 5 then become A();
+    }
+    case(uint256 g(uint256 a))
+    {
+        return 1 + 9 then become A();
+    }
+    case(uint256 gg(uint256 a))
+    {
+        return 12138129191999999999 + 9213817283712 then become A();
+    }
+    case(uint256 ggg(uint256 a))
+    {
+        return 77712138129191999999999 - 9 then become A();
+    }
+    case(bool s())
+    {
+        return 239842934 > 289302 then become A();
+    }
+    case(uint8 i(uint8 a))
+    {
+        return 12u8 + 5u8 then become A();
+    }
+    case(uint8 j())
+    {
+        return 12u8 - 5u8 then become A();
+    }
+    case(uint8 jjjj())
+    {
+        return 120u8 + 255u8 then become A();
+    }
+    case(bool k())
+    {
+        return 12u8 > 5u8 then become A();
+    }
+    case(bool q(uint8 a))
+    {
+        return a < 5u8 then become A();
+    }
+    case(uint8 multiply5(uint8 a))
+    {
+        return a * 5u8 then become A();
+    }
+    case(uint256 multiply7(uint256 a))
+    {
+        return a * 7 then become A();
+    }
+}
