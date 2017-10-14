@@ -140,9 +140,9 @@ var abi = [{"type": "constructor", "inputs":[{"name": "totalSupply", "type": "ui
 When you deploy the code, the contract first becomes the `PreToken` contract.
 ```
 contract PreToken
-(uint totalSupply
-,address => uint balances
-,address => address => uint allowances
+(uint256 totalSupply
+,address => uint256 balances
+,address => address => uint256 allowances
 )
 {
     <snip>
@@ -226,9 +226,9 @@ Now remember that the contract is currently a `PreToken`:
 
 ```
 contract PreToken
-(uint totalSupply
-,address => uint balances
-,address => address => uint allowances
+(uint256 totalSupply
+,address => uint256 balances
+,address => address => uint256 allowances
 )
 {
     default
@@ -253,43 +253,43 @@ After that, the contract becomes a `Token` contract.
 
 ```
 contract Token
-(uint totalSupply
-,address => uint balances
-,address => address => uint allowances
+(uint256 totalSupply
+,address => uint256 balances
+,address => address => uint256 allowances
 )
 {
-    case(uint totalSupply())
+    case(uint256 totalSupply())
     {
         <snip>
     }
-    case(uint balanceOf(address a))
-    {
-        <snip>
-    }
-
-    case(bool transfer(address _to, uint _amount))
+    case(uint256 balanceOf(address a))
     {
         <snip>
     }
 
-    case(bool approve(address _spender, uint _amount))
-    {
-        <snip>
-    }
-    case(uint allowance(address _owner, address _spender))
-    {
-        <snip>
-    }
-    case(bool transferFrom(address _from, address _to, uint _amount))
+    case(bool transfer(address _to, uint256 _amount))
     {
         <snip>
     }
 
-    case(bool buy(uint _amount))
+    case(bool approve(address _spender, uint256 _amount))
     {
         <snip>
     }
-    case (bool sell(uint _amount, uint _value))
+    case(uint256 allowance(address _owner, address _spender))
+    {
+        <snip>
+    }
+    case(bool transferFrom(address _from, address _to, uint256 _amount))
+    {
+        <snip>
+    }
+
+    case(bool buy(uint256 _amount))
+    {
+        <snip>
+    }
+    case (bool sell(uint256 _amount, uint256 _value))
     {
         <snip>
     }
