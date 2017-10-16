@@ -6,7 +6,7 @@ This document describes the semantics of the Bamboo language.  This is an inform
 
 ### Arena of the Game
 
-A program written in Bamboo, after deployed, participates in a game between the program and the world.  In this game, the world makes the first move, the program makes the second move, and so on alternatively.  Neither the world or the program makes two moves in a row.  This document aims at  defining the choice of the program's move, given a sequence of earlier moves.
+A program written in Bamboo, once deployed, participates in a game between the program and the world.  In this game, the world makes the first move, the program makes the second move, and so on alternatively.  Neither the world or the program makes two moves in a row.  This document aims at  defining the choice of the program's move, given a sequence of earlier moves.
 
 The world can make the following three kinds of moves:
 * calling the program
@@ -30,7 +30,7 @@ From the above sentences, you should be able to prove that the nesting never goe
 
 ### Bamboo's Strategy
 
-In general, a program needs to decide on a move after any sequence of moves that ends with the world's move.  However, Bamboo does not remember the whole sequence of moves, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the stored program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the remaining program's state for the later use.
+In general, a program needs to decide on a move after any sequence of moves that ends with the world's move.  However, Bamboo does not remember the whole sequence of moves, but just remembers the "program's state".  The Bamboo semantics computes the program's next move only using the stored program's state and the previous move made by the world.  In addition to the program's move, the Bamboo semantics specifies the program's new altered state for later use.
 
 ### Bamboo's Program State
 
@@ -72,33 +72,33 @@ contract C() {
 }
 ```
 
-When this souce code is compiled and deployed, we get a program whose state consists of a persistent state and no pending execution states.  The initial persistent state is `A()`.  The initial `killed` flag is `false`.
+When this source code is compiled and deployed, we get a program whose state consists of a persistent state and no pending execution states.  The initial persistent state is `A()`.  The initial `killed` flag is `false`.
 
 When the world calls the program, the program might return, leaving the persistent state `B()`; intuitively, that's the meaning of `return then become B()`.  Otherwise, there is a possibility that the program fails, leaving the persistent state as `A()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program might return, leaving the persistent state `C()`; intuitively, that's the meaning of `return then become C()`. Otherwise, there is a possibility that the prorgram fails, leaving the persistent state as `B()` (this possibility comes from EVM's out-of-gas).
+When the world calls the program again, the program might return, leaving the persistent state `C()`; intuitively, that's the meaning of `return then become C()`. Otherwise, there is a possibility that the program fails, leaving the persistent state as `B()` (this possibility comes from EVM's out-of-gas).
 
-When the world again calls the program, the program might destroy itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag `true`.  Again, there is a possibility that the program fails, leaving the persistent state as `C()` and the `killed` flag `false` (this possibility comes from EVM's out-of-gas).
+When the world calls the program again, the program might destroy itself.  This is described in `selfdestruct(this)`.  The form `selfdestruct(.)` takes one argument, which specifies the account where the remaining ETH balance goes.  The keyword `this` represents the Ethereum account where the program is deployed.  Bamboo inherits EVM's special behavior when the program's own address is specified as the receiver of the remaining balance.  In that case, the remaining balance disappears.  After selfdestruction, the program's state contains the `killed` flag `true`.  Again, there is a possibility that the program fails, leaving the persistent state as `C()` and the `killed` flag `false` (this possibility comes from EVM's out-of-gas).
 
 ### What happens after selfdestruction
 
-After the program destroys itself, if the world calls the program, the program simply returns the empty data  given enough gas.  The program might fail if there are no enough gas.  (TODO: make sure the compiler realizes this behavior.  Issue [#170](https://github.com/pirapira/bamboo/issues/170).)
+After the program destroys itself, if the world calls the program, the program simply returns the empty data given enough gas.  The program might fail if there is not enough gas.  (TODO: make sure the compiler realizes this behavior.  Issue [#170](https://github.com/pirapira/bamboo/issues/170).)
 
-### What happens the selfdestruction is reverted?
+### What happens if the selfdestruction is reverted?
 
-People familiar with EVM semantics might ask what happens when the state changes are reverted.  The Bamboo semantics does not see the state reversion.  From a history in the EVM, you can pick up unreverted executions, and the Bamboo semantics can run there.
+People familiar with EVM semantics might ask what happens when state changes are reverted.  The Bamboo semantics do not see the state reversion.  From a history in the EVM, you can pick up unreverted executions, and the Bamboo semantics can run there.
 
-(TODO: maybe I should not mention the possibilites that the program fails because of out-of-gas in EVM?)
+(TODO: maybe I should not mention the possibilities that the program fails because of out-of-gas in EVM?)
 
 ## Pending Execution State
 
 As mentioned, a program's state contains a list of pending execution states.  Moreover, after the world makes a move and before the program makes a move, the abstract machine keeps track of the current pending execution state.
 
-A pending execution state contains a evaluation point, a variable environment and an annotating function.  Each component is described below.
+A pending execution state contains an evaluation point, a variable environment and an annotating function.  Each component is described below.
 
 ### An evaluation point
 
-Any pending execution state contains an evaluation point.  An evaluation point is either a sentence or an expression in the source code.  When identically looking expressions (resp. sentences) appear in the source code, they are considered different expressions (resp. sentences) if their locations are different.
+Any pending execution state contains an evaluation point.  An evaluation point is either a sentence or an expression in the source code.  When identical expressions (resp. sentences) appear in the source code, they are considered different expressions (resp. sentences) if their locations are different.
 
 A Bamboo source code is a list of contracts.  A contract contains a list of cases.  A case contains a list of sentences.  A sentence contains sentences and/or expressions.  An expression contains sentences and/or expressions.  The current evaluation point is either a sentence or an expression in the source code.  (TODO: there should be a separate document called Bamboo Syntax.)
 
@@ -122,11 +122,11 @@ When the world calls the program, the world can specify one of the two kinds of 
 
 Anyway, when the world calls the program, the program first looks up the source code for the contract specified in the permanent state.  For example, when the permanent state is `A()`, the program tries to find a contract called `A` with zero arguments in the source code.  If such a contract is not found in the source code, the Bamboo compiler is broken.  If multiple such contracts are found in the compiler, the Bamboo compiler is also broken.
 
-Moreover, if the persistent state of the program contains `killed` flag being true, the program returns or fails at random (the EVM knows if there is enough gas to execute `STOP`, but Bamboo semantics is not aware of the EVM's choice).
+Moreover, if the persistent state of the program contains `killed` flag being true, the program returns or fails at random (the EVM knows if there is enough gas to execute `STOP`, but the Bamboo semantics is not aware of the EVM's choice).
 
 ### The world can call the default case
 
-If such a contract is found in the source code, and if the world has called the default case, the program then looks for the `default` case in the contract.  If there is none, the program fails.  If there are more than one `default` case, the Bamboo compiler is broken (TODO: make sure that the compiler refused multiple `default` cases: issue [#171](https://github.com/pirapira/bamboo/issues/171)).  If there is one such `default` case, the `default` case contains a list of sentences.  If the list of sentences is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.
+If such a contract is found in the source code, and if the world has called the default case, the program then looks for the `default` case in the contract.  If there is none, the program fails.  If there are more than one `default` case, the Bamboo compiler is broken.  If there is one such `default` case, the `default` case contains a list of sentences.  If the list of sentences is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.
 
 The combination of the evaluation point, the empty variable environment, and the empty annotating function is kept as the current pending execution state.
 
@@ -140,6 +140,7 @@ Bamboo recognizes the following ABI types:
 * bytes32
 * address
 * bool
+
 These types are just meaningless symbols.
 
 A value is a sequence of 32 bytes.
@@ -160,13 +161,13 @@ When there is a current pending execution state, there is always a possibility t
 
 Moreover, when the evaluation point in the current pending execution state is an `abort;` sentence, the program certainly fails.
 
-Otherwise, when the evaluation point in the current pending execution state is a `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leave the persistent state specified by the annotation function.
+Otherwise, when the evaluation point in the current pending execution state is a `return then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  When the annotation function maps `X` to a persistent state, the program returns and leaves the persistent state specified by the annotation function.
 
 Otherwise, when the evaluation point in the current pending execution state is a `return e then become X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotation function maps `X` to a persistent state, but the annotation function does not map `e` to anything, the evaluation point is set to `e`. When the annotation function maps `X` to a persistent state and the annotation function maps `e` to a value, the program returns the value associated with `e` and leaves the persistent state associated with `X`.  When the annotation function does anything else, the Bamboo compiler is broken.
 
 Otherwise, when the evaluation point in the current pending execution state is a `void = X;` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, the evaluation point advances from the sentence (see below for how an evaluation point advances from a sentence in the source code).
 
-Otherwise, when the evaluation point in the current pending execution state is a `TYPE V = X` where `TYPE` is a name of a type, `V` is an identifier and `X` is an expression, if the annotating functiohn does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, if the annotating function maps `X` to a value, the variable environment is updated to map `V` to the value, and the evaluation point advances from this sentence (see below for  what it is that the evaluation point advances).
+Otherwise, when the evaluation point in the current pending execution state is a `TYPE V = X` where `TYPE` is a name of a type, `V` is an identifier and `X` is an expression, if the annotating function does not map `X` to anything, the evaluation point is set to `X`.  Otherwise, if the annotating function maps `X` to a value, the variable environment is updated to map `V` to the value, and the evaluation point advances from this sentence (see below for  what it is that the evaluation point advances).
 
 Otherwise, when the evaluation point in the current pending execution state is an `if (C) then B0 else B1` sentence, where `C` is an expression, `B0` is a block and `B1` is another block, the evaluation point is set to `C` if the annotating function does not map `C` to anything.  Otherwise, when the annotation function maps `C` to zero, the evaluation point advances into `B1` (see below for what it is that the evaluation point advances into a block).  Even otherwise, when the annotation function maps `C` to a non-zero value, the evaluation point advances into `B0`.  When the annotation function maps `C` to something else, the Bamboo compiler is broken.
 
@@ -174,12 +175,11 @@ Otherwise, when the evaluation point in the current pending execution state is a
 
 Otherwise, when the evaluation point in the current pending execution state is a `selfdestruct(X);` sentence, if the annotating function does not map `X` to anything, the evaluation point is set to `X`. When the annotating function maps `X` to a value, the program destroys itself, specifying the value as the inheritor.  The current pending execution state is discarded.  The `killed` flag is set in the persistent state.  (When the program has been called from a Bamboo program, the world then returns into that Bamboo program, not failing into it.)
 
-Otherwise, when the evaluation point in the currrent pending execution state is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating functio
-n now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
+Otherwise, when the evaluation point in the current pending execution state is an identifier occurrence, the program looks up the variable environment. If the variable environment does not map the identifier occurrence to a value, the Bamboo compiler is broken.  Otherwise, when the variable environment maps the identifier occurrence to a value, the annotating function now associates the identifier occurrence with the value.  The evaluation point is set to the surrounding expression or sentence.
 
-Otherwise, when the evaluation point in the current pending execution state is a call `C.m(E1, E2, ...,E_n) reentrance { abort; }`, if the annotating function does not map `C` to anything, the evaluation point is set to `C`.  Otherwise, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program calls an accout of address, specified by the annotation of `C`.  The call is on a named case `m` (TODO: for completing this clause, we need some information about the types of arguments of `m`.  We need some information in the persistent state), together with annotations of `E1`, ... `E_n`.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
+Otherwise, when the evaluation point in the current pending execution state is a call `C.m(E1, E2, ...,E_n) reentrance { abort; }`, if the annotating function does not map `C` to anything, the evaluation point is set to `C`.  Otherwise, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program calls an account of address, specified by the annotation of `C`.  The call is on a named case `m` (TODO: for completing this clause, we need some information about the types of arguments of `m`.  We need some information in the persistent state), together with annotations of `E1`, ... `E_n`.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
 
-Otherwise, when the evaluation point in the current pending execution state is a deployment `deploy C(E1, E2, E_n) reentrance { abort; }`, if the annotation funciton maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program deploys the contract `C` with a packing of annotations of `E_k`s.  If the contract `C` does not appear in the source code, the Bamboo compiler is broken.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
+Otherwise, when the evaluation point in the current pending execution state is a deployment `deploy C(E1, E2, E_n) reentrance { abort; }`, if the annotation function maps any of `E_k` to nothing, the evaluation point is set to the last such argument.  Otherwise, the program deploys the contract `C` with a packing of annotations of `E_k`s.  If the contract `C` does not appear in the source code, the Bamboo compiler is broken.  The program's state should now contain the current pending execution state as the last element in the list of pending execution states.  Moreover, the persistent state in the program's state is now the aborting element.
 
 ## How to advance an evaluation point
 
@@ -187,7 +187,7 @@ When an evaluation point advances from a sentence, if the sentence belongs to a 
 
 ## When the World returns into the Program
 
-When the world returns into the program but the program's state does not contain any pending execution state, something is very wrong in this document.  Otherwise, the program can find the last element in the list of pending execution state in the program's state.  This element is removed from the program's state and becomes the current pending execution state.  The execution continues according to the execution point in the current pending execution state.
+When the world returns into the program but the program's state does not contain any pending execution state, something is very wrong.  Otherwise, the program finds in its state the last element in the list of pending execution states.  This element is removed from the program's state and becomes the current pending execution state.  The execution continues according to the execution point in the current pending execution state.
 
 ## When the World fails into the Program
 
@@ -208,6 +208,6 @@ When the evaluation point is an assignment to a mapping `m[idx0][idx1]...[idx_k]
 When the evaluation point is a mapping lookup `m[idx]`, the program looks up the annotating function for `m`. If the annotating function does not map `m` to anything, `m` becomes the evaluation point.
 Otherwise, if the annotating function maps `m` to zero, the program assigns a seed to `m` (see below for what it is for a program to assign a seed to `m`).
 Otherwise, if the annotating function does not map `idx` to anything, the evaluation point becomes `idx`.
-Otherwise, the annotating funciton is updated to map `m[idx]` to `M(<<m>>, <<idx>>)` where `<<m>>` and `<<idx>>` are the values that the annotation function returns for `m` and `idx`, and the evaluation point is set to the surrounding expression or sentence.
+Otherwise, the annotating function is updated to map `m[idx]` to `M(<<m>>, <<idx>>)` where `<<m>>` and `<<idx>>` are the values that the annotation function returns for `m` and `idx`, and the evaluation point is set to the surrounding expression or sentence.
 
 When the program assigns a new array seed to `m[idx]`, the grand mapping function is updated so that `M(<<m>>, <<idx>>)` is the array seed, where `<<m>>` and `<<idx>>` represents the values that the annotation function maps `m` and `idx` into.  Then, the array seed is incremented.  When the annotation function does not map `m` or `idx` to any value, the Bamboo compiler is broken.
