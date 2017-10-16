@@ -122,7 +122,7 @@ When the world calls the program, the world can specify one of the two kinds of 
 
 Anyway, when the world calls the program, the program first looks up the source code for the contract specified in the permanent state.  For example, when the permanent state is `A()`, the program tries to find a contract called `A` with zero arguments in the source code.  If such a contract is not found in the source code, the Bamboo compiler is broken.  If multiple such contracts are found in the compiler, the Bamboo compiler is also broken.
 
-Moreover, if the persistent state of the program contains `killed` flag being true, the program returns or fails at random (the EVM knows if there is enough gas to execute `STOP`, but the Bamboo semantics are not aware of the EVM's choice).
+Moreover, if the persistent state of the program contains `killed` flag being true, the program returns or fails at random (the EVM knows if there is enough gas to execute `STOP`, but the Bamboo semantics is not aware of the EVM's choice).
 
 ### The world can call the default case
 
