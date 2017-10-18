@@ -664,7 +664,7 @@ let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel 
   | Event e -> Event e
 
 let has_distinct_contract_names (contracts : unit Syntax.contract Assoc.contract_id_assoc) : bool =
-  let contract_names = (List.map (fun (a, b) -> b.Syntax.contract_name) contracts) in
+  let contract_names = (List.map (fun (_, b) -> b.Syntax.contract_name) contracts) in
   List.length contracts = List.length (BatList.unique contract_names)
 
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
