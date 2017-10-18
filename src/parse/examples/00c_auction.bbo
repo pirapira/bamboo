@@ -73,10 +73,3 @@ contract auction_done
  uint256 _highest_bid)
 {
 }
-contract bid
-  (address _sender
-  ,uint256 _value
-  ,address _auction
-  )
-{
-}

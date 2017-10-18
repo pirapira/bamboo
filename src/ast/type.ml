@@ -663,6 +663,10 @@ let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel 
      Contract (strip_side_effects_contract c)
   | Event e -> Event e
 
+let has_distinct_contract_names (contracts : unit Syntax.contract Assoc.contract_id_assoc) : bool =
+  let contract_names = (List.map (fun (_, b) -> b.Syntax.contract_name) contracts) in
+  List.length contracts = List.length (BatList.unique contract_names)
+
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =
   let raw_contracts : unit Syntax.contract Assoc.contract_id_assoc =
@@ -671,6 +675,7 @@ let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
                           | Contract c -> Some c
                           | _ -> None
                         ) raw in
+  let () = assert(has_distinct_contract_names(raw_contracts)) in
   let interfaces = Assoc.map Contract.contract_interface_of raw_contracts in
   let events : event Assoc.contract_id_assoc =
     Assoc.filter_map (fun x ->
