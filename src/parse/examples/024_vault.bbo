@@ -1,6 +1,5 @@
 // Based on http://www.blunderingcode.com/ether-vaults/
 
-// The argument unvaultPeriod should disappear and instead a constant four weeks should be used.
 contract Vault(address hotwallet, address vaultKey, address recoveryKey) {
   case(void unvault(uint256 amount)) {
     if (sender(msg) != vaultKey) abort;
