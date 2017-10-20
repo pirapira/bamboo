@@ -36,6 +36,14 @@ prints ABI.
 [{"type": "constructor", "inputs":[{"name": "_beneficiary", "type": "address"},{"name": "_bidding_time", "type": "uint256"},{"name": "_highest_bid", "type": "uint256"}], "name": "auction", "outputs":[], "payable": true},{"type":"fallback","inputs": [],"outputs": [],"payable": true}]
 ```
 
+## Developing Bamboo
+
+When you modify the OCaml source of Bamboo, you can try your version by
+```
+$ make
+$ ./bamboo.native < src/parse/examples/006auction_first_case.bbo
+```
+
 ## How to Contribute
 
 * notice problems and point them out. [create issues](https://github.com/pirapira/bamboo/issues/new).

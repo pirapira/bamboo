@@ -164,7 +164,7 @@ let test_mineBlocks s (num : int) =
     Rpc.({ name = "test_mineBlocks"
          ; params = [Rpc.Int (Int64.of_int num)]
          }) in
-  let ()  = ignore (do_rpc_unix s call) in
+  let ()  = ignore (pick_result (do_rpc_unix s call)) in
   ()
 
 let test_rawSign s (addr : address) (data : string) =
@@ -944,6 +944,84 @@ let test_plus_mult channel my_acc =
 
   ()
 
+(* takes an address in hex (0x followed by 40 characters) form and returns it as a word (64 characters without 0x) *)
+let address_as_word address =
+  let () = assert (String.length address = 42) in
+  let () = assert (String.sub address 0 2 = "0x") in
+  (String.make 24 '0') ^ (String.sub address 2 40)
+
+let testing_024 channel my_acc =
+  let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/024_vault_shorter.bbo" in
+  let recover_key = my_acc in
+  let () = Printf.printf "recover: %s\n" recover_key in
+  let vault_key = personal_newAccount channel in
+  let () = Printf.printf "vault: %s\n" vault_key in
+  let hot = personal_newAccount channel in
+  let () = Printf.printf "hot: %s\n" hot in
+
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = vault_key
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "2200000000000000000"
+    ; data = "0x00"
+    ; gasprice = "0x0000000000000000000000000000000000000000000000000000005af3107a40"
+    } in
+  let () = ignore (call channel c) in
+
+  let c : eth_transaction =
+    { from = my_acc
+    ; _to = hot
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "2200000000000000000"
+    ; data = "0x00"
+    ; gasprice = "0x0000000000000000000000000000000000000000000000000000005af3107a40"
+    } in
+  let () = ignore (call channel c) in
+
+
+  let initdata = initcode_compiled ^ address_as_word hot ^ address_as_word vault_key ^ address_as_word recover_key in
+  let receipt = deploy_code channel my_acc initdata "10000" in
+  let contract_address = receipt.contractAddress in
+  let deployed = eth_getCode channel contract_address in
+  let () = assert (String.length deployed > 2) in
+  let () = Printf.printf "saw code!\n" in
+  let balance = eth_getBalance channel contract_address in
+  let () = assert (Big_int.(eq_big_int balance (big_int_of_int 10000))) in
+
+  (* initiate a withdrawal *)
+  let unvault : eth_transaction =
+    { from = vault_key
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (Ethereum.compute_signature_hash "unvault(uint256)")^
+               (pad_to_word "50")
+    ; gasprice = "0x0000000000000000000000000000000000000000000000000000005af3107a40"
+    } in
+  let unvault_tx = call channel unvault in
+  let () = Printf.printf "unvault_tx: %Ld\n" unvault_tx.blockNumber in
+
+  (* wait for two seconds *)
+  let () = Unix.sleepf 2.0 in
+  let () = advance_block channel in
+
+  let redeem : eth_transaction =
+    { from = hot
+    ; _to = contract_address
+    ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
+    ; value = "0"
+    ; data = (Ethereum.compute_signature_hash "redeem()")
+    ; gasprice = "0x0000000000000000000000000000000000000000000000000000005af3107a40"
+    } in
+  let redeem_tx = call channel redeem in
+  let () = Printf.printf "redeem_tx: %Ld\n" redeem_tx.blockNumber in
+  let balance = eth_getBalance channel hot in
+  let () = Printf.printf "hot acccount now has %s\n%!" (Big_int.string_of_big_int balance) in
+  let () = assert(Big_int.(eq_big_int balance (big_int_of_string "2198781100000000080"))) in
+
+  ()
+
 let test_erc20 channel my_acc =
   let initcode_compiled : string = CompileFile.compile_file "./src/parse/examples/01b_erc20better.bbo" in
   let initial_amount : string = "0000000000000000000000000000000000000000000000010000000000000000" in
@@ -1113,6 +1191,7 @@ let () =
   let () = testing_01a s my_acc in
   let () = test_erc20 s my_acc in
   let () = testing_022 s my_acc in
+  let () = testing_024 s my_acc in
   let () = Unix.close s in
   ()
 

@@ -1,0 +1,7 @@
+contract A ()
+{
+    case(bool f(uint8 a))
+    {
+        return a < 300u8 then become A();
+    }
+}

@@ -145,6 +145,8 @@ and assign_type_exp
   | FunctionCallExp c ->
      let (c', typ) = assign_type_call contract_interfaces cname venv c in
      (FunctionCallExp c', typ)
+  | DecLit256Exp d -> (DecLit256Exp d, (Uint256Type, []))
+  | DecLit8Exp d -> (DecLit8Exp d, (Uint8Type, []))
   | IdentifierExp s ->
      (* Now something is strange. This might not need a type anyway. *)
      (* Maybe introduce a type called CallableType *)
@@ -593,6 +595,8 @@ and strip_side_effects_exp_inner i =
   match i with
   | TrueExp -> TrueExp
   | FalseExp -> FalseExp
+  | DecLit256Exp d -> DecLit256Exp d
+  | DecLit8Exp d -> DecLit8Exp d
   | NowExp -> NowExp
   | FunctionCallExp fc ->
      FunctionCallExp (strip_side_effects_function_call fc)
@@ -659,6 +663,10 @@ let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel 
      Contract (strip_side_effects_contract c)
   | Event e -> Event e
 
+let has_distinct_contract_names (contracts : unit Syntax.contract Assoc.contract_id_assoc) : bool =
+  let contract_names = (List.map (fun (_, b) -> b.Syntax.contract_name) contracts) in
+  List.length contracts = List.length (BatList.unique contract_names)
+
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =
   let raw_contracts : unit Syntax.contract Assoc.contract_id_assoc =
@@ -667,6 +675,7 @@ let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
                           | Contract c -> Some c
                           | _ -> None
                         ) raw in
+  let () = assert(has_distinct_contract_names(raw_contracts)) in
   let interfaces = Assoc.map Contract.contract_interface_of raw_contracts in
   let events : event Assoc.contract_id_assoc =
     Assoc.filter_map (fun x ->

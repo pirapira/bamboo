@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 25c73d5a4474f82f8d1d433d49b1ad5b)
+# DO NOT EDIT (digest: 2a2127f33ba3796438e6a561b562f590)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -30,6 +30,7 @@ true: annot, bin_annot
 <src/parse/*.ml{,i,y}>: pkg_batteries
 <src/parse/*.ml{,i,y}>: pkg_cryptokit
 <src/parse/*.ml{,i,y}>: pkg_hex
+<src/parse/*.ml{,i,y}>: pkg_menhirLib
 <src/parse/*.ml{,i,y}>: pkg_rope
 <src/parse/*.ml{,i,y}>: use_ast
 <src/parse/*.ml{,i,y}>: use_basics
@@ -38,6 +39,7 @@ true: annot, bin_annot
 <src/codegen/*.ml{,i,y}>: pkg_batteries
 <src/codegen/*.ml{,i,y}>: pkg_cryptokit
 <src/codegen/*.ml{,i,y}>: pkg_hex
+<src/codegen/*.ml{,i,y}>: pkg_menhirLib
 <src/codegen/*.ml{,i,y}>: pkg_rope
 <src/codegen/*.ml{,i,y}>: use_ast
 <src/codegen/*.ml{,i,y}>: use_basics
@@ -46,6 +48,7 @@ true: annot, bin_annot
 <src/exec/bamboo.{native,byte}>: pkg_batteries
 <src/exec/bamboo.{native,byte}>: pkg_cryptokit
 <src/exec/bamboo.{native,byte}>: pkg_hex
+<src/exec/bamboo.{native,byte}>: pkg_menhirLib
 <src/exec/bamboo.{native,byte}>: pkg_rope
 <src/exec/bamboo.{native,byte}>: use_ast
 <src/exec/bamboo.{native,byte}>: use_basics
@@ -54,6 +57,7 @@ true: annot, bin_annot
 <src/exec/*.ml{,i,y}>: pkg_batteries
 <src/exec/*.ml{,i,y}>: pkg_cryptokit
 <src/exec/*.ml{,i,y}>: pkg_hex
+<src/exec/*.ml{,i,y}>: pkg_menhirLib
 <src/exec/*.ml{,i,y}>: pkg_rope
 <src/exec/*.ml{,i,y}>: use_ast
 <src/exec/*.ml{,i,y}>: use_basics

@@ -3,7 +3,7 @@
 contract Vault(address hotwallet, address vaultKey, address recoveryKey) {
   case(void unvault(uint256 amount)) {
     if (sender(msg) != vaultKey) abort;
-    uint256 unvaultPeriod = 60 * 60 * 24 * 7 * 2; // two weeks
+    uint256 unvaultPeriod = 2; // two seconds, to allow testing
     if (now(block) + unvaultPeriod < now(block)) abort;
     return then become UnVaulting(now(block) + unvaultPeriod, amount, hotwallet, vaultKey, recoveryKey);
   }
