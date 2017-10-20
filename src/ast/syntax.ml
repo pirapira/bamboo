@@ -245,15 +245,16 @@ let fits_in_one_storage_slot (typ : typ) =
   | ContractArchType _ -> false
   | VoidType -> false
 
-let size_of_typ (* in bytes *) = function
+let rec size_of_typ (* in bytes *) = function
   | Uint256Type -> 32
   | Uint8Type -> 1
   | Bytes32Type -> 32
   | AddressType -> 20
   | BoolType -> 32
   | ReferenceType _ -> 32
-  | TupleType lst ->
-     failwith "size_of_typ Tuple"
+  | TupleType lst -> 
+    let sizes = List.map  size_of_typ lst
+    in List.fold_left (+) 0 sizes
   | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
   | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
   | ContractInstanceType _ -> 20 (* address as word *)
