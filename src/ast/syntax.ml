@@ -143,7 +143,7 @@ type 'exp_annot case_body =
   'exp_annot sentence list
 
 type usual_case_header =
-  { case_return_typ : typ list
+  { case_return_typs : typ list
   ; case_name : string
   ; case_arguments : arg list
   }

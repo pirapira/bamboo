@@ -2,14 +2,14 @@ let case0 = ("pay(address)", "0c11dedd")
 
 let case1_case : Syntax.usual_case_header =
   Syntax.(
-  { case_return_typ = []
+  { case_return_typs = []
   ; case_name = "pay"
   ; case_arguments = [{arg_typ = AddressType; arg_ident = "addr"; arg_location = None}]
   })
 
 let case2_case : Syntax.usual_case_header =
   Syntax.(
-    { case_return_typ = [Uint256Type]
+    { case_return_typs = [Uint256Type]
     ; case_name = "f"
     ; case_arguments = [{arg_typ = Uint256Type; arg_ident = "x"; arg_location = None}]
     })

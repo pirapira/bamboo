@@ -222,7 +222,7 @@ let print_usual_case_abi u =
     "{\"type\":\"function\",\"name\":\"%s\",\"inputs\": [%s],\"outputs\": [%s],\"payable\": true}"
     (u.Syntax.case_name)
     (print_inputs_abi u.Syntax.case_arguments)
-    (print_outputs_abi u.Syntax.case_return_typ)
+    (print_outputs_abi u.Syntax.case_return_typs)
 
 let print_case_abi (c : Syntax.typ Syntax.case) : string =
   match c.Syntax.case_header with

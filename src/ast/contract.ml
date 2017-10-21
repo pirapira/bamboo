@@ -4,7 +4,7 @@ let case_interface_of (raw : 'exp Syntax.case) : case_interface =
   match Syntax.(raw.case_header) with
   | Syntax.UsualCaseHeader header ->
      { Ethereum.sig_return =
-         List.map Ethereum.interpret_interface_type Syntax.(header.case_return_typ)
+         List.map Ethereum.interpret_interface_type Syntax.(header.case_return_typs)
      ; sig_name = Syntax.(header.case_name)
      ; sig_args =
          List.map Ethereum.interpret_interface_type

@@ -40,7 +40,7 @@ let arg_has_known_type contract_interfaces arg =
   ret
 
 let ret_type_is_known contract_interfaces header =
-  BatList.for_all (is_known_type contract_interfaces) header.case_return_typ
+  BatList.for_all (is_known_type contract_interfaces) header.case_return_typs
 
 let assign_type_case_header contract_interfaces header =
   match header with
@@ -333,11 +333,12 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : (typ * SideEffect.t list) return =
-  let exps = BatOption.map (assign_type_exp contract_interfaces
-                                   cname tenv) src.return_exp in
-  let f = TypeEnv.lookup_expected_returns tenv in
-  let () = assert (f (BatOption.map (fun x -> (fst (snd x))) exps)) in
-  { return_exp = exps
+  let exps = BatList.map (assign_type_exp contract_interfaces
+                                   cname tenv) src.return_exps in  
+  let lookup = TypeEnv.lookup_expected_returns tenv in
+  let predicate = (fun x -> (fst (snd x))) in
+  let () = assert (lookup (List.map  predicate exps)) in
+  { return_exps = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
   }
@@ -430,11 +431,7 @@ type termination =
 let rec is_terminating_sentence (s : unit sentence) : termination list =
   match s with
   | AbortSentence -> [JustStop]
-  | ReturnSentence ret ->
-     begin match ret.return_exp with
-     | Some _ -> [ReturnValues 1]
-     | None -> [ReturnValues 0]
-     end
+  | ReturnSentence ret -> [ReturnValues (List.length ret.return_exps)]
   | AssignmentSentence _ -> [RunAway]
   | VariableInitSentence _ -> [RunAway]
   | IfThenOnly (_, b) -> (are_terminating b) @ [RunAway] (* there is a continuation if the condition does not hold. *)
@@ -453,19 +450,18 @@ let case_is_returning_void (case : unit case) : bool =
   match case.case_header with
   | DefaultCaseHeader -> true
   | UsualCaseHeader u ->
-     u.case_return_typ = []
+     u.case_return_typs = []
 
-let return_expectation_of_case (h : Syntax.case_header) (actual : Syntax.typ option) : bool =
+let return_expectation_of_case (h : Syntax.case_header) (actual : Syntax.typ list) : bool =
   match h, actual with
-  | DefaultCaseHeader, Some _ -> false
-  | DefaultCaseHeader, None -> true
-  | UsualCaseHeader u, _ ->
-     begin match u.case_return_typ, actual with
-     | _ :: _ :: _, _ -> false
-     | [x], Some y -> Syntax.acceptable_as x y
-     | [], None -> true
-     | _, _ ->false
-     end
+  | DefaultCaseHeader, [] -> true
+  | DefaultCaseHeader, _ -> false  
+  | UsualCaseHeader u, tps ->
+    if List.length u.case_return_typs != List.length tps
+      then false
+    else
+      let expectation_list = List.map2 Syntax.acceptable_as u.case_return_typs tps in
+      List.for_all (fun x -> x) expectation_list
 
 let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc)
                      (contract_name : string)
@@ -486,7 +482,7 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
   let () =
     if BatList.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") case_arguments then
       failwith "names that start with pre_ are reserved" in
-  let returns : Syntax.typ option -> bool = return_expectation_of_case case.case_header in
+  let returns : Syntax.typ list -> bool = return_expectation_of_case case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
   ; case_body = assign_type_sentences
                   contract_interfaces
@@ -640,7 +636,7 @@ and strip_side_effects_exp_inner i =
   | BalanceExp e ->
      BalanceExp (strip_side_effects_exp e)
 and strip_side_effects_return ret =
-  { return_exp = BatOption.map strip_side_effects_exp ret.return_exp
+  { return_exps = BatList.map strip_side_effects_exp ret.return_exps
   ; return_cont = strip_side_effects_exp ret.return_cont
   }
 and strip_side_effects_case_body (raw : (typ * 'a) case_body) : typ case_body =

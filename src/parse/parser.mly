@@ -119,7 +119,7 @@ case_header:
     name = IDENT;
     args = plist(arg);
     RPAR { Syntax.UsualCaseHeader
-      { case_return_typ = rtypes
+      { case_return_typs = rtypes
       ; Syntax.case_name = name
       ; case_arguments = args
       }
