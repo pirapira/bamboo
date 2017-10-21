@@ -12,7 +12,7 @@ type typ =
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
 
-let rec string_of_typ t =
+let rec string_of_typ t  =
   match t with
   | VoidType -> "void"
   | Uint256Type -> "uint256"
@@ -24,7 +24,9 @@ let rec string_of_typ t =
   | ContractArchType s -> "ContractArchType "^s
   | ContractInstanceType s -> "ContractInstanceType "^s
   | ReferenceType _ -> "pointer to ..."
-  | TupleType _ -> "tuple"
+  | TupleType typs -> 
+    let typs_as_string = String.concat ", " (List.map string_of_typ typs) 
+    in "tuple of ("^typs_as_string^")"
 
 type arg =
   { arg_typ : typ
@@ -264,7 +266,6 @@ let calldata_size_of_typ (typ : typ) =
   match typ with
   | MappingType _ -> failwith "mapping cannot be a case argument"
   | ReferenceType _ -> failwith "reference type cannot be a case argument"
-  | TupleType _ -> failwith "tupletype not implemented"
   | ContractArchType _ -> failwith "ContractArchType cannot be a case argument"
   | _ -> size_of_typ typ
 
