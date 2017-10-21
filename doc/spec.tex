@@ -1,0 +1,417 @@
+\documentclass{book}
+
+\usepackage{stmaryrd}
+\usepackage{amsmath}
+
+
+\newcommand{\todo}[1]{\underline{TODO: {#1}}}
+\newcommand{\sem}[1]{\llbracket{#1}\rrbracket}
+\newcommand{\evalE}[1]{E_\mathrm{e}\left({#1}\right)}
+\newcommand{\evalS}[1]{E_\mathrm{s}\left({#1}\right)}
+
+\newcommand{\expressionsentence}[1]{\mathsf{void}={#1}\mathsf{;}}
+
+\title{Bamboo Specification---An Early Draft}
+
+\begin{document}
+
+\maketitle
+
+This specification contains some exercises.  Please try to solve them at least mentally.  Your solutions are welcome at \texttt{https://gitter.im/bbo-dev/Lobby}.  \todo{use url}
+
+\chapter{Syntax}
+
+\section{Keywords}
+
+\newcommand{\abort}{\text{\texttt{abort;}}}
+\newcommand{\true}{\text{\texttt{true}}}
+\newcommand{\false}{\text{\texttt{false}}}
+\newcommand{\msgsender}{\text{\texttt{msg.sender}}}
+\newcommand{\msgvalue}{\text{\texttt{msg.value}}}
+\newcommand{\this}{\text{\texttt{this}}}
+\newcommand{\now}{\text{\texttt{now}}}
+\newcommand{\paren}[1]{\mathtt{(}{#1}\mathtt{)}}
+\newcommand{\logicalAnd}[2]{{#1}\mathbin{\text{\texttt{\&\&}}{#2}}}
+\newcommand{\logicalNot}[1]{\mathop{\text{\texttt{not}}}{#1}}
+\newcommand{\balance}[1]{\text{\texttt{balance}}\mathtt{(}{#1}\mathtt{)}}
+\newcommand{\arrayAccess}[2]{{#1}[{#2}]}
+\newcommand{\lt}[2]{{#1} \mathop{\text{\texttt{<}}} {#2}}
+\newcommand{\gt}[2]{{#1} \mathop{\text{\texttt{>}}} {#2}}
+\newcommand{\eq}[2]{{#1} \mathop{\text{\texttt{==}}} {#2}}
+\newcommand{\notEq}[2]{{#1} \mathop{\text{\texttt{!=}}} {#2}}
+
+The following sequences of characters are \textit{keywords}.
+\begin{itemize}
+\item $\true$
+\item $\false$
+\item $\this$
+\item $\now$
+\item \texttt{not}
+\end{itemize}
+
+\todo{Use a maththm like environment for exercises.}
+
+Exercise: which of the following are keywords?
+\begin{enumerate}
+\item \texttt{True}
+\item \texttt{true}
+\end{enumerate}
+
+\section{Identifier}
+
+An \textit{identifier} is a sequence of characters of the following form (but is not a keyword).
+
+\todo{define identifier}
+
+
+Exercise: which of the following are identifiers? \\
+\todo{complete}
+
+\section{Syntactic Types}
+
+The following sequences of characters are \textit{syntactic types}.
+\begin{itemize}
+\item \texttt{void}
+\item \texttt{uint256}
+\item \texttt{bool}
+\item \texttt{uint8}
+\item \texttt{bytes32}
+\item \texttt{address}
+\item \texttt{mapping } $T$ \texttt{=>} $T'$ when $T$ and $T'$ are syntactic types
+\item any identifier except those listed above.
+\end{itemize}
+
+Every syntactic type except \texttt{void} is a \textit{non-\texttt{void} syntactic type}.
+
+Exercise: which of the following is true?
+\begin{enumerate}
+\item \texttt{uint256} is the set of integers at least zero and at most $2^{256} - 1$.
+\item \texttt{uint256} is the set of 256-bit words.
+\item none of the above.
+\end{enumerate}
+
+\section{Expressions}
+
+Expressions are inductively defined as follows.
+
+\begin{itemize}
+\item $\true$ is an expression.
+\item $\false$ is an expression.
+\item $\msgsender$ is an expression.
+\item $\msgvalue$ is an expression.
+\item $\this$ is an expression.
+\item $\now$ is an expression.
+\item An identifier is an expression.
+\item When $e$ is an expression, $\paren{e}$ is an expression.
+\item When $e$ is an expression, $\logicalNot{e}$ is an expression.
+\item When $e$ is an expression, $\balance{e}$ is an expression.
+\item A deploy-expression is an expression.
+\item A call-expression is an expression.
+\item AddressExp?  What is an AddressExp?
+\item When $e_0$ and $e_1$ are expressions, the following are expressions
+\begin{itemize}
+\item $\logicalAnd{e_0}{e_1}$
+\item $\lt{e_0}{e_1}$
+\item $\gt{e_0}{e_1}$
+\item $\notEq{e_0}{e_1}$
+\item $\eq{e_0}{e_1}$
+\item $\arrayAccess{e_0}{e_1}$
+\item $e_0 + e_1$
+\item $e_0 - e_1$
+\item $e_0 \times e_1$
+\end{itemize}
+\end{itemize}
+
+Exercise: prove that \texttt{99a} is not an expression.
+
+\section{Sentences}
+
+Sentences are inductively defined as follows.
+
+\begin{itemize}
+\item $\abort$ is a sentence.
+\item a return sentence is a sentence.
+\item an assignment sentnece is a sentence.
+\item a variable initialization sentence is a sentence.
+\item an expression-only sentence is a sentence.
+\item an if sentence is a sentence.
+\item an if-then-else sentence is a sentence.
+\item a logging sentence is a sentence.
+\item a self-destruct sentence is a sentence.
+\end{itemize}
+
+\section{Blocks}
+
+A block is a sequence of stentences surrounded by \texttt{\{} and \texttt{\}}.
+
+\todo{talk about whitespaces, perhaps.}
+
+\section{Contracts}
+
+\subsection{Contract's Signature}
+
+$(\mathtt{auction}, [\mathtt{address}, \mathtt{uint256}, \mathtt{address}, \mathtt{uint256}])$.
+
+Exercise: what is the signature of the following contract?
+\todo{complete the question}
+
+\chapter{Semantics}
+
+\section{Notations}
+
+\todo{describe $\in$}
+
+\todo{describe pi}
+
+\section{States}
+
+\subsection{Interpretation of Syntactic Types}
+Each syntactic type~$T$ is associated with a set~$\sem{T}$.
+
+Exercise: determine if each of the following is true.
+\begin{enumerate}
+  \item $0 \in\sem{\mathtt{address}}$?
+\end{enumerate}
+
+A \textit{value} is a union of all $\sem{T}$ for $T \in \{\ldots\}$.
+
+We pick something called $\bot$ (pronounced ``bottom'') which is not a value.  The choice should not affect the meaning of a Bamboo program.
+
+\subsection{A Contract's States}
+A contract has \textit{states}.
+
+When a contract has a signature $(x, [T_1, T_2, \ldots, T_n])$ ($n \ge 0$),
+the set of the states of the contract is
+$\Pi_{i = 0}^{n} \sem{T_i}$.
+
+\subsection{A Program's Account States}
+A program determines a set of \textit{account states}.
+
+\section{Dynamics}
+
+\subsection{Variable Environment}
+
+A \textit{variable environment} is a partial map that takes identifiers and may or may not return a value.  When a variable environment $\sigma$ maps and identifier~$i$ to a value~$v$, we write
+\[
+\sigma(i) = v
+\]
+
+\subsection{Current Call}
+
+A \textit{current call} $c = (c_\mathrm{s}, c_\mathrm{v}, c_\mathrm{t})$ is a tuple of
+\begin{itemize}
+\item a value $c_\mathrm{s}$ called the \textit{sender},
+\item a value $c_\mathrm{v}$ called the \textit{transferred amount} and
+\item a value $c_\mathrm{t}$ called the \textit{timestamp}.
+\end{itemize}
+
+\subsection{World Oracle}
+
+\subsubsection{Call Queries}
+
+\subsubsection{Create Queries}
+
+\subsubsection{Balance Queries}
+
+\subsection{Timestamp query}
+
+\newcommand{\timestampQuery}{\text{\texttt{timestamp?}}}
+The time stamp query~$\timestampQuery$ is something different from any query that appears above. Apart from that, $\timestampQuery$ can be anything, and the behavior of Bamboo programs should not be affected by the concrete choice of $\timestampQuery$ (with some adaptations on world oracles).
+
+\subsection{Current Account Query}
+
+\newcommand{\thisQuery}[0]{\text{\texttt{this?}}}
+
+The current account query~$\thisQuery$ is something different from any query that appears above.
+
+\subsection{Sender Query}
+
+\newcommand{\senderQuery}{\text{\texttt{sender?}}}
+
+The sender query~$\senderQuery$ is something different from any query that appears above.
+
+\subsection{Value Query}
+
+\newcommand{\valueQuery}{\text{\texttt{value?}}}
+
+The value query~$\valueQuery$ is something different from any query that appears above.
+
+\subsubsection{World Oracle}
+
+Call queries, create queries, \todo{fill in} are \textit{oracle queries}.
+
+A \textit{world oracle} is defined coinductively as a function that takes an oracle query and returns a pair of a value and a world oracle.
+
+When a world oracle~$w$ takes a query~$q$ and returns a pair of a value~$v$ and a world oracle~$w'$, we write $w(q) = (v, w')$.
+
+\todo{Add a possibility that the world oracle calls into the program again.}
+
+\subsection{Evaluation of an Expression}
+
+The evaluation for expressions takes
+\begin{itemize}
+\item an expression,
+\item a current call,
+\item a world oracle and
+\item a variable environment.
+\end{itemize}
+It returns
+\begin{itemize}
+\item a value or $\bot$ and
+\item a world oracle
+\end{itemize}
+
+
+
+\todo{say it's inductively defined over the definition of expressions}.
+
+\subsubsection{Evaluation of Literals}
+
+\textit{Literals} are those keywords whose evaluation is defined below.
+
+\begin{itemize}
+  \item $\evalE{\boxed{\true}, c, w, \sigma} := (1, w)$
+  \item $\evalE{\boxed{\false}, c, w, \sigma} := (0, w)$
+  \item $\evalE{\boxed{\now}, c, w, \sigma} := w(\timestampQuery)$
+  \item $\evalE{\boxed{\this}, c, w, \sigma} := w(\thisQuery)$
+  \item $\evalE{\boxed{\msgsender}, c, w, \sigma} := w(\senderQuery)$
+  \item $\evalE{\boxed{\msgvalue}, c, w, \sigma} := w(\valueQuery)$
+\end{itemize}
+
+balance(x) sends a balance query on the world oracle.
+
+\subsubsection{Evaluation of an Identifier}
+
+An identifier~$i$ is evaluated as follows:
+\[
+\evalE{\boxed{i}, c, w, \sigma} := (\sigma(i), w)
+\]
+
+Note that $\sigma(i)$ can be $\bot$.
+
+\subsubsection{Evaluation of a new-expression}
+
+\todo{Consider new-expressions with nontrivial continuation later.  That requires an interaction between the program and the world oracle. }
+
+\subsubsection{Evaluation of a call-expression}
+
+\todo{Consider call-expressions with nontrivial continuation later.  That requires an interaction between the program and the world oracle. }
+
+\subsubsection{Evaluation of Binary Operators}
+
+\[
+\evalE{\boxed{\logicalAnd{e_0}{e_1}}, c, w, \sigma} :=
+\begin{cases}
+  (v_0, w_0) & \text{if}\ v_0 = 0\ \text{or}\ v_0 = \bot \\
+  (v_1, w_1) & \text{otherwise}
+\end{cases}
+\]
+where
+\[
+\evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
+\]
+and
+\[
+\evalE{\boxed{e_1}, c, w_0, \sigma} = (v_1, w_1)
+\]
+
+\[
+\evalE{\boxed{\lt{e_0}{e_1}}, c, w, \sigma} :=
+\begin{cases}
+  (1, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 < v_1 \\
+  (0, w_0) &\text{if}\ v_0 \neq \bot, v_1 \neq\bot\ \text{and}\ v_0 \ge v_1 \\
+  (\bot, w) &\text{if}\ v_0 = \bot \ \text{or}\ v_1 = \bot
+\end{cases}
+\]
+where
+\[
+\evalE{\boxed{e_1}, c, w, \sigma} = (v_1, w_1)
+\]
+and
+\[
+\evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
+\]
+
+\subsection{Evaluation of a Sentence}
+
+The evaluation function for sentences take
+\begin{itemize}
+\item a sentence,
+\item a current call,
+\item a variable environment and
+\item a world oracle
+\end{itemize}
+and returns
+\begin{itemize}
+\item a variable environment,
+\item a world oracle
+\item and optionally an account state.
+\end{itemize}
+
+\todo{Show two forms of equations: one without an account state, the other with an account state.}
+
+\subsubsection{Evaluation of an Expression Sentence}
+
+\[
+\evalS{\boxed{\expressionsentence{e}}, c, \sigma, w} := (\sigma', w')
+\]
+where
+\[
+\evalE{\boxed{e}, c, \sigma, w} = (v, \sigma', w')
+\]
+
+\subsection{Evaluation of a Case}
+
+The evaluation function of a case takes
+\begin{itemize}
+\item A contract state
+\item a world oracle
+\item a case call
+\end{itemize}
+and returns
+\begin{itemize}
+\item an account state
+\item a world oracle
+\end{itemize}
+
+\subsection{Evaluation of a Contract}
+
+The evaluation function of a contract takes
+\begin{itemize}
+\item A contract state
+\item a world oracle
+\item a contract call
+\end{itemize}
+and returns
+\begin{itemize}
+\item An account state
+\item a world oracle
+\end{itemize}
+
+\subsection{Evaluation of a Program}
+
+The evaluation function of a program takes
+\begin{itemize}
+\item an account state
+\item a world oracle
+\item a program call
+\end{itemize}
+and returns
+\begin{itemize}
+\item an account state
+\item a world oracle
+\end{itemize}
+
+\section{Account Initialization}
+
+\subsection{Account Deployment Query}
+
+\subsection{Initial Variable Environment}
+
+\chapter{Connection to EVM}
+
+\section{Bamboo Account State as an EVM Account State}
+
+\section{Queries as EVM instructions}
+
+\end{document}
