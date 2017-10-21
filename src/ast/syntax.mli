@@ -97,7 +97,7 @@ and 'exp_annot sentence =
   | ExpSentence of 'exp_annot exp
   | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp option
+  { return_exps : 'exp_annot exp list
   ; return_cont : 'exp_annot exp
   }
 

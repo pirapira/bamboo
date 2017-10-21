@@ -114,7 +114,7 @@ and 'exp_annot sentence =
   | ExpSentence of 'exp_annot exp
   | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp option
+  { return_exps : 'exp_annot exp list
   ; return_cont : 'exp_annot exp
   }
 
@@ -354,15 +354,7 @@ let variable_init_might_become v =
 let rec sentence_might_become (s : typ sentence) : string list =
   match s with
   | AbortSentence -> []
-  | ReturnSentence ret ->
-     (match ret.return_exp with
-      | Some e -> exp_might_become e
-      | None -> []) @
-       (exp_might_become ret.return_cont)@
-         (match contract_name_of_return_cont ret.return_cont with
-          | Some name -> [name]
-          | None -> []
-         )
+  | ReturnSentence ret -> exps_might_become ret.return_exps
   | AssignmentSentence (l, r) ->
      (lexp_might_become l)@
        (exp_might_become r)

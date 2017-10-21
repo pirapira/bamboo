@@ -1,6 +1,6 @@
 contract A ()
 {
-    case(uint256, bool f(uint256 a))
+    case((uint256, bool) f(uint256 a))
     {
         return a, a < 5 then become A();
     }

@@ -65,6 +65,9 @@
 %%
 
 
+%inline clist(X):
+   xs = separated_list(COMMA, X) {xs}
+
 %inline plist(X):
    xs = delimited(LPAR, separated_list(COMMA, X), RPAR) {xs}
 
@@ -174,8 +177,8 @@ typ:
 
 sentence:
   | ABORT; SEMICOLON { Syntax.AbortSentence }
-  | RETURN; value = option(exp); THEN; BECOME; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
+  | RETURN; values = clist(exp); THEN; BECOME; cont = exp; SEMICOLON
+    { Syntax.ReturnSentence { Syntax. return_exps = values; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;
