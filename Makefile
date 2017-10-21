@@ -10,5 +10,8 @@ endToEnd:
 test:
 	(cd src; sh ./run_tests.sh)
 
+testTuples:
+	(cd src; sh ./run_tuple_tests.sh)
+
 clean:
 	rm -rf _build
