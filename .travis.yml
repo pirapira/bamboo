@@ -59,7 +59,9 @@ before_install:
 - make -j3 eth
 - sudo make install
 - cd $BAMBOO
+- sudo apt install texlive-latex-base texlive-science texlive-math-extra
 script:
+- make doc/spec.pdf
 - make
 - make test
 - make endToEnd
