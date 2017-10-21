@@ -232,19 +232,6 @@ let is_mapping (typ : typ) =
 let count_plain_args (typs : typ list) =
   List.length (List.filter (fun t -> not (is_mapping t)) typs)
 
-let rec size_of_typ (* in bytes *) = function
-  | Uint256Type -> 32
-  | Uint8Type -> 1
-  | Bytes32Type -> 32
-  | AddressType -> 20
-  | BoolType -> 32
-  | ReferenceType _ -> 32
-  | TupleType lst ->  BatList.sum (List.map  size_of_typ lst)
-  | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
-  | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
-  | ContractInstanceType _ -> 20 (* address as word *)
-  | VoidType -> failwith "size_of_typ VoidType should not be asked"
-let storage_slot_size = 32
 let fits_in_one_storage_slot (typ : typ) =
   match typ with
   | Uint256Type
@@ -255,13 +242,24 @@ let fits_in_one_storage_slot (typ : typ) =
   | ContractInstanceType _
   | MappingType _ -> true
   | ReferenceType _ -> false
-  | TupleType _ -> 
-    (try
-      (size_of_typ typ) <= storage_slot_size
-    with
-      _ -> false )
+  | TupleType _ -> false
   | ContractArchType _ -> false
   | VoidType -> false
+
+let rec size_of_typ (* in bytes *) = function
+  | Uint256Type -> 32
+  | Uint8Type -> 1
+  | Bytes32Type -> 32
+  | AddressType -> 20
+  | BoolType -> 32
+  | ReferenceType _ -> 32
+  | TupleType lst -> 
+    let sizes = List.map  size_of_typ lst
+    in List.fold_left (+) 0 sizes
+  | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
+  | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
+  | ContractInstanceType _ -> 20 (* address as word *)
+  | VoidType -> failwith "size_of_typ VoidType should not be asked"
 
 let calldata_size_of_typ (typ : typ) =
   match typ with

@@ -1,0 +1,7 @@
+contract A ()
+{
+    case((bool, bool) f(uint256 a))
+    {
+        return a < 5, a < 7 then become A();
+    }
+}
