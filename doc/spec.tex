@@ -92,7 +92,13 @@ Exercise: which of the following is true?
 
 \section{Expressions}
 
-Expressions are inductively defined as follows.
+A \textit{deploy-expression} looks
+\[
+\text{\texttt{deploy}}\ i(e_1,\ldots,e_n)\ m
+\]
+when $i$ is an identifier, $e_i$ ($0 \le i \le n$) is an expression and $m$ is a message-info.
+
+\textit{Expressions} are inductively defined as follows.
 
 \begin{itemize}
 \item $\true$ is an expression.
