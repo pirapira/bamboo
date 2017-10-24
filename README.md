@@ -12,6 +12,7 @@ See [manifest](doc/manifest.md) for the motivation, or [tutorial](doc/tutorial.m
 
 * [A payment channel](./src/parse/examples/00h_payment_channel.bbo)
 * [An ERC20 contract](./src/parse/examples/01b_erc20better.bbo)
+* [A vault](https://medium.com/@pirapira/implementing-a-vault-in-bamboo-9c08241b6755)
 
 ## Compiler
 
