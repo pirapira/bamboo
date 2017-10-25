@@ -148,7 +148,7 @@ Sentences are inductively defined as follows.
 
 \section{Blocks}
 
-A \textit{block} is a sequence of stentences surrounded by \texttt{\{} and \texttt{\}}.
+A \textit{block} is a possibly empty sequence of stentences surrounded by \texttt{\{} and \texttt{\}}.
 
 \todo{talk about whitespaces, perhaps.}
 
@@ -164,6 +164,16 @@ $(\mathtt{auction}, [\mathtt{address}, \mathtt{uint256}, \mathtt{address}, \math
 
 Exercise: what is the signature of the following contract?
 \todo{complete the question}
+
+\subsection{Contract Body}
+
+A \textit{contract body} is a possibly empty sequence of cases surrounded by \texttt{\{} and \texttt{\}}.
+
+\subsection{Contract Definitions}
+
+A \textit{contract definition} is a contract header followed by a contract body.
+
+\section{Event Declarations}
 
 \chapter{Semantics}
 
