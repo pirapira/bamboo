@@ -352,6 +352,19 @@ and
 \evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
 \]
 
+\[
+\evalE{\boxed{\arrayAccess{e_0}{e_1}}, c, w, \sigma, M} :=
+(w_0, M(v_0, v_1))
+\]
+where
+\[
+\evalE{\boxed{e_1}, c, w, \sigma, M} = (v_1, w_1)
+\]
+and
+\[
+\evalE{\boxed{e_0}, c, w_1, \sigma, M} = (v_0, w_0)
+\]
+
 \subsection{Evaluation of a Sentence}
 
 The evaluation function for sentences take
