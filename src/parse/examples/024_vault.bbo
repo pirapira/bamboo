@@ -7,10 +7,6 @@ contract Vault(address vaultKey, address recoveryKey) {
     if (now(block) + unvaultPeriod < now(block)) abort;
     return then become UnVaulting(now(block) + unvaultPeriod, _amount, _hotWallet, vaultKey, recoveryKey);
   }
-  case(void recover()) {
-    if (sender(msg) != recoveryKey) abort;
-    return then become Vault(vaultKey, recoveryKey);
-  }
   case(void destroy()) {
     if (sender(msg) != recoveryKey) abort;
     return then become Destroyed();
