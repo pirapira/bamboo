@@ -1,15 +1,15 @@
 // Based on http://www.blunderingcode.com/ether-vaults/
 
-contract Vault(address hotwallet, address vaultKey, address recoveryKey) {
-  case(void unvault(uint256 amount)) {
+contract Vault(address vaultKey, address recoveryKey) {
+  case(void unvault(uint256 _amount, address _hotWallet)) {
     if (sender(msg) != vaultKey) abort;
-    uint256 unvaultPeriod = 2; // two seconds, to allow testing
+    uint256 unvaultPeriod = 2; // two seconds
     if (now(block) + unvaultPeriod < now(block)) abort;
-    return then become UnVaulting(now(block) + unvaultPeriod, amount, hotwallet, vaultKey, recoveryKey);
+    return then become UnVaulting(now(block) + unvaultPeriod, _amount, _hotWallet, vaultKey, recoveryKey);
   }
-  case(void recover(address _newHotWallet)) {
+  case(void recover()) {
     if (sender(msg) != recoveryKey) abort;
-    return then become Vault(_newHotWallet, vaultKey, recoveryKey);
+    return then become Vault(vaultKey, recoveryKey);
   }
   case(void destroy()) {
     if (sender(msg) != recoveryKey) abort;
@@ -17,15 +17,15 @@ contract Vault(address hotwallet, address vaultKey, address recoveryKey) {
   }
 }
 
-contract UnVaulting(uint256 redeemtime, uint256 amount, address hotwallet, address vaultKey, address recoveryKey) {
+contract UnVaulting(uint256 redeemtime, uint256 amount, address hotWallet, address vaultKey, address recoveryKey) {
   case(void redeem()) {
     if (amount > balance(this)) abort;
-    void = hotwallet.default() with amount reentrance { abort; };
-    return then become Vault(hotwallet, vaultKey, recoveryKey);
+    void = hotWallet.default() with amount reentrance { abort; };
+    return then become Vault(vaultKey, recoveryKey);
   }
-  case(void recover(address _newHotWallet)) {
+  case(void recover()) {
     if (sender(msg) != recoveryKey) abort;
-    return then become Vault(_newHotWallet, vaultKey, recoveryKey);
+    return then become Vault(vaultKey, recoveryKey);
   }
   case(void destroy()) {
     if (sender(msg) != recoveryKey) abort;

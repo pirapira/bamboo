@@ -980,7 +980,7 @@ let testing_024 channel my_acc =
   let () = ignore (call channel c) in
 
 
-  let initdata = initcode_compiled ^ address_as_word hot ^ address_as_word vault_key ^ address_as_word recover_key in
+  let initdata = initcode_compiled ^ address_as_word vault_key ^ address_as_word recover_key in
   let receipt = deploy_code channel my_acc initdata "10000" in
   let contract_address = receipt.contractAddress in
   let deployed = eth_getCode channel contract_address in
@@ -996,7 +996,7 @@ let testing_024 channel my_acc =
     ; gas = "0x0000000000000000000000000000000000000000000000000000000005f5e100"
     ; value = "0"
     ; data = (Ethereum.compute_signature_hash "unvault(uint256)")^
-               (pad_to_word "50")
+               (pad_to_word "50")^(address_as_word hot)
     ; gasprice = "0x0000000000000000000000000000000000000000000000000000005af3107a40"
     } in
   let unvault_tx = call channel unvault in
