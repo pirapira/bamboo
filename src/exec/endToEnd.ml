@@ -1018,7 +1018,7 @@ let testing_024 channel my_acc =
   let () = Printf.printf "redeem_tx: %Ld\n" redeem_tx.blockNumber in
   let balance = eth_getBalance channel hot in
   let () = Printf.printf "hot acccount now has %s\n%!" (Big_int.string_of_big_int balance) in
-  let () = assert(Big_int.(eq_big_int balance (big_int_of_string "2198781100000000080"))) in
+  let () = assert(Big_int.(eq_big_int balance (big_int_of_string "2198885220000000080"))) in
 
   ()
 
