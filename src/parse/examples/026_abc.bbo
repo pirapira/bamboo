@@ -1,0 +1,18 @@
+contract A()
+{
+    case (uint256 f()) {
+        return 0 then become B();
+    }
+}
+contract B()
+{
+    case (uint256 f()) {
+        return 1 then become C();
+    }
+}
+contract C()
+{
+    case (uint256 f()) {
+        return 2 then become A();
+    }
+}
