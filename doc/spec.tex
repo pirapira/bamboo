@@ -92,7 +92,13 @@ Exercise: which of the following is true?
 
 \section{Expressions}
 
-Expressions are inductively defined as follows.
+A \textit{deploy-expression} looks
+\[
+\text{\texttt{deploy}}\ i(e_1,\ldots,e_n)\ m
+\]
+when $i$ is an identifier, $e_i$ ($0 \le i \le n$) is an expression and $m$ is a message-info.
+
+\textit{Expressions} are inductively defined as follows.
 
 \begin{itemize}
 \item $\true$ is an expression.
@@ -142,9 +148,13 @@ Sentences are inductively defined as follows.
 
 \section{Blocks}
 
-A block is a sequence of stentences surrounded by \texttt{\{} and \texttt{\}}.
+A \textit{block} is a possibly empty sequence of stentences surrounded by \texttt{\{} and \texttt{\}}.
 
 \todo{talk about whitespaces, perhaps.}
+
+\section{Cases}
+
+A \textit{case} is a case header followed by a block.
 
 \section{Contracts}
 
@@ -154,6 +164,16 @@ $(\mathtt{auction}, [\mathtt{address}, \mathtt{uint256}, \mathtt{address}, \math
 
 Exercise: what is the signature of the following contract?
 \todo{complete the question}
+
+\subsection{Contract Body}
+
+A \textit{contract body} is a possibly empty sequence of cases surrounded by \texttt{\{} and \texttt{\}}.
+
+\subsection{Contract Definitions}
+
+A \textit{contract definition} is a contract header followed by a contract body.
+
+\section{Event Declarations}
 
 \chapter{Semantics}
 
@@ -330,6 +350,19 @@ where
 and
 \[
 \evalE{\boxed{e_0}, c, w, \sigma} = (v_0, w_0)
+\]
+
+\[
+\evalE{\boxed{\arrayAccess{e_0}{e_1}}, c, w, \sigma, M} :=
+(w_0, M(v_0, v_1))
+\]
+where
+\[
+\evalE{\boxed{e_1}, c, w, \sigma, M} = (v_1, w_1)
+\]
+and
+\[
+\evalE{\boxed{e_0}, c, w_1, \sigma, M} = (v_0, w_0)
 \]
 
 \subsection{Evaluation of a Sentence}
