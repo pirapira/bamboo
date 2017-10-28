@@ -354,7 +354,13 @@ let variable_init_might_become v =
 let rec sentence_might_become (s : typ sentence) : string list =
   match s with
   | AbortSentence -> []
-  | ReturnSentence ret -> exps_might_become ret.return_exps
+  | ReturnSentence ret ->
+  (exps_might_become ret.return_exps) @
+    (exp_might_become ret.return_cont)@
+      (match contract_name_of_return_cont ret.return_cont with
+       | Some name -> [name]
+       | None -> []
+      )
   | AssignmentSentence (l, r) ->
      (lexp_might_become l)@
        (exp_might_become r)
@@ -386,22 +392,16 @@ let might_become (c : typ contract) : string list =
   let cases = c.contract_cases in
   List.concat (List.map case_might_become cases)
 
-
 let lookup_usual_case_in_single_contract c case_name =
   let cases = c.contract_cases in
   let cases = List.filter (fun c -> match c.case_header with
                                      | DefaultCaseHeader -> false
                                      | UsualCaseHeader uc ->
                                         uc.case_name = case_name) cases in
-  let () = if (List.length cases = 0) then
-             raise Not_found
-           else if (List.length cases > 1) then
-             let () = Printf.eprintf "case %s duplicated\n%!" case_name in
-             failwith "case_lookup"
-  in
   match cases with
-  | [] -> raise Not_found
-  | _ :: _ :: _ -> failwith "should not happen"
+  | [] -> let () = Printf.eprintf "usual case of name %s not found\n%!" case_name in raise Not_found
+  | _ :: _ :: _ -> 
+    let () = Printf.eprintf "case %s duplicated\n%!" case_name in failwith "case_lookup"
   | [a] ->
      begin match a.case_header with
      | UsualCaseHeader uc -> uc
@@ -411,17 +411,20 @@ let lookup_usual_case_in_single_contract c case_name =
 let rec lookup_usual_case_header_inner (already_seen : typ contract list)
                                    (c : typ contract)
                                    (case_name : string) f : usual_case_header =
+  
   if List.mem c already_seen then
+    let () = Printf.eprintf "conctract %s already seen\n%!" c.contract_name in
     raise Not_found
   else
-    try
+    try      
       lookup_usual_case_in_single_contract c case_name
     with Not_found ->
          let already_seen = c :: already_seen in
          let becomes = List.map f (might_become c) in
          let rec try_becomes bs already_seen =
            (match bs with
-            | [] -> raise Not_found
+            | [] -> 
+              let () = Printf.eprintf "No contracts to become!\n"  in raise Not_found
             | h :: tl ->
                (try
                   lookup_usual_case_header_inner already_seen h case_name f

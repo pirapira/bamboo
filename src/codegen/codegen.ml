@@ -1488,14 +1488,14 @@ let rec place_exps_in_memory le ce packing (exps : typ exp list) =
 let return_mem_content le ce =
   append_instruction ce RETURN
 
-let add_return le ce (layout : LayoutInfo.layout_info) ret =
+let add_return le ce (layout : LayoutInfo.layout_info) ret = 
   let original_stack_size = stack_size ce in
   let e = ret.return_exps in
   let c = ret.return_cont in
   let (le, ce) = set_continuation le ce layout c in
   let ce = match e with
-    | e :: tl ->
-       let (le, ce) = place_exp_in_memory le ce ABIPacking e in
+    | fe :: tl ->
+       let (le, ce) = place_exp_in_memory le ce ABIPacking fe in
        return_mem_content le ce
     | [] ->
        append_instruction ce STOP
