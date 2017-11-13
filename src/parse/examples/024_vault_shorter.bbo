@@ -11,6 +11,9 @@ contract Vault(address vaultKey, address recoveryKey) {
     if (sender(msg) != recoveryKey) abort;
     return then become Destroyed();
   }
+  default {
+    return then become Vault(vaultKey, recoveryKey);
+  }
 }
 
 contract UnVaulting(uint256 redeemtime, uint256 amount, address hotWallet, address vaultKey, address recoveryKey) {
@@ -26,6 +29,9 @@ contract UnVaulting(uint256 redeemtime, uint256 amount, address hotWallet, addre
   case(void destroy()) {
     if (sender(msg) != recoveryKey) abort;
     return then become Destroyed();
+  }
+  default {
+    return then become UnVaulting(redeemtime, amount, hotWallet, vaultKey, recoveryKey);
   }
 }
 
