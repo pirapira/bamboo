@@ -32,8 +32,8 @@ before_install:
 # - locate libpolymain.a
 - wget https://raw.github.com/ocaml/opam/master/shell/opam_installer.sh -O - | sudo sh -s /usr/local/bin
 - export OPAMJOBS=2
-- opam init -y --comp=4.02.1
-- opam switch 4.02.1
+- opam init -y --comp=4.04.2
+- opam switch 4.04.2
 - eval `opam config env`
 - opam update
 - opam upgrade rpc -y
