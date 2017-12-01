@@ -37,6 +37,9 @@ let append_instruction
               | _ -> ()
              ) in
     let new_stack_size = orig.ce_stack_size - Evm.stack_eaten i + Evm.stack_pushed i in
+    if new_stack_size > 1024 then
+      failwith "stack overflow"
+    else
     { ce_stack_size = new_stack_size
     ; ce_program = Evm.append_inst orig.ce_program i
     ; ce_cid_lookup = orig.ce_cid_lookup
