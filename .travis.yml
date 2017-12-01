@@ -36,6 +36,7 @@ before_install:
 - opam switch 4.02.1
 - eval `opam config env`
 - opam update
+- opam upgrade rpc -y
 - opam upgrade -y
 - opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc cryptokit hex
 - cd ../..
