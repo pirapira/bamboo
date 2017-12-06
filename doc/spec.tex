@@ -190,17 +190,13 @@ A \textit{contract definition} is a contract header followed by a contract body.
 
 \section{States}
 
-\subsection{Interpretation of Syntactic Types}
-Each syntactic type~$T$ is associated with a set~$\sem{T}$.
+\subsection{Values}
 
-Exercise: determine if each of the following is true.
-\begin{enumerate}
-  \item $0 \in\sem{\mathtt{address}}$?
-\end{enumerate}
-
-A \textit{value} is a union of all $\sem{T}$ for $T \in \{\ldots\}$.
+A \textit{value} is a 256-bit word.
 
 We pick something called $\bot$ (pronounced ``bottom'') which is not a value.  The choice should not affect the meaning of a Bamboo program.
+
+(We might specify a set of values for each syntactic type in the future.)
 
 \subsection{A Contract's States}
 A contract has \textit{states}.
