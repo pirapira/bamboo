@@ -92,7 +92,10 @@ Exercise: which of the following are keywords?
 
 \section{Identifier}
 
-An \textit{identifier} is a sequence of characters of the following form (but is not a keyword).
+An \textit{identifier} is a sequence of characters that matches the following regular expression (but is not a keyword):
+\begin{verbatim}
+  ['a'-'z' 'A'-'Z' '_'] ['a'-'z' 'A'-'Z' '0'-'9' '_']*
+\end{verbatim}
 
 \todo{define identifier}
 
