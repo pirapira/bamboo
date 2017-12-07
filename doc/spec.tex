@@ -129,7 +129,7 @@ A \textit{deploy-expression} looks
 \[
 \text{\texttt{deploy}}\ i(e_1,\ldots,e_n)\ m
 \]
-when $i$ is an identifier, $e_i$ ($0 \le i \le n$) is an expression and $m$ is a message-info.
+when $i$ is an identifier, $e_i$ ($1 \le i \le n$) is an expression and $m$ is a message-info.
 
 \textit{Expressions} are inductively defined as follows.
 
@@ -165,7 +165,13 @@ Exercise: prove that \texttt{99a} is not an expression.
 
 \section{Sentences}
 
-Sentences are inductively defined as follows.
+A \textit{return sentence} is
+\[
+\texttt{return} e_0 \texttt{then} \texttt{become} i(e_1,\ldots,e_n)
+\]
+when $i$ is an identifier and $e_i$ ($0 \le i \le n$) is an expression.
+
+\textit{Sentences} are inductively defined as follows.
 
 \begin{itemize}
 \item $\abort$ is a sentence.
