@@ -128,11 +128,19 @@ Exercise: which of the following is true?
 
 \section{Expressions}
 
+A \textit{case-call-expression} looks like
+\[
+e . c (e_1, \ldots, e_n)\ m
+\]
+with $e$ and $e_i$ ($1 \le i \le n$) being expressions and $m$ a message-info.
+
+A \textit{call-expression} is either a case-call-expression or a default-call-expression.
+
 A \textit{deploy-expression} looks
 \[
 \text{\texttt{deploy}}\ i(e_1,\ldots,e_n)\ m
 \]
-when $i$ is an identifier, $e_i$ ($1 \le i \le n$) is an expression and $m$ is a message-info.
+with $i$ being an identifier, $e_i$ ($1 \le i \le n$) an expression and $m$ a message-info.
 
 \textit{Expressions} are inductively defined as follows.
 
