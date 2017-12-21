@@ -202,10 +202,6 @@ and assign_type_exp
   | PlusExp (l, r) ->
      let l = assign_type_exp contract_interfaces cname venv l in
      let r = assign_type_exp contract_interfaces cname venv r in
-     let () = if (snd l <> snd r) then
-                (Printf.printf "%s %s\n%!" (string_of_typ (fst (snd l)))
-                               (string_of_typ (fst (snd r))))
-     in
      let () = assert (fst (snd l) = fst (snd r)) in
      let sides = (List.map (fun (_, (_, x)) -> x) [l; r]) in
      let () = check_only_one_side_effect sides in

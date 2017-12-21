@@ -19,7 +19,7 @@ sudo: required
 before_install:
 - BAMBOO=`pwd`
 - sudo apt-get -qq update
-- sudo apt-get install aspcud ccache
+- sudo apt-get install aspcud ccache jq
 # - git clone https://github.com/polyml/polyml.git
 # - cd polyml
 # - git checkout v5.6
