@@ -176,11 +176,17 @@ Exercise: prove that \texttt{99a} is not an expression.
 
 \section{Sentences}
 
-A \textit{return sentence} is
+A \textit{return sentence} looks
 \[
-\texttt{return} e_0 \texttt{then} \texttt{become} i(e_1,\ldots,e_n)
+\texttt{return} e_0 \texttt{then} \texttt{become} i(e_1,\ldots,e_n);
 \]
-when $i$ is an identifier and $e_i$ ($0 \le i \le n$) is an expression.
+with $i$ being an identifier and $e_i$ ($0 \le i \le n$) an expression.
+
+An \textit{assignment sentence} looks
+\[
+l = e;
+\]
+with $l$ being a left-expression and $e$ an expression.
 
 \textit{Sentences} are inductively defined as follows.
 
