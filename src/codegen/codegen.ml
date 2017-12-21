@@ -266,7 +266,6 @@ let increase_top ce (inc : int) =
  *  according to the ABI.  This increases the stack top element by the size of the
  *  new allocation. *)
 let rec add_constructor_argument_to_memory le (packing : memoryPacking) ce (arg : Syntax.typ exp) =
-  let () = Printf.printf "it's about appending type %s\n" (Syntax.string_of_typ (snd arg)) in
   let original_stack_size = stack_size ce in
   let typ = snd arg in
   let () = assert (Syntax.fits_in_one_storage_slot typ) in
