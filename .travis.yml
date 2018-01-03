@@ -8,7 +8,6 @@ notifications:
 dist: trusty
 cache:
   directories:
-  - $HOME/.opam
   - $HOME/.ccache
   - $HOME/build/pirapira/cpp-ethereum
   - $HOME/build/pirapira/cmake
