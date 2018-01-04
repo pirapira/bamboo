@@ -36,7 +36,7 @@ before_install:
 - eval `opam config env`
 - opam update
 - opam upgrade -y
-- opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc=2.2.0 cryptokit hex
+- opam install -y ocamlfind menhir batteries rope zarith ppx_deriving rpc=2.0.0 cryptokit hex
 - cd ../..
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
 - sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
