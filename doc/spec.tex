@@ -194,7 +194,7 @@ t i = e;
 \]
 with $t$ being a type, $i$ and identifier and $e$ an expression.
 
-An \textit{if sentence} is looks
+An \textit{if sentence} looks
 \[
 \texttt{if}\, (e)\, B
 \]
@@ -205,6 +205,12 @@ An \textit{if-then-else sentence} is looks
 \texttt{if}\, (e)\, B_0 \,\texttt{else}\, B_1
 \]
 with $e$ being an expression and each $B_i$ either a block or a sentence (this forms a mutual induction together with the definition of sentences).
+
+A \textit{logging sentence} looks
+\[
+\texttt{log}\,i(e_1, \ldots, e_n)
+\]
+where $n \ge 0$.  Each $e_j$ is an expression.  $i$ is an identifier.
 
 \textit{Sentences} are inductively defined as follows.
 
