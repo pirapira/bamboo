@@ -1,0 +1,28 @@
+{
+  "name": "bamboo",
+  "version": "0.0.02",
+  "description": "A compiler targeting Ethereum Virtual Machine",
+  "keywords": [
+    "ethereum",
+    "smart-contracts",
+    "blockchain",
+    "virtual machine",
+    "compiler"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pirapira/bamboo"
+  },
+  "homepage": "https://github.com/pirapira/bamboo",
+  "author": "Yoichi Hirai <i@yoichihirai.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "bs-platform": "bsansouci/bsb-native#2.1.1"
+  },
+  "scripts": {
+    "build": "bsb -make-world -backend native",
+    "watch": "bsb -make-world -backend native -w",
+    "test": "npm run build && ./lib/bs/native/test.native",
+    "clean": "bsb -clean-world"
+  }
+}

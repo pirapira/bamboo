@@ -37,6 +37,8 @@ module Utils = struct
       Unix.close s;
       raise e
 
+  let minisleep (sec: float) =
+    ignore (Unix.select [] [] [] sec)
 end
 
 type connection =
@@ -299,7 +301,7 @@ let eth_getStorageAt s addr slot =
 
 let wait_till_mined s old_block =
   while eth_blockNumber s = old_block do
-    Unix.sleepf 0.01
+    Utils.minisleep 0.01
   done
 
 let sample_file_name : string = "./src/parse/examples/006auction_first_case.bbo"
@@ -912,7 +914,7 @@ let testing_01a channel my_acc =
 
   let receipt = call channel write_to_true in
   let () = assert (List.length receipt.logs = 1) in
-  let [log] = receipt.logs in
+  let log = List.hd receipt.logs in
   let () = assert (List.length log.topics = 2) in
 
   ()
@@ -1003,7 +1005,7 @@ let testing_024 channel my_acc =
   let () = Printf.printf "unvault_tx: %Ld\n" unvault_tx.blockNumber in
 
   (* wait for two seconds *)
-  let () = Unix.sleepf 2.0 in
+  let () = Unix.sleep 2 in
   let () = advance_block channel in
 
   let redeem : eth_transaction =
