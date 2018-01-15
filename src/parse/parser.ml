@@ -1,661 +1,4575 @@
 
-module Basics = struct
-  
-  exception Error
-  
-  type token = 
-    | VOID
-    | VALUE
-    | UINT8
-    | UINT256
-    | TRUE
-    | THIS
-    | THEN
-    | SINGLE_EQ
-    | SENDER
-    | SEMICOLON
-    | SELFDESTRUCT
-    | RSQBR
-    | RPAR
-    | RETURN
-    | REENTRANCE
-    | RBRACE
-    | RARROW
-    | PLUS
-    | NOW
-    | NOT
-    | NEQ
-    | MULT
-    | MSG
-    | MINUS
-    | LT
-    | LSQBR
-    | LPAR
-    | LOG
-    | LBRACE
-    | LAND
-    | INDEXED
-    | IF
-    | IDENT of (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 43 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-  )
-    | GT
-    | FALSE
-    | EVENT
-    | EQUALITY
-    | EOF
-    | ELSE
-    | DOT
-    | DEPLOY
-    | DEFAULT
-    | DECLIT8 of (
-# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 57 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-  )
-    | DECLIT256 of (
-# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 62 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-  )
-    | CONTRACT
-    | COMMA
-    | CASE
-    | BYTES32
-    | BOOL
-    | BLOCK
-    | BECOME
-    | BALANCE
-    | ALONG
-    | ADDRESS
-    | ABORT
-  
-end
-
-include Basics
+exception Error
 
 let _eRR =
   Error
 
-module Tables = struct
-  
-  include Basics
-  
-  let token2terminal : token -> int =
-    fun _tok ->
-      match _tok with
-      | ABORT ->
-          55
-      | ADDRESS ->
-          54
-      | ALONG ->
-          53
-      | BALANCE ->
-          52
-      | BECOME ->
-          51
-      | BLOCK ->
-          50
-      | BOOL ->
-          49
-      | BYTES32 ->
-          48
-      | CASE ->
-          47
-      | COMMA ->
-          46
-      | CONTRACT ->
-          45
-      | DECLIT256 _ ->
-          44
-      | DECLIT8 _ ->
-          43
-      | DEFAULT ->
-          42
-      | DEPLOY ->
-          41
-      | DOT ->
-          40
-      | ELSE ->
-          39
-      | EOF ->
-          38
-      | EQUALITY ->
-          37
-      | EVENT ->
-          36
-      | FALSE ->
-          35
-      | GT ->
-          34
-      | IDENT _ ->
-          33
-      | IF ->
-          32
-      | INDEXED ->
-          31
-      | LAND ->
-          30
-      | LBRACE ->
-          29
-      | LOG ->
-          28
-      | LPAR ->
-          27
-      | LSQBR ->
-          26
-      | LT ->
-          25
-      | MINUS ->
-          24
-      | MSG ->
-          23
-      | MULT ->
-          22
-      | NEQ ->
-          21
-      | NOT ->
-          20
-      | NOW ->
-          19
-      | PLUS ->
-          18
-      | RARROW ->
-          17
-      | RBRACE ->
-          16
-      | REENTRANCE ->
-          15
-      | RETURN ->
-          14
-      | RPAR ->
-          13
-      | RSQBR ->
-          12
-      | SELFDESTRUCT ->
-          11
-      | SEMICOLON ->
-          10
-      | SENDER ->
-          9
-      | SINGLE_EQ ->
-          8
-      | THEN ->
-          7
-      | THIS ->
-          6
-      | TRUE ->
-          5
-      | UINT256 ->
-          4
-      | UINT8 ->
-          3
-      | VALUE ->
-          2
-      | VOID ->
-          1
-  
-  and error_terminal =
-    0
-  
-  and token2value : token -> Obj.t =
-    fun _tok ->
-      match _tok with
-      | ABORT ->
-          Obj.repr ()
-      | ADDRESS ->
-          Obj.repr ()
-      | ALONG ->
-          Obj.repr ()
-      | BALANCE ->
-          Obj.repr ()
-      | BECOME ->
-          Obj.repr ()
-      | BLOCK ->
-          Obj.repr ()
-      | BOOL ->
-          Obj.repr ()
-      | BYTES32 ->
-          Obj.repr ()
-      | CASE ->
-          Obj.repr ()
-      | COMMA ->
-          Obj.repr ()
-      | CONTRACT ->
-          Obj.repr ()
-      | DECLIT256 _v ->
-          Obj.repr _v
-      | DECLIT8 _v ->
-          Obj.repr _v
-      | DEFAULT ->
-          Obj.repr ()
-      | DEPLOY ->
-          Obj.repr ()
-      | DOT ->
-          Obj.repr ()
-      | ELSE ->
-          Obj.repr ()
-      | EOF ->
-          Obj.repr ()
-      | EQUALITY ->
-          Obj.repr ()
-      | EVENT ->
-          Obj.repr ()
-      | FALSE ->
-          Obj.repr ()
-      | GT ->
-          Obj.repr ()
-      | IDENT _v ->
-          Obj.repr _v
-      | IF ->
-          Obj.repr ()
-      | INDEXED ->
-          Obj.repr ()
-      | LAND ->
-          Obj.repr ()
-      | LBRACE ->
-          Obj.repr ()
-      | LOG ->
-          Obj.repr ()
-      | LPAR ->
-          Obj.repr ()
-      | LSQBR ->
-          Obj.repr ()
-      | LT ->
-          Obj.repr ()
-      | MINUS ->
-          Obj.repr ()
-      | MSG ->
-          Obj.repr ()
-      | MULT ->
-          Obj.repr ()
-      | NEQ ->
-          Obj.repr ()
-      | NOT ->
-          Obj.repr ()
-      | NOW ->
-          Obj.repr ()
-      | PLUS ->
-          Obj.repr ()
-      | RARROW ->
-          Obj.repr ()
-      | RBRACE ->
-          Obj.repr ()
-      | REENTRANCE ->
-          Obj.repr ()
-      | RETURN ->
-          Obj.repr ()
-      | RPAR ->
-          Obj.repr ()
-      | RSQBR ->
-          Obj.repr ()
-      | SELFDESTRUCT ->
-          Obj.repr ()
-      | SEMICOLON ->
-          Obj.repr ()
-      | SENDER ->
-          Obj.repr ()
-      | SINGLE_EQ ->
-          Obj.repr ()
-      | THEN ->
-          Obj.repr ()
-      | THIS ->
-          Obj.repr ()
-      | TRUE ->
-          Obj.repr ()
-      | UINT256 ->
-          Obj.repr ()
-      | UINT8 ->
-          Obj.repr ()
-      | VALUE ->
-          Obj.repr ()
-      | VOID ->
-          Obj.repr ()
-  
-  and default_reduction =
-    (8, "\000\000\000\000LKQMON\000\000\000\000\011\0021\000\000\t\000\000H\n\000\000\000\000/\000\000\000\005\000\000\000\000\000\000\000\007\000\000F\000\000\000\000\000\006\000\b\000\000\000\000\000\000\000\017\r$\000\000\000\018\000\000\000\020\000\000\000\000\014\000\000\000\016\015\000\000\000\000%\000\"\000\000\000\000\000\000'\000\000\000\000\000\000\0003\000\000\000\000\000\000\000\000\000\000\000\000\000\00074!\000\000J\000\000\000 \000\019\000\000\031\000\030\000\029\000\000<\000\000D\000\000\000\000\0009\000\000\000\000\000\000C\000\000\000\000\000\000\0008\000\000\000\000;\000\000=\000\000\000:\000>\000\000?@\000-\000\003\004\000)\000&\001\000+")
-  
-  and error =
-    (56, "\000\000\000\000\n\004\000\000\000\000\000@\000\000\000\000\000\016\000\000\000\024\004\000\000@\000\194\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000@\001@\000\000\024\000\000\000@\000\194\000\000@\001@\000\000\000\000\000\000@\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000 \000\000\000\000\000\000\000\000\000\000\000\000\000\004\000\000\000\002\000\024\000\000\000@\000\194\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000@\000\000\000\000\000\016\000\000\000\024\004\000\000@\000\194\000\000@\000@\000\000\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000\000\000\004\000\000\000\000\000\128\000\000!\000\000\000\000\000\000\000\000\000\000\000\016\000\000\000X\000\000\000@\000\194\000\000\000\000@\000\000\000\000\000\016\000\000\000\024\004\000\000@\000\194\000\004\000\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\004\000\000\000\002\000\024\000\000\000@\000\194\000\000\000\000\000\000\000\000\000@\000@\000\000\000\000\000\016\000\000\000\024\004\000\000@\000\194\000\004\000\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\000\128\000\000\000\000\000\000\000\000\000\000\000\000\000\000\004\000\000\000~R\152\024\208X\203\000\128\000\000\000\000\000&@\024\016PX\n\000\000\000\016\000\000\000\000\000\001\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\016\000\000\000\000\000\001\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\016\000\000\000\000\000\000\000\000\000 \000\004\000\000\000\000\000\000\000\000\000\000\000\000&@\024\016PX\n&@\024\016PX\n\001-&\242$\130\000&D\024\016PX\n\000\000\000\000\000\000\000\000\000\000\000@\000\000\000\000\000\016\000\000\000&D\024\016PX\n\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\016\000\000\000&@\024\016PX\n\000\000\000\016\000\000\000&@\024\016PX\n\000\000\000\000\000\000\000\000\004&\226$\128\000\000\000\000\000\000\000\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\000\b&\226$\128\000\000\000\000\000\000\000\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\001-&\226$\130\000\000\000\000\000@ \000\000\000\000\016\000\000\000&D\024\016PX\n\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000\001\000\000\000\000\004&@\024\016PX\n\000\001&\226$\128\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\001-&\226$\130\000&@\024\016PX\n\001-&\226$\130\000\000\001\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\004&\226$\130\000&@\024\016PX\n\000\000\000\000\000\000\000\000\000\000\016\000\000\000\000\004\000\000\000\000\000\000\001\000\000\000\000\004\000\000\000\000\000\000\000\000\004&\226$\128\000\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000\001\000\000\000\000\004\000\000\000\000\000\000\000\000\004\000\000\000\000\000\000\000\000\000\000\000\000\000\004&\226$\128\000\000\000\000\000\000\000\000\001-&\226$\130\000\000 &\226$\128\000\000\000\000\000\000\000\000&@\024\016PX\n\000 &\226$\128\000\000\000\000\000\000\000\000'@\024\016PX\n\001\000\000\000\000\000\000\000\000\000\000\000\000\016&@\024\016PX\n\000 &\226$\128\000\000\000\000\000\000\000\000\001\000&\226$\128\000\000\000\000\000@\000\000\000\000\000\016\000\000\000&D\024\016PX\n\000\004\000\000\000\000\000\000 \000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\016\000\000\000&@\024\016PX\n\000\004&\226$\128\000~R\024\028\208X\203\000\000f\242d\128\000\000\000@\016@\000\000\000 \000\000\000\000\000\000\000\000\000\000\000\000\000\000@\000@\000\000\000\128\000\000\000\000\000&@\024\016PX\n\000 &\226$\128\000\000\000\000\000\000\000\000~R\152\024\209X\203~R\024\028\208X\203\000\000\000\000\000\000\000\000\128&\226$\128\000&@\024\016PX\n\000 &\226$\128\000\000\000\000\000\000\000\000\000\000&\226$\128\000\000\000\000\000\000\000\000~R\152\024\209X\203~R\024\028\208X\203\000\000\000\000\000\000\000\000\000\000\000\000\000\000~R\152\024\208X\203\000\000\000\000\000\000\000\000\000\128\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\128\000\000!\000\000\000\000\000\000\000\000\000\000\000\000\002\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\n\004\000\000\000\000\000\000\000\000")
-  
-  and start =
-    1
-  
-  and action =
-    ((16, "\000\017\0005\000\011\004\206\000\000\000\000\000\000\000\000\000\000\000\000\000\136\004\178\000\246\000\004\000\000\000\000\000\000\000t\000\146\000\000\000\006\004\178\000\000\000\000\000v\000\138\004\212\000:\000\000\000\182\000\152\001D\000\000\000\160\004\178\000\168\000\198\004\212\001\b\001\012\000\000\000>\004\178\000\000\000\230\000\248\004\212\001&\0012\000\000\0018\000\000\000\218\000\218\001L\002\170\0018\001B\001Z\000\000\000\000\000\000\001F\001\\\001r\000\000\001Z\001<\001\138\000\000\002\170\002\170\0016\002\170\000\000\001f\001t\002\170\000\000\000\000\001z\002\170\001\028\002\170\000\000\003t\000\000\002\170\000\003\002\170\000l\002\170\002\170\000\000\002\170\000\218\002\170\001j\000\016\001\136\002\170\000\000\001\166\000J\002\170\002\170\002\170\001\158\002\170\001\210\002\170\002\006\002\170\002:\001\166\000\218\000\000\000\000\000\000\002\250\002\170\000\000\001\150\001\186\000J\000\000\003\156\000\000\001\188\000J\000\000\001\190\000\000\003\196\000\000\002n\002\250\000\000\002\170\003\230\000\000\002\250\001\206\001x\002\170\004\b\000\000\003\156\001\162\001\188\002\170\001\218\001\228\000\000\001\202\002\170\0040\000\218\003F\001\028\001\244\000\000\0014\001\250\002\170\004R\000\000\000\003\000\218\000\000\004z\002\170\004\156\000\000\002n\000\000\000l\000\218\000\000\000\000\000\218\000\000\001\236\000\000\000\000\001D\000\000\001\196\000\000\000\000\000\017\000\000"), (16, "\001\001\001\001\001\001\001\001\001\001\001\001\000Q\000\n\001\001\000Q\001\001\000Q\000Q\001\001\000Q\001\001\001\025\000Q\001\001\001\001\000Q\001f\000\014\000Q\000Q\001n\001\001\001\001\000\006\000Q\000\165\001\001\001\001\000Q\001\001\000:\000Q\000b\002\162\001\138\001\001\001\142\001\001\001\001\001\017\000Q\000.\001\001\001\001\000V\001\234\001\001\001E\001\001\001\001\001\005\001\005\001\005\001\005\001\005\001\005\000Y\000>\001\005\000Y\001\005\000Y\000Y\001\005\000Y\001\005\000J\000Y\001\005\001\005\000Y\000Y\000\170\000Y\000Y\001n\001\005\001\005\000N\000Y\000.\001\005\001\005\000Y\001\005\001\162\000Y\000f\002\198\001\138\001\005\000j\001\005\001\005\0006\000Y\000>\001\005\001\005\000z\000~\001\005\000\138\001\005\001\005\000\218\000\226\000\018\000\022\000\242\000\246\000e\000\146\000\250\000e\002*\000e\000e\0026\000e\000\173\000\150\001^\001\n\001\026\000e\001f\000.\001\130\000e\001n\001\030\002R\000\214\000e\000.\002j\002z\000e\001*\000\158\000e\000\162\000\182\001\138\001.\000\186\001:\001>\001=\000e\001=\000\030\000\"\0015\000\194\001B\000m\002~\002\130\000m\000\198\000m\000m\001N\000m\000.\000\206\000m\000\222\0015\000m\000m\000\157\000m\000m\000m\001&\000\230\000\234\000m\000\238\002\142\000U\000m\000\254\000U\000m\000U\000U\000m\000U\001\002\001\006\000U\001\014\000m\000U\001f\000\130\000U\000U\001n\001\018\000\134\001\022\000U\0012\0016\000]\000U\001F\000]\000U\000]\000]\001\138\000]\001\146\001\158\001^\001\206\000U\000]\001f\001\238\001\130\000]\001n\001\242\002\006\002\018\000]\002>\002B\000-\000]\002V\000-\000]\000-\000-\001\138\000-\002Z\002b\001^\002f\000]\001z\001f\002n\001\130\001\170\001n\002\134\002\146\002\222\000-\002\243\000\000\000a\001\186\000\000\000a\001\194\000a\000a\001\138\000a\000\000\000\000\001^\000\000\000-\000a\001f\000\000\001\130\000a\001n\000\000\000\000\000\000\000a\000\000\000\000\000i\000a\000\000\000i\000a\000i\000i\001\138\000i\000\000\000\000\001^\000\000\000a\000i\001f\000\000\001\130\000i\001n\000\000\000\000\000\000\000i\000\000\000\000\000\137\000i\000\000\000\137\000i\000\137\000\137\001\138\000\137\000\000\000\000\001^\000\000\000i\001z\001f\000\000\001\130\001\170\001n\000\000\000\000\000\000\001\178\000\000\000\226\000\000\001\186\000\242\000\246\001\194\000\000\000\250\001\138\000\000\001v\000\197\000\000\001I\000\137\000\000\001^\001\n\001\026\001z\001f\000\000\001\130\001\170\001n\001\030\000\000\000\000\001\178\000\000\000\000\001\"\001\186\001*\000\000\001\194\000\000\000\000\001\138\001.\000\226\001:\001>\000\242\000\246\000\209\000\000\000\250\002&\000\000\001B\001!\001J\000\000\000\000\000\000\001^\001\n\001\026\001z\001f\000\000\001\130\001\170\001n\001\030\000\000\000\000\001\178\000\000\000\000\001\"\001\186\001*\000\000\001\194\000\000\000\000\001\138\001.\000\000\001:\001>\000\000\001\226\000\000\000\000\000\000\000\000\000\000\001B\000\000\001J\001A\000m\000\000\000\000\000m\000m\000\000\000m\000m\000m\001&\000\000\000\000\000m\000\000\000\000\001A\000m\000\000\001Z\000m\000\000\000\000\000m\001^\000\000\000\000\001z\001f\000\000\001\130\001\170\001n\000\213\000\000\000\000\001\178\000\000\000\000\001\254\001\186\000\000\000\000\001\194\001^\000\000\001\138\001z\001f\000\000\001\130\001\170\001n\000\000\000\000\000\000\001\178\000\000\000\000\002\026\001\186\000\000\000\000\001\194\001^\000\000\001\138\001z\001f\000\000\001\130\001\170\001n\0022\000\000\000\000\001\178\000\000\000\000\000\000\001\186\001^\000\000\001\194\001z\001f\001\138\001\130\001\170\001n\002J\000\000\000\000\001\178\000\000\000\000\000\000\001\186\001^\000\000\001\194\001z\001f\001\138\001\130\001\170\001n\000\000\000\000\000\000\001\178\000\000\000\000\002v\001\186\000\000\000\000\001\194\001^\000\000\001\138\001z\001f\000\000\001\130\001\170\001n\002\154\000\000\000\000\001\178\000\000\000\000\000\000\001\186\001^\000\000\001\194\001z\001f\001\138\001\130\001\170\001n\000\000\002\174\000\000\001\178\000\000\000\000\000\000\001\186\000\000\000\000\001\194\000\145\000\000\001\138\000\145\000\145\000\000\000\145\000\145\000\145\002\182\000\000\000\142\000\145\000\018\000\022\000\000\000\145\001^\000\000\000\145\001z\001f\000\145\001\130\001\170\001n\000\000\000\018\000\022\001\178\000\018\000\022\000\000\001\186\000\000\000\000\001\194\000\189\000\000\001\138\000\181\000\000\000\000\000\026\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\026\000\030\000\"\000\026\000\000\000\000\000\000\000&\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\030\000\"\000\000\000\030\000\"\000\000\000&\000\000\000\000\000&"))
-  
-  and lhs =
-    (8, "\000\024\023\022\021\021\021\020\020\019\019\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\018\017\016\015\015\014\014\r\r\012\012\011\011\n\n\t\b\b\007\006\006\006\006\006\006\006\006\006\006\006\006\006\005\005\004\004\003\003\002\002\002\002\002\002\002\001\001")
-  
-  and goto =
-    ((8, "\003\000\000\005\000\000\000\000\000\000\000\006\000\000\000\000\000\000\000\000\000@\000\000\000\000<\000\000\000\000v\000\0002\000\000L\000\000\000\000\146\000\000\000V\000\000\000\000\000:\004\000\031\000\000\000\000\000\000\000\000\000\000\000\000\000\000V\134\000d\000\000\000l\000\000\000\150\000\160\000\000\000\166\000\168\000\174\000\000\176\000\182\000\000\000n\000\000:\184\000\190\000\192\000\198\000\200\000p~\000\000\000\000\148\000\000\000\236\000\000\000\000\238\000\000\000\000\000\000\000\000\210\000\000\142\000\000\212\000\000\000\000\000\132\000\000\000\000\226\000\n\000\000\000\000\000\000\228\000\000\000\016\000\000\234\000\000\000\000\000.\000\000>\000\000\000\000\146\000\000\000\000\017\000"), (8, "\011U\017\137\163\r\192\163\181\018\163\168\191\188\170\183\190\021\171\191\175\171\024\175\171\163\175-\177\179s\176\028\163\011\029\023\181w\171\028\175\030\029\182\028\180\171\029\175'\021\185f*0\024ffU\132\136*v\129gU*xfUUxx3\028\152z,\1435\186UUx\134uU\187\148UUx\1275\186U*VUUY[UU]`UUbjUUlnUUprssUU\140\146\000\000~\131UU\157\166U\000\173"))
-  
-  and semantic_action =
-    [|
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = i;
-          MenhirLib.EngineTypes.startp = _startpos_i_;
-          MenhirLib.EngineTypes.endp = _endpos_i_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = t;
-            MenhirLib.EngineTypes.startp = _startpos_t_;
-            MenhirLib.EngineTypes.endp = _endpos_t_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let i : (
+type token = 
+  | VOID
+  | VALUE
+  | UINT8
+  | UINT256
+  | TRUE
+  | THIS
+  | THEN
+  | SINGLE_EQ
+  | SENDER
+  | SEMICOLON
+  | SELFDESTRUCT
+  | RSQBR
+  | RPAR
+  | RETURN
+  | REENTRANCE
+  | RBRACE
+  | RARROW
+  | PLUS
+  | NOW
+  | NOT
+  | NEQ
+  | MULT
+  | MSG
+  | MINUS
+  | LT
+  | LSQBR
+  | LPAR
+  | LOG
+  | LBRACE
+  | LAND
+  | INDEXED
+  | IF
+  | IDENT of (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 355 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic i in
-        let t : 'tv_typ = Obj.magic t in
-        let _startpos = _startpos_t_ in
-        let _endpos = _endpos_i_ in
-        let _v : 'tv_arg = 
-# 139 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( { Syntax.arg_typ = t
-      ; Syntax.arg_ident = i
-      ; Syntax.arg_location = None
-      }
-    )
-# 367 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 44 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+)
+  | GT
+  | FALSE
+  | EVENT
+  | EQUALITY
+  | EOF
+  | ELSE
+  | DOT
+  | DEPLOY
+  | DEFAULT
+  | DECLIT8 of (
+# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 58 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+)
+  | DECLIT256 of (
+# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 63 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+)
+  | CONTRACT
+  | COMMA
+  | CASE
+  | BYTES32
+  | BOOL
+  | BLOCK
+  | BECOME
+  | BALANCE
+  | ALONG
+  | ADDRESS
+  | ABORT
+
+type _menhir_env = {
+  _menhir_lexer: Lexing.lexbuf -> token;
+  _menhir_lexbuf: Lexing.lexbuf;
+  _menhir_token: token;
+  mutable _menhir_error: bool
+}
+
+and _menhir_state = 
+  | MenhirState190
+  | MenhirState185
+  | MenhirState180
+  | MenhirState177
+  | MenhirState171
+  | MenhirState168
+  | MenhirState164
+  | MenhirState157
+  | MenhirState155
+  | MenhirState150
+  | MenhirState144
+  | MenhirState141
+  | MenhirState138
+  | MenhirState129
+  | MenhirState124
+  | MenhirState120
+  | MenhirState115
+  | MenhirState112
+  | MenhirState110
+  | MenhirState108
+  | MenhirState106
+  | MenhirState104
+  | MenhirState103
+  | MenhirState100
+  | MenhirState96
+  | MenhirState94
+  | MenhirState91
+  | MenhirState89
+  | MenhirState87
+  | MenhirState83
+  | MenhirState81
+  | MenhirState77
+  | MenhirState73
+  | MenhirState71
+  | MenhirState70
+  | MenhirState55
+  | MenhirState53
+  | MenhirState52
+  | MenhirState46
+  | MenhirState42
+  | MenhirState37
+  | MenhirState34
+  | MenhirState31
+  | MenhirState26
+  | MenhirState21
+  | MenhirState11
+  | MenhirState3
+  | MenhirState0
+
+let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_list_sentence_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState180 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv659 * _menhir_state * 'tv_sentence) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv657 * _menhir_state * 'tv_sentence) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        let _v : 'tv_list_sentence_ = 
+# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 147 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _3;
-          MenhirLib.EngineTypes.startp = _startpos__3_;
-          MenhirLib.EngineTypes.endp = _endpos__3_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = scs;
-            MenhirLib.EngineTypes.startp = _startpos_scs_;
-            MenhirLib.EngineTypes.endp = _endpos_scs_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = _1;
-              MenhirLib.EngineTypes.startp = _startpos__1_;
-              MenhirLib.EngineTypes.endp = _endpos__1_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let _3 : unit = Obj.magic _3 in
-        let scs : 'tv_list_sentence_ = Obj.magic scs in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__3_ in
-        let _v : 'tv_block = 
+        _menhir_goto_list_sentence_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv658)) : 'freshtv660)
+    | MenhirState53 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv717 * _menhir_state) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RBRACE ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv713 * _menhir_state) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv711 * _menhir_state) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, scs) = _menhir_stack in
+            let _3 = () in
+            let _1 = () in
+            let _v : 'tv_block = 
 # 109 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( scs )
-# 403 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = cb;
-          MenhirLib.EngineTypes.startp = _startpos_cb_;
-          MenhirLib.EngineTypes.endp = _endpos_cb_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = ch;
-            MenhirLib.EngineTypes.startp = _startpos_ch_;
-            MenhirLib.EngineTypes.endp = _endpos_ch_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let cb : 'tv_block = Obj.magic cb in
-        let ch : 'tv_case_header = Obj.magic ch in
-        let _startpos = _startpos_ch_ in
-        let _endpos = _endpos_cb_ in
-        let _v : 'tv_case = 
+# 168 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv709) = _menhir_stack in
+            let (_menhir_s : _menhir_state) = _menhir_s in
+            let (_v : 'tv_block) = _v in
+            ((let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+            match _menhir_s with
+            | MenhirState115 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv683) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv681) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _, b) = _menhir_stack in
+                let _1 = () in
+                let _v : 'tv_reentrance_info = 
+# 261 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                          ( b )
+# 186 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv679) = _menhir_stack in
+                let (_v : 'tv_reentrance_info) = _v in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv677 * _menhir_state * 'tv_value_info) = Obj.magic _menhir_stack in
+                let (_v : 'tv_reentrance_info) = _v in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv675 * _menhir_state * 'tv_value_info) = Obj.magic _menhir_stack in
+                let (r : 'tv_reentrance_info) = _v in
+                ((let (_menhir_stack, _menhir_s, v) = _menhir_stack in
+                let _v : 'tv_msg_info = 
+# 251 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                        ( { Syntax.message_value_info = v;
+                                            message_reentrance_info = r } )
+# 202 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv673) = _menhir_stack in
+                let (_menhir_s : _menhir_state) = _menhir_s in
+                let (_v : 'tv_msg_info) = _v in
+                ((match _menhir_s with
+                | MenhirState103 ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : ((((('freshtv663 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 214 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                    let (_menhir_s : _menhir_state) = _menhir_s in
+                    let (_v : 'tv_msg_info) = _v in
+                    ((let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : ((((('freshtv661 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 222 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                    let (_ : _menhir_state) = _menhir_s in
+                    let (m : 'tv_msg_info) = _v in
+                    ((let (((_menhir_stack, _menhir_s, contr), mtd), _, xs0000) = _menhir_stack in
+                    let _3000 = () in
+                    let _1000 = () in
+                    let _2 = () in
+                    let _v : 'tv_exp = let lst =
+                      let _300 = _3000 in
+                      let xs000 = xs0000 in
+                      let _100 = _1000 in
+                      let lst =
+                        let _30 = _300 in
+                        let xs00 = xs000 in
+                        let _10 = _100 in
+                        let xs =
+                          let _3 = _30 in
+                          let xs0 = xs00 in
+                          let _1 = _10 in
+                          let x =
+                            let xs = xs0 in
+                            
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 247 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                            
+                          in
+                          
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 253 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                          
+                        in
+                        
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 259 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                        
+                      in
+                      
+# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                    (lst)
+# 265 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
+# 237 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
+                       ; send_args = (lst); send_msg_info = m }, () )
+# 272 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                     in
+                    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv662)) : 'freshtv664)
+                | MenhirState124 ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv667 * _menhir_state * 'tv_exp))))) = Obj.magic _menhir_stack in
+                    let (_menhir_s : _menhir_state) = _menhir_s in
+                    let (_v : 'tv_msg_info) = _v in
+                    ((let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv665 * _menhir_state * 'tv_exp))))) = Obj.magic _menhir_stack in
+                    let (_ : _menhir_state) = _menhir_s in
+                    let (m : 'tv_msg_info) = _v in
+                    ((let (_menhir_stack, _menhir_s, contr) = _menhir_stack in
+                    let _5 = () in
+                    let _4 = () in
+                    let _3 = () in
+                    let _2 = () in
+                    let _v : 'tv_exp = 
+# 234 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
+                       ; send_args = []; send_msg_info = m }, () )
+# 293 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                     in
+                    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv666)) : 'freshtv668)
+                | MenhirState129 ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv671 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 301 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                    let (_menhir_s : _menhir_state) = _menhir_s in
+                    let (_v : 'tv_msg_info) = _v in
+                    ((let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv669 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 309 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                    let (_ : _menhir_state) = _menhir_s in
+                    let (m : 'tv_msg_info) = _v in
+                    ((let (((_menhir_stack, _menhir_s), s), _, xs0000) = _menhir_stack in
+                    let _3000 = () in
+                    let _1000 = () in
+                    let _1 = () in
+                    let _v : 'tv_exp = let lst =
+                      let _300 = _3000 in
+                      let xs000 = xs0000 in
+                      let _100 = _1000 in
+                      let lst =
+                        let _30 = _300 in
+                        let xs00 = xs000 in
+                        let _10 = _100 in
+                        let xs =
+                          let _3 = _30 in
+                          let xs0 = xs00 in
+                          let _1 = _10 in
+                          let x =
+                            let xs = xs0 in
+                            
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 334 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                            
+                          in
+                          
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 340 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                          
+                        in
+                        
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 346 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                        
+                      in
+                      
+# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                    (lst)
+# 352 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
+# 231 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                    ( Syntax.NewExp { Syntax.new_head = s; new_args = lst; new_msg_info = m }, () )
+# 358 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                     in
+                    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv670)) : 'freshtv672)
+                | _ ->
+                    _menhir_fail ()) : 'freshtv674)) : 'freshtv676)) : 'freshtv678)) : 'freshtv680)) : 'freshtv682)) : 'freshtv684)
+            | MenhirState168 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv687 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv685 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, cond), _, s0), _, b0) = _menhir_stack in
+                let _6 = () in
+                let _4 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_sentence = let bodyF =
+                  let b = b0 in
+                  
+# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              (b)
+# 378 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                let bodyT =
+                  let s = s0 in
+                  
+# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ([s])
+# 386 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
+# 392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv686)) : 'freshtv688)
+            | MenhirState157 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv695 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((assert (not _menhir_env._menhir_error);
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | ELSE ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv689 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                    ((let _menhir_env = _menhir_discard _menhir_env in
+                    let _tok = _menhir_env._menhir_token in
+                    match _tok with
+                    | ABORT ->
+                        _menhir_run160 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | ADDRESS ->
+                        _menhir_run159 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | BALANCE ->
+                        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | BOOL ->
+                        _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | BYTES32 ->
+                        _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | DECLIT256 _v ->
+                        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState177 _v
+                    | DECLIT8 _v ->
+                        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState177 _v
+                    | DEPLOY ->
+                        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | FALSE ->
+                        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | IDENT _v ->
+                        _menhir_run158 _menhir_env (Obj.magic _menhir_stack) MenhirState177 _v
+                    | IF ->
+                        _menhir_run154 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | LBRACE ->
+                        _menhir_run53 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | LOG ->
+                        _menhir_run148 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | LPAR ->
+                        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | NOT ->
+                        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | NOW ->
+                        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | RETURN ->
+                        _menhir_run141 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | SELFDESTRUCT ->
+                        _menhir_run138 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | SENDER ->
+                        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | THIS ->
+                        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | TRUE ->
+                        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | UINT256 ->
+                        _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | UINT8 ->
+                        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | VALUE ->
+                        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | VOID ->
+                        _menhir_run54 _menhir_env (Obj.magic _menhir_stack) MenhirState177
+                    | _ ->
+                        assert (not _menhir_env._menhir_error);
+                        _menhir_env._menhir_error <- true;
+                        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState177) : 'freshtv690)
+                | ABORT | ADDRESS | BALANCE | BOOL | BYTES32 | DECLIT256 _ | DECLIT8 _ | DEPLOY | FALSE | IDENT _ | IF | LOG | LPAR | NOT | NOW | RBRACE | RETURN | SELFDESTRUCT | SENDER | THIS | TRUE | UINT256 | UINT8 | VALUE | VOID ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv691 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                    ((let (((_menhir_stack, _menhir_s), _, cond), _, b0) = _menhir_stack in
+                    let _4 = () in
+                    let _2 = () in
+                    let _1 = () in
+                    let _v : 'tv_sentence = let body =
+                      let b = b0 in
+                      
+# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              (b)
+# 473 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
+# 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                            ( Syntax.IfThenOnly (cond, body) )
+# 479 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                     in
+                    _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv692)
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : (((('freshtv693 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                    ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv694)) : 'freshtv696)
+            | MenhirState177 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv699 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv697 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, cond), _, b0), _, b1) = _menhir_stack in
+                let _6 = () in
+                let _4 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_sentence = let bodyF =
+                  let b = b1 in
+                  
+# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              (b)
+# 504 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                let bodyT =
+                  let b = b0 in
+                  
+# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              (b)
+# 512 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
+# 518 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv698)) : 'freshtv700)
+            | MenhirState52 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv707 * _menhir_state * 'tv_case_header) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv705 * _menhir_state * 'tv_case_header) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
+                ((let ((_menhir_stack, _menhir_s, ch), _, cb) = _menhir_stack in
+                let _v : 'tv_case = 
 # 98 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     (
       { Syntax.case_header = ch
       ; Syntax.case_body = cb
       }
      )
-# 437 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 534 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv703) = _menhir_stack in
+                let (_menhir_s : _menhir_state) = _menhir_s in
+                let (_v : 'tv_case) = _v in
+                ((let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv701 * _menhir_state * 'tv_case) = Obj.magic _menhir_stack in
+                ((assert (not _menhir_env._menhir_error);
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | CASE ->
+                    _menhir_run33 _menhir_env (Obj.magic _menhir_stack) MenhirState185
+                | DEFAULT ->
+                    _menhir_run32 _menhir_env (Obj.magic _menhir_stack) MenhirState185
+                | RBRACE ->
+                    _menhir_reduce39 _menhir_env (Obj.magic _menhir_stack) MenhirState185
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState185) : 'freshtv702)) : 'freshtv704)) : 'freshtv706)) : 'freshtv708)
+            | _ ->
+                _menhir_fail ()) : 'freshtv710)) : 'freshtv712)) : 'freshtv714)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv715 * _menhir_state) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv716)) : 'freshtv718)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_reduce81 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_value_info = 
+# 256 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                ( None )
+# 573 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_value_info _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run104 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState104 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState104 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState104 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState104
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState104
+
+and _menhir_reduce43 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_list_sentence_ = 
+# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 621 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_list_sentence_ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_loption_separated_nonempty_list_COMMA_exp__ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState100 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv629 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 634 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv625 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 644 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ALONG ->
+                _menhir_run104 _menhir_env (Obj.magic _menhir_stack) MenhirState103
+            | REENTRANCE ->
+                _menhir_reduce81 _menhir_env (Obj.magic _menhir_stack) MenhirState103
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState103) : 'freshtv626)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv627 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 664 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv628)) : 'freshtv630)
+    | MenhirState77 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv635 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 673 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv631 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 683 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ALONG ->
+                _menhir_run104 _menhir_env (Obj.magic _menhir_stack) MenhirState129
+            | REENTRANCE ->
+                _menhir_reduce81 _menhir_env (Obj.magic _menhir_stack) MenhirState129
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState129) : 'freshtv632)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv633 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 703 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv634)) : 'freshtv636)
+    | MenhirState73 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv643 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 712 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv639 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 722 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv637 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 729 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, s), _, xs0000) = _menhir_stack in
+            let _3000 = () in
+            let _1000 = () in
+            let _v : 'tv_exp = let lst =
+              let _300 = _3000 in
+              let xs000 = xs0000 in
+              let _100 = _1000 in
+              let lst =
+                let _30 = _300 in
+                let xs00 = xs000 in
+                let _10 = _100 in
+                let xs =
+                  let _3 = _30 in
+                  let xs0 = xs00 in
+                  let _1 = _10 in
+                  let x =
+                    let xs = xs0 in
+                    
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 751 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    
+                  in
+                  
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 757 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 763 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                
+              in
+              
+# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                    (lst)
+# 769 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 230 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                              ( Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () )
+# 775 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv638)) : 'freshtv640)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv641 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 785 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv642)) : 'freshtv644)
+    | MenhirState150 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv655 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 794 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv651 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 804 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | SEMICOLON ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv647 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 814 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv645 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 821 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                ((let (((_menhir_stack, _menhir_s), name), _, xs0000) = _menhir_stack in
+                let _4 = () in
+                let _3000 = () in
+                let _1000 = () in
+                let _1 = () in
+                let _v : 'tv_sentence = let lst =
+                  let _300 = _3000 in
+                  let xs000 = xs0000 in
+                  let _100 = _1000 in
+                  let lst =
+                    let _30 = _300 in
+                    let xs00 = xs000 in
+                    let _10 = _100 in
+                    let xs =
+                      let _3 = _30 in
+                      let xs0 = xs00 in
+                      let _1 = _10 in
+                      let x =
+                        let xs = xs0 in
+                        
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 845 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                        
+                      in
+                      
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 851 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 857 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    
+                  in
+                  
+# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                    (lst)
+# 863 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 199 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                 ( Syntax.LogSentence (name, lst, None))
+# 869 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv646)) : 'freshtv648)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv649 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 879 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv650)) : 'freshtv652)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv653 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 890 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv654)) : 'freshtv656)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_run54 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | SINGLE_EQ ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv621 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ADDRESS ->
+            _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | BALANCE ->
+            _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | DECLIT256 _v ->
+            _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState55 _v
+        | DECLIT8 _v ->
+            _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState55 _v
+        | DEPLOY ->
+            _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | FALSE ->
+            _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | IDENT _v ->
+            _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState55 _v
+        | LPAR ->
+            _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | NOT ->
+            _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | NOW ->
+            _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | SENDER ->
+            _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | THIS ->
+            _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | TRUE ->
+            _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | VALUE ->
+            _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState55
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState55) : 'freshtv622)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv623 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv624)
+
+and _menhir_run138 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState138 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState138 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState138 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState138
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState138
+
+and _menhir_run141 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState141 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState141 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState141 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState141
+    | THEN ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv619) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = MenhirState141 in
+        ((let _v : 'tv_option_exp_ = 
+# 101 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( None )
+# 1029 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_case_header = 
+        _menhir_goto_option_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv620)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState141
+
+and _menhir_run148 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | IDENT _v ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv615 * _menhir_state) = Obj.magic _menhir_stack in
+        let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 1049 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = _v in
+        ((let _menhir_stack = (_menhir_stack, _v) in
+        let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv611 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 1060 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState150 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState150 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | IDENT _v ->
+                _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState150 _v
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | RPAR ->
+                _menhir_reduce49 _menhir_env (Obj.magic _menhir_stack) MenhirState150
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState150) : 'freshtv612)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv613 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 1106 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv614)) : 'freshtv616)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv617 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv618)
+
+and _menhir_run154 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv607 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ADDRESS ->
+            _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | BALANCE ->
+            _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | DECLIT256 _v ->
+            _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState155 _v
+        | DECLIT8 _v ->
+            _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState155 _v
+        | DEPLOY ->
+            _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | FALSE ->
+            _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | IDENT _v ->
+            _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState155 _v
+        | LPAR ->
+            _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | NOT ->
+            _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | NOW ->
+            _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | SENDER ->
+            _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | THIS ->
+            _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | TRUE ->
+            _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | VALUE ->
+            _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState155
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState155) : 'freshtv608)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv609 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv610)
+
+and _menhir_run158 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 1173 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        _menhir_run73 _menhir_env (Obj.magic _menhir_stack)
+    | IDENT _ | RARROW ->
+        _menhir_reduce80 _menhir_env (Obj.magic _menhir_stack)
+    | DOT | EQUALITY | GT | LAND | LSQBR | LT | MINUS | MULT | NEQ | PLUS ->
+        _menhir_reduce27 _menhir_env (Obj.magic _menhir_stack)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv605 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 1193 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv606)
+
+and _menhir_run159 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        _menhir_run83 _menhir_env (Obj.magic _menhir_stack)
+    | IDENT _ | RARROW ->
+        _menhir_reduce77 _menhir_env (Obj.magic _menhir_stack)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv603 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv604)
+
+and _menhir_run160 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | SEMICOLON ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv599 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv597 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        let _2 = () in
+        let _1 = () in
+        let _v : 'tv_sentence = 
+# 180 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                     ( Syntax.AbortSentence )
+# 1234 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv598)) : 'freshtv600)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv601 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv602)
+
+and _menhir_goto_option_exp_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_option_exp_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : ('freshtv595 * _menhir_state) * _menhir_state * 'tv_option_exp_) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | THEN ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv591 * _menhir_state) * _menhir_state * 'tv_option_exp_) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | BECOME ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv587 * _menhir_state) * _menhir_state * 'tv_option_exp_)) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState144 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState144 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | IDENT _v ->
+                _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState144 _v
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState144
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState144) : 'freshtv588)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv589 * _menhir_state) * _menhir_state * 'tv_option_exp_)) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv590)) : 'freshtv592)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv593 * _menhir_state) * _menhir_state * 'tv_option_exp_) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv594)) : 'freshtv596)
+
+and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sentence -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState157 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv575 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ELSE ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv569 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ABORT ->
+                _menhir_run160 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | ADDRESS ->
+                _menhir_run159 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | BOOL ->
+                _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | BYTES32 ->
+                _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState168 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState168 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | IDENT _v ->
+                _menhir_run158 _menhir_env (Obj.magic _menhir_stack) MenhirState168 _v
+            | IF ->
+                _menhir_run154 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | LBRACE ->
+                _menhir_run53 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | LOG ->
+                _menhir_run148 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | RETURN ->
+                _menhir_run141 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | SELFDESTRUCT ->
+                _menhir_run138 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | UINT256 ->
+                _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | UINT8 ->
+                _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | VOID ->
+                _menhir_run54 _menhir_env (Obj.magic _menhir_stack) MenhirState168
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState168) : 'freshtv570)
+        | ABORT | ADDRESS | BALANCE | BOOL | BYTES32 | DECLIT256 _ | DECLIT8 _ | DEPLOY | FALSE | IDENT _ | IF | LOG | LPAR | NOT | NOW | RBRACE | RETURN | SELFDESTRUCT | SENDER | THIS | TRUE | UINT256 | UINT8 | VALUE | VOID ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv571 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), _, cond), _, s0) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _1 = () in
+            let _v : 'tv_sentence = let body =
+              let s = s0 in
+              
+# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ([s])
+# 1394 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                            ( Syntax.IfThenOnly (cond, body) )
+# 1400 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv572)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv573 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv574)) : 'freshtv576)
+    | MenhirState168 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((((('freshtv579 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((((('freshtv577 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((let ((((_menhir_stack, _menhir_s), _, cond), _, s0), _, s1) = _menhir_stack in
+        let _6 = () in
+        let _4 = () in
+        let _2 = () in
+        let _1 = () in
+        let _v : 'tv_sentence = let bodyF =
+          let s = s1 in
+          
+# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ([s])
+# 1425 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+          
+        in
+        let bodyT =
+          let s = s0 in
+          
+# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ([s])
+# 1433 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+          
+        in
+        
+# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
+# 1439 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv578)) : 'freshtv580)
+    | MenhirState177 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((((('freshtv583 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((((('freshtv581 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((let ((((_menhir_stack, _menhir_s), _, cond), _, b0), _, s0) = _menhir_stack in
+        let _6 = () in
+        let _4 = () in
+        let _2 = () in
+        let _1 = () in
+        let _v : 'tv_sentence = let bodyF =
+          let s = s0 in
+          
+# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ([s])
+# 1457 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+          
+        in
+        let bodyT =
+          let b = b0 in
+          
+# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              (b)
+# 1465 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+          
+        in
+        
+# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
+# 1471 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv582)) : 'freshtv584)
+    | MenhirState180 | MenhirState53 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv585 * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ABORT ->
+            _menhir_run160 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | ADDRESS ->
+            _menhir_run159 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | BALANCE ->
+            _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | BOOL ->
+            _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | BYTES32 ->
+            _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | DECLIT256 _v ->
+            _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState180 _v
+        | DECLIT8 _v ->
+            _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState180 _v
+        | DEPLOY ->
+            _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | FALSE ->
+            _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | IDENT _v ->
+            _menhir_run158 _menhir_env (Obj.magic _menhir_stack) MenhirState180 _v
+        | IF ->
+            _menhir_run154 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | LOG ->
+            _menhir_run148 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | LPAR ->
+            _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | NOT ->
+            _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | NOW ->
+            _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | RETURN ->
+            _menhir_run141 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | SELFDESTRUCT ->
+            _menhir_run138 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | SENDER ->
+            _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | THIS ->
+            _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | TRUE ->
+            _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | UINT256 ->
+            _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | UINT8 ->
+            _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | VALUE ->
+            _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | VOID ->
+            _menhir_run54 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | RBRACE ->
+            _menhir_reduce43 _menhir_env (Obj.magic _menhir_stack) MenhirState180
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState180) : 'freshtv586)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_goto_separated_nonempty_list_COMMA_exp_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_separated_nonempty_list_COMMA_exp_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    match _menhir_s with
+    | MenhirState150 | MenhirState73 | MenhirState77 | MenhirState100 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv563) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv561) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (x : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        ((let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
+# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 1552 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv562)) : 'freshtv564)
+    | MenhirState120 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv567 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv565 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        let (_ : _menhir_state) = _menhir_s in
+        let (xs : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let _2 = () in
+        let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
+# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 1569 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_separated_nonempty_list_COMMA_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv566)) : 'freshtv568)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_goto_value_info : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_value_info -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv559 * _menhir_state * 'tv_value_info) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | REENTRANCE ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv555) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LBRACE ->
+            _menhir_run53 _menhir_env (Obj.magic _menhir_stack) MenhirState115
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState115) : 'freshtv556)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv557 * _menhir_state * 'tv_value_info) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv558)) : 'freshtv560)
+
+and _menhir_reduce36 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_lexp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let (_menhir_stack, _menhir_s, l) = _menhir_stack in
+    let _v : 'tv_exp = 
+# 243 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.ArrayAccessExp l, () )
+# 1609 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run87 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState87 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState87 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState87 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState87
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState87
+
+and _menhir_run94 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState94 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState94 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState94 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState94
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState94
+
+and _menhir_run89 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState89 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState89 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState89 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState89
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState89
+
+and _menhir_run96 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState96 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState96 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState96 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState96
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState96
+
+and _menhir_run106 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState106 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState106 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState106 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState106
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState106
+
+and _menhir_run91 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState91 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState91 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState91 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState91
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState91
+
+and _menhir_run108 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState108 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState108 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState108 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState108
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState108
+
+and _menhir_run110 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState110 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState110 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState110 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState110
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState110
+
+and _menhir_run112 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState112 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState112 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState112 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState112
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState112
+
+and _menhir_run98 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | DEFAULT ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv545 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv541 * _menhir_state * 'tv_exp))) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ((('freshtv537 * _menhir_state * 'tv_exp)))) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | ALONG ->
+                    _menhir_run104 _menhir_env (Obj.magic _menhir_stack) MenhirState124
+                | REENTRANCE ->
+                    _menhir_reduce81 _menhir_env (Obj.magic _menhir_stack) MenhirState124
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState124) : 'freshtv538)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ((('freshtv539 * _menhir_state * 'tv_exp)))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv540)) : 'freshtv542)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv543 * _menhir_state * 'tv_exp))) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv544)) : 'freshtv546)
+    | IDENT _v ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv551 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2006 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = _v in
+        ((let _menhir_stack = (_menhir_stack, _v) in
+        let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv547 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2017 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState100 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState100 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | IDENT _v ->
+                _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState100 _v
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | RPAR ->
+                _menhir_reduce49 _menhir_env (Obj.magic _menhir_stack) MenhirState100
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState100) : 'freshtv548)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv549 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2063 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv550)) : 'freshtv552)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv553 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv554)
+
+and _menhir_run53 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ABORT ->
+        _menhir_run160 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | ADDRESS ->
+        _menhir_run159 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | BOOL ->
+        _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | BYTES32 ->
+        _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState53 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState53 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | IDENT _v ->
+        _menhir_run158 _menhir_env (Obj.magic _menhir_stack) MenhirState53 _v
+    | IF ->
+        _menhir_run154 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | LOG ->
+        _menhir_run148 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | RETURN ->
+        _menhir_run141 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | SELFDESTRUCT ->
+        _menhir_run138 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | UINT256 ->
+        _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | UINT8 ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | VOID ->
+        _menhir_run54 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | RBRACE ->
+        _menhir_reduce43 _menhir_env (Obj.magic _menhir_stack) MenhirState53
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState53
+
+and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_list_case_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState31 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((((('freshtv531 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2145 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RBRACE ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((((('freshtv527 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2155 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((((('freshtv525 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2162 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+            ((let ((((_menhir_stack, _menhir_s), name), _, xs000), _, css) = _menhir_stack in
+            let _6 = () in
+            let _4 = () in
+            let _300 = () in
+            let _100 = () in
+            let _1 = () in
+            let _v : 'tv_contract = let args =
+              let _30 = _300 in
+              let xs00 = xs000 in
+              let _10 = _100 in
+              let xs =
+                let _3 = _30 in
+                let xs0 = xs00 in
+                let _1 = _10 in
+                let x =
+                  let xs = xs0 in
+                  
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 2183 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 2189 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                
+              in
+              
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 2195 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 82 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.Contract
+      ({ Syntax.contract_cases = css
+       ; contract_name = name
+       ; contract_arguments = args}) )
+# 2204 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_contract _menhir_env _menhir_stack _menhir_s _v) : 'freshtv526)) : 'freshtv528)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((((('freshtv529 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2214 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv530)) : 'freshtv532)
+    | MenhirState185 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv535 * _menhir_state * 'tv_case) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv533 * _menhir_state * 'tv_case) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        let _v : 'tv_list_case_ = 
+# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 2227 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_list_case_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv534)) : 'freshtv536)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_reduce27 : _menhir_env -> 'ttv_tail * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2236 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let (_menhir_stack, _menhir_s, s) = _menhir_stack in
+    let _v : 'tv_exp = 
+# 225 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.IdentifierExp s, () )
+# 2243 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run73 : _menhir_env -> 'ttv_tail * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2250 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState73 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState73 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState73 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | RPAR ->
+        _menhir_reduce49 _menhir_env (Obj.magic _menhir_stack) MenhirState73
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState73
+
+and _menhir_reduce49 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
+# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 2296 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState83 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv365 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv361 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv359 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _1 = () in
+            let _v : 'tv_exp = 
+# 239 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( Syntax.AddressExp e, () )
+# 2343 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv360)) : 'freshtv362)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv363 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv364)) : 'freshtv366)
+    | MenhirState87 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv371 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | MINUS | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv367 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 204 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         (fun (l, r) -> Syntax.PlusExp(l, r))
+# 2375 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2381 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv368)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv369 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv370)) : 'freshtv372)
+    | MenhirState89 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv377 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | MINUS | MULT | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv373 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 206 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         (fun (l, r) -> Syntax.MultExp(l, r))
+# 2411 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2417 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv374)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv375 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv376)) : 'freshtv378)
+    | MenhirState91 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv395 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RSQBR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv391 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv389 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, s), _, idx) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _v : 'tv_lexp = 
+# 269 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.ArrayAccessLExp {
+       Syntax.array_access_array = s; array_access_index = idx} )
+# 2466 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv387) = _menhir_stack in
+            let (_menhir_s : _menhir_state) = _menhir_s in
+            let (_v : 'tv_lexp) = _v in
+            ((let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+            match _menhir_s with
+            | MenhirState171 | MenhirState164 | MenhirState155 | MenhirState150 | MenhirState141 | MenhirState144 | MenhirState138 | MenhirState55 | MenhirState70 | MenhirState71 | MenhirState73 | MenhirState77 | MenhirState81 | MenhirState120 | MenhirState100 | MenhirState112 | MenhirState110 | MenhirState108 | MenhirState106 | MenhirState104 | MenhirState96 | MenhirState94 | MenhirState91 | MenhirState89 | MenhirState87 | MenhirState83 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv379 * _menhir_state * 'tv_lexp) = Obj.magic _menhir_stack in
+                (_menhir_reduce36 _menhir_env (Obj.magic _menhir_stack) : 'freshtv380)
+            | MenhirState53 | MenhirState180 | MenhirState177 | MenhirState157 | MenhirState168 ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv385 * _menhir_state * 'tv_lexp) = Obj.magic _menhir_stack in
+                ((assert (not _menhir_env._menhir_error);
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | SINGLE_EQ ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : 'freshtv381 * _menhir_state * 'tv_lexp) = Obj.magic _menhir_stack in
+                    ((let _menhir_env = _menhir_discard _menhir_env in
+                    let _tok = _menhir_env._menhir_token in
+                    match _tok with
+                    | ADDRESS ->
+                        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | BALANCE ->
+                        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | DECLIT256 _v ->
+                        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState171 _v
+                    | DECLIT8 _v ->
+                        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState171 _v
+                    | DEPLOY ->
+                        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | FALSE ->
+                        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | IDENT _v ->
+                        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState171 _v
+                    | LPAR ->
+                        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | NOT ->
+                        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | NOW ->
+                        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | SENDER ->
+                        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | THIS ->
+                        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | TRUE ->
+                        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | VALUE ->
+                        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState171
+                    | _ ->
+                        assert (not _menhir_env._menhir_error);
+                        _menhir_env._menhir_error <- true;
+                        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState171) : 'freshtv382)
+                | DOT | EQUALITY | GT | LAND | LSQBR | LT | MINUS | MULT | NEQ | PLUS ->
+                    _menhir_reduce36 _menhir_env (Obj.magic _menhir_stack)
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : 'freshtv383 * _menhir_state * 'tv_lexp) = Obj.magic _menhir_stack in
+                    ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv384)) : 'freshtv386)
+            | _ ->
+                _menhir_fail ()) : 'freshtv388)) : 'freshtv390)) : 'freshtv392)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv393 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv394)) : 'freshtv396)
+    | MenhirState94 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv401 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv397 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 209 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+        (fun (l, r) -> Syntax.NeqExp(l, r))
+# 2566 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2572 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv398)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv399 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv400)) : 'freshtv402)
+    | MenhirState96 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv407 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | MINUS | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv403 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 205 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+          (fun (l, r)  -> Syntax.MinusExp(l, r))
+# 2604 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2610 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv404)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv405 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv406)) : 'freshtv408)
+    | MenhirState104 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv413 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | REENTRANCE ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv409 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, v) = _menhir_stack in
+            let _1 = () in
+            let _v : 'tv_value_info = 
+# 257 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                    ( Some v )
+# 2654 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_value_info _menhir_env _menhir_stack _menhir_s _v) : 'freshtv410)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv411 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv412)) : 'freshtv414)
+    | MenhirState106 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv419 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv415 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 207 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (fun (l, r) -> Syntax.LtExp(l, r))
+# 2690 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2696 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv416)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv417 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv418)) : 'freshtv420)
+    | MenhirState108 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv425 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | LAND | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv421 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _2 = () in
+            let _v : 'tv_exp = 
+# 214 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                               ( Syntax.LandExp (lhs, rhs), () )
+# 2738 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv422)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv423 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv424)) : 'freshtv426)
+    | MenhirState110 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv431 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv427 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 208 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (fun (l, r) -> Syntax.GtExp(l, r))
+# 2774 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2780 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv428)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv429 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv430)) : 'freshtv432)
+    | MenhirState112 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv437 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv433 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _10 = () in
+            let _v : 'tv_exp = let o =
+              let _1 = _10 in
+              
+# 210 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+             (fun (l, r) -> Syntax.EqualityExp(l, r))
+# 2816 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( (o (lhs, rhs)), () )
+# 2822 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv434)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv435 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv436)) : 'freshtv438)
+    | MenhirState150 | MenhirState73 | MenhirState77 | MenhirState120 | MenhirState100 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv445 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | COMMA ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv439 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState120 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState120 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | IDENT _v ->
+                _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState120 _v
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState120
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState120) : 'freshtv440)
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv441 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
+# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [ x ] )
+# 2903 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_separated_nonempty_list_COMMA_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv442)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv443 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv444)) : 'freshtv446)
+    | MenhirState81 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv453 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv449 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv447 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _1 = () in
+            let _v : 'tv_exp = 
+# 221 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                 ( Syntax.BalanceExp e, () )
+# 2952 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv448)) : 'freshtv450)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv451 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv452)) : 'freshtv454)
+    | MenhirState71 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv461 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv457 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv455 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            let _3 = () in
+            let _1 = () in
+            let _v : 'tv_exp = 
+# 229 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.ParenthExp e, () )
+# 3000 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv456)) : 'freshtv458)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv459 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv460)) : 'freshtv462)
+    | MenhirState70 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv467 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | COMMA | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv463 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            let _1 = () in
+            let _v : 'tv_exp = 
+# 240 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                 ( Syntax.NotExp e, () )
+# 3044 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv464)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv465 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv466)) : 'freshtv468)
+    | MenhirState55 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv475 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv471 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv469 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, value) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _1 = () in
+            let _v : 'tv_sentence = 
+# 196 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.ExpSentence value )
+# 3093 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv470)) : 'freshtv472)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv473 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv474)) : 'freshtv476)
+    | MenhirState138 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv483 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv479 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv477 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            let _3 = () in
+            let _1 = () in
+            let _v : 'tv_sentence = 
+# 200 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                     ( Syntax.SelfdestructSentence e )
+# 3141 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv478)) : 'freshtv480)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv481 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv482)) : 'freshtv484)
+    | MenhirState144 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv491 * _menhir_state) * _menhir_state * 'tv_option_exp_))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv487 * _menhir_state) * _menhir_state * 'tv_option_exp_))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv485 * _menhir_state) * _menhir_state * 'tv_option_exp_))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), _, value), _, cont) = _menhir_stack in
+            let _6 = () in
+            let _4 = () in
+            let _3 = () in
+            let _1 = () in
+            let _v : 'tv_sentence = 
+# 182 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} )
+# 3191 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv486)) : 'freshtv488)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv489 * _menhir_state) * _menhir_state * 'tv_option_exp_))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv490)) : 'freshtv492)
+    | MenhirState141 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv497 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | THEN ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv493 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            let _v : 'tv_option_exp_ = 
+# 103 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( Some x )
+# 3234 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_option_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv494)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv495 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv496)) : 'freshtv498)
+    | MenhirState155 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv503 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv499 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ABORT ->
+                _menhir_run160 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | ADDRESS ->
+                _menhir_run159 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | BOOL ->
+                _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | BYTES32 ->
+                _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState157 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState157 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | IDENT _v ->
+                _menhir_run158 _menhir_env (Obj.magic _menhir_stack) MenhirState157 _v
+            | IF ->
+                _menhir_run154 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | LBRACE ->
+                _menhir_run53 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | LOG ->
+                _menhir_run148 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | RETURN ->
+                _menhir_run141 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | SELFDESTRUCT ->
+                _menhir_run138 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | UINT256 ->
+                _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | UINT8 ->
+                _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | VOID ->
+                _menhir_run54 _menhir_env (Obj.magic _menhir_stack) MenhirState157
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState157) : 'freshtv500)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv501 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv502)) : 'freshtv504)
+    | MenhirState164 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv511 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3342 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv507 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3372 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv505 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3379 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s, t), name), _, value) = _menhir_stack in
+            let _5 = () in
+            let _3 = () in
+            let _v : 'tv_sentence = 
+# 189 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              ( Syntax.VariableInitSentence
+                { Syntax.variable_init_type = t
+                ; variable_init_name = name
+                ; variable_init_value = value
+                }
+              )
+# 3392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv506)) : 'freshtv508)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv509 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3402 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv510)) : 'freshtv512)
+    | MenhirState171 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv519 * _menhir_state * 'tv_lexp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv515 * _menhir_state * 'tv_lexp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv513 * _menhir_state * 'tv_lexp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            let _4 = () in
+            let _2 = () in
+            let _v : 'tv_sentence = 
+# 184 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.AssignmentSentence (lhs, rhs) )
+# 3444 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv514)) : 'freshtv516)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv517 * _menhir_state * 'tv_lexp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv518)) : 'freshtv520)
+    | MenhirState53 | MenhirState180 | MenhirState177 | MenhirState157 | MenhirState168 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv523 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | DOT ->
+            _menhir_run98 _menhir_env (Obj.magic _menhir_stack)
+        | EQUALITY ->
+            _menhir_run112 _menhir_env (Obj.magic _menhir_stack)
+        | GT ->
+            _menhir_run110 _menhir_env (Obj.magic _menhir_stack)
+        | LAND ->
+            _menhir_run108 _menhir_env (Obj.magic _menhir_stack)
+        | LSQBR ->
+            _menhir_run91 _menhir_env (Obj.magic _menhir_stack)
+        | LT ->
+            _menhir_run106 _menhir_env (Obj.magic _menhir_stack)
+        | MINUS ->
+            _menhir_run96 _menhir_env (Obj.magic _menhir_stack)
+        | MULT ->
+            _menhir_run89 _menhir_env (Obj.magic _menhir_stack)
+        | NEQ ->
+            _menhir_run94 _menhir_env (Obj.magic _menhir_stack)
+        | PLUS ->
+            _menhir_run87 _menhir_env (Obj.magic _menhir_stack)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv521 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv522)) : 'freshtv524)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_run83 : _menhir_env -> 'ttv_tail * _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState83 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState83 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState83 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState83
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState83
+
+and _menhir_goto_separated_nonempty_list_COMMA_event_arg_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_separated_nonempty_list_COMMA_event_arg_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    match _menhir_s with
+    | MenhirState3 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv353) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv351) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (x : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        ((let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
+# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 3543 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv352)) : 'freshtv354)
+    | MenhirState21 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv357 * _menhir_state * 'tv_event_arg)) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv355 * _menhir_state * 'tv_event_arg)) = Obj.magic _menhir_stack in
+        let (_ : _menhir_state) = _menhir_s in
+        let (xs : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let _2 = () in
+        let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
+# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 3560 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_separated_nonempty_list_COMMA_event_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv356)) : 'freshtv358)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_goto_separated_nonempty_list_COMMA_arg_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_separated_nonempty_list_COMMA_arg_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    match _menhir_s with
+    | MenhirState46 | MenhirState37 | MenhirState26 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv345) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv343) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (x : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        ((let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
+# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 3581 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv344)) : 'freshtv346)
+    | MenhirState42 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv349 * _menhir_state * 'tv_arg)) = Obj.magic _menhir_stack in
+        let (_menhir_s : _menhir_state) = _menhir_s in
+        let (_v : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv347 * _menhir_state * 'tv_arg)) = Obj.magic _menhir_stack in
+        let (_ : _menhir_state) = _menhir_s in
+        let (xs : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let _2 = () in
+        let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
+# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 3598 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_separated_nonempty_list_COMMA_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv348)) : 'freshtv350)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_goto_case_header : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_case_header -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv341 * _menhir_state * 'tv_case_header) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LBRACE ->
+        _menhir_run53 _menhir_env (Obj.magic _menhir_stack) MenhirState52
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState52) : 'freshtv342)
+
+and _menhir_reduce39 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_list_case_ = 
+# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 3624 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_list_case_ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run32 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv339) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_case_header = 
 # 113 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.DefaultCaseHeader )
-# 461 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _6;
-          MenhirLib.EngineTypes.startp = _startpos__6_;
-          MenhirLib.EngineTypes.endp = _endpos__6_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _300;
-            MenhirLib.EngineTypes.startp = _startpos__300_;
-            MenhirLib.EngineTypes.endp = _endpos__300_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs000;
-              MenhirLib.EngineTypes.startp = _startpos_xs000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _100;
-                MenhirLib.EngineTypes.startp = _startpos__100_;
-                MenhirLib.EngineTypes.endp = _endpos__100_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = name;
-                  MenhirLib.EngineTypes.startp = _startpos_name_;
-                  MenhirLib.EngineTypes.endp = _endpos_name_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = return_typ;
-                    MenhirLib.EngineTypes.startp = _startpos_return_typ_;
-                    MenhirLib.EngineTypes.endp = _endpos_return_typ_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.semv = _2;
-                      MenhirLib.EngineTypes.startp = _startpos__2_;
-                      MenhirLib.EngineTypes.endp = _endpos__2_;
-                      MenhirLib.EngineTypes.next = {
-                        MenhirLib.EngineTypes.state = _menhir_s;
-                        MenhirLib.EngineTypes.semv = _1;
-                        MenhirLib.EngineTypes.startp = _startpos__1_;
-                        MenhirLib.EngineTypes.endp = _endpos__1_;
-                        MenhirLib.EngineTypes.next = _menhir_stack;
-                      };
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _6 : unit = Obj.magic _6 in
-        let _300 : unit = Obj.magic _300 in
-        let xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__ = Obj.magic xs000 in
-        let _100 : unit = Obj.magic _100 in
-        let name : (
+# 3638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv340)
+
+and _menhir_run33 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv335 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ADDRESS ->
+            _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState34
+        | BOOL ->
+            _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState34
+        | BYTES32 ->
+            _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState34
+        | IDENT _v ->
+            _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState34 _v
+        | UINT256 ->
+            _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState34
+        | UINT8 ->
+            _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState34
+        | VOID ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv333 * _menhir_state)) = Obj.magic _menhir_stack in
+            let (_menhir_s : _menhir_state) = MenhirState34 in
+            ((let _menhir_stack = (_menhir_stack, _menhir_s) in
+            let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | IDENT _v ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv329 * _menhir_state)) * _menhir_state) = Obj.magic _menhir_stack in
+                let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 521 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let return_typ : 'tv_typ = Obj.magic return_typ in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__6_ in
-        let _v : 'tv_case_header = let args =
-          let _30 = _300 in
-          let xs00 = xs000 in
-          let _10 = _100 in
-          let xs =
-            let _3 = _30 in
-            let xs0 = xs00 in
-            let _1 = _10 in
-            let x =
-              let xs = xs0 in
-              
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 541 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 547 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 553 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 118 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         ( Syntax.UsualCaseHeader
-      { case_return_typ = [return_typ] (* multi returns not supported *)
-      ; Syntax.case_name = name
-      ; case_arguments = args
+# 3680 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = _v in
+                ((let _menhir_stack = (_menhir_stack, _v) in
+                let _menhir_env = _menhir_discard _menhir_env in
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | LPAR ->
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : ((('freshtv325 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3691 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    )) = Obj.magic _menhir_stack in
+                    ((let _menhir_env = _menhir_discard _menhir_env in
+                    let _tok = _menhir_env._menhir_token in
+                    match _tok with
+                    | ADDRESS ->
+                        _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | BOOL ->
+                        _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | BYTES32 ->
+                        _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | IDENT _v ->
+                        _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState37 _v
+                    | UINT256 ->
+                        _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | UINT8 ->
+                        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | RPAR ->
+                        _menhir_reduce45 _menhir_env (Obj.magic _menhir_stack) MenhirState37
+                    | _ ->
+                        assert (not _menhir_env._menhir_error);
+                        _menhir_env._menhir_error <- true;
+                        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState37) : 'freshtv326)
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    let (_menhir_env : _menhir_env) = _menhir_env in
+                    let (_menhir_stack : ((('freshtv327 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3721 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    )) = Obj.magic _menhir_stack in
+                    ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv328)) : 'freshtv330)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv331 * _menhir_state)) * _menhir_state) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv332)) : 'freshtv334)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState34) : 'freshtv336)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv337 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv338)
+
+and _menhir_run56 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv321 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | MSG ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv317 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv313 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv311 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                let _4 = () in
+                let _3 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_exp = 
+# 219 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                        ( Syntax.ValueExp, () )
+# 3776 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv312)) : 'freshtv314)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv315 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv316)) : 'freshtv318)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv319 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv320)) : 'freshtv322)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv323 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv324)
+
+and _menhir_run60 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv309) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_exp = 
+# 215 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         ( Syntax.TrueExp, () )
+# 3811 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv310)
+
+and _menhir_run61 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv307) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_exp = 
+# 241 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         ( Syntax.ThisExp, () )
+# 3825 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv308)
+
+and _menhir_run62 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv303 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | MSG ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv299 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv295 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv293 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                let _4 = () in
+                let _3 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_exp = 
+# 220 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                         ( Syntax.SenderExp, () )
+# 3861 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv294)) : 'freshtv296)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv297 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv298)) : 'freshtv300)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv301 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv302)) : 'freshtv304)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv305 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv306)
+
+and _menhir_run66 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv289 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | BLOCK ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv285 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv281 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv279 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                let _4 = () in
+                let _3 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_exp = 
+# 222 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                        ( Syntax.NowExp, () )
+# 3918 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv280)) : 'freshtv282)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (('freshtv283 * _menhir_state))) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv284)) : 'freshtv286)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv287 * _menhir_state)) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv288)) : 'freshtv290)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv291 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv292)
+
+and _menhir_run70 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState70 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState70 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState70 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState70
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState70
+
+and _menhir_run71 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | BALANCE ->
+        _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | DECLIT256 _v ->
+        _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState71 _v
+    | DECLIT8 _v ->
+        _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState71 _v
+    | DEPLOY ->
+        _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | FALSE ->
+        _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | IDENT _v ->
+        _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState71 _v
+    | LPAR ->
+        _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | NOT ->
+        _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | NOW ->
+        _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | SENDER ->
+        _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | THIS ->
+        _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | TRUE ->
+        _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | VALUE ->
+        _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState71
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState71
+
+and _menhir_run72 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4024 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        _menhir_run73 _menhir_env (Obj.magic _menhir_stack)
+    | COMMA | DOT | EQUALITY | GT | LAND | LSQBR | LT | MINUS | MULT | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
+        _menhir_reduce27 _menhir_env (Obj.magic _menhir_stack)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv277 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4042 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv278)
+
+and _menhir_run74 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv275) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_exp = 
+# 216 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+          ( Syntax.FalseExp, () )
+# 4057 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv276)
+
+and _menhir_run75 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | IDENT _v ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv271 * _menhir_state) = Obj.magic _menhir_stack in
+        let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4073 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = _v in
+        ((let _menhir_stack = (_menhir_stack, _v) in
+        let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv267 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4084 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | BALANCE ->
+                _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | DECLIT256 _v ->
+                _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState77 _v
+            | DECLIT8 _v ->
+                _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState77 _v
+            | DEPLOY ->
+                _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | FALSE ->
+                _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | IDENT _v ->
+                _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState77 _v
+            | LPAR ->
+                _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | NOT ->
+                _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | NOW ->
+                _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | SENDER ->
+                _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | THIS ->
+                _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | TRUE ->
+                _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | VALUE ->
+                _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | RPAR ->
+                _menhir_reduce49 _menhir_env (Obj.magic _menhir_stack) MenhirState77
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState77) : 'freshtv268)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv269 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4130 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv270)) : 'freshtv272)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv273 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv274)
+
+and _menhir_run78 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 4145 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv265) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    let (d : (
+# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 4155 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) = _v in
+    ((let _v : 'tv_exp = 
+# 218 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                ( Syntax.DecLit8Exp d, ())
+# 4160 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv266)
+
+and _menhir_run79 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 4167 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv263) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    let (d : (
+# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (Wrap_bn.t)
+# 4177 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) = _v in
+    ((let _v : 'tv_exp = 
+# 217 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                  ( Syntax.DecLit256Exp d, ())
+# 4182 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv264)
+
+and _menhir_run80 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv259 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ADDRESS ->
+            _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | BALANCE ->
+            _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | DECLIT256 _v ->
+            _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState81 _v
+        | DECLIT8 _v ->
+            _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState81 _v
+        | DEPLOY ->
+            _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | FALSE ->
+            _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | IDENT _v ->
+            _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState81 _v
+        | LPAR ->
+            _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | NOT ->
+            _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | NOW ->
+            _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | SENDER ->
+            _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | THIS ->
+            _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | TRUE ->
+            _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | VALUE ->
+            _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState81
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState81) : 'freshtv260)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv261 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv262)
+
+and _menhir_run82 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | LPAR ->
+        _menhir_run83 _menhir_env (Obj.magic _menhir_stack)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv257 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv258)
+
+and _menhir_run11 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | ADDRESS ->
+        _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState11
+    | BOOL ->
+        _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState11
+    | BYTES32 ->
+        _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState11
+    | IDENT _v ->
+        _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState11 _v
+    | UINT256 ->
+        _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState11
+    | UINT8 ->
+        _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState11
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState11
+
+and _menhir_goto_event_arg : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_event_arg -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv255 * _menhir_state * 'tv_event_arg) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | COMMA ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv249 * _menhir_state * 'tv_event_arg) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | ADDRESS ->
+            _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState21
+        | BOOL ->
+            _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState21
+        | BYTES32 ->
+            _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState21
+        | IDENT _v ->
+            _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState21 _v
+        | UINT256 ->
+            _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState21
+        | UINT8 ->
+            _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState21
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState21) : 'freshtv250)
+    | RPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv251 * _menhir_state * 'tv_event_arg) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
+# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [ x ] )
+# 4313 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_separated_nonempty_list_COMMA_event_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv252)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv253 * _menhir_state * 'tv_event_arg) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv254)) : 'freshtv256)
+
+and _menhir_run15 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4327 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _v ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv247 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+    let (i : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4336 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) = _v in
+    ((let (_menhir_stack, _menhir_s, t) = _menhir_stack in
+    let _v : 'tv_arg = 
+# 139 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( { Syntax.arg_typ = t
+      ; Syntax.arg_ident = i
+      ; Syntax.arg_location = None
       }
     )
-# 564 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4346 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv245) = _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    let (_v : 'tv_arg) = _v in
+    ((let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState3 | MenhirState21 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv235 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv233 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, a) = _menhir_stack in
+        let _v : 'tv_event_arg = 
+# 147 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+            ( Syntax.event_arg_of_arg a false )
+# 4363 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _6;
-          MenhirLib.EngineTypes.startp = _startpos__6_;
-          MenhirLib.EngineTypes.endp = _endpos__6_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _300;
-            MenhirLib.EngineTypes.startp = _startpos__300_;
-            MenhirLib.EngineTypes.endp = _endpos__300_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs000;
-              MenhirLib.EngineTypes.startp = _startpos_xs000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _100;
-                MenhirLib.EngineTypes.startp = _startpos__100_;
-                MenhirLib.EngineTypes.endp = _endpos__100_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = name;
-                  MenhirLib.EngineTypes.startp = _startpos_name_;
-                  MenhirLib.EngineTypes.endp = _endpos_name_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _3;
-                    MenhirLib.EngineTypes.startp = _startpos__3_;
-                    MenhirLib.EngineTypes.endp = _endpos__3_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.semv = _2;
-                      MenhirLib.EngineTypes.startp = _startpos__2_;
-                      MenhirLib.EngineTypes.endp = _endpos__2_;
-                      MenhirLib.EngineTypes.next = {
-                        MenhirLib.EngineTypes.state = _menhir_s;
-                        MenhirLib.EngineTypes.semv = _1;
-                        MenhirLib.EngineTypes.startp = _startpos__1_;
-                        MenhirLib.EngineTypes.endp = _endpos__1_;
-                        MenhirLib.EngineTypes.next = _menhir_stack;
-                      };
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _6 : unit = Obj.magic _6 in
-        let _300 : unit = Obj.magic _300 in
-        let xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__ = Obj.magic xs000 in
-        let _100 : unit = Obj.magic _100 in
-        let name : (
+        _menhir_goto_event_arg _menhir_env _menhir_stack _menhir_s _v) : 'freshtv234)) : 'freshtv236)
+    | MenhirState26 | MenhirState46 | MenhirState42 | MenhirState37 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv243 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | COMMA ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv237 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState42
+            | BOOL ->
+                _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState42
+            | BYTES32 ->
+                _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState42
+            | IDENT _v ->
+                _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState42 _v
+            | UINT256 ->
+                _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState42
+            | UINT8 ->
+                _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState42
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState42) : 'freshtv238)
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv239 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
+# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [ x ] )
+# 4401 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_separated_nonempty_list_COMMA_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv240)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv241 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv242)) : 'freshtv244)
+    | _ ->
+        _menhir_fail ()) : 'freshtv246)) : 'freshtv248)
+
+and _menhir_fail : unit -> 'a =
+  fun () ->
+    Printf.fprintf Pervasives.stderr "Internal failure -- please contact the parser generator's developers.\n%!";
+    assert false
+
+and _menhir_goto_contract : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_contract -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv231 * _menhir_state * 'tv_contract) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | CONTRACT ->
+        _menhir_run24 _menhir_env (Obj.magic _menhir_stack) MenhirState190
+    | EVENT ->
+        _menhir_run1 _menhir_env (Obj.magic _menhir_stack) MenhirState190
+    | EOF ->
+        _menhir_reduce41 _menhir_env (Obj.magic _menhir_stack) MenhirState190
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState190) : 'freshtv232)
+
+and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_loption_separated_nonempty_list_COMMA_arg__ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState26 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv205 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 624 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let _3 : unit = Obj.magic _3 in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__6_ in
-        let _v : 'tv_case_header = let args =
-          let _30 = _300 in
-          let xs00 = xs000 in
-          let _10 = _100 in
-          let xs =
-            let _3 = _30 in
-            let xs0 = xs00 in
-            let _1 = _10 in
-            let x =
-              let xs = xs0 in
-              
+# 4447 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv201 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4457 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | LBRACE ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv197 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4467 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | CASE ->
+                    _menhir_run33 _menhir_env (Obj.magic _menhir_stack) MenhirState31
+                | DEFAULT ->
+                    _menhir_run32 _menhir_env (Obj.magic _menhir_stack) MenhirState31
+                | RBRACE ->
+                    _menhir_reduce39 _menhir_env (Obj.magic _menhir_stack) MenhirState31
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState31) : 'freshtv198)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((('freshtv199 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4489 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv200)) : 'freshtv202)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((('freshtv203 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4500 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv204)) : 'freshtv206)
+    | MenhirState37 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv217 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4509 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((((('freshtv213 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4519 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv209 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4529 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv207 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4536 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _), name), _, xs000) = _menhir_stack in
+                let _6 = () in
+                let _300 = () in
+                let _100 = () in
+                let _3 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_case_header = let args =
+                  let _30 = _300 in
+                  let xs00 = xs000 in
+                  let _10 = _100 in
+                  let xs =
+                    let _3 = _30 in
+                    let xs0 = xs00 in
+                    let _1 = _10 in
+                    let x =
+                      let xs = xs0 in
+                      
 # 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 644 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
+# 4558 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
 # 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 650 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
+# 4564 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    
+                  in
+                  
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 656 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
+# 4570 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
 # 128 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          ( Syntax.UsualCaseHeader
       { case_return_typ = []
@@ -663,257 +4577,186 @@ module Tables = struct
       ; case_arguments = args
       }
     )
-# 667 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _6;
-          MenhirLib.EngineTypes.startp = _startpos__6_;
-          MenhirLib.EngineTypes.endp = _endpos__6_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = css;
-            MenhirLib.EngineTypes.startp = _startpos_css_;
-            MenhirLib.EngineTypes.endp = _endpos_css_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _4;
-              MenhirLib.EngineTypes.startp = _startpos__4_;
-              MenhirLib.EngineTypes.endp = _endpos__4_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _300;
-                MenhirLib.EngineTypes.startp = _startpos__300_;
-                MenhirLib.EngineTypes.endp = _endpos__300_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = xs000;
-                  MenhirLib.EngineTypes.startp = _startpos_xs000_;
-                  MenhirLib.EngineTypes.endp = _endpos_xs000_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _100;
-                    MenhirLib.EngineTypes.startp = _startpos__100_;
-                    MenhirLib.EngineTypes.endp = _endpos__100_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.semv = name;
-                      MenhirLib.EngineTypes.startp = _startpos_name_;
-                      MenhirLib.EngineTypes.endp = _endpos_name_;
-                      MenhirLib.EngineTypes.next = {
-                        MenhirLib.EngineTypes.state = _menhir_s;
-                        MenhirLib.EngineTypes.semv = _1;
-                        MenhirLib.EngineTypes.startp = _startpos__1_;
-                        MenhirLib.EngineTypes.endp = _endpos__1_;
-                        MenhirLib.EngineTypes.next = _menhir_stack;
-                      };
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _6 : unit = Obj.magic _6 in
-        let css : 'tv_list_case_ = Obj.magic css in
-        let _4 : unit = Obj.magic _4 in
-        let _300 : unit = Obj.magic _300 in
-        let xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__ = Obj.magic xs000 in
-        let _100 : unit = Obj.magic _100 in
-        let name : (
+# 4581 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv208)) : 'freshtv210)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv211 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 729 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__6_ in
-        let _v : 'tv_contract = let args =
-          let _30 = _300 in
-          let xs00 = xs000 in
-          let _10 = _100 in
-          let xs =
-            let _3 = _30 in
-            let xs0 = xs00 in
-            let _1 = _10 in
-            let x =
-              let xs = xs0 in
-              
+# 4591 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv212)) : 'freshtv214)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((((('freshtv215 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4602 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv216)) : 'freshtv218)
+    | MenhirState46 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv229 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4611 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((((('freshtv225 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4621 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv221 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4631 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv219 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, return_typ), name), _, xs000) = _menhir_stack in
+                let _6 = () in
+                let _300 = () in
+                let _100 = () in
+                let _2 = () in
+                let _1 = () in
+                let _v : 'tv_case_header = let args =
+                  let _30 = _300 in
+                  let xs00 = xs000 in
+                  let _10 = _100 in
+                  let xs =
+                    let _3 = _30 in
+                    let xs0 = xs00 in
+                    let _1 = _10 in
+                    let x =
+                      let xs = xs0 in
+                      
 # 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 747 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
+# 4659 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                      
+                    in
+                    
 # 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 753 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
+# 4665 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    
+                  in
+                  
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 759 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 82 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.Contract
-      ({ Syntax.contract_cases = css
-       ; contract_name = name
-       ; contract_arguments = args}) )
-# 768 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _300;
-            MenhirLib.EngineTypes.startp = _startpos__300_;
-            MenhirLib.EngineTypes.endp = _endpos__300_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs000;
-              MenhirLib.EngineTypes.startp = _startpos_xs000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _100;
-                MenhirLib.EngineTypes.startp = _startpos__100_;
-                MenhirLib.EngineTypes.endp = _endpos__100_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = name;
-                  MenhirLib.EngineTypes.startp = _startpos_name_;
-                  MenhirLib.EngineTypes.endp = _endpos_name_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.state = _menhir_s;
-                    MenhirLib.EngineTypes.semv = _1;
-                    MenhirLib.EngineTypes.startp = _startpos__1_;
-                    MenhirLib.EngineTypes.endp = _endpos__1_;
-                    MenhirLib.EngineTypes.next = _menhir_stack;
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let _300 : unit = Obj.magic _300 in
-        let xs000 : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = Obj.magic xs000 in
-        let _100 : unit = Obj.magic _100 in
-        let name : (
+# 4671 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 118 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         ( Syntax.UsualCaseHeader
+      { case_return_typ = [return_typ] (* multi returns not supported *)
+      ; Syntax.case_name = name
+      ; case_arguments = args
+      }
+    )
+# 4682 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv220)) : 'freshtv222)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : (((((('freshtv223 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 818 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_contract = let args =
-          let _30 = _300 in
-          let xs00 = xs000 in
-          let _10 = _100 in
-          let xs =
-            let _3 = _30 in
-            let xs0 = xs00 in
-            let _1 = _10 in
-            let x =
-              let xs = xs0 in
-              
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 836 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 842 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 848 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 90 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.Event { Syntax.event_arguments = args
-      ; event_name = name
-      })
-# 856 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = a;
-          MenhirLib.EngineTypes.startp = _startpos_a_;
-          MenhirLib.EngineTypes.endp = _endpos_a_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let a : 'tv_arg = Obj.magic a in
-        let _startpos = _startpos_a_ in
-        let _endpos = _endpos_a_ in
-        let _v : 'tv_event_arg = 
-# 147 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-            ( Syntax.event_arg_of_arg a false )
-# 880 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = i;
-          MenhirLib.EngineTypes.startp = _startpos_i_;
-          MenhirLib.EngineTypes.endp = _endpos_i_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = t;
-              MenhirLib.EngineTypes.startp = _startpos_t_;
-              MenhirLib.EngineTypes.endp = _endpos_t_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let i : (
+# 4692 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv224)) : 'freshtv226)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ((((('freshtv227 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 911 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic i in
-        let _2 : unit = Obj.magic _2 in
-        let t : 'tv_typ = Obj.magic t in
-        let _startpos = _startpos_t_ in
-        let _endpos = _endpos_i_ in
-        let _v : 'tv_event_arg = 
+# 4703 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv228)) : 'freshtv230)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_reduce80 : _menhir_env -> 'ttv_tail * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4713 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let (_menhir_stack, _menhir_s, s) = _menhir_stack in
+    let _v : 'tv_typ = 
+# 171 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+              ( Syntax.ContractInstanceType s )
+# 4720 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState21 | MenhirState3 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv165 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | IDENT _v ->
+            _menhir_run15 _menhir_env (Obj.magic _menhir_stack) _v
+        | INDEXED ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv161 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | IDENT _v ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv157 * _menhir_state * 'tv_typ)) = Obj.magic _menhir_stack in
+                let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4748 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = _v in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv155 * _menhir_state * 'tv_typ)) = Obj.magic _menhir_stack in
+                let (i : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4756 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = _v in
+                ((let (_menhir_stack, _menhir_s, t) = _menhir_stack in
+                let _2 = () in
+                let _v : 'tv_event_arg = 
 # 151 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( { Syntax.event_arg_body =
         { Syntax.arg_typ = t
@@ -923,2841 +4766,966 @@ module Tables = struct
       ; Syntax.event_arg_indexed = true
       }
     )
-# 927 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _2 : unit = Obj.magic _2 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = 
-# 214 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                               ( Syntax.LandExp (lhs, rhs), () )
-# 963 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_exp = 
-# 215 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         ( Syntax.TrueExp, () )
-# 987 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_exp = 
-# 216 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-          ( Syntax.FalseExp, () )
-# 1011 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = d;
-          MenhirLib.EngineTypes.startp = _startpos_d_;
-          MenhirLib.EngineTypes.endp = _endpos_d_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let d : (
-# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 1032 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic d in
-        let _startpos = _startpos_d_ in
-        let _endpos = _endpos_d_ in
-        let _v : 'tv_exp = 
-# 217 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                  ( Syntax.DecLit256Exp d, ())
-# 1039 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = d;
-          MenhirLib.EngineTypes.startp = _startpos_d_;
-          MenhirLib.EngineTypes.endp = _endpos_d_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let d : (
-# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 1060 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic d in
-        let _startpos = _startpos_d_ in
-        let _endpos = _endpos_d_ in
-        let _v : 'tv_exp = 
-# 218 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                ( Syntax.DecLit8Exp d, ())
-# 1067 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3;
-            MenhirLib.EngineTypes.startp = _startpos__3_;
-            MenhirLib.EngineTypes.endp = _endpos__3_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let _3 : unit = Obj.magic _3 in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_exp = 
-# 219 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                        ( Syntax.ValueExp, () )
-# 1109 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3;
-            MenhirLib.EngineTypes.startp = _startpos__3_;
-            MenhirLib.EngineTypes.endp = _endpos__3_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let _3 : unit = Obj.magic _3 in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_exp = 
-# 220 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                         ( Syntax.SenderExp, () )
-# 1151 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = e;
-            MenhirLib.EngineTypes.startp = _startpos_e_;
-            MenhirLib.EngineTypes.endp = _endpos_e_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let e : 'tv_exp = Obj.magic e in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_exp = 
-# 221 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( Syntax.BalanceExp e, () )
-# 1193 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3;
-            MenhirLib.EngineTypes.startp = _startpos__3_;
-            MenhirLib.EngineTypes.endp = _endpos__3_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let _3 : unit = Obj.magic _3 in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_exp = 
-# 222 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                        ( Syntax.NowExp, () )
-# 1235 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 204 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         (fun (l, r) -> Syntax.PlusExp(l, r))
-# 1273 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1279 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 205 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-          (fun (l, r)  -> Syntax.MinusExp(l, r))
-# 1317 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1323 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 206 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         (fun (l, r) -> Syntax.MultExp(l, r))
-# 1361 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1367 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 207 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (fun (l, r) -> Syntax.LtExp(l, r))
-# 1405 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1411 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 208 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (fun (l, r) -> Syntax.GtExp(l, r))
-# 1449 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1455 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 209 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-        (fun (l, r) -> Syntax.NeqExp(l, r))
-# 1493 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1499 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = rhs;
-          MenhirLib.EngineTypes.startp = _startpos_rhs_;
-          MenhirLib.EngineTypes.endp = _endpos_rhs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _10;
-            MenhirLib.EngineTypes.startp = _startpos__10_;
-            MenhirLib.EngineTypes.endp = _endpos__10_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = lhs;
-              MenhirLib.EngineTypes.startp = _startpos_lhs_;
-              MenhirLib.EngineTypes.endp = _endpos_lhs_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _10 : unit = Obj.magic _10 in
-        let lhs : 'tv_exp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos_rhs_ in
-        let _v : 'tv_exp = let o =
-          let _1 = _10 in
-          
-# 210 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-             (fun (l, r) -> Syntax.EqualityExp(l, r))
-# 1537 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( (o (lhs, rhs)), () )
-# 1543 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = s;
-          MenhirLib.EngineTypes.startp = _startpos_s_;
-          MenhirLib.EngineTypes.endp = _endpos_s_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let s : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 1564 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic s in
-        let _startpos = _startpos_s_ in
-        let _endpos = _endpos_s_ in
-        let _v : 'tv_exp = 
-# 225 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.IdentifierExp s, () )
-# 1571 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _3;
-          MenhirLib.EngineTypes.startp = _startpos__3_;
-          MenhirLib.EngineTypes.endp = _endpos__3_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = e;
-            MenhirLib.EngineTypes.startp = _startpos_e_;
-            MenhirLib.EngineTypes.endp = _endpos_e_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = _1;
-              MenhirLib.EngineTypes.startp = _startpos__1_;
-              MenhirLib.EngineTypes.endp = _endpos__1_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let _3 : unit = Obj.magic _3 in
-        let e : 'tv_exp = Obj.magic e in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__3_ in
-        let _v : 'tv_exp = 
-# 229 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.ParenthExp e, () )
-# 1607 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _3000;
-          MenhirLib.EngineTypes.startp = _startpos__3000_;
-          MenhirLib.EngineTypes.endp = _endpos__3000_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = xs0000;
-            MenhirLib.EngineTypes.startp = _startpos_xs0000_;
-            MenhirLib.EngineTypes.endp = _endpos_xs0000_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _1000;
-              MenhirLib.EngineTypes.startp = _startpos__1000_;
-              MenhirLib.EngineTypes.endp = _endpos__1000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = s;
-                MenhirLib.EngineTypes.startp = _startpos_s_;
-                MenhirLib.EngineTypes.endp = _endpos_s_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _3000 : unit = Obj.magic _3000 in
-        let xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__ = Obj.magic xs0000 in
-        let _1000 : unit = Obj.magic _1000 in
-        let s : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 1646 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic s in
-        let _startpos = _startpos_s_ in
-        let _endpos = _endpos__3000_ in
-        let _v : 'tv_exp = let lst =
-          let _300 = _3000 in
-          let xs000 = xs0000 in
-          let _100 = _1000 in
-          let lst =
-            let _30 = _300 in
-            let xs00 = xs000 in
-            let _10 = _100 in
-            let xs =
-              let _3 = _30 in
-              let xs0 = xs00 in
-              let _1 = _10 in
-              let x =
-                let xs = xs0 in
-                
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 1667 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-                
-              in
-              
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 1673 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 1679 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                    (lst)
-# 1685 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 230 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                              ( Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () )
-# 1691 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = m;
-          MenhirLib.EngineTypes.startp = _startpos_m_;
-          MenhirLib.EngineTypes.endp = _endpos_m_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3000;
-            MenhirLib.EngineTypes.startp = _startpos__3000_;
-            MenhirLib.EngineTypes.endp = _endpos__3000_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs0000;
-              MenhirLib.EngineTypes.startp = _startpos_xs0000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs0000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _1000;
-                MenhirLib.EngineTypes.startp = _startpos__1000_;
-                MenhirLib.EngineTypes.endp = _endpos__1000_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = s;
-                  MenhirLib.EngineTypes.startp = _startpos_s_;
-                  MenhirLib.EngineTypes.endp = _endpos_s_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.state = _menhir_s;
-                    MenhirLib.EngineTypes.semv = _1;
-                    MenhirLib.EngineTypes.startp = _startpos__1_;
-                    MenhirLib.EngineTypes.endp = _endpos__1_;
-                    MenhirLib.EngineTypes.next = _menhir_stack;
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let m : 'tv_msg_info = Obj.magic m in
-        let _3000 : unit = Obj.magic _3000 in
-        let xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__ = Obj.magic xs0000 in
-        let _1000 : unit = Obj.magic _1000 in
-        let s : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 1741 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic s in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_m_ in
-        let _v : 'tv_exp = let lst =
-          let _300 = _3000 in
-          let xs000 = xs0000 in
-          let _100 = _1000 in
-          let lst =
-            let _30 = _300 in
-            let xs00 = xs000 in
-            let _10 = _100 in
-            let xs =
-              let _3 = _30 in
-              let xs0 = xs00 in
-              let _1 = _10 in
-              let x =
-                let xs = xs0 in
-                
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 1763 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-                
-              in
-              
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 1769 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 1775 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                    (lst)
-# 1781 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 231 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                    ( Syntax.NewExp { Syntax.new_head = s; new_args = lst; new_msg_info = m }, () )
-# 1787 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = m;
-          MenhirLib.EngineTypes.startp = _startpos_m_;
-          MenhirLib.EngineTypes.endp = _endpos_m_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _5;
-            MenhirLib.EngineTypes.startp = _startpos__5_;
-            MenhirLib.EngineTypes.endp = _endpos__5_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _4;
-              MenhirLib.EngineTypes.startp = _startpos__4_;
-              MenhirLib.EngineTypes.endp = _endpos__4_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _3;
-                MenhirLib.EngineTypes.startp = _startpos__3_;
-                MenhirLib.EngineTypes.endp = _endpos__3_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = _2;
-                  MenhirLib.EngineTypes.startp = _startpos__2_;
-                  MenhirLib.EngineTypes.endp = _endpos__2_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.state = _menhir_s;
-                    MenhirLib.EngineTypes.semv = contr;
-                    MenhirLib.EngineTypes.startp = _startpos_contr_;
-                    MenhirLib.EngineTypes.endp = _endpos_contr_;
-                    MenhirLib.EngineTypes.next = _menhir_stack;
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let m : 'tv_msg_info = Obj.magic m in
-        let _5 : unit = Obj.magic _5 in
-        let _4 : unit = Obj.magic _4 in
-        let _3 : unit = Obj.magic _3 in
-        let _2 : unit = Obj.magic _2 in
-        let contr : 'tv_exp = Obj.magic contr in
-        let _startpos = _startpos_contr_ in
-        let _endpos = _endpos_m_ in
-        let _v : 'tv_exp = 
-# 234 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
-                       ; send_args = []; send_msg_info = m }, () )
-# 1842 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = m;
-          MenhirLib.EngineTypes.startp = _startpos_m_;
-          MenhirLib.EngineTypes.endp = _endpos_m_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3000;
-            MenhirLib.EngineTypes.startp = _startpos__3000_;
-            MenhirLib.EngineTypes.endp = _endpos__3000_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs0000;
-              MenhirLib.EngineTypes.startp = _startpos_xs0000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs0000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _1000;
-                MenhirLib.EngineTypes.startp = _startpos__1000_;
-                MenhirLib.EngineTypes.endp = _endpos__1000_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = mtd;
-                  MenhirLib.EngineTypes.startp = _startpos_mtd_;
-                  MenhirLib.EngineTypes.endp = _endpos_mtd_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _2;
-                    MenhirLib.EngineTypes.startp = _startpos__2_;
-                    MenhirLib.EngineTypes.endp = _endpos__2_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.state = _menhir_s;
-                      MenhirLib.EngineTypes.semv = contr;
-                      MenhirLib.EngineTypes.startp = _startpos_contr_;
-                      MenhirLib.EngineTypes.endp = _endpos_contr_;
-                      MenhirLib.EngineTypes.next = _menhir_stack;
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let m : 'tv_msg_info = Obj.magic m in
-        let _3000 : unit = Obj.magic _3000 in
-        let xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__ = Obj.magic xs0000 in
-        let _1000 : unit = Obj.magic _1000 in
-        let mtd : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 1897 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic mtd in
-        let _2 : unit = Obj.magic _2 in
-        let contr : 'tv_exp = Obj.magic contr in
-        let _startpos = _startpos_contr_ in
-        let _endpos = _endpos_m_ in
-        let _v : 'tv_exp = let lst =
-          let _300 = _3000 in
-          let xs000 = xs0000 in
-          let _100 = _1000 in
-          let lst =
-            let _30 = _300 in
-            let xs00 = xs000 in
-            let _10 = _100 in
-            let xs =
-              let _3 = _30 in
-              let xs0 = xs00 in
-              let _1 = _10 in
-              let x =
-                let xs = xs0 in
-                
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 1920 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-                
-              in
-              
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 1926 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 1932 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                    (lst)
-# 1938 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 237 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
-                       ; send_args = (lst); send_msg_info = m }, () )
-# 1945 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = e;
-            MenhirLib.EngineTypes.startp = _startpos_e_;
-            MenhirLib.EngineTypes.endp = _endpos_e_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let e : 'tv_exp = Obj.magic e in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_exp = 
-# 239 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                 ( Syntax.AddressExp e, () )
-# 1987 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = e;
-          MenhirLib.EngineTypes.startp = _startpos_e_;
-          MenhirLib.EngineTypes.endp = _endpos_e_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = _1;
-            MenhirLib.EngineTypes.startp = _startpos__1_;
-            MenhirLib.EngineTypes.endp = _endpos__1_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let e : 'tv_exp = Obj.magic e in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_e_ in
-        let _v : 'tv_exp = 
-# 240 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ( Syntax.NotExp e, () )
-# 2017 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_exp = 
-# 241 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         ( Syntax.ThisExp, () )
-# 2041 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = l;
-          MenhirLib.EngineTypes.startp = _startpos_l_;
-          MenhirLib.EngineTypes.endp = _endpos_l_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let l : 'tv_lexp = Obj.magic l in
-        let _startpos = _startpos_l_ in
-        let _endpos = _endpos_l_ in
-        let _v : 'tv_exp = 
-# 243 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.ArrayAccessExp l, () )
-# 2065 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _2;
-          MenhirLib.EngineTypes.startp = _startpos__2_;
-          MenhirLib.EngineTypes.endp = _endpos__2_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = cs;
-            MenhirLib.EngineTypes.startp = _startpos_cs_;
-            MenhirLib.EngineTypes.endp = _endpos_cs_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let _2 : unit = Obj.magic _2 in
-        let cs : 'tv_list_contract_ = Obj.magic cs in
-        let _startpos = _startpos_cs_ in
-        let _endpos = _endpos__2_ in
-        let _v : (
-# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (unit Syntax.toplevel list)
-# 2095 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = 
-# 72 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                              ( cs )
-# 2099 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = idx;
-            MenhirLib.EngineTypes.startp = _startpos_idx_;
-            MenhirLib.EngineTypes.endp = _endpos_idx_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = s;
-                MenhirLib.EngineTypes.startp = _startpos_s_;
-                MenhirLib.EngineTypes.endp = _endpos_s_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let idx : 'tv_exp = Obj.magic idx in
-        let _2 : unit = Obj.magic _2 in
-        let s : 'tv_exp = Obj.magic s in
-        let _startpos = _startpos_s_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_lexp = 
-# 269 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.ArrayAccessLExp {
-       Syntax.array_access_array = s; array_access_index = idx} )
-# 2142 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_list_case_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2162 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = x;
-            MenhirLib.EngineTypes.startp = _startpos_x_;
-            MenhirLib.EngineTypes.endp = _endpos_x_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let xs : 'tv_list_case_ = Obj.magic xs in
-        let x : 'tv_case = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_list_case_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 2192 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_list_contract_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2212 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = x;
-            MenhirLib.EngineTypes.startp = _startpos_x_;
-            MenhirLib.EngineTypes.endp = _endpos_x_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let xs : 'tv_list_contract_ = Obj.magic xs in
-        let x : 'tv_contract = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_list_contract_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 2242 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_list_sentence_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2262 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = x;
-            MenhirLib.EngineTypes.startp = _startpos_x_;
-            MenhirLib.EngineTypes.endp = _endpos_x_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let xs : 'tv_list_sentence_ = Obj.magic xs in
-        let x : 'tv_sentence = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_list_sentence_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 2292 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2312 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_separated_nonempty_list_COMMA_arg_ = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 2336 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2356 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_separated_nonempty_list_COMMA_event_arg_ = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 2380 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [] )
-# 2400 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_separated_nonempty_list_COMMA_exp_ = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 2424 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = r;
-          MenhirLib.EngineTypes.startp = _startpos_r_;
-          MenhirLib.EngineTypes.endp = _endpos_r_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = v;
-            MenhirLib.EngineTypes.startp = _startpos_v_;
-            MenhirLib.EngineTypes.endp = _endpos_v_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let r : 'tv_reentrance_info = Obj.magic r in
-        let v : 'tv_value_info = Obj.magic v in
-        let _startpos = _startpos_v_ in
-        let _endpos = _endpos_r_ in
-        let _v : 'tv_msg_info = 
-# 251 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                        ( { Syntax.message_value_info = v;
-                                            message_reentrance_info = r } )
-# 2455 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_option_exp_ = 
-# 101 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( None )
-# 2475 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_exp = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_option_exp_ = 
-# 103 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( Some x )
-# 2499 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = b;
-          MenhirLib.EngineTypes.startp = _startpos_b_;
-          MenhirLib.EngineTypes.endp = _endpos_b_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = _1;
-            MenhirLib.EngineTypes.startp = _startpos__1_;
-            MenhirLib.EngineTypes.endp = _endpos__1_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let b : 'tv_block = Obj.magic b in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_b_ in
-        let _v : 'tv_reentrance_info = 
-# 261 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                          ( b )
-# 2529 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _2;
-          MenhirLib.EngineTypes.startp = _startpos__2_;
-          MenhirLib.EngineTypes.endp = _endpos__2_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = _1;
-            MenhirLib.EngineTypes.startp = _startpos__1_;
-            MenhirLib.EngineTypes.endp = _endpos__1_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__2_ in
-        let _v : 'tv_sentence = 
-# 180 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                     ( Syntax.AbortSentence )
-# 2559 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _6;
-          MenhirLib.EngineTypes.startp = _startpos__6_;
-          MenhirLib.EngineTypes.endp = _endpos__6_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = cont;
-            MenhirLib.EngineTypes.startp = _startpos_cont_;
-            MenhirLib.EngineTypes.endp = _endpos_cont_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _4;
-              MenhirLib.EngineTypes.startp = _startpos__4_;
-              MenhirLib.EngineTypes.endp = _endpos__4_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _3;
-                MenhirLib.EngineTypes.startp = _startpos__3_;
-                MenhirLib.EngineTypes.endp = _endpos__3_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = value;
-                  MenhirLib.EngineTypes.startp = _startpos_value_;
-                  MenhirLib.EngineTypes.endp = _endpos_value_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.state = _menhir_s;
-                    MenhirLib.EngineTypes.semv = _1;
-                    MenhirLib.EngineTypes.startp = _startpos__1_;
-                    MenhirLib.EngineTypes.endp = _endpos__1_;
-                    MenhirLib.EngineTypes.next = _menhir_stack;
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _6 : unit = Obj.magic _6 in
-        let cont : 'tv_exp = Obj.magic cont in
-        let _4 : unit = Obj.magic _4 in
-        let _3 : unit = Obj.magic _3 in
-        let value : 'tv_option_exp_ = Obj.magic value in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__6_ in
-        let _v : 'tv_sentence = 
-# 182 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} )
-# 2613 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = rhs;
-            MenhirLib.EngineTypes.startp = _startpos_rhs_;
-            MenhirLib.EngineTypes.endp = _endpos_rhs_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = lhs;
-                MenhirLib.EngineTypes.startp = _startpos_lhs_;
-                MenhirLib.EngineTypes.endp = _endpos_lhs_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let rhs : 'tv_exp = Obj.magic rhs in
-        let _2 : unit = Obj.magic _2 in
-        let lhs : 'tv_lexp = Obj.magic lhs in
-        let _startpos = _startpos_lhs_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_sentence = 
-# 184 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.AssignmentSentence (lhs, rhs) )
-# 2655 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _5;
-          MenhirLib.EngineTypes.startp = _startpos__5_;
-          MenhirLib.EngineTypes.endp = _endpos__5_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = value;
-            MenhirLib.EngineTypes.startp = _startpos_value_;
-            MenhirLib.EngineTypes.endp = _endpos_value_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _3;
-              MenhirLib.EngineTypes.startp = _startpos__3_;
-              MenhirLib.EngineTypes.endp = _endpos__3_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = name;
-                MenhirLib.EngineTypes.startp = _startpos_name_;
-                MenhirLib.EngineTypes.endp = _endpos_name_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.state = _menhir_s;
-                  MenhirLib.EngineTypes.semv = t;
-                  MenhirLib.EngineTypes.startp = _startpos_t_;
-                  MenhirLib.EngineTypes.endp = _endpos_t_;
-                  MenhirLib.EngineTypes.next = _menhir_stack;
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _5 : unit = Obj.magic _5 in
-        let value : 'tv_exp = Obj.magic value in
-        let _3 : unit = Obj.magic _3 in
-        let name : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 2699 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let t : 'tv_typ = Obj.magic t in
-        let _startpos = _startpos_t_ in
-        let _endpos = _endpos__5_ in
-        let _v : 'tv_sentence = 
-# 189 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              ( Syntax.VariableInitSentence
-                { Syntax.variable_init_type = t
-                ; variable_init_name = name
-                ; variable_init_value = value
-                }
-              )
-# 2712 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = value;
-            MenhirLib.EngineTypes.startp = _startpos_value_;
-            MenhirLib.EngineTypes.endp = _endpos_value_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = _2;
-              MenhirLib.EngineTypes.startp = _startpos__2_;
-              MenhirLib.EngineTypes.endp = _endpos__2_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.state = _menhir_s;
-                MenhirLib.EngineTypes.semv = _1;
-                MenhirLib.EngineTypes.startp = _startpos__1_;
-                MenhirLib.EngineTypes.endp = _endpos__1_;
-                MenhirLib.EngineTypes.next = _menhir_stack;
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let value : 'tv_exp = Obj.magic value in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_sentence = 
-# 196 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-    ( Syntax.ExpSentence value )
-# 2754 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = s1;
-          MenhirLib.EngineTypes.startp = _startpos_s1_;
-          MenhirLib.EngineTypes.endp = _endpos_s1_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _6;
-            MenhirLib.EngineTypes.startp = _startpos__6_;
-            MenhirLib.EngineTypes.endp = _endpos__6_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = s0;
-              MenhirLib.EngineTypes.startp = _startpos_s0_;
-              MenhirLib.EngineTypes.endp = _endpos_s0_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _4;
-                MenhirLib.EngineTypes.startp = _startpos__4_;
-                MenhirLib.EngineTypes.endp = _endpos__4_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = cond;
-                  MenhirLib.EngineTypes.startp = _startpos_cond_;
-                  MenhirLib.EngineTypes.endp = _endpos_cond_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _2;
-                    MenhirLib.EngineTypes.startp = _startpos__2_;
-                    MenhirLib.EngineTypes.endp = _endpos__2_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.state = _menhir_s;
-                      MenhirLib.EngineTypes.semv = _1;
-                      MenhirLib.EngineTypes.startp = _startpos__1_;
-                      MenhirLib.EngineTypes.endp = _endpos__1_;
-                      MenhirLib.EngineTypes.next = _menhir_stack;
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let s1 : 'tv_sentence = Obj.magic s1 in
-        let _6 : unit = Obj.magic _6 in
-        let s0 : 'tv_sentence = Obj.magic s0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_s1_ in
-        let _v : 'tv_sentence = let bodyF =
-          let s = s1 in
-          
-# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ([s])
-# 2816 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        let bodyT =
-          let s = s0 in
-          
-# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ([s])
-# 2824 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 2830 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = b0;
-          MenhirLib.EngineTypes.startp = _startpos_b0_;
-          MenhirLib.EngineTypes.endp = _endpos_b0_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _6;
-            MenhirLib.EngineTypes.startp = _startpos__6_;
-            MenhirLib.EngineTypes.endp = _endpos__6_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = s0;
-              MenhirLib.EngineTypes.startp = _startpos_s0_;
-              MenhirLib.EngineTypes.endp = _endpos_s0_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _4;
-                MenhirLib.EngineTypes.startp = _startpos__4_;
-                MenhirLib.EngineTypes.endp = _endpos__4_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = cond;
-                  MenhirLib.EngineTypes.startp = _startpos_cond_;
-                  MenhirLib.EngineTypes.endp = _endpos_cond_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _2;
-                    MenhirLib.EngineTypes.startp = _startpos__2_;
-                    MenhirLib.EngineTypes.endp = _endpos__2_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.state = _menhir_s;
-                      MenhirLib.EngineTypes.semv = _1;
-                      MenhirLib.EngineTypes.startp = _startpos__1_;
-                      MenhirLib.EngineTypes.endp = _endpos__1_;
-                      MenhirLib.EngineTypes.next = _menhir_stack;
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let b0 : 'tv_block = Obj.magic b0 in
-        let _6 : unit = Obj.magic _6 in
-        let s0 : 'tv_sentence = Obj.magic s0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_b0_ in
-        let _v : 'tv_sentence = let bodyF =
-          let b = b0 in
-          
-# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              (b)
-# 2892 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        let bodyT =
-          let s = s0 in
-          
-# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ([s])
-# 2900 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 2906 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = s0;
-          MenhirLib.EngineTypes.startp = _startpos_s0_;
-          MenhirLib.EngineTypes.endp = _endpos_s0_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _6;
-            MenhirLib.EngineTypes.startp = _startpos__6_;
-            MenhirLib.EngineTypes.endp = _endpos__6_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = b0;
-              MenhirLib.EngineTypes.startp = _startpos_b0_;
-              MenhirLib.EngineTypes.endp = _endpos_b0_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _4;
-                MenhirLib.EngineTypes.startp = _startpos__4_;
-                MenhirLib.EngineTypes.endp = _endpos__4_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = cond;
-                  MenhirLib.EngineTypes.startp = _startpos_cond_;
-                  MenhirLib.EngineTypes.endp = _endpos_cond_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _2;
-                    MenhirLib.EngineTypes.startp = _startpos__2_;
-                    MenhirLib.EngineTypes.endp = _endpos__2_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.state = _menhir_s;
-                      MenhirLib.EngineTypes.semv = _1;
-                      MenhirLib.EngineTypes.startp = _startpos__1_;
-                      MenhirLib.EngineTypes.endp = _endpos__1_;
-                      MenhirLib.EngineTypes.next = _menhir_stack;
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let s0 : 'tv_sentence = Obj.magic s0 in
-        let _6 : unit = Obj.magic _6 in
-        let b0 : 'tv_block = Obj.magic b0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_s0_ in
-        let _v : 'tv_sentence = let bodyF =
-          let s = s0 in
-          
-# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ([s])
-# 2968 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        let bodyT =
-          let b = b0 in
-          
-# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              (b)
-# 2976 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 2982 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = b1;
-          MenhirLib.EngineTypes.startp = _startpos_b1_;
-          MenhirLib.EngineTypes.endp = _endpos_b1_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _6;
-            MenhirLib.EngineTypes.startp = _startpos__6_;
-            MenhirLib.EngineTypes.endp = _endpos__6_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = b0;
-              MenhirLib.EngineTypes.startp = _startpos_b0_;
-              MenhirLib.EngineTypes.endp = _endpos_b0_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _4;
-                MenhirLib.EngineTypes.startp = _startpos__4_;
-                MenhirLib.EngineTypes.endp = _endpos__4_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = cond;
-                  MenhirLib.EngineTypes.startp = _startpos_cond_;
-                  MenhirLib.EngineTypes.endp = _endpos_cond_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.semv = _2;
-                    MenhirLib.EngineTypes.startp = _startpos__2_;
-                    MenhirLib.EngineTypes.endp = _endpos__2_;
-                    MenhirLib.EngineTypes.next = {
-                      MenhirLib.EngineTypes.state = _menhir_s;
-                      MenhirLib.EngineTypes.semv = _1;
-                      MenhirLib.EngineTypes.startp = _startpos__1_;
-                      MenhirLib.EngineTypes.endp = _endpos__1_;
-                      MenhirLib.EngineTypes.next = _menhir_stack;
-                    };
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let b1 : 'tv_block = Obj.magic b1 in
-        let _6 : unit = Obj.magic _6 in
-        let b0 : 'tv_block = Obj.magic b0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_b1_ in
-        let _v : 'tv_sentence = let bodyF =
-          let b = b1 in
-          
-# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              (b)
-# 3044 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        let bodyT =
-          let b = b0 in
-          
-# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              (b)
-# 3052 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                                 ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 3058 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = s0;
-          MenhirLib.EngineTypes.startp = _startpos_s0_;
-          MenhirLib.EngineTypes.endp = _endpos_s0_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _4;
-            MenhirLib.EngineTypes.startp = _startpos__4_;
-            MenhirLib.EngineTypes.endp = _endpos__4_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = cond;
-              MenhirLib.EngineTypes.startp = _startpos_cond_;
-              MenhirLib.EngineTypes.endp = _endpos_cond_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _2;
-                MenhirLib.EngineTypes.startp = _startpos__2_;
-                MenhirLib.EngineTypes.endp = _endpos__2_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.state = _menhir_s;
-                  MenhirLib.EngineTypes.semv = _1;
-                  MenhirLib.EngineTypes.startp = _startpos__1_;
-                  MenhirLib.EngineTypes.endp = _endpos__1_;
-                  MenhirLib.EngineTypes.next = _menhir_stack;
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let s0 : 'tv_sentence = Obj.magic s0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_s0_ in
-        let _v : 'tv_sentence = let body =
-          let s = s0 in
-          
-# 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                 ([s])
-# 3108 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                            ( Syntax.IfThenOnly (cond, body) )
-# 3114 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = b0;
-          MenhirLib.EngineTypes.startp = _startpos_b0_;
-          MenhirLib.EngineTypes.endp = _endpos_b0_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _4;
-            MenhirLib.EngineTypes.startp = _startpos__4_;
-            MenhirLib.EngineTypes.endp = _endpos__4_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = cond;
-              MenhirLib.EngineTypes.startp = _startpos_cond_;
-              MenhirLib.EngineTypes.endp = _endpos_cond_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _2;
-                MenhirLib.EngineTypes.startp = _startpos__2_;
-                MenhirLib.EngineTypes.endp = _endpos__2_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.state = _menhir_s;
-                  MenhirLib.EngineTypes.semv = _1;
-                  MenhirLib.EngineTypes.startp = _startpos__1_;
-                  MenhirLib.EngineTypes.endp = _endpos__1_;
-                  MenhirLib.EngineTypes.next = _menhir_stack;
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let b0 : 'tv_block = Obj.magic b0 in
-        let _4 : unit = Obj.magic _4 in
-        let cond : 'tv_exp = Obj.magic cond in
-        let _2 : unit = Obj.magic _2 in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_b0_ in
-        let _v : 'tv_sentence = let body =
-          let b = b0 in
-          
-# 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              (b)
-# 3164 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                            ( Syntax.IfThenOnly (cond, body) )
-# 3170 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _4;
-          MenhirLib.EngineTypes.startp = _startpos__4_;
-          MenhirLib.EngineTypes.endp = _endpos__4_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _3000;
-            MenhirLib.EngineTypes.startp = _startpos__3000_;
-            MenhirLib.EngineTypes.endp = _endpos__3000_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.semv = xs0000;
-              MenhirLib.EngineTypes.startp = _startpos_xs0000_;
-              MenhirLib.EngineTypes.endp = _endpos_xs0000_;
-              MenhirLib.EngineTypes.next = {
-                MenhirLib.EngineTypes.semv = _1000;
-                MenhirLib.EngineTypes.startp = _startpos__1000_;
-                MenhirLib.EngineTypes.endp = _endpos__1000_;
-                MenhirLib.EngineTypes.next = {
-                  MenhirLib.EngineTypes.semv = name;
-                  MenhirLib.EngineTypes.startp = _startpos_name_;
-                  MenhirLib.EngineTypes.endp = _endpos_name_;
-                  MenhirLib.EngineTypes.next = {
-                    MenhirLib.EngineTypes.state = _menhir_s;
-                    MenhirLib.EngineTypes.semv = _1;
-                    MenhirLib.EngineTypes.startp = _startpos__1_;
-                    MenhirLib.EngineTypes.endp = _endpos__1_;
-                    MenhirLib.EngineTypes.next = _menhir_stack;
-                  };
-                };
-              };
-            };
-          };
-        } = _menhir_stack in
-        let _4 : unit = Obj.magic _4 in
-        let _3000 : unit = Obj.magic _3000 in
-        let xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__ = Obj.magic xs0000 in
-        let _1000 : unit = Obj.magic _1000 in
-        let name : (
-# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (string)
-# 3220 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic name in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__4_ in
-        let _v : 'tv_sentence = let lst =
-          let _300 = _3000 in
-          let xs000 = xs0000 in
-          let _100 = _1000 in
-          let lst =
-            let _30 = _300 in
-            let xs00 = xs000 in
-            let _10 = _100 in
-            let xs =
-              let _3 = _30 in
-              let xs0 = xs00 in
-              let _1 = _10 in
-              let x =
-                let xs = xs0 in
-                
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( xs )
-# 3242 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-                
-              in
-              
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x )
-# 3248 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-              
-            in
-            
-# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                        (xs)
-# 3254 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-            
-          in
-          
-# 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                    (lst)
-# 3260 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-          
-        in
-        
-# 199 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                                 ( Syntax.LogSentence (name, lst, None))
-# 3266 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = _3;
-          MenhirLib.EngineTypes.startp = _startpos__3_;
-          MenhirLib.EngineTypes.endp = _endpos__3_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = e;
-            MenhirLib.EngineTypes.startp = _startpos_e_;
-            MenhirLib.EngineTypes.endp = _endpos_e_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = _1;
-              MenhirLib.EngineTypes.startp = _startpos__1_;
-              MenhirLib.EngineTypes.endp = _endpos__1_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let _3 : unit = Obj.magic _3 in
-        let e : 'tv_exp = Obj.magic e in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__3_ in
-        let _v : 'tv_sentence = 
-# 200 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                                     ( Syntax.SelfdestructSentence e )
-# 3302 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_arg = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [ x ] )
-# 3326 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = x;
-              MenhirLib.EngineTypes.startp = _startpos_x_;
-              MenhirLib.EngineTypes.endp = _endpos_x_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let xs : 'tv_separated_nonempty_list_COMMA_arg_ = Obj.magic xs in
-        let _2 : unit = Obj.magic _2 in
-        let x : 'tv_arg = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 3362 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_event_arg = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [ x ] )
-# 3386 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = x;
-              MenhirLib.EngineTypes.startp = _startpos_x_;
-              MenhirLib.EngineTypes.endp = _endpos_x_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let xs : 'tv_separated_nonempty_list_COMMA_event_arg_ = Obj.magic xs in
-        let _2 : unit = Obj.magic _2 in
-        let x : 'tv_event_arg = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 3422 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = x;
-          MenhirLib.EngineTypes.startp = _startpos_x_;
-          MenhirLib.EngineTypes.endp = _endpos_x_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let x : 'tv_exp = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_x_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( [ x ] )
-# 3446 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = xs;
-          MenhirLib.EngineTypes.startp = _startpos_xs_;
-          MenhirLib.EngineTypes.endp = _endpos_xs_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = x;
-              MenhirLib.EngineTypes.startp = _startpos_x_;
-              MenhirLib.EngineTypes.endp = _endpos_x_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let xs : 'tv_separated_nonempty_list_COMMA_exp_ = Obj.magic xs in
-        let _2 : unit = Obj.magic _2 in
-        let x : 'tv_exp = Obj.magic x in
-        let _startpos = _startpos_x_ in
-        let _endpos = _endpos_xs_ in
-        let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
-    ( x :: xs )
-# 3482 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_typ = 
-# 162 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-            ( Syntax.Uint256Type )
-# 3506 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_typ = 
-# 163 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-          ( Syntax.Uint8Type )
-# 3530 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_typ = 
-# 164 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-            ( Syntax.Bytes32Type )
-# 3554 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_typ = 
-# 165 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-            ( Syntax.AddressType )
-# 3578 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = _1;
-          MenhirLib.EngineTypes.startp = _startpos__1_;
-          MenhirLib.EngineTypes.endp = _endpos__1_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos__1_ in
-        let _v : 'tv_typ = 
-# 166 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-         ( Syntax.BoolType )
-# 3602 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = value;
-          MenhirLib.EngineTypes.startp = _startpos_value_;
-          MenhirLib.EngineTypes.endp = _endpos_value_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.semv = _2;
-            MenhirLib.EngineTypes.startp = _startpos__2_;
-            MenhirLib.EngineTypes.endp = _endpos__2_;
-            MenhirLib.EngineTypes.next = {
-              MenhirLib.EngineTypes.state = _menhir_s;
-              MenhirLib.EngineTypes.semv = key;
-              MenhirLib.EngineTypes.startp = _startpos_key_;
-              MenhirLib.EngineTypes.endp = _endpos_key_;
-              MenhirLib.EngineTypes.next = _menhir_stack;
-            };
-          };
-        } = _menhir_stack in
-        let value : 'tv_typ = Obj.magic value in
-        let _2 : unit = Obj.magic _2 in
-        let key : 'tv_typ = Obj.magic key in
-        let _startpos = _startpos_key_ in
-        let _endpos = _endpos_value_ in
-        let _v : 'tv_typ = 
+# 4770 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_event_arg _menhir_env _menhir_stack _menhir_s _v) : 'freshtv156)) : 'freshtv158)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv159 * _menhir_state * 'tv_typ)) = Obj.magic _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv160)) : 'freshtv162)
+        | RARROW ->
+            _menhir_run11 _menhir_env (Obj.magic _menhir_stack)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv163 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv164)) : 'freshtv166)
+    | MenhirState11 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv171 * _menhir_state * 'tv_typ)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | RARROW ->
+            _menhir_run11 _menhir_env (Obj.magic _menhir_stack)
+        | IDENT _ | INDEXED ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv167 * _menhir_state * 'tv_typ)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, key), _, value) = _menhir_stack in
+            let _2 = () in
+            let _v : 'tv_typ = 
 # 170 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.MappingType (key, value) )
-# 3638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = s;
-          MenhirLib.EngineTypes.startp = _startpos_s_;
-          MenhirLib.EngineTypes.endp = _endpos_s_;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        } = _menhir_stack in
-        let s : (
+# 4805 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv168)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv169 * _menhir_state * 'tv_typ)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv170)) : 'freshtv172)
+    | MenhirState46 | MenhirState42 | MenhirState37 | MenhirState26 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv175 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | IDENT _v ->
+            _menhir_run15 _menhir_env (Obj.magic _menhir_stack) _v
+        | RARROW ->
+            _menhir_run11 _menhir_env (Obj.magic _menhir_stack)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv173 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv174)) : 'freshtv176)
+    | MenhirState34 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv185 * _menhir_state)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | IDENT _v ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv181 * _menhir_state)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3659 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-        ) = Obj.magic s in
-        let _startpos = _startpos_s_ in
-        let _endpos = _endpos_s_ in
-        let _v : 'tv_typ = 
-# 171 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-              ( Syntax.ContractInstanceType s )
-# 3666 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let _menhir_s = _menhir_env.MenhirLib.EngineTypes.current in
-        let _startpos =
-          let (_, startpos, _) = _menhir_env.MenhirLib.EngineTypes.triple in
-          startpos
-        in
-        let _endpos = _startpos in
-        let _v : 'tv_value_info = 
-# 256 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                ( None )
-# 3686 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-      (fun _menhir_env ->
-        let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
-        let {
-          MenhirLib.EngineTypes.semv = v;
-          MenhirLib.EngineTypes.startp = _startpos_v_;
-          MenhirLib.EngineTypes.endp = _endpos_v_;
-          MenhirLib.EngineTypes.next = {
-            MenhirLib.EngineTypes.state = _menhir_s;
-            MenhirLib.EngineTypes.semv = _1;
-            MenhirLib.EngineTypes.startp = _startpos__1_;
-            MenhirLib.EngineTypes.endp = _endpos__1_;
-            MenhirLib.EngineTypes.next = _menhir_stack;
-          };
-        } = _menhir_stack in
-        let v : 'tv_exp = Obj.magic v in
-        let _1 : unit = Obj.magic _1 in
-        let _startpos = _startpos__1_ in
-        let _endpos = _endpos_v_ in
-        let _v : 'tv_value_info = 
-# 257 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-                    ( Some v )
-# 3716 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-         in
-        {
-          MenhirLib.EngineTypes.state = _menhir_s;
-          MenhirLib.EngineTypes.semv = Obj.repr _v;
-          MenhirLib.EngineTypes.startp = _startpos;
-          MenhirLib.EngineTypes.endp = _endpos;
-          MenhirLib.EngineTypes.next = _menhir_stack;
-        });
-    |]
-  
-  and trace =
-    None
-  
-end
+# 4844 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = _v in
+            ((let _menhir_stack = (_menhir_stack, _v) in
+            let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | LPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ((('freshtv177 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4855 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | ADDRESS ->
+                    _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | BOOL ->
+                    _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | BYTES32 ->
+                    _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | IDENT _v ->
+                    _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState46 _v
+                | UINT256 ->
+                    _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | UINT8 ->
+                    _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | RPAR ->
+                    _menhir_reduce45 _menhir_env (Obj.magic _menhir_stack) MenhirState46
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState46) : 'freshtv178)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ((('freshtv179 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4885 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = Obj.magic _menhir_stack in
+                ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv180)) : 'freshtv182)
+        | RARROW ->
+            _menhir_run11 _menhir_env (Obj.magic _menhir_stack)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (('freshtv183 * _menhir_state)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv184)) : 'freshtv186)
+    | MenhirState180 | MenhirState53 | MenhirState177 | MenhirState168 | MenhirState157 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv195 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | IDENT _v ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv191 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4910 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = _v in
+            ((let _menhir_stack = (_menhir_stack, _v) in
+            let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | SINGLE_EQ ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv187 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4921 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = Obj.magic _menhir_stack in
+                ((let _menhir_env = _menhir_discard _menhir_env in
+                let _tok = _menhir_env._menhir_token in
+                match _tok with
+                | ADDRESS ->
+                    _menhir_run82 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | BALANCE ->
+                    _menhir_run80 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | DECLIT256 _v ->
+                    _menhir_run79 _menhir_env (Obj.magic _menhir_stack) MenhirState164 _v
+                | DECLIT8 _v ->
+                    _menhir_run78 _menhir_env (Obj.magic _menhir_stack) MenhirState164 _v
+                | DEPLOY ->
+                    _menhir_run75 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | FALSE ->
+                    _menhir_run74 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | IDENT _v ->
+                    _menhir_run72 _menhir_env (Obj.magic _menhir_stack) MenhirState164 _v
+                | LPAR ->
+                    _menhir_run71 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | NOT ->
+                    _menhir_run70 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | NOW ->
+                    _menhir_run66 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | SENDER ->
+                    _menhir_run62 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | THIS ->
+                    _menhir_run61 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | TRUE ->
+                    _menhir_run60 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | VALUE ->
+                    _menhir_run56 _menhir_env (Obj.magic _menhir_stack) MenhirState164
+                | _ ->
+                    assert (not _menhir_env._menhir_error);
+                    _menhir_env._menhir_error <- true;
+                    _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState164) : 'freshtv188)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : ('freshtv189 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4965 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) = Obj.magic _menhir_stack in
+                ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv190)) : 'freshtv192)
+        | RARROW ->
+            _menhir_run11 _menhir_env (Obj.magic _menhir_stack)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv193 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv194)) : 'freshtv196)
+    | _ ->
+        _menhir_fail ()
 
-module MenhirInterpreter = struct
-  
-  module TI = MenhirLib.TableInterpreter.Make (Tables)
-  
-  include TI
-  
-end
+and _menhir_reduce77 : _menhir_env -> 'ttv_tail * _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack ->
+    let (_menhir_stack, _menhir_s) = _menhir_stack in
+    let _1 = () in
+    let _v : 'tv_typ = 
+# 165 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+            ( Syntax.AddressType )
+# 4988 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v
 
-let file =
+and _menhir_goto_list_contract_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_list_contract_ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    match _menhir_s with
+    | MenhirState0 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv149 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+        ((assert (not _menhir_env._menhir_error);
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | EOF ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv145 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+            ((let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv143 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, cs) = _menhir_stack in
+            let _2 = () in
+            let _v : (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5012 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ) = 
+# 72 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                              ( cs )
+# 5016 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv141) = _menhir_stack in
+            let (_menhir_s : _menhir_state) = _menhir_s in
+            let (_v : (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5024 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = _v in
+            ((let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv139) = Obj.magic _menhir_stack in
+            let (_menhir_s : _menhir_state) = _menhir_s in
+            let (_v : (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5032 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = _v in
+            ((let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv137) = Obj.magic _menhir_stack in
+            let (_menhir_s : _menhir_state) = _menhir_s in
+            let (_1 : (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5040 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = _v in
+            (Obj.magic _1 : 'freshtv138)) : 'freshtv140)) : 'freshtv142)) : 'freshtv144)) : 'freshtv146)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : 'freshtv147 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv148)) : 'freshtv150)
+    | MenhirState190 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv153 * _menhir_state * 'tv_contract) * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+        ((let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv151 * _menhir_state * 'tv_contract) * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        let _v : 'tv_list_contract_ = 
+# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x :: xs )
+# 5059 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+         in
+        _menhir_goto_list_contract_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv152)) : 'freshtv154)
+    | _ ->
+        _menhir_fail ()
+
+and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_loption_separated_nonempty_list_COMMA_event_arg__ -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : ((('freshtv135 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5072 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
+    ((assert (not _menhir_env._menhir_error);
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | RPAR ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv131 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5082 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
+        ((let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | SEMICOLON ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv127 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5092 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv125 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5099 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), name), _, xs000) = _menhir_stack in
+            let _4 = () in
+            let _300 = () in
+            let _100 = () in
+            let _1 = () in
+            let _v : 'tv_contract = let args =
+              let _30 = _300 in
+              let xs00 = xs000 in
+              let _10 = _100 in
+              let xs =
+                let _3 = _30 in
+                let xs0 = xs00 in
+                let _1 = _10 in
+                let x =
+                  let xs = xs0 in
+                  
+# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( xs )
+# 5119 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                  
+                in
+                
+# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( x )
+# 5125 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                
+              in
+              
+# 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+                                                        (xs)
+# 5131 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+              
+            in
+            
+# 90 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+    ( Syntax.Event { Syntax.event_arguments = args
+      ; event_name = name
+      })
+# 5139 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+             in
+            _menhir_goto_contract _menhir_env _menhir_stack _menhir_s _v) : 'freshtv126)) : 'freshtv128)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : (((('freshtv129 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5149 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv130)) : 'freshtv132)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv133 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5160 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv134)) : 'freshtv136)
+
+and _menhir_reduce45 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
+# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 5170 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run4 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv123) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_typ = 
+# 163 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+          ( Syntax.Uint8Type )
+# 5184 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv124)
+
+and _menhir_run5 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv121) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_typ = 
+# 162 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+            ( Syntax.Uint256Type )
+# 5198 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv122)
+
+and _menhir_run6 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5205 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s _v ->
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    _menhir_reduce80 _menhir_env (Obj.magic _menhir_stack)
+
+and _menhir_run7 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv119) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_typ = 
+# 164 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+            ( Syntax.Bytes32Type )
+# 5222 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv120)
+
+and _menhir_run8 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_env = _menhir_discard _menhir_env in
+    let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv117) = Obj.magic _menhir_stack in
+    let (_menhir_s : _menhir_state) = _menhir_s in
+    ((let _1 = () in
+    let _v : 'tv_typ = 
+# 166 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+         ( Syntax.BoolType )
+# 5236 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv118)
+
+and _menhir_run9 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    _menhir_reduce77 _menhir_env (Obj.magic _menhir_stack)
+
+and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    match _menhir_s with
+    | MenhirState190 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv21 * _menhir_state * 'tv_contract) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv22)
+    | MenhirState185 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv23 * _menhir_state * 'tv_case) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv24)
+    | MenhirState180 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv25 * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv26)
+    | MenhirState177 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv27 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv28)
+    | MenhirState171 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv29 * _menhir_state * 'tv_lexp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv30)
+    | MenhirState168 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv31 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv32)
+    | MenhirState164 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv33 * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5284 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv34)
+    | MenhirState157 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv35 * _menhir_state)) * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv36)
+    | MenhirState155 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv37 * _menhir_state)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv38)
+    | MenhirState150 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv39 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5303 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv40)
+    | MenhirState144 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv41 * _menhir_state) * _menhir_state * 'tv_option_exp_))) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv42)
+    | MenhirState141 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv43 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv44)
+    | MenhirState138 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv45 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv46)
+    | MenhirState129 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv47 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5327 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv48)
+    | MenhirState124 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv49 * _menhir_state * 'tv_exp))))) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv50)
+    | MenhirState120 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv51 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv52)
+    | MenhirState115 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv53) = Obj.magic _menhir_stack in
+        (raise _eRR : 'freshtv54)
+    | MenhirState112 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv55 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv56)
+    | MenhirState110 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv57 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv58)
+    | MenhirState108 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv59 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv60)
+    | MenhirState106 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv61 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv62)
+    | MenhirState104 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv63 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv64)
+    | MenhirState103 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv65 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5375 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv66)
+    | MenhirState100 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((('freshtv67 * _menhir_state * 'tv_exp)) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5384 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv68)
+    | MenhirState96 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv69 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv70)
+    | MenhirState94 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv71 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv72)
+    | MenhirState91 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv73 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv74)
+    | MenhirState89 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv75 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv76)
+    | MenhirState87 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv77 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv78)
+    | MenhirState83 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv79 * _menhir_state)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv80)
+    | MenhirState81 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv81 * _menhir_state)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv82)
+    | MenhirState77 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv83 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5428 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv84)
+    | MenhirState73 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv85 * _menhir_state * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5437 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv86)
+    | MenhirState71 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv87 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv88)
+    | MenhirState70 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv89 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv90)
+    | MenhirState55 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv91 * _menhir_state)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv92)
+    | MenhirState53 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv93 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv94)
+    | MenhirState52 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv95 * _menhir_state * 'tv_case_header) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv96)
+    | MenhirState46 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv97 * _menhir_state)) * _menhir_state * 'tv_typ) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5471 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv98)
+    | MenhirState42 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv99 * _menhir_state * 'tv_arg)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv100)
+    | MenhirState37 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (((('freshtv101 * _menhir_state)) * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5485 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv102)
+    | MenhirState34 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv103 * _menhir_state)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv104)
+    | MenhirState31 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ((((('freshtv105 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5499 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv106)
+    | MenhirState26 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv107 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5508 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv108)
+    | MenhirState21 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv109 * _menhir_state * 'tv_event_arg)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv110)
+    | MenhirState11 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : ('freshtv111 * _menhir_state * 'tv_typ)) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv112)
+    | MenhirState3 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : (('freshtv113 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5527 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        ))) = Obj.magic _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv114)
+    | MenhirState0 ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv115) = Obj.magic _menhir_stack in
+        (raise _eRR : 'freshtv116)
+
+and _menhir_reduce41 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _v : 'tv_list_contract_ = 
+# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 5541 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+     in
+    _menhir_goto_list_contract_ _menhir_env _menhir_stack _menhir_s _v
+
+and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | IDENT _v ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv17 * _menhir_state) = Obj.magic _menhir_stack in
+        let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5557 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = _v in
+        ((let _menhir_stack = (_menhir_stack, _v) in
+        let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv13 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5568 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState3
+            | BOOL ->
+                _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState3
+            | BYTES32 ->
+                _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState3
+            | IDENT _v ->
+                _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState3 _v
+            | UINT256 ->
+                _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState3
+            | UINT8 ->
+                _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState3
+            | RPAR ->
+                let (_menhir_env : _menhir_env) = _menhir_env in
+                let (_menhir_stack : 'freshtv11) = Obj.magic _menhir_stack in
+                let (_menhir_s : _menhir_state) = MenhirState3 in
+                ((let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
+# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+    ( [] )
+# 5592 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                 in
+                _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv12)
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState3) : 'freshtv14)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv15 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5606 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv16)) : 'freshtv18)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv19 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv20)
+
+and _menhir_run24 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
+  fun _menhir_env _menhir_stack _menhir_s ->
+    let _menhir_stack = (_menhir_stack, _menhir_s) in
+    let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | IDENT _v ->
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv7 * _menhir_state) = Obj.magic _menhir_stack in
+        let (_v : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5630 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+        )) = _v in
+        ((let _menhir_stack = (_menhir_stack, _v) in
+        let _menhir_env = _menhir_discard _menhir_env in
+        let _tok = _menhir_env._menhir_token in
+        match _tok with
+        | LPAR ->
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv3 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5641 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let _menhir_env = _menhir_discard _menhir_env in
+            let _tok = _menhir_env._menhir_token in
+            match _tok with
+            | ADDRESS ->
+                _menhir_run9 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | BOOL ->
+                _menhir_run8 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | BYTES32 ->
+                _menhir_run7 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | IDENT _v ->
+                _menhir_run6 _menhir_env (Obj.magic _menhir_stack) MenhirState26 _v
+            | UINT256 ->
+                _menhir_run5 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | UINT8 ->
+                _menhir_run4 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | RPAR ->
+                _menhir_reduce45 _menhir_env (Obj.magic _menhir_stack) MenhirState26
+            | _ ->
+                assert (not _menhir_env._menhir_error);
+                _menhir_env._menhir_error <- true;
+                _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState26) : 'freshtv4)
+        | _ ->
+            assert (not _menhir_env._menhir_error);
+            _menhir_env._menhir_error <- true;
+            let (_menhir_env : _menhir_env) = _menhir_env in
+            let (_menhir_stack : ('freshtv5 * _menhir_state) * (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5671 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) = Obj.magic _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv6)) : 'freshtv8)
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        let (_menhir_env : _menhir_env) = _menhir_env in
+        let (_menhir_stack : 'freshtv9 * _menhir_state) = Obj.magic _menhir_stack in
+        ((let (_menhir_stack, _menhir_s) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv10)
+
+and _menhir_discard : _menhir_env -> _menhir_env =
+  fun _menhir_env ->
+    let lexer = _menhir_env._menhir_lexer in
+    let lexbuf = _menhir_env._menhir_lexbuf in
+    let _tok = lexer lexbuf in
+    {
+      _menhir_lexer = lexer;
+      _menhir_lexbuf = lexbuf;
+      _menhir_token = _tok;
+      _menhir_error = false;
+    }
+
+and file : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5698 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+) =
   fun lexer lexbuf ->
-    (Obj.magic (MenhirInterpreter.entry 0 lexer lexbuf) : (
-# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (unit Syntax.toplevel list)
-# 3745 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-    ))
-
-module Incremental = struct
-  
-  let file =
-    fun () ->
-      (Obj.magic (MenhirInterpreter.start 0) : (
-# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (unit Syntax.toplevel list)
-# 3755 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-      ) MenhirInterpreter.result)
-  
-end
+    let _menhir_env =
+      let (lexer : Lexing.lexbuf -> token) = lexer in
+      let (lexbuf : Lexing.lexbuf) = lexbuf in
+      ((let _tok = Obj.magic () in
+      {
+        _menhir_lexer = lexer;
+        _menhir_lexbuf = lexbuf;
+        _menhir_token = _tok;
+        _menhir_error = false;
+      }) : _menhir_env)
+    in
+    Obj.magic (let (_menhir_env : _menhir_env) = _menhir_env in
+    let (_menhir_stack : 'freshtv1) = () in
+    ((let _menhir_env = _menhir_discard _menhir_env in
+    let _tok = _menhir_env._menhir_token in
+    match _tok with
+    | CONTRACT ->
+        _menhir_run24 _menhir_env (Obj.magic _menhir_stack) MenhirState0
+    | EVENT ->
+        _menhir_run1 _menhir_env (Obj.magic _menhir_stack) MenhirState0
+    | EOF ->
+        _menhir_reduce41 _menhir_env (Obj.magic _menhir_stack) MenhirState0
+    | _ ->
+        assert (not _menhir_env._menhir_error);
+        _menhir_env._menhir_error <- true;
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState0) : 'freshtv2))
 
 # 220 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
   
 
 
-# 3764 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5732 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"

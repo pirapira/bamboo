@@ -13,8 +13,7 @@
     "batteries",
     "cryptokit",
     "hex",
-    "ppx_deriving_rpc",
-    "menhirlib"
+    "ppx_deriving_rpc"
   ],
   "generators": [
     {
@@ -23,7 +22,7 @@
     },
     {
       "name": "menhir",
-      "command": "menhir --table $in"
+      "command": "menhir $in"
     }
   ],
   "sources": {
