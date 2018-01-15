@@ -21,14 +21,12 @@
   },
   "scripts": {
     "build": "bsb -make-world -backend native",
-    "build-js": "cd ./js-build && bsb -make-world -backend js",
     "watch": "bsb -make-world -backend native -w",
     "test": "npm run build && ./lib/bs/native/test.native",
-    "clean": "bsb -clean-world",
-    "clean-js": "cd ./js-build && bsb -clean-world"
+    "clean": "bsb -clean-world"
   },
   "dependencies": {
     "bn.js": "^4.11.8",
-    "bs-bn.js": "0.0.1"
+    "bs-bn.js": "0.0.2"
   }
 }

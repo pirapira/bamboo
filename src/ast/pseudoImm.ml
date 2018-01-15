@@ -1,7 +1,7 @@
 (* pseudo immediate value *)
 
 type pseudo_imm =
-  | Big of Big_int.big_int
+  | Big of Wrap_bn.t
   | Int of int
   | DestLabel of Label.label
   | StorageProgramCounterIndex

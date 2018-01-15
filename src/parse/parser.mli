@@ -44,8 +44,8 @@ type token =
   | DOT
   | DEPLOY
   | DEFAULT
-  | DECLIT8 of (Big_int.big_int)
-  | DECLIT256 of (Big_int.big_int)
+  | DECLIT8 of (Wrap_bn.t)
+  | DECLIT256 of (Wrap_bn.t)
   | CONTRACT
   | COMMA
   | CASE

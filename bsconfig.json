@@ -6,6 +6,9 @@
     "number": "-40+6+7-26-27+32..39-28-44+45",
     "error": "+8"
   },
+  "bs-dependencies": [
+    "bs-bn.js"
+  ],
   "ocamlfind-dependencies": [
     "batteries",
     "rope",

@@ -52,12 +52,12 @@ module Basics = struct
     | DEFAULT
     | DECLIT8 of (
 # 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Big_int.big_int)
+       (Wrap_bn.t)
 # 57 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
   )
     | DECLIT256 of (
 # 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Big_int.big_int)
+       (Wrap_bn.t)
 # 62 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
   )
     | CONTRACT
@@ -1027,7 +1027,7 @@ module Tables = struct
         } = _menhir_stack in
         let d : (
 # 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Big_int.big_int)
+       (Wrap_bn.t)
 # 1032 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ) = Obj.magic d in
         let _startpos = _startpos_d_ in
@@ -1055,7 +1055,7 @@ module Tables = struct
         } = _menhir_stack in
         let d : (
 # 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Big_int.big_int)
+       (Wrap_bn.t)
 # 1060 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ) = Obj.magic d in
         let _startpos = _startpos_d_ in
