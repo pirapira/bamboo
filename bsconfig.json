@@ -11,7 +11,6 @@
   ],
   "ocamlfind-dependencies": [
     "batteries",
-    "rope",
     "cryptokit",
     "hex",
     "ppx_deriving_rpc",
