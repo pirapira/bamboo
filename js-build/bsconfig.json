@@ -14,6 +14,9 @@
     "ppx_deriving_rpc",
     "menhirlib"
   ],
+  "bs-dependencies": [
+    "bs-bn.js"
+  ],
   "generators": [
     {
       "name": "ocamllex",
@@ -25,7 +28,7 @@
     }
   ],
   "sources": {
-    "dir": "src",
+    "dir": "../src",
     "subdirs": [
       "./ast",
       "./basics",

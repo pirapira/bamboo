@@ -8,4 +8,7 @@ setup.log
 .bsb.lock
 npm-debug.log
 /lib/bs/
+/lib/js/
+/js-build/lib/bs/
+/js-build/lib/js/
 /node_modules/
