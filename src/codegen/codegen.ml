@@ -1623,7 +1623,7 @@ let add_case_argument_locations (le : LocationEnv.t) (case : Syntax.typ Syntax.c
 let calldatasize_of_usual_header us =
   let args = us.case_arguments in
   4 (* for signature *) +
-    try BatList.sum (List.map (fun x -> Ethereum.(interface_typ_size (interpret_interface_type x.arg_typ))) args) with
+    try Wrap_list.sum (List.map (fun x -> Ethereum.(interface_typ_size (interpret_interface_type x.arg_typ))) args) with
       Invalid_argument _ -> 0
 
 let add_case_argument_length_check ce case_header =
@@ -1704,7 +1704,7 @@ let calculate_offsets initial lst =
 let layout_info_from_runtime_compiled (rc : runtime_compiled) (constructors : constructor_compiled Assoc.contract_id_assoc) : LayoutInfo.runtime_layout_info =
   let sizes_of_constructors = sizes_of_constructors constructors in
   let offsets_of_constructors = calculate_offsets (CodegenEnv.code_length rc.runtime_codegen_env) sizes_of_constructors in
-  let sum_of_constructor_sizes = BatList.sum sizes_of_constructors in
+  let sum_of_constructor_sizes = Wrap_list.sum sizes_of_constructors in
   LayoutInfo.(
     { runtime_code_size = sum_of_constructor_sizes + CodegenEnv.code_length rc.runtime_codegen_env
     ; runtime_offset_of_contract_id = rc.runtime_contract_offsets

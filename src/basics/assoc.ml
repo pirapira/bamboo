@@ -1,3 +1,12 @@
+#if BSB_BACKEND = "js" then
+(* Js.Option.map expects the callback to be uncurried
+https://bucklescript.github.io/bucklescript/api/Js.Option.html#VALmap
+Explanation: https://bucklescript.github.io/docs/en/function.html#curry-uncurry *)
+let map_id id = ((fun ret -> (id, ret))[@bs ])
+#else
+let map_id id = (fun ret -> (id, ret))
+#end
+
 type contract_id = int
 
 type 'a contract_id_assoc = (contract_id * 'a) list
@@ -7,7 +16,7 @@ let list_to_contract_id_assoc (lst : 'a list) =
     if lst = [] then
       []
     else
-      BatList.(range 0 `To (List.length lst - 1)) in
+      Wrap_list.range 0 (List.length lst - 1) in
   List.combine ids lst
 
 let map f lst =
@@ -17,9 +26,9 @@ let pair_map f lst =
   List.map (fun (id, x) -> (id, f id x)) lst
 
 let filter_map f lst =
-  BatList.filter_map (
+  Wrap_list.filter_map (
       fun (id, x) ->
-      BatOption.map (fun ret -> (id, ret)) (f x)) lst
+      Wrap_option.map (map_id id) (f x)) lst
 
 let choose_contract (id : contract_id) lst =
   try

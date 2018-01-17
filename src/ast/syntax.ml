@@ -66,8 +66,8 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
-  | DecLit256Exp of Big_int.big_int
-  | DecLit8Exp of Big_int.big_int
+  | DecLit256Exp of Wrap_bn.t
+  | DecLit8Exp of Wrap_bn.t
   | NowExp
   | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string
@@ -135,7 +135,7 @@ let split_event_args (e : event) (args : 'a exp list) =
         a.event_arg_indexed) e.event_arguments in
   let combined : ('a exp * bool) list =
     List.combine args indexed in
-  let (is, ns) = BatList.partition snd combined in
+  let (is, ns) = List.partition snd combined in
   (List.map fst is, List.map fst ns)
 
 type 'exp_annot case_body =
@@ -441,7 +441,7 @@ let lookup_usual_case_header (c : typ contract) (case_name : string) f : usual_c
   lookup_usual_case_header_inner [] c case_name f
 
 let size_of_typs (typs : typ list) =
-  BatList.sum (List.map size_of_typ typs)
+  Wrap_list.sum (List.map size_of_typ typs)
 
 let acceptable_as t0 t1 =
   (t0 = t1) ||

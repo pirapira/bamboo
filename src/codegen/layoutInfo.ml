@@ -258,4 +258,4 @@ let array_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_locati
   let total_num = List.length argument_types in
   if total_num = num_of_plains then []
   else
-  BatList.(range (2 + num_of_plains) `To (total_num + 1))
+  Wrap_list.range (2 + num_of_plains) (total_num + 1)
