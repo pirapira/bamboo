@@ -78,6 +78,6 @@ val case_header_signature_hash :
 val event_signature_hash :
   Syntax.event -> string
 
-val hex_to_big_int : string -> Big_int.big_int
+val hex_to_big_int : string -> Wrap_bn.t
 
 val print_abi : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc -> unit

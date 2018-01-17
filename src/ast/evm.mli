@@ -106,6 +106,6 @@ val size_of_program : 'exp program -> int
 Commented out till we need it.
 
 val string_of_real_instruction :
-  Big_int.big_int instruction -> string
-val string_of_real_program : Big_int.big_int program -> unit
+  Wrap_bn.t instruction -> string
+val string_of_real_program : Wrap_bn.t program -> unit
 *)

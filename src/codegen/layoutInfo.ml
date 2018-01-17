@@ -110,7 +110,7 @@ let construct_post_layout_info (lst : (Assoc.contract_id * contract_layout_info)
 let runtime_code_offset (layout : layout_info) (cid : Assoc.contract_id) : int =
   layout.constructor_code_size cid
 
-let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
+let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm) : Wrap_bn.t =
   PseudoImm.(
   match p with
   | Big b -> b
@@ -144,7 +144,7 @@ let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.cont
   )
 
 let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)
-    : Big_int.big_int Evm.instruction =
+    : Wrap_bn.t Evm.instruction =
   Evm.(
   match i with
   | PUSH1 imm -> PUSH1 (realize_pseudo_imm l initial_cid imm)
@@ -221,7 +221,7 @@ let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contr
   )
 
 let realize_pseudo_program (l : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm Evm.program)
-    : Big_int.big_int Evm.program
+    : Wrap_bn.t Evm.program
   = List.map (realize_pseudo_instruction l initial_cid) p
 
 let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code : PseudoImm.pseudo_imm Evm.program) =

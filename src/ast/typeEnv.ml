@@ -37,7 +37,7 @@ let add_block (h : Syntax.arg list) (orig : type_env) : type_env =
 
 let lookup_event (env : type_env) (name : string) : Syntax.event =
   try
-    BatList.find (fun e -> e.Syntax.event_name = name) env.events
+    List.find (fun e -> e.Syntax.event_name = name) env.events
   with Not_found ->
     let () = Printf.eprintf "event %s not found\n" name in
     raise Not_found

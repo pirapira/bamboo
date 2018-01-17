@@ -70,10 +70,10 @@ rule read =
   | "event" { EVENT }
   | "log" { LOG }
   | "indexed" { INDEXED }
-  | digit+ as i { DECLIT256 (Big_int.big_int_of_string i) }
+  | digit+ as i { DECLIT256 (Wrap_bn.big_int_of_string i) }
   (* uint8 has at most three digits *)
   | digit digit? digit? "u8" as i {
       let last = String.length i - 2 in
-      DECLIT8 (Big_int.big_int_of_string (String.sub i 0 last)) }
+      DECLIT8 (Wrap_bn.big_int_of_string (String.sub i 0 last)) }
   | id  { IDENT (lexeme lexbuf) }
   | eof { EOF }

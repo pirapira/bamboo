@@ -179,7 +179,7 @@ let test_rawSign s (addr : address) (data : string) =
   Rpc.string_of_rpc json
 
 
-let eth_getBalance s (addr : address) : Big_int.big_int =
+let eth_getBalance s (addr : address) : Wrap_bn.t =
   let call : Rpc.call =
     Rpc.({ name = "eth_getBalance"
          ; params = [rpc_of_address addr; Rpc.rpc_of_string "latest"]
@@ -293,7 +293,7 @@ let personal_unlockAccount s addr =
 
 let eth_getStorageAt s addr slot =
   let call = Rpc.({ name = "eth_getStorageAt"
-                  ; params = [rpc_of_address addr; rpc_of_string (Big_int.string_of_big_int slot); rpc_of_string "latest"]
+                  ; params = [rpc_of_address addr; rpc_of_string (Wrap_bn.string_of_big_int slot); rpc_of_string "latest"]
              }) in
   let ret = do_rpc_unix s call in
   let json = pick_result ret in
@@ -371,7 +371,7 @@ let testing_006 s my_acc =
     } in
   let receipt = call s tr in
   let n = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
-  let () = Printf.printf "got storage %s\n" (Big_int.string_of_big_int n) in
+  let () = Printf.printf "got storage %s\n" (Wrap_bn.string_of_big_int n) in
   let () = assert (Big_int.(eq_big_int n (big_int_of_int 100))) in
   ()
 
@@ -400,7 +400,7 @@ let testing_00bb s my_acc =
   let () = assert (String.length deployed > 2) in
   let () = Printf.printf "saw code! %s\n" deployed in
   let storage_first_word = eth_getStorageAt s contract_address (Big_int.big_int_of_int 0) in
-  let () = Printf.printf "first word! %s\n" (Big_int.string_of_big_int storage_first_word) in
+  let () = Printf.printf "first word! %s\n" (Wrap_bn.string_of_big_int storage_first_word) in
   let original = eth_getStorageAt s contract_address (Big_int.big_int_of_int 4) in
   let () = assert (Big_int.(eq_big_int original zero_big_int)) in
   let tr : eth_transaction =
@@ -1019,7 +1019,7 @@ let testing_024 channel my_acc =
   let redeem_tx = call channel redeem in
   let () = Printf.printf "redeem_tx: %Ld\n" redeem_tx.blockNumber in
   let balance = eth_getBalance channel hot in
-  let () = Printf.printf "hot acccount now has %s\n%!" (Big_int.string_of_big_int balance) in
+  let () = Printf.printf "hot acccount now has %s\n%!" (Wrap_bn.string_of_big_int balance) in
   let () = assert(Big_int.(eq_big_int balance (big_int_of_string "2198885220000000080"))) in
 
   ()

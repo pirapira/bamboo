@@ -18,7 +18,7 @@ type pseudo_imm =
 
 let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   match p with
-  | Big b -> "(Big "^(Big_int.string_of_big_int b)^")"
+  | Big b -> "(Big "^(Wrap_bn.string_of_big_int b)^")"
   | Int i -> "(Int "^(string_of_int i)^")"
   | DestLabel _ -> "DestLabel (print label here)"
   | StorageProgramCounterIndex -> "StorageProgramCounterIndex"
@@ -33,11 +33,11 @@ let rec string_of_pseudo_imm (p : pseudo_imm) : string =
   | RuntimeCodeSize -> "RuntimeCodeSize"
   | Minus (a, b) -> "(- "^(string_of_pseudo_imm a)^" "^(string_of_pseudo_imm b)^")"
 
-let is_constant_big (b : Big_int.big_int) (p : pseudo_imm) : bool =
+let is_constant_big (b : Wrap_bn.t) (p : pseudo_imm) : bool =
   match p with
-  | Big b' -> Big_int.eq_big_int b b'
-  | Int i  -> Big_int.(eq_big_int (big_int_of_int i) b)
+  | Big b' -> Wrap_bn.eq_big_int b b'
+  | Int i  -> Wrap_bn.(eq_big_int (big_int_of_int i) b)
   | _ -> false (* XXX: very rough approximation *)
 
 let is_constant_int (i : int) =
-  is_constant_big (Big_int.big_int_of_int i)
+  is_constant_big (Wrap_bn.big_int_of_int i)

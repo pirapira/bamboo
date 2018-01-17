@@ -196,8 +196,8 @@ let string_of_exp_inner e =
   | SenderExp -> "sender"
   | TrueExp -> "true"
   | FalseExp -> "false"
-  | DecLit256Exp d -> "declit "^(Big_int.string_of_big_int d)
-  | DecLit8Exp d -> "declit "^(Big_int.string_of_big_int d)
+  | DecLit256Exp d -> "declit "^(Wrap_bn.string_of_big_int d)
+  | DecLit8Exp d -> "declit "^(Wrap_bn.string_of_big_int d)
   | NotExp _ -> "not"
   | NeqExp _ -> "neq"
   | LandExp _ -> "_ && _"

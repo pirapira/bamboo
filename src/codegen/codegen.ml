@@ -218,7 +218,7 @@ let push_signature_code (ce : CodegenEnv.t)
                         (case_signature : usual_case_header)
   =
   let hash = Ethereum.case_header_signature_hash case_signature in
-  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
+  let ce = append_instruction ce (PUSH4 (Big (Wrap_bn.hex_to_big_int hash))) in
   ce
 
 (** [prepare_functiohn_signature ce usual_header]
@@ -603,13 +603,13 @@ and codegen_exp
      let () = assert (alignment = RightAligned) in
      ce
   | DecLit256Exp d, _ ->
-      failwith ("codegen_exp: DecLit256Exp of unexpected type: "^(Big_int.string_of_big_int d))
+      failwith ("codegen_exp: DecLit256Exp of unexpected type: "^(Wrap_bn.string_of_big_int d))
   | DecLit8Exp d, Uint8Type ->
      let ce = append_instruction ce (PUSH1 (Big d)) in
      let () = assert (alignment = RightAligned) in
      ce
   | DecLit8Exp d, _ ->
-      failwith ("codegen_exp: DecLit8Exp of unexpected type: "^(Big_int.string_of_big_int d))
+      failwith ("codegen_exp: DecLit8Exp of unexpected type: "^(Wrap_bn.string_of_big_int d))
   | LandExp (l, r), BoolType ->
      let shortcut_label = Label.new_label () in
      let () = assert (alignment = RightAligned) in
@@ -1537,7 +1537,7 @@ let add_assignment le ce layout l r =
 
 let push_event_signature ce event =
   let hash = Ethereum.event_signature_hash event in
-  let ce = append_instruction ce (PUSH4 (Big (Ethereum.hex_to_big_int hash))) in
+  let ce = append_instruction ce (PUSH4 (Big (Wrap_bn.hex_to_big_int hash))) in
   ce
 
 let add_variable_init le ce layout i =
@@ -1727,7 +1727,7 @@ let constructors_packed layout (constructors : constructor_compiled Assoc.contra
 
 let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
                      (runtime : runtime_compiled) (cid : Assoc.contract_id)
-    : Big_int.big_int Evm.program =
+    : Wrap_bn.t Evm.program =
   let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
     List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
   let runtime_layout = layout_info_from_runtime_compiled runtime constructors in
@@ -1743,7 +1743,7 @@ let compose_bytecode (constructors : constructor_compiled Assoc.contract_id_asso
 
 let compose_runtime_bytecode (constructors : constructor_compiled Assoc.contract_id_assoc)
                      (runtime : runtime_compiled)
-    : Big_int.big_int Evm.program =
+    : Wrap_bn.t Evm.program =
   let contracts_layout_info : (Assoc.contract_id * LayoutInfo.contract_layout_info) list =
     List.map (fun (id, const) -> (id, layout_info_from_constructor_compiled const)) constructors in
   let runtime_layout = layout_info_from_runtime_compiled runtime constructors in
