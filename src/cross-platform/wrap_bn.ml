@@ -8,7 +8,7 @@
   let big_int_of_int x = x |> float_of_int |> Bn.fromFloat
 #else
   type t = Big_int.big_int
-  let to_string_in_hexa = Big_int.to_string_in_hexa
+  let to_string_in_hexa = BatBig_int.to_string_in_hexa
   let string_of_big_int = Big_int.string_of_big_int
   let big_int_of_string = Big_int.big_int_of_string
   let hex_to_big_int h = Big_int.big_int_of_string ("0x"^h)

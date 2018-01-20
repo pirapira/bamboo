@@ -50,8 +50,6 @@ val string_keccak : string -> string
  *  represented byte sequence, without the prefix [0x]. *)
 val hex_keccak : string -> string
 
-val strip_0x : string -> string
-
 (** [keccak_short "pay(address)"] returns the
  * method signature code (which is commonly used in the ABI.
  *)
@@ -77,7 +75,5 @@ val case_header_signature_hash :
 
 val event_signature_hash :
   Syntax.event -> string
-
-val hex_to_big_int : string -> Wrap_bn.t
 
 val print_abi : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc -> unit
