@@ -540,7 +540,6 @@ and codegen_exp
       ((e,t) : Syntax.typ Syntax.exp) :
       CodegenEnv.t =
   let ret =
-  Syntax.
   (match e,t with
    | AddressExp ((c, ContractInstanceType _)as inner), AddressType ->
       let ce = codegen_exp le ce alignment inner in
@@ -589,12 +588,12 @@ and codegen_exp
       end
   | FalseExp,BoolType ->
      let ce = CodegenEnv.append_instruction
-                ce (Evm.PUSH1 (Big Big_int.zero_big_int)) in
+                ce (Evm.PUSH1 (Big Wrap_bn.zero_big_int)) in
      let () = assert (alignment = RightAligned) in
      ce
   | FalseExp, _ -> failwith "codegen_exp: FalseExp of unexpected type"
   | TrueExp,BoolType ->
-     let ce = append_instruction ce (PUSH1 (Big Big_int.unit_big_int)) in
+     let ce = append_instruction ce (PUSH1 (Big Wrap_bn.unit_big_int)) in
      let () = assert (alignment = RightAligned) in
      ce
   | TrueExp, _ -> failwith "codegen_exp: TrueExp of unexpected type"

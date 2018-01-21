@@ -28,7 +28,6 @@
     create_keccak_hash "keccak256" |> update str |> digest "hex"
   let hex_keccak str =
     create_keccak_hash "keccak256" |> update (toAscii str) |> digest "hex"
-
 #else
   module Hash = Cryptokit.Hash
   let string_keccak str : string =

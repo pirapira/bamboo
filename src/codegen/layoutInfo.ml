@@ -114,33 +114,33 @@ let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.cont
   PseudoImm.(
   match p with
   | Big b -> b
-  | Int i -> Big_int.big_int_of_int i
+  | Int i -> Wrap_bn.big_int_of_int i
   | DestLabel l ->
-     Big_int.big_int_of_int (Label.lookup_value l)
+     Wrap_bn.big_int_of_int (Label.lookup_value l)
   | StorageProgramCounterIndex ->
-     Big_int.big_int_of_int (layout.l.storage_current_pc_index)
+     Wrap_bn.big_int_of_int (layout.l.storage_current_pc_index)
   | StorageConstructorArgumentsBegin cid ->
-     Big_int.big_int_of_int (layout.l.storage_constructor_arguments_begin cid)
+     Wrap_bn.big_int_of_int (layout.l.storage_constructor_arguments_begin cid)
   | StorageConstructorArgumentsSize cid ->
-     Big_int.big_int_of_int (layout.l.storage_constructor_arguments_size cid)
+     Wrap_bn.big_int_of_int (layout.l.storage_constructor_arguments_size cid)
   | InitDataSize cid ->
-     Big_int.big_int_of_int (layout.init_data_size cid)
+     Wrap_bn.big_int_of_int (layout.init_data_size cid)
   | RuntimeCodeOffset cid ->
-     Big_int.big_int_of_int (runtime_code_offset layout.l cid)
+     Wrap_bn.big_int_of_int (runtime_code_offset layout.l cid)
   | RuntimeCodeSize ->
-     Big_int.big_int_of_int (layout.runtime_code_size)
+     Wrap_bn.big_int_of_int (layout.runtime_code_size)
   | ConstructorCodeSize cid ->
-     Big_int.big_int_of_int (layout.l.constructor_code_size cid)
+     Wrap_bn.big_int_of_int (layout.l.constructor_code_size cid)
   | ConstructorInRuntimeCodeOffset cid ->
-     Big_int.big_int_of_int (Assoc.choose_contract cid layout.constructor_in_runtime_code_offset)
+     Wrap_bn.big_int_of_int (Assoc.choose_contract cid layout.constructor_in_runtime_code_offset)
   | ContractOffsetInRuntimeCode cid ->
-     Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
+     Wrap_bn.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->
      let label = EntrypointDatabase.(lookup_entrypoint (Case (cid, case_header))) in
      let v = Label.lookup_value label in
-     Big_int.big_int_of_int v
+     Wrap_bn.big_int_of_int v
   | Minus (a, b) ->
-     Big_int.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
+     Wrap_bn.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
   )
 
 let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)

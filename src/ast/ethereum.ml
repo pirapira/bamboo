@@ -164,7 +164,7 @@ let print_input_abi (arg : Syntax.arg) : string =
 
 let print_inputs_abi (args : Syntax.arg list) : string =
   let strings = List.map print_input_abi args in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_output_abi (typ : Syntax.typ) : string =
   Printf.sprintf "{\"name\": \"\", \"type\": \"%s\"}"
@@ -172,7 +172,7 @@ let print_output_abi (typ : Syntax.typ) : string =
 
 let print_outputs_abi (typs : Syntax.typ list) : string =
   let strings = List.map print_output_abi typs in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_usual_case_abi u =
   Printf.sprintf
@@ -200,7 +200,7 @@ let print_contract_abi seen_constructor (c : Syntax.typ Syntax.contract) : strin
   let strings = if !seen_constructor then strings
                 else (print_constructor_abi c) :: strings in
   let () = (seen_constructor := true) in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_event_arg (a : Syntax.event_arg) : string =
   Printf.sprintf "{\"name\":\"%s\",\"type\":\"%s\",\"indexed\":%s}"
@@ -210,7 +210,7 @@ let print_event_arg (a : Syntax.event_arg) : string =
 
 let print_event_inputs (is : Syntax.event_arg list) : string =
   let strings : string list = List.map print_event_arg is in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_event_abi (e : Syntax.event) : string =
   Printf.sprintf
@@ -228,6 +228,6 @@ let print_toplevel_abi seen_constructor (t : Syntax.typ Syntax.toplevel) : strin
 let print_abi (tops : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc) : unit =
   let seen_constructor = ref false in
   let () = Printf.printf "[" in
-  let strings : string list = List.filter (fun s -> not (BatString.is_empty s)) (List.map (print_toplevel_abi seen_constructor) (Assoc.values tops)) in
-  let () = Printf.printf "%s" (BatString.concat "," strings) in
+  let strings : string list = List.filter (fun s -> (String.length s) != 0) (List.map (print_toplevel_abi seen_constructor) (Assoc.values tops)) in
+  let () = Printf.printf "%s" (String.concat "," strings) in
   Printf.printf "]"
