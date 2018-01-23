@@ -28,13 +28,14 @@
   "sources": {
     "dir": "src",
     "subdirs": [
-      "./ast",
-      "./basics",
-      "./codegen",
-      "./cross-platform",
-      "./exec",
-      "./lib",
-      "./parse"
+      {"dir": "ast"},
+      {"dir": "basics"},
+      {"dir": "codegen"},
+      {"dir": "cross-platform"},
+      {"backend": "native", "dir": "exec"},
+      {"backend": "js", "dir": "exec-js"},
+      {"dir": "lib"},
+      {"dir": "parse"}
     ],
     "generators": [
       {
@@ -54,7 +55,7 @@
     },
     {
       "backend": "js",
-      "main-module": "Bamboo"
+      "main-module": "BambooJs"
     }
   ],
   "refmt": 3
