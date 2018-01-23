@@ -11,7 +11,7 @@ let ident_lookup_type
   (* what should it return when it is a method name? *)
 
 let is_known_contract contract_interfaces name =
-  BatList.exists (fun (_, i) -> i.Contract.contract_interface_name = name) contract_interfaces
+  List.exists (fun (_, i) -> i.Contract.contract_interface_name = name) contract_interfaces
 
 let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.contract_id_assoc) (t : typ) =
   Syntax.(
@@ -22,9 +22,9 @@ let rec is_known_type (contract_interfaces : Contract.contract_interface Assoc.c
     | AddressType -> true
     | BoolType -> true
     | ReferenceType lst ->
-       BatList.for_all (is_known_type contract_interfaces) lst
+       List.for_all (is_known_type contract_interfaces) lst
     | TupleType lst ->
-       BatList.for_all (is_known_type contract_interfaces) lst
+       List.for_all (is_known_type contract_interfaces) lst
     | MappingType (a, b) ->
        is_known_type contract_interfaces a && is_known_type contract_interfaces b
     | ContractArchType contract ->
@@ -40,12 +40,12 @@ let arg_has_known_type contract_interfaces arg =
   ret
 
 let ret_type_is_known contract_interfaces header =
-  BatList.for_all (is_known_type contract_interfaces) header.case_return_typ
+  List.for_all (is_known_type contract_interfaces) header.case_return_typ
 
 let assign_type_case_header contract_interfaces header =
   match header with
   | UsualCaseHeader header ->
-     let () = assert (BatList.for_all (arg_has_known_type contract_interfaces) header.case_arguments) in
+     let () = assert (List.for_all (arg_has_known_type contract_interfaces) header.case_arguments) in
      let () = assert (ret_type_is_known contract_interfaces header) in
      UsualCaseHeader header
   | DefaultCaseHeader ->
@@ -83,16 +83,16 @@ let typecheck_multiple (exps : typ list) (actual : (typ * 'a) exp list) =
 let check_only_one_side_effect (llst : SideEffect.t list list)  =
   (* write-write *)
   if List.length (List.filter (fun x ->
-                      BatList.exists (fun s -> snd s = SideEffect.Write) x
+                      List.exists (fun s -> snd s = SideEffect.Write) x
                     ) llst) > 1 then
     failwith "more than one sub-expressions have side-effects";
   (* read-write *)
   if List.length (List.filter (fun x ->
-                      BatList.exists (fun s -> snd s = SideEffect.Write) x
+                      List.exists (fun s -> snd s = SideEffect.Write) x
                     ) llst) = 0 then ()
   else
   if List.length (List.filter (fun x ->
-                      BatList.exists (fun s -> snd s = SideEffect.Read) x
+                      List.exists (fun s -> snd s = SideEffect.Read) x
                     ) llst) > 0 then
     failwith "some sub-expressions have write effects and some have read effects"
 
@@ -126,7 +126,7 @@ let rec assign_type_call
    (ret_typ, side_effects))
 and assign_type_message_info contract_interfaces cname tenv
                              (orig : unit message_info) : (typ * SideEffect.t list) message_info =
-  let v' = BatOption.map (assign_type_exp contract_interfaces cname tenv)
+  let v' = Wrap_option.map (assign_type_exp contract_interfaces cname tenv)
                             orig.message_value_info in
   let block' = assign_type_sentences contract_interfaces cname tenv orig.message_reentrance_info in
   { message_value_info = v'
@@ -236,7 +236,7 @@ and assign_type_exp
      | MappingType (key_type, value_type) ->
         let (idx', (idx_typ', idx_side')) = assign_type_exp contract_interfaces cname venv (read_array_access aa).array_access_index in
         let () = assert (acceptable_as key_type idx_typ') in
-        let () = assert (BatList.for_all (fun x -> x = (SideEffect.Storage, SideEffect.Read)) idx_side') in
+        let () = assert (List.for_all (fun x -> x = (SideEffect.Storage, SideEffect.Read)) idx_side') in
         (* TODO Check idx_typ' and key_type are somehow compatible *)
         (ArrayAccessExp (ArrayAccessLExp
            { array_access_array = atyped
@@ -261,7 +261,7 @@ and assign_type_exp
         let types = Ethereum.(List.map to_typ (method_sig.sig_return)) in
         let args = List.map (assign_type_exp contract_interfaces cname venv)
                                      send.send_args in
-        let () = assert (BatList.for_all has_no_side_effects args) in
+        let () = assert (List.for_all has_no_side_effects args) in
         let reference : (Syntax.typ * SideEffect.t list) exp =
           ( SendExp
               { send_head_contract = contract'
@@ -329,10 +329,10 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : (typ * SideEffect.t list) return =
-  let exps = BatOption.map (assign_type_exp contract_interfaces
+  let exps = Wrap_option.map (assign_type_exp contract_interfaces
                                    cname tenv) src.return_exp in
   let f = TypeEnv.lookup_expected_returns tenv in
-  let () = assert (f (BatOption.map (fun x -> (fst (snd x))) exps)) in
+  let () = assert (f (Wrap_option.map (fun x -> (fst (snd x))) exps)) in
   { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
@@ -392,7 +392,7 @@ and assign_type_sentence
   | ExpSentence exp ->
      let exp = assign_type_exp contract_interfaces cname venv exp in
      let () = assert (fst (snd exp) = VoidType) in
-     let () = assert (BatList.exists (fun (_, x) -> x = SideEffect.Write) (snd (snd exp))) in
+     let () = assert (List.exists (fun (_, x) -> x = SideEffect.Write) (snd (snd exp))) in
      (ExpSentence exp, venv)
   | LogSentence (name, args, _) ->
      let args = List.map (assign_type_exp contract_interfaces cname venv) args in
@@ -442,7 +442,7 @@ let rec is_terminating_sentence (s : unit sentence) : termination list =
 (** [check_termination sentences] make sure that the last sentence in [sentences]
  *  cuts the continuation. *)
 and are_terminating sentences =
-  let last_sentence = BatList.last sentences in
+  let last_sentence = Wrap_list.last sentences in
   is_terminating_sentence last_sentence
 
 let case_is_returning_void (case : unit case) : bool =
@@ -480,7 +480,7 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
                      ) (are_terminating case.case_body)) in
   let case_arguments = case_header_arg_list case.case_header in
   let () =
-    if BatList.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") case_arguments then
+    if List.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") case_arguments then
       failwith "names that start with pre_ are reserved" in
   let returns : Syntax.typ option -> bool = return_expectation_of_case case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
@@ -498,7 +498,7 @@ let has_distinct_signatures (c : unit Syntax.contract) : bool =
                        match c.case_header with
                        | UsualCaseHeader u -> Some (Ethereum.case_header_signature_string u)
                        | DefaultCaseHeader -> None) cases in
-  let unique_sig = BatList.unique signatures in
+  let unique_sig = Wrap_list.unique signatures in
   List.length signatures = List.length unique_sig
 
 
@@ -506,14 +506,14 @@ let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_as
                          (events: event Assoc.contract_id_assoc)
       (raw : unit Syntax.contract) :
       (Syntax.typ * SideEffect.t list) Syntax.contract =
-  let () = assert (BatList.for_all (arg_has_known_type env) raw.contract_arguments) in
+  let () = assert (List.for_all (arg_has_known_type env) raw.contract_arguments) in
   let () = assert (has_distinct_signatures raw) in
   let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   let () =
     if BatString.starts_with raw.contract_name "pre_" then
       failwith "names that start with pre_ are reserved" in
   let () =
-    if BatList.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") raw.contract_arguments then
+    if List.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") raw.contract_arguments then
       failwith "names that start with pre_ are reserved" in
   { contract_name = raw.contract_name
   ; contract_arguments = raw.contract_arguments
@@ -572,7 +572,7 @@ and strip_side_effects_function_call fc =
   ; call_args = List.map strip_side_effects_exp fc.call_args
   }
 and strip_side_effects_msg_info m =
-  { message_value_info = BatOption.map strip_side_effects_exp m.message_value_info
+  { message_value_info = Wrap_option.map strip_side_effects_exp m.message_value_info
   ; message_reentrance_info =
       List.map strip_side_effects_sentence m.message_reentrance_info
   }
@@ -636,7 +636,7 @@ and strip_side_effects_exp_inner i =
   | BalanceExp e ->
      BalanceExp (strip_side_effects_exp e)
 and strip_side_effects_return ret =
-  { return_exp = BatOption.map strip_side_effects_exp ret.return_exp
+  { return_exp = Wrap_option.map strip_side_effects_exp ret.return_exp
   ; return_cont = strip_side_effects_exp ret.return_cont
   }
 and strip_side_effects_case_body (raw : (typ * 'a) case_body) : typ case_body =
@@ -661,7 +661,7 @@ let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel 
 
 let has_distinct_contract_names (contracts : unit Syntax.contract Assoc.contract_id_assoc) : bool =
   let contract_names = (List.map (fun (_, b) -> b.Syntax.contract_name) contracts) in
-  List.length contracts = List.length (BatList.unique contract_names)
+  List.length contracts = List.length (Wrap_list.unique contract_names)
 
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =

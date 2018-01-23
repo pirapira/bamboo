@@ -1317,7 +1317,7 @@ let add_dispatcher le ce contract_id contract =
   let () = assert (stack_size ce = original_stack_size + 1) in
   let case_signatures = List.map (fun x -> x.Syntax.case_header) contract.contract_cases in
 
-  let usual_case_headers = BatList.filter_map
+  let usual_case_headers = Wrap_list.filter_map
                              (fun h -> match h with DefaultCaseHeader -> None |
                                                     UsualCaseHeader u -> Some u
                              ) case_signatures in
