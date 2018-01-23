@@ -151,7 +151,7 @@ and assign_type_exp
      (* Now something is strange. This might not need a type anyway. *)
      (* Maybe introduce a type called CallableType *)
      let () =
-       if BatString.starts_with s "pre_" then
+       if WrapString.starts_with s "pre_" then
          failwith "names that start with pre_ are reserved" in
      ident_lookup_type contract_interfaces venv s
   | ParenthExp e ->
@@ -160,7 +160,7 @@ and assign_type_exp
   | NewExp n ->
      let (n', contract_name) = assign_type_new_exp contract_interfaces cname venv n in
      let () =
-       if BatString.starts_with contract_name "pre_" then
+       if WrapString.starts_with contract_name "pre_" then
          failwith "names that start with pre_ are reserved" in
      (NewExp n', (ContractInstanceType contract_name, [SideEffect.External, SideEffect.Write]))
   | LandExp (l, r) ->
@@ -345,7 +345,7 @@ and type_variable_init
                                cname tenv vi.variable_init_value in
   let added_name = vi.variable_init_name in
   let () =
-    if BatString.starts_with added_name "pre_" then
+    if WrapString.starts_with added_name "pre_" then
       failwith "names that start with pre_ are reserved" in
   let added_typ = vi.variable_init_type in
   let () = assert (is_known_type contract_interfaces added_typ) in
@@ -480,7 +480,7 @@ let assign_type_case (contract_interfaces : Contract.contract_interface Assoc.co
                      ) (are_terminating case.case_body)) in
   let case_arguments = case_header_arg_list case.case_header in
   let () =
-    if List.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") case_arguments then
+    if List.exists (fun arg -> WrapString.starts_with arg.arg_ident "pre_") case_arguments then
       failwith "names that start with pre_ are reserved" in
   let returns : Syntax.typ option -> bool = return_expectation_of_case case.case_header in
   { case_header = assign_type_case_header contract_interfaces case.case_header
@@ -510,10 +510,10 @@ let assign_type_contract (env : Contract.contract_interface Assoc.contract_id_as
   let () = assert (has_distinct_signatures raw) in
   let tenv = TypeEnv.(add_block raw.contract_arguments (add_events events empty_type_env)) in
   let () =
-    if BatString.starts_with raw.contract_name "pre_" then
+    if WrapString.starts_with raw.contract_name "pre_" then
       failwith "names that start with pre_ are reserved" in
   let () =
-    if List.exists (fun arg -> BatString.starts_with arg.arg_ident "pre_") raw.contract_arguments then
+    if List.exists (fun arg -> WrapString.starts_with arg.arg_ident "pre_") raw.contract_arguments then
       failwith "names that start with pre_ are reserved" in
   { contract_name = raw.contract_name
   ; contract_arguments = raw.contract_arguments
