@@ -2,7 +2,7 @@
 type type_env =
   { identifiers: Syntax.arg list list
   ; events: Syntax.event list
-  ; expected_returns : (Syntax.typ option -> bool) option
+  ; expected_returns : (Syntax.typ list -> bool) option
   }
 
 let empty_type_env : type_env =

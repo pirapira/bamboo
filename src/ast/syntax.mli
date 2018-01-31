@@ -97,7 +97,7 @@ and 'exp_annot sentence =
   | ExpSentence of 'exp_annot exp
   | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp option
+  { return_exps : 'exp_annot exp list
   ; return_cont : 'exp_annot exp
   }
 
@@ -110,7 +110,7 @@ type 'exp_annot case_body =
   'exp_annot sentence list
 
 type usual_case_header =
-  { case_return_typ : typ list
+  { case_return_typs : typ list
   ; case_name : string
   ; case_arguments : arg list
   }

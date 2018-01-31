@@ -65,6 +65,9 @@
 %%
 
 
+%inline clist(X):
+   xs = separated_list(COMMA, X) {xs}
+
 %inline plist(X):
    xs = delimited(LPAR, separated_list(COMMA, X), RPAR) {xs}
 
@@ -112,25 +115,21 @@ block:
 case_header:
   | DEFAULT { Syntax.DefaultCaseHeader }
   | CASE; LPAR;
-    return_typ = typ;
+    rtypes = return_types;
     name = IDENT;
     args = plist(arg);
     RPAR { Syntax.UsualCaseHeader
-      { case_return_typ = [return_typ] (* multi returns not supported *)
+      { case_return_typs = rtypes
       ; Syntax.case_name = name
       ; case_arguments = args
       }
     }
-  | CASE; LPAR;
-    VOID;
-    name = IDENT;
-    args = plist(arg);
-    RPAR { Syntax.UsualCaseHeader
-      { case_return_typ = []
-      ; Syntax.case_name = name
-      ; case_arguments = args
-      }
-    }
+  ;
+
+return_types:
+  | rtyp = typ {[rtyp]}
+  | rtypes = plist(typ) { rtypes }
+  | VOID {[]}
   ;
 
 arg:
@@ -178,8 +177,8 @@ typ:
 
 sentence:
   | ABORT; SEMICOLON { Syntax.AbortSentence }
-  | RETURN; value = option(exp); THEN; BECOME; cont = exp; SEMICOLON
-    { Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} }
+  | RETURN; values = clist(exp); THEN; BECOME; cont = exp; SEMICOLON
+    { Syntax.ReturnSentence { Syntax. return_exps = values; return_cont = cont} }
   | lhs = lexp; SINGLE_EQ; rhs = exp; SEMICOLON
     { Syntax.AssignmentSentence (lhs, rhs) }
   | t = typ;

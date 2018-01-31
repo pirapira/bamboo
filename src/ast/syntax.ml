@@ -12,7 +12,7 @@ type typ =
   | ContractArchType of string (* type of [bid(...)] where bid is a contract *)
   | ContractInstanceType of string (* type of [b] declared as [bid b] *)
 
-let rec string_of_typ t =
+let rec string_of_typ t  =
   match t with
   | VoidType -> "void"
   | Uint256Type -> "uint256"
@@ -23,8 +23,9 @@ let rec string_of_typ t =
   | MappingType (a, b) -> "mapping ("^string_of_typ a^" => "^string_of_typ b^")"
   | ContractArchType s -> "ContractArchType "^s
   | ContractInstanceType s -> "ContractInstanceType "^s
-  | ReferenceType _ -> "pointer to ..."
-  | TupleType _ -> "tuple"
+  | ReferenceType typs -> "pointer to ("^string_of_typs typs^")" 
+  | TupleType typs -> "tuple ("^string_of_typs typs^")"
+and string_of_typs ts = String.concat ", " (List.map string_of_typ ts)
 
 type arg =
   { arg_typ : typ
@@ -113,7 +114,7 @@ and 'exp_annot sentence =
   | ExpSentence of 'exp_annot exp
   | LogSentence of string * 'exp_annot exp list * event option
 and 'exp_annot return =
-  { return_exp : 'exp_annot exp option
+  { return_exps : 'exp_annot exp list
   ; return_cont : 'exp_annot exp
   }
 
@@ -142,7 +143,7 @@ type 'exp_annot case_body =
   'exp_annot sentence list
 
 type usual_case_header =
-  { case_return_typ : typ list
+  { case_return_typs : typ list
   ; case_name : string
   ; case_arguments : arg list
   }
@@ -245,15 +246,16 @@ let fits_in_one_storage_slot (typ : typ) =
   | ContractArchType _ -> false
   | VoidType -> false
 
-let size_of_typ (* in bytes *) = function
+let rec size_of_typ (* in bytes *) = function
   | Uint256Type -> 32
   | Uint8Type -> 1
   | Bytes32Type -> 32
   | AddressType -> 20
   | BoolType -> 32
   | ReferenceType _ -> 32
-  | TupleType lst ->
-     failwith "size_of_typ Tuple"
+  | TupleType lst -> 
+    let sizes = List.map  size_of_typ lst
+    in List.fold_left (+) 0 sizes
   | MappingType _ -> failwith "size_of_typ MappingType" (* XXX: this is just 32 I think *)
   | ContractArchType x -> failwith ("size_of_typ ContractArchType: "^x)
   | ContractInstanceType _ -> 20 (* address as word *)
@@ -263,7 +265,6 @@ let calldata_size_of_typ (typ : typ) =
   match typ with
   | MappingType _ -> failwith "mapping cannot be a case argument"
   | ReferenceType _ -> failwith "reference type cannot be a case argument"
-  | TupleType _ -> failwith "tupletype not implemented"
   | ContractArchType _ -> failwith "ContractArchType cannot be a case argument"
   | _ -> size_of_typ typ
 
@@ -354,14 +355,12 @@ let rec sentence_might_become (s : typ sentence) : string list =
   match s with
   | AbortSentence -> []
   | ReturnSentence ret ->
-     (match ret.return_exp with
-      | Some e -> exp_might_become e
-      | None -> []) @
-       (exp_might_become ret.return_cont)@
-         (match contract_name_of_return_cont ret.return_cont with
-          | Some name -> [name]
-          | None -> []
-         )
+  (exps_might_become ret.return_exps) @
+    (exp_might_become ret.return_cont)@
+      (match contract_name_of_return_cont ret.return_cont with
+       | Some name -> [name]
+       | None -> []
+      )
   | AssignmentSentence (l, r) ->
      (lexp_might_become l)@
        (exp_might_become r)
@@ -393,22 +392,16 @@ let might_become (c : typ contract) : string list =
   let cases = c.contract_cases in
   List.concat (List.map case_might_become cases)
 
-
 let lookup_usual_case_in_single_contract c case_name =
   let cases = c.contract_cases in
   let cases = List.filter (fun c -> match c.case_header with
                                      | DefaultCaseHeader -> false
                                      | UsualCaseHeader uc ->
                                         uc.case_name = case_name) cases in
-  let () = if (List.length cases = 0) then
-             raise Not_found
-           else if (List.length cases > 1) then
-             let () = Printf.eprintf "case %s duplicated\n%!" case_name in
-             failwith "case_lookup"
-  in
   match cases with
-  | [] -> raise Not_found
-  | _ :: _ :: _ -> failwith "should not happen"
+  | [] -> let () = Printf.eprintf "usual case of name %s not found\n%!" case_name in raise Not_found
+  | _ :: _ :: _ -> 
+    let () = Printf.eprintf "case %s duplicated\n%!" case_name in failwith "case_lookup"
   | [a] ->
      begin match a.case_header with
      | UsualCaseHeader uc -> uc
@@ -418,17 +411,20 @@ let lookup_usual_case_in_single_contract c case_name =
 let rec lookup_usual_case_header_inner (already_seen : typ contract list)
                                    (c : typ contract)
                                    (case_name : string) f : usual_case_header =
+  
   if List.mem c already_seen then
+    let () = Printf.eprintf "conctract %s already seen\n%!" c.contract_name in
     raise Not_found
   else
-    try
+    try      
       lookup_usual_case_in_single_contract c case_name
     with Not_found ->
          let already_seen = c :: already_seen in
          let becomes = List.map f (might_become c) in
          let rec try_becomes bs already_seen =
            (match bs with
-            | [] -> raise Not_found
+            | [] -> 
+              let () = Printf.eprintf "No contracts to become!\n"  in raise Not_found
             | h :: tl ->
                (try
                   lookup_usual_case_header_inner already_seen h case_name f

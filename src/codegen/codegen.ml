@@ -849,8 +849,8 @@ and codegen_send_exp le ce (s : Syntax.typ Syntax.send_exp) =
         let () = assert(is_throw_only s.send_msg_info.message_reentrance_info)  in
         let ce = swap_entrance_pc_with_zero ce in
         (* stack : [entrance_pc_bkp] *)
-        let return_typ = usual_header.case_return_typ in
-        let return_size = Syntax.size_of_typs return_typ in
+        let return_typs = usual_header.case_return_typs in
+        let return_size = Syntax.size_of_typs return_typs in
         (* stack : [entrance_bkp] *)
         let ce = append_instruction ce (PUSH1 (Int return_size)) in
         (* stack : [entrance_bkp, out size] *)
@@ -1487,16 +1487,16 @@ let rec place_exps_in_memory le ce packing (exps : typ exp list) =
 let return_mem_content le ce =
   append_instruction ce RETURN
 
-let add_return le ce (layout : LayoutInfo.layout_info) ret =
+let add_return le ce (layout : LayoutInfo.layout_info) ret = 
   let original_stack_size = stack_size ce in
-  let e = ret.return_exp in
+  let e = ret.return_exps in
   let c = ret.return_cont in
   let (le, ce) = set_continuation le ce layout c in
   let ce = match e with
-    | Some e ->
-       let (le, ce) = place_exp_in_memory le ce ABIPacking e in
+    | fe :: tl ->
+       let (le, ce) = place_exp_in_memory le ce ABIPacking fe in
        return_mem_content le ce
-    | None ->
+    | [] ->
        append_instruction ce STOP
   in
   let () = assert (stack_size ce = original_stack_size) in

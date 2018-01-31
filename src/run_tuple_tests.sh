@@ -7,7 +7,7 @@ ocamlbuild -Is basics,ast,parse,lib,codegen -package batteries -package cryptoki
 ./codegen_test.native || exit 1
 ./lib_test.native || exit 1
 ./hex_test.native || exit 1
-for f in `ls parse/examples/*.bbo ../sketch/*.bbo`
+for f in `find parse -type f -name "*tuple*"`
 do
   echo "trying" $f
   cat $f | ./parser_test.native || \
@@ -16,15 +16,5 @@ do
   exit 1
   cat $f | ./codegen_test2.native || \
   exit 1
-  cat $f | ../bamboo.native --abi | jq || \
-  exit 1
 done
-for f in `ls parse/negative_examples/*.bbo`
-do
-  echo "trying" $f
-  if cat $f | ./codegen_test2.native
-  then
-    exit 1
-  fi
-done
-echo "what should succeed has succeeded; what should fail has failed."
+echo "[SUCCESS] Tuple tests are done."
