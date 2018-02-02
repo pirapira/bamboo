@@ -19,6 +19,7 @@
 
 (* Yoichi Hirai: I modified the above-mentinoed code. *)
 
+(*
 exception Connection_reset
 
 let lib_version = "0.1.1"
@@ -1195,7 +1196,7 @@ let () =
   let () = testing_022 s my_acc in
   let () = testing_024 s my_acc in
   let () = Unix.close s in
-  ()
+  ()*)
 
 (* ocaml-rpc formats every message as an HTTP request while geth does not expect this *)
 (* ocaml-bitcoin is similar.  It always adds HTTP headers *)

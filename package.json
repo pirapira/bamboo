@@ -21,6 +21,7 @@
   },
   "scripts": {
     "build": "bsb -make-world -backend native",
+    "build-js": "bsb -make-world -backend js",
     "watch": "bsb -make-world -backend native -w",
     "test": "npm run build && ./lib/bs/native/test.native",
     "clean": "bsb -clean-world"

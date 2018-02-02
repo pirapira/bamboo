@@ -13,7 +13,7 @@
     "batteries",
     "cryptokit",
     "hex",
-    "ppx_deriving_rpc"
+    "ppx_deriving"
   ],
   "generators": [
     {
@@ -52,6 +52,30 @@
     {
       "backend": "native",
       "main-module": "Bamboo"
+    },
+    {
+      "backend": "native",
+      "main-module": "Codegen_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Codegen_test2"
+    },
+    {
+      "backend": "native",
+      "main-module": "Lib_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Hex_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Parser_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Ast_test"
     },
     {
       "backend": "js",
