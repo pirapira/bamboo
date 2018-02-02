@@ -1,10 +1,7 @@
-.PHONY: test bamboo endToEnd clean
+.PHONY: test bamboo clean
 
 bamboo:
 	npm run build
-
-endToEnd:
-	ocamlbuild -use-ocamlfind -Is src/basics,src/ast,src/parse,src/lib,src/codegen -package batteries -package cryptokit -package rope -package rpclib -package rpclib.unix -package unix -package rpclib.json -package ppx_deriving -package ppx_deriving_rpc -package hex -use-menhir src/exec/endToEnd.native
 
 doc/spec.pdf: doc/spec.tex
 	(cd doc; pdflatex -halt-on-error spec.tex; pdflatex -halt-on-error spec.tex)

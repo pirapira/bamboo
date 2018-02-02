@@ -12,7 +12,7 @@ do
   exit 1
   cat $f | $lib_path"codegen_test2.native" || \
   exit 1
-  cat $f | .$lib_path"bamboo.native" --abi | jq || \
+  cat $f | $lib_path"bamboo.native" --abi | jq || \
   exit 1
 done
 for f in `ls parse/negative_examples/*.bbo`

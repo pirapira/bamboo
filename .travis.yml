@@ -36,9 +36,10 @@ before_install:
 - eval `opam config env`
 - opam update
 - opam upgrade -y
-- opam install -y ocamlfind menhir rope zarith ppx_deriving rpc=1.9.52 cryptokit hex
+# It's important to install batteries first, so the proper version of rpc can be installed afterwards
 - git clone https://github.com/bsansouci/batteries-included
 - cd ./batteries-included && opam pin add -y batteries . && cd ..
+- opam install -y ocamlfind menhir rope zarith ppx_deriving rpc=1.9.52 cryptokit hex
 - cd ../..
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
 - sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
@@ -67,14 +68,12 @@ script:
 - make doc/spec.pdf
 - make
 - make test
-# FIXME: Re-add end to end tests by looking for an alternative without PPX
-# - make endToEnd
-# - which eth
-# - eth --version
-# - mkdir -p /tmp/test
-# - eth --test -d /tmp/test &> eth.log &
-# - PID=$!
-# - sleep 4
-# - ./endToEnd.native
-# - kill $PID
-# - cat eth.log
+- which eth
+- eth --version
+- mkdir -p /tmp/test
+- eth --test -d /tmp/test &> eth.log &
+- PID=$!
+- sleep 4
+- ./lib/bs/native/endtoend.native
+- kill $PID
+- cat eth.log

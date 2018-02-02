@@ -13,7 +13,9 @@
     "batteries",
     "cryptokit",
     "hex",
-    "ppx_deriving"
+    "ppx_deriving",
+    "ppx_deriving_rpc",
+    "rpclib.json"
   ],
   "generators": [
     {
@@ -76,6 +78,10 @@
     {
       "backend": "native",
       "main-module": "Ast_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "EndToEnd"
     },
     {
       "backend": "js",
