@@ -39,10 +39,13 @@ prints ABI.
 
 ## Developing Bamboo
 
+To try Bamboo in your local environment, run `make install` from the project folder. That should install all dependencies.
+Once the installation process is done, run `eval $(opam config env)` and then you can build all targets using `make`, and run the tests with `make test`.
+
 When you modify the OCaml source of Bamboo, you can try your version by
 ```
 $ make
-$ ./bamboo.native < src/parse/examples/006auction_first_case.bbo
+$ ./lib/bs/native/bamboo.native < src/parse/examples/006auction_first_case.bbo
 ```
 
 ## How to Contribute
