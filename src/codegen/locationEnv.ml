@@ -4,7 +4,7 @@ type t =
   (string * Location.location) list list
 
 let size l =
-  Wrap_list.sum (List.map List.length l)
+  WrapList.sum (List.map List.length l)
 
 let empty_env = []
 

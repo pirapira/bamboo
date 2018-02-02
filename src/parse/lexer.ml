@@ -3270,7 +3270,7 @@ let
 # 3271 "/Users/javi/Development/github/bamboo/src/parse/lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
 # 73 "/Users/javi/Development/github/bamboo/src/parse/lexer.mll"
-                ( DECLIT256 (Wrap_bn.big_int_of_string i) )
+                ( DECLIT256 (WrapBn.big_int_of_string i) )
 # 3275 "/Users/javi/Development/github/bamboo/src/parse/lexer.ml"
 
   | 55 ->
@@ -3282,7 +3282,7 @@ let
 # 75 "/Users/javi/Development/github/bamboo/src/parse/lexer.mll"
                                   (
       let last = String.length i - 2 in
-      DECLIT8 (Wrap_bn.big_int_of_string (String.sub i 0 last)) )
+      DECLIT8 (WrapBn.big_int_of_string (String.sub i 0 last)) )
 # 3287 "/Users/javi/Development/github/bamboo/src/parse/lexer.ml"
 
   | 56 ->

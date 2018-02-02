@@ -1,77 +1,83 @@
 
-exception Error
-
-let _eRR =
-  Error
-
-type token = 
-  | VOID
-  | VALUE
-  | UINT8
-  | UINT256
-  | TRUE
-  | THIS
-  | THEN
-  | SINGLE_EQ
-  | SENDER
-  | SEMICOLON
-  | SELFDESTRUCT
-  | RSQBR
-  | RPAR
-  | RETURN
-  | REENTRANCE
-  | RBRACE
-  | RARROW
-  | PLUS
-  | NOW
-  | NOT
-  | NEQ
-  | MULT
-  | MSG
-  | MINUS
-  | LT
-  | LSQBR
-  | LPAR
-  | LOG
-  | LBRACE
-  | LAND
-  | INDEXED
-  | IF
-  | IDENT of (
+module MenhirBasics = struct
+  
+  exception Error
+  
+  type token = 
+    | VOID
+    | VALUE
+    | UINT8
+    | UINT256
+    | TRUE
+    | THIS
+    | THEN
+    | SINGLE_EQ
+    | SENDER
+    | SEMICOLON
+    | SELFDESTRUCT
+    | RSQBR
+    | RPAR
+    | RETURN
+    | REENTRANCE
+    | RBRACE
+    | RARROW
+    | PLUS
+    | NOW
+    | NOT
+    | NEQ
+    | MULT
+    | MSG
+    | MINUS
+    | LT
+    | LSQBR
+    | LPAR
+    | LOG
+    | LBRACE
+    | LAND
+    | INDEXED
+    | IF
+    | IDENT of (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 44 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-)
-  | GT
-  | FALSE
-  | EVENT
-  | EQUALITY
-  | EOF
-  | ELSE
-  | DOT
-  | DEPLOY
-  | DEFAULT
-  | DECLIT8 of (
+# 43 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+  )
+    | GT
+    | FALSE
+    | EVENT
+    | EQUALITY
+    | EOF
+    | ELSE
+    | DOT
+    | DEPLOY
+    | DEFAULT
+    | DECLIT8 of (
 # 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 58 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-)
-  | DECLIT256 of (
+       (WrapBn.t)
+# 57 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+  )
+    | DECLIT256 of (
 # 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 63 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
-)
-  | CONTRACT
-  | COMMA
-  | CASE
-  | BYTES32
-  | BOOL
-  | BLOCK
-  | BECOME
-  | BALANCE
-  | ALONG
-  | ADDRESS
-  | ABORT
+       (WrapBn.t)
+# 62 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+  )
+    | CONTRACT
+    | COMMA
+    | CASE
+    | BYTES32
+    | BOOL
+    | BLOCK
+    | BECOME
+    | BALANCE
+    | ALONG
+    | ADDRESS
+    | ABORT
+  
+end
+
+include MenhirBasics
+
+let _eRR =
+  MenhirBasics.Error
 
 type _menhir_env = {
   _menhir_lexer: Lexing.lexbuf -> token;
@@ -139,11 +145,11 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
         let (_menhir_stack : ('freshtv659 * _menhir_state * 'tv_sentence) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv657 * _menhir_state * 'tv_sentence) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
-        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, (x : 'tv_sentence)), _, (xs : 'tv_list_sentence_)) = _menhir_stack in
         let _v : 'tv_list_sentence_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 187 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 147 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 153 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_list_sentence_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv658)) : 'freshtv660)
     | MenhirState53 ->
@@ -158,13 +164,13 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ('freshtv711 * _menhir_state) * _menhir_state * 'tv_list_sentence_) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, scs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (scs : 'tv_list_sentence_)) = _menhir_stack in
             let _3 = () in
             let _1 = () in
             let _v : 'tv_block = 
 # 109 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( scs )
-# 168 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 174 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv709) = _menhir_stack in
@@ -177,12 +183,12 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 let (_menhir_stack : ('freshtv683) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
                 ((let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : ('freshtv681) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
-                ((let (_menhir_stack, _, b) = _menhir_stack in
+                ((let (_menhir_stack, _, (b : 'tv_block)) = _menhir_stack in
                 let _1 = () in
                 let _v : 'tv_reentrance_info = 
 # 261 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                           ( b )
-# 186 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 192 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv679) = _menhir_stack in
@@ -192,13 +198,13 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 let (_v : 'tv_reentrance_info) = _v in
                 ((let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv675 * _menhir_state * 'tv_value_info) = Obj.magic _menhir_stack in
-                let (r : 'tv_reentrance_info) = _v in
-                ((let (_menhir_stack, _menhir_s, v) = _menhir_stack in
+                let ((r : 'tv_reentrance_info) : 'tv_reentrance_info) = _v in
+                ((let (_menhir_stack, _menhir_s, (v : 'tv_value_info)) = _menhir_stack in
                 let _v : 'tv_msg_info = 
 # 251 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                         ( { Syntax.message_value_info = v;
                                             message_reentrance_info = r } )
-# 202 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 208 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv673) = _menhir_stack in
@@ -210,7 +216,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                     let (_menhir_stack : ((((('freshtv663 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 214 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 220 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                     let (_menhir_s : _menhir_state) = _menhir_s in
                     let (_v : 'tv_msg_info) = _v in
@@ -218,11 +224,15 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                     let (_menhir_stack : ((((('freshtv661 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 222 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 228 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                     let (_ : _menhir_state) = _menhir_s in
-                    let (m : 'tv_msg_info) = _v in
-                    ((let (((_menhir_stack, _menhir_s, contr), mtd), _, xs0000) = _menhir_stack in
+                    let ((m : 'tv_msg_info) : 'tv_msg_info) = _v in
+                    ((let (((_menhir_stack, _menhir_s, (contr : 'tv_exp)), (mtd : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 235 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))), _, (xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__)) = _menhir_stack in
                     let _3000 = () in
                     let _1000 = () in
                     let _2 = () in
@@ -241,34 +251,34 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                           let x =
                             let xs = xs0 in
                             
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 247 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 257 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                             
                           in
                           
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 253 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 263 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                           
                         in
                         
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 259 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 269 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                         
                       in
                       
 # 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                     (lst)
-# 265 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 275 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
 # 237 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = Some mtd
                        ; send_args = (lst); send_msg_info = m }, () )
-# 272 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 282 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                      in
                     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv662)) : 'freshtv664)
                 | MenhirState124 ->
@@ -279,8 +289,8 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                     ((let (_menhir_env : _menhir_env) = _menhir_env in
                     let (_menhir_stack : (((('freshtv665 * _menhir_state * 'tv_exp))))) = Obj.magic _menhir_stack in
                     let (_ : _menhir_state) = _menhir_s in
-                    let (m : 'tv_msg_info) = _v in
-                    ((let (_menhir_stack, _menhir_s, contr) = _menhir_stack in
+                    let ((m : 'tv_msg_info) : 'tv_msg_info) = _v in
+                    ((let (_menhir_stack, _menhir_s, (contr : 'tv_exp)) = _menhir_stack in
                     let _5 = () in
                     let _4 = () in
                     let _3 = () in
@@ -289,7 +299,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
 # 234 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
                        ; send_args = []; send_msg_info = m }, () )
-# 293 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 303 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                      in
                     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv666)) : 'freshtv668)
                 | MenhirState129 ->
@@ -297,7 +307,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                     let (_menhir_stack : (((('freshtv671 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 301 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 311 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                     let (_menhir_s : _menhir_state) = _menhir_s in
                     let (_v : 'tv_msg_info) = _v in
@@ -305,11 +315,15 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                     let (_menhir_stack : (((('freshtv669 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 309 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 319 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                     let (_ : _menhir_state) = _menhir_s in
-                    let (m : 'tv_msg_info) = _v in
-                    ((let (((_menhir_stack, _menhir_s), s), _, xs0000) = _menhir_stack in
+                    let ((m : 'tv_msg_info) : 'tv_msg_info) = _v in
+                    ((let (((_menhir_stack, _menhir_s), (s : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 326 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                    ))), _, (xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__)) = _menhir_stack in
                     let _3000 = () in
                     let _1000 = () in
                     let _1 = () in
@@ -328,33 +342,33 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                           let x =
                             let xs = xs0 in
                             
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 334 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 348 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                             
                           in
                           
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 340 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 354 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                           
                         in
                         
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 346 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 360 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                         
                       in
                       
 # 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                     (lst)
-# 352 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 366 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
 # 231 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                     ( Syntax.NewExp { Syntax.new_head = s; new_args = lst; new_msg_info = m }, () )
-# 358 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 372 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                      in
                     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv670)) : 'freshtv672)
                 | _ ->
@@ -364,7 +378,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 let (_menhir_stack : (((((('freshtv687 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
                 ((let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : (((((('freshtv685 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
-                ((let ((((_menhir_stack, _menhir_s), _, cond), _, s0), _, b0) = _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (s0 : 'tv_sentence)), _, (b0 : 'tv_block)) = _menhir_stack in
                 let _6 = () in
                 let _4 = () in
                 let _2 = () in
@@ -374,7 +388,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                   
 # 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               (b)
-# 378 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 let bodyT =
@@ -382,13 +396,13 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                   
 # 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ([s])
-# 386 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 400 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
 # 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                                  ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 406 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv686)) : 'freshtv688)
             | MenhirState157 ->
@@ -460,7 +474,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 | ABORT | ADDRESS | BALANCE | BOOL | BYTES32 | DECLIT256 _ | DECLIT8 _ | DEPLOY | FALSE | IDENT _ | IF | LOG | LPAR | NOT | NOW | RBRACE | RETURN | SELFDESTRUCT | SENDER | THIS | TRUE | UINT256 | UINT8 | VALUE | VOID ->
                     let (_menhir_env : _menhir_env) = _menhir_env in
                     let (_menhir_stack : (((('freshtv691 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
-                    ((let (((_menhir_stack, _menhir_s), _, cond), _, b0) = _menhir_stack in
+                    ((let (((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (b0 : 'tv_block)) = _menhir_stack in
                     let _4 = () in
                     let _2 = () in
                     let _1 = () in
@@ -469,13 +483,13 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                       
 # 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               (b)
-# 473 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 487 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
 # 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                             ( Syntax.IfThenOnly (cond, body) )
-# 479 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 493 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                      in
                     _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv692)
                 | _ ->
@@ -490,7 +504,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 let (_menhir_stack : (((((('freshtv699 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
                 ((let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : (((((('freshtv697 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
-                ((let ((((_menhir_stack, _menhir_s), _, cond), _, b0), _, b1) = _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (b0 : 'tv_block)), _, (b1 : 'tv_block)) = _menhir_stack in
                 let _6 = () in
                 let _4 = () in
                 let _2 = () in
@@ -500,7 +514,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                   
 # 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               (b)
-# 504 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 518 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 let bodyT =
@@ -508,13 +522,13 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                   
 # 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               (b)
-# 512 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 526 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
 # 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                                  ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 518 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 532 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv698)) : 'freshtv700)
             | MenhirState52 ->
@@ -522,7 +536,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
                 let (_menhir_stack : ('freshtv707 * _menhir_state * 'tv_case_header) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
                 ((let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : ('freshtv705 * _menhir_state * 'tv_case_header) * _menhir_state * 'tv_block) = Obj.magic _menhir_stack in
-                ((let ((_menhir_stack, _menhir_s, ch), _, cb) = _menhir_stack in
+                ((let ((_menhir_stack, _menhir_s, (ch : 'tv_case_header)), _, (cb : 'tv_block)) = _menhir_stack in
                 let _v : 'tv_case = 
 # 98 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     (
@@ -530,7 +544,7 @@ let rec _menhir_goto_list_sentence_ : _menhir_env -> 'ttv_tail -> _menhir_state 
       ; Syntax.case_body = cb
       }
      )
-# 534 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 548 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : 'freshtv703) = _menhir_stack in
@@ -569,7 +583,7 @@ and _menhir_reduce81 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return 
     let _v : 'tv_value_info = 
 # 256 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                 ( None )
-# 573 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 587 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_value_info _menhir_env _menhir_stack _menhir_s _v
 
@@ -615,9 +629,9 @@ and _menhir_run104 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
 and _menhir_reduce43 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_list_sentence_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 185 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 621 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 635 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_list_sentence_ _menhir_env _menhir_stack _menhir_s _v
 
@@ -630,7 +644,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
         let (_menhir_stack : (((('freshtv629 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 634 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 648 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -640,7 +654,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : (((('freshtv625 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 644 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 658 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -660,7 +674,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : (((('freshtv627 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 664 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 678 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv628)) : 'freshtv630)
@@ -669,7 +683,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
         let (_menhir_stack : ((('freshtv635 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 673 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 687 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -679,7 +693,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv631 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 683 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 697 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -699,7 +713,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv633 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 703 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 717 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv634)) : 'freshtv636)
@@ -708,7 +722,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
         let (_menhir_stack : (('freshtv643 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 712 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 726 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -718,16 +732,20 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : (('freshtv639 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 722 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 736 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv637 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 729 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 743 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, s), _, xs0000) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (s : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 748 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))), _, (xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__)) = _menhir_stack in
             let _3000 = () in
             let _1000 = () in
             let _v : 'tv_exp = let lst =
@@ -745,33 +763,33 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
                   let x =
                     let xs = xs0 in
                     
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 751 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 769 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     
                   in
                   
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 757 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 775 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 763 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 781 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 
               in
               
 # 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                     (lst)
-# 769 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 787 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 230 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                               ( Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () )
-# 775 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 793 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv638)) : 'freshtv640)
         | _ ->
@@ -781,7 +799,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : (('freshtv641 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 785 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 803 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv642)) : 'freshtv644)
@@ -790,7 +808,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
         let (_menhir_stack : ((('freshtv655 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 794 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 812 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -800,7 +818,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv651 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 804 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 822 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -810,16 +828,20 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
                 let (_menhir_stack : (((('freshtv647 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 814 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 832 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : (((('freshtv645 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 821 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 839 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
-                ((let (((_menhir_stack, _menhir_s), name), _, xs0000) = _menhir_stack in
+                ((let (((_menhir_stack, _menhir_s), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 844 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))), _, (xs0000 : 'tv_loption_separated_nonempty_list_COMMA_exp__)) = _menhir_stack in
                 let _4 = () in
                 let _3000 = () in
                 let _1000 = () in
@@ -839,33 +861,33 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
                       let x =
                         let xs = xs0 in
                         
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 845 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 867 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                         
                       in
                       
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 851 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 873 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 857 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 879 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     
                   in
                   
 # 248 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                     (lst)
-# 863 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 885 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
 # 199 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                  ( Syntax.LogSentence (name, lst, None))
-# 869 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 891 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv646)) : 'freshtv648)
             | _ ->
@@ -875,7 +897,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
                 let (_menhir_stack : (((('freshtv649 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 879 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 901 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
                 ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv650)) : 'freshtv652)
@@ -886,7 +908,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv653 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 890 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 912 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv654)) : 'freshtv656)
@@ -1023,9 +1045,9 @@ and _menhir_run141 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let (_menhir_stack : 'freshtv619) = Obj.magic _menhir_stack in
         let (_menhir_s : _menhir_state) = MenhirState141 in
         ((let _v : 'tv_option_exp_ = 
-# 101 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 100 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( None )
-# 1029 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1051 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_option_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv620)
     | _ ->
@@ -1045,7 +1067,7 @@ and _menhir_run148 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 1049 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1071 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = _v in
         ((let _menhir_stack = (_menhir_stack, _v) in
         let _menhir_env = _menhir_discard _menhir_env in
@@ -1056,7 +1078,7 @@ and _menhir_run148 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv611 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 1060 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1082 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -1102,7 +1124,7 @@ and _menhir_run148 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv613 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 1106 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1128 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv614)) : 'freshtv616)
@@ -1169,7 +1191,7 @@ and _menhir_run154 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
 and _menhir_run158 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 1173 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1195 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
@@ -1189,7 +1211,7 @@ and _menhir_run158 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
         let (_menhir_stack : 'freshtv605 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 1193 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1215 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv606)
@@ -1230,7 +1252,7 @@ and _menhir_run160 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let _v : 'tv_sentence = 
 # 180 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                      ( Syntax.AbortSentence )
-# 1234 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1256 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv598)) : 'freshtv600)
     | _ ->
@@ -1381,7 +1403,7 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
         | ABORT | ADDRESS | BALANCE | BOOL | BYTES32 | DECLIT256 _ | DECLIT8 _ | DEPLOY | FALSE | IDENT _ | IF | LOG | LPAR | NOT | NOW | RBRACE | RETURN | SELFDESTRUCT | SENDER | THIS | TRUE | UINT256 | UINT8 | VALUE | VOID ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (((('freshtv571 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
-            ((let (((_menhir_stack, _menhir_s), _, cond), _, s0) = _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (s0 : 'tv_sentence)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _1 = () in
@@ -1390,13 +1412,13 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
               
 # 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ([s])
-# 1394 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1416 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 198 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                             ( Syntax.IfThenOnly (cond, body) )
-# 1400 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1422 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv572)
         | _ ->
@@ -1411,7 +1433,7 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
         let (_menhir_stack : (((((('freshtv579 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : (((((('freshtv577 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_sentence)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
-        ((let ((((_menhir_stack, _menhir_s), _, cond), _, s0), _, s1) = _menhir_stack in
+        ((let ((((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (s0 : 'tv_sentence)), _, (s1 : 'tv_sentence)) = _menhir_stack in
         let _6 = () in
         let _4 = () in
         let _2 = () in
@@ -1421,7 +1443,7 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
           
 # 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ([s])
-# 1425 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1447 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
           
         in
         let bodyT =
@@ -1429,13 +1451,13 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
           
 # 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ([s])
-# 1433 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1455 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
           
         in
         
 # 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                                  ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 1439 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1461 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv578)) : 'freshtv580)
     | MenhirState177 ->
@@ -1443,7 +1465,7 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
         let (_menhir_stack : (((((('freshtv583 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : (((((('freshtv581 * _menhir_state)) * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_block)) * _menhir_state * 'tv_sentence) = Obj.magic _menhir_stack in
-        ((let ((((_menhir_stack, _menhir_s), _, cond), _, b0), _, s0) = _menhir_stack in
+        ((let ((((_menhir_stack, _menhir_s), _, (cond : 'tv_exp)), _, (b0 : 'tv_block)), _, (s0 : 'tv_sentence)) = _menhir_stack in
         let _6 = () in
         let _4 = () in
         let _2 = () in
@@ -1453,7 +1475,7 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
           
 # 175 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ([s])
-# 1457 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1479 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
           
         in
         let bodyT =
@@ -1461,13 +1483,13 @@ and _menhir_goto_sentence : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_sen
           
 # 176 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               (b)
-# 1465 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1487 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
           
         in
         
 # 197 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                                  ( Syntax.IfThenElse (cond, bodyT, bodyF) )
-# 1471 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1493 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv582)) : 'freshtv584)
     | MenhirState180 | MenhirState53 ->
@@ -1544,11 +1566,11 @@ and _menhir_goto_separated_nonempty_list_COMMA_exp_ : _menhir_env -> 'ttv_tail -
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv561) = Obj.magic _menhir_stack in
         let (_menhir_s : _menhir_state) = _menhir_s in
-        let (x : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        let ((x : 'tv_separated_nonempty_list_COMMA_exp_) : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
         ((let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 130 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 1552 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1574 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv562)) : 'freshtv564)
     | MenhirState120 ->
@@ -1559,13 +1581,13 @@ and _menhir_goto_separated_nonempty_list_COMMA_exp_ : _menhir_env -> 'ttv_tail -
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv565 * _menhir_state * 'tv_exp)) = Obj.magic _menhir_stack in
         let (_ : _menhir_state) = _menhir_s in
-        let (xs : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
-        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let ((xs : 'tv_separated_nonempty_list_COMMA_exp_) : 'tv_separated_nonempty_list_COMMA_exp_) = _v in
+        ((let (_menhir_stack, _menhir_s, (x : 'tv_exp)) = _menhir_stack in
         let _2 = () in
         let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 217 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 1569 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1591 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_separated_nonempty_list_COMMA_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv566)) : 'freshtv568)
     | _ ->
@@ -1601,11 +1623,11 @@ and _menhir_goto_value_info : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_v
 
 and _menhir_reduce36 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_lexp -> 'ttv_return =
   fun _menhir_env _menhir_stack ->
-    let (_menhir_stack, _menhir_s, l) = _menhir_stack in
+    let (_menhir_stack, _menhir_s, (l : 'tv_lexp)) = _menhir_stack in
     let _v : 'tv_exp = 
 # 243 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.ArrayAccessExp l, () )
-# 1609 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 1631 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v
 
@@ -2002,7 +2024,7 @@ and _menhir_run98 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_r
         let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2006 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2028 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = _v in
         ((let _menhir_stack = (_menhir_stack, _v) in
         let _menhir_env = _menhir_discard _menhir_env in
@@ -2013,7 +2035,7 @@ and _menhir_run98 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_r
             let (_menhir_stack : (('freshtv547 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2017 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2039 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -2059,7 +2081,7 @@ and _menhir_run98 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_exp -> 'ttv_r
             let (_menhir_stack : (('freshtv549 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2063 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2085 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv550)) : 'freshtv552)
@@ -2141,7 +2163,7 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
         let (_menhir_stack : (((((('freshtv531 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2145 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2167 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -2151,16 +2173,20 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
             let (_menhir_stack : (((((('freshtv527 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2155 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2177 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (((((('freshtv525 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2162 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2184 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
-            ((let ((((_menhir_stack, _menhir_s), name), _, xs000), _, css) = _menhir_stack in
+            ((let ((((_menhir_stack, _menhir_s), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2189 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))), _, (xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__)), _, (css : 'tv_list_case_)) = _menhir_stack in
             let _6 = () in
             let _4 = () in
             let _300 = () in
@@ -2177,21 +2203,21 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
                 let x =
                   let xs = xs0 in
                   
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 2183 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2209 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 2189 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2215 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 
               in
               
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 2195 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2221 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
@@ -2200,7 +2226,7 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
       ({ Syntax.contract_cases = css
        ; contract_name = name
        ; contract_arguments = args}) )
-# 2204 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2230 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_contract _menhir_env _menhir_stack _menhir_s _v) : 'freshtv526)) : 'freshtv528)
         | _ ->
@@ -2210,7 +2236,7 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
             let (_menhir_stack : (((((('freshtv529 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2214 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2240 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv530)) : 'freshtv532)
@@ -2219,11 +2245,11 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
         let (_menhir_stack : ('freshtv535 * _menhir_state * 'tv_case) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv533 * _menhir_state * 'tv_case) * _menhir_state * 'tv_list_case_) = Obj.magic _menhir_stack in
-        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, (x : 'tv_case)), _, (xs : 'tv_list_case_)) = _menhir_stack in
         let _v : 'tv_list_case_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 187 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 2227 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2253 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_list_case_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv534)) : 'freshtv536)
     | _ ->
@@ -2232,21 +2258,25 @@ and _menhir_goto_list_case_ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_l
 and _menhir_reduce27 : _menhir_env -> 'ttv_tail * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2236 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2262 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack ->
-    let (_menhir_stack, _menhir_s, s) = _menhir_stack in
+    let (_menhir_stack, _menhir_s, (s : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 2268 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    ))) = _menhir_stack in
     let _v : 'tv_exp = 
 # 225 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.IdentifierExp s, () )
-# 2243 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2273 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v
 
 and _menhir_run73 : _menhir_env -> 'ttv_tail * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 2250 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2280 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack ->
     let _menhir_env = _menhir_discard _menhir_env in
@@ -2290,9 +2320,9 @@ and _menhir_run73 : _menhir_env -> 'ttv_tail * _menhir_state * (
 and _menhir_reduce49 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_loption_separated_nonempty_list_COMMA_exp__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 128 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 2296 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2326 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_loption_separated_nonempty_list_COMMA_exp__ _menhir_env _menhir_stack _menhir_s _v
 
@@ -2332,14 +2362,14 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv359 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (e : 'tv_exp)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _1 = () in
             let _v : 'tv_exp = 
 # 239 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( Syntax.AddressExp e, () )
-# 2343 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2373 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv360)) : 'freshtv362)
         | _ ->
@@ -2364,20 +2394,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | MINUS | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv367 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 204 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          (fun (l, r) -> Syntax.PlusExp(l, r))
-# 2375 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2405 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2381 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2411 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv368)
         | _ ->
@@ -2400,20 +2430,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | MINUS | MULT | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv373 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 206 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          (fun (l, r) -> Syntax.MultExp(l, r))
-# 2411 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2441 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2417 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2447 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv374)
         | _ ->
@@ -2455,14 +2485,14 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv389 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, s), _, idx) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (s : 'tv_exp)), _, (idx : 'tv_exp)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _v : 'tv_lexp = 
 # 269 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.ArrayAccessLExp {
        Syntax.array_access_array = s; array_access_index = idx} )
-# 2466 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2496 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv387) = _menhir_stack in
@@ -2555,20 +2585,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv397 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 209 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
         (fun (l, r) -> Syntax.NeqExp(l, r))
-# 2566 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2596 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2572 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2602 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv398)
         | _ ->
@@ -2593,20 +2623,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | MINUS | NEQ | PLUS | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv403 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 205 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
           (fun (l, r)  -> Syntax.MinusExp(l, r))
-# 2604 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2634 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2610 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2640 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv404)
         | _ ->
@@ -2645,12 +2675,12 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | REENTRANCE ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ('freshtv409 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, v) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (v : 'tv_exp)) = _menhir_stack in
             let _1 = () in
             let _v : 'tv_value_info = 
 # 257 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                     ( Some v )
-# 2654 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2684 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_value_info _menhir_env _menhir_stack _menhir_s _v) : 'freshtv410)
         | _ ->
@@ -2679,20 +2709,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv415 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 207 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (fun (l, r) -> Syntax.LtExp(l, r))
-# 2690 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2720 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2696 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2726 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv416)
         | _ ->
@@ -2729,12 +2759,12 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | LAND | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv421 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _2 = () in
             let _v : 'tv_exp = 
 # 214 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                ( Syntax.LandExp (lhs, rhs), () )
-# 2738 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2768 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv422)
         | _ ->
@@ -2763,20 +2793,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv427 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 208 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (fun (l, r) -> Syntax.GtExp(l, r))
-# 2774 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2804 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2780 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2810 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv428)
         | _ ->
@@ -2805,20 +2835,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | EQUALITY | GT | LAND | LT | NEQ | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv433 * _menhir_state * 'tv_exp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_exp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _10 = () in
             let _v : 'tv_exp = let o =
               let _1 = _10 in
               
 # 210 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
              (fun (l, r) -> Syntax.EqualityExp(l, r))
-# 2816 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2846 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
 # 223 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( (o (lhs, rhs)), () )
-# 2822 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2852 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv434)
         | _ ->
@@ -2895,11 +2925,11 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | RPAR ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv441 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, (x : 'tv_exp)) = _menhir_stack in
             let _v : 'tv_separated_nonempty_list_COMMA_exp_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 215 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [ x ] )
-# 2903 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2933 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_separated_nonempty_list_COMMA_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv442)
         | _ ->
@@ -2941,14 +2971,14 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv447 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (e : 'tv_exp)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _1 = () in
             let _v : 'tv_exp = 
 # 221 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                  ( Syntax.BalanceExp e, () )
-# 2952 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 2982 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv448)) : 'freshtv450)
         | _ ->
@@ -2990,13 +3020,13 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ('freshtv455 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (e : 'tv_exp)) = _menhir_stack in
             let _3 = () in
             let _1 = () in
             let _v : 'tv_exp = 
 # 229 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.ParenthExp e, () )
-# 3000 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3030 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv456)) : 'freshtv458)
         | _ ->
@@ -3035,12 +3065,12 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | COMMA | REENTRANCE | RPAR | RSQBR | SEMICOLON | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ('freshtv463 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (e : 'tv_exp)) = _menhir_stack in
             let _1 = () in
             let _v : 'tv_exp = 
 # 240 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                  ( Syntax.NotExp e, () )
-# 3044 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3074 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv464)
         | _ ->
@@ -3082,14 +3112,14 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv469 * _menhir_state)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, value) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (value : 'tv_exp)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _1 = () in
             let _v : 'tv_sentence = 
 # 196 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.ExpSentence value )
-# 3093 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3123 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv470)) : 'freshtv472)
         | _ ->
@@ -3131,13 +3161,13 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ('freshtv477 * _menhir_state) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s), _, e) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s), _, (e : 'tv_exp)) = _menhir_stack in
             let _3 = () in
             let _1 = () in
             let _v : 'tv_sentence = 
 # 200 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                      ( Syntax.SelfdestructSentence e )
-# 3141 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3171 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv478)) : 'freshtv480)
         | _ ->
@@ -3179,7 +3209,7 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (((('freshtv485 * _menhir_state) * _menhir_state * 'tv_option_exp_))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let (((_menhir_stack, _menhir_s), _, value), _, cont) = _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), _, (value : 'tv_option_exp_)), _, (cont : 'tv_exp)) = _menhir_stack in
             let _6 = () in
             let _4 = () in
             let _3 = () in
@@ -3187,7 +3217,7 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             let _v : 'tv_sentence = 
 # 182 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.ReturnSentence { Syntax. return_exp = value; return_cont = cont} )
-# 3191 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3221 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv486)) : 'freshtv488)
         | _ ->
@@ -3226,11 +3256,11 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         | THEN ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv493 * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, (x : 'tv_exp)) = _menhir_stack in
             let _v : 'tv_option_exp_ = 
-# 103 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 102 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( Some x )
-# 3234 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3264 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_option_exp_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv494)
         | _ ->
@@ -3338,7 +3368,7 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
         let (_menhir_stack : ((('freshtv511 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3342 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3372 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -3368,16 +3398,20 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             let (_menhir_stack : ((('freshtv507 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3372 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3402 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : ((('freshtv505 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3379 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3409 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let (((_menhir_stack, _menhir_s, t), name), _, value) = _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s, (t : 'tv_typ)), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 3414 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))), _, (value : 'tv_exp)) = _menhir_stack in
             let _5 = () in
             let _3 = () in
             let _v : 'tv_sentence = 
@@ -3388,7 +3422,7 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
                 ; variable_init_value = value
                 }
               )
-# 3392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3426 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv506)) : 'freshtv508)
         | _ ->
@@ -3398,7 +3432,7 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             let (_menhir_stack : ((('freshtv509 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3402 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3436 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv510)) : 'freshtv512)
@@ -3434,13 +3468,13 @@ and _menhir_goto_exp : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_exp -> '
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv513 * _menhir_state * 'tv_lexp)) * _menhir_state * 'tv_exp) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, lhs), _, rhs) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (lhs : 'tv_lexp)), _, (rhs : 'tv_exp)) = _menhir_stack in
             let _4 = () in
             let _2 = () in
             let _v : 'tv_sentence = 
 # 184 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.AssignmentSentence (lhs, rhs) )
-# 3444 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3478 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_sentence _menhir_env _menhir_stack _menhir_s _v) : 'freshtv514)) : 'freshtv516)
         | _ ->
@@ -3535,11 +3569,11 @@ and _menhir_goto_separated_nonempty_list_COMMA_event_arg_ : _menhir_env -> 'ttv_
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv351) = Obj.magic _menhir_stack in
         let (_menhir_s : _menhir_state) = _menhir_s in
-        let (x : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        let ((x : 'tv_separated_nonempty_list_COMMA_event_arg_) : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
         ((let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 130 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 3543 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3577 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv352)) : 'freshtv354)
     | MenhirState21 ->
@@ -3550,13 +3584,13 @@ and _menhir_goto_separated_nonempty_list_COMMA_event_arg_ : _menhir_env -> 'ttv_
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv355 * _menhir_state * 'tv_event_arg)) = Obj.magic _menhir_stack in
         let (_ : _menhir_state) = _menhir_s in
-        let (xs : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
-        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let ((xs : 'tv_separated_nonempty_list_COMMA_event_arg_) : 'tv_separated_nonempty_list_COMMA_event_arg_) = _v in
+        ((let (_menhir_stack, _menhir_s, (x : 'tv_event_arg)) = _menhir_stack in
         let _2 = () in
         let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 217 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 3560 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3594 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_separated_nonempty_list_COMMA_event_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv356)) : 'freshtv358)
     | _ ->
@@ -3573,11 +3607,11 @@ and _menhir_goto_separated_nonempty_list_COMMA_arg_ : _menhir_env -> 'ttv_tail -
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv343) = Obj.magic _menhir_stack in
         let (_menhir_s : _menhir_state) = _menhir_s in
-        let (x : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        let ((x : 'tv_separated_nonempty_list_COMMA_arg_) : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
         ((let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
-# 131 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 130 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 3581 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3615 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv344)) : 'freshtv346)
     | MenhirState42 ->
@@ -3588,13 +3622,13 @@ and _menhir_goto_separated_nonempty_list_COMMA_arg_ : _menhir_env -> 'ttv_tail -
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv347 * _menhir_state * 'tv_arg)) = Obj.magic _menhir_stack in
         let (_ : _menhir_state) = _menhir_s in
-        let (xs : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
-        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        let ((xs : 'tv_separated_nonempty_list_COMMA_arg_) : 'tv_separated_nonempty_list_COMMA_arg_) = _v in
+        ((let (_menhir_stack, _menhir_s, (x : 'tv_arg)) = _menhir_stack in
         let _2 = () in
         let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
-# 218 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 217 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 3598 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3632 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_separated_nonempty_list_COMMA_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv348)) : 'freshtv350)
     | _ ->
@@ -3618,9 +3652,9 @@ and _menhir_goto_case_header : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_
 and _menhir_reduce39 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_list_case_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 185 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 3624 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3658 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_list_case_ _menhir_env _menhir_stack _menhir_s _v
 
@@ -3634,7 +3668,7 @@ and _menhir_run32 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_case_header = 
 # 113 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.DefaultCaseHeader )
-# 3638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3672 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv340)
 
@@ -3676,7 +3710,7 @@ and _menhir_run33 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                 let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3680 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3714 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = _v in
                 ((let _menhir_stack = (_menhir_stack, _v) in
                 let _menhir_env = _menhir_discard _menhir_env in
@@ -3687,7 +3721,7 @@ and _menhir_run33 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                     let (_menhir_stack : ((('freshtv325 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3691 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3725 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     )) = Obj.magic _menhir_stack in
                     ((let _menhir_env = _menhir_discard _menhir_env in
                     let _tok = _menhir_env._menhir_token in
@@ -3717,7 +3751,7 @@ and _menhir_run33 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                     let (_menhir_stack : ((('freshtv327 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 3721 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3755 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     )) = Obj.magic _menhir_stack in
                     ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
                     _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv328)) : 'freshtv330)
@@ -3772,7 +3806,7 @@ and _menhir_run56 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                 let _v : 'tv_exp = 
 # 219 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                         ( Syntax.ValueExp, () )
-# 3776 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3810 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv312)) : 'freshtv314)
             | _ ->
@@ -3807,7 +3841,7 @@ and _menhir_run60 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_exp = 
 # 215 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          ( Syntax.TrueExp, () )
-# 3811 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3845 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv310)
 
@@ -3821,7 +3855,7 @@ and _menhir_run61 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_exp = 
 # 241 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          ( Syntax.ThisExp, () )
-# 3825 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3859 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv308)
 
@@ -3857,7 +3891,7 @@ and _menhir_run62 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                 let _v : 'tv_exp = 
 # 220 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                          ( Syntax.SenderExp, () )
-# 3861 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3895 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv294)) : 'freshtv296)
             | _ ->
@@ -3914,7 +3948,7 @@ and _menhir_run66 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                 let _v : 'tv_exp = 
 # 222 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                         ( Syntax.NowExp, () )
-# 3918 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 3952 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv280)) : 'freshtv282)
             | _ ->
@@ -4020,7 +4054,7 @@ and _menhir_run71 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
 and _menhir_run72 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4024 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4058 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
@@ -4038,7 +4072,7 @@ and _menhir_run72 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
         let (_menhir_stack : 'freshtv277 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4042 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4076 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv278)
@@ -4053,7 +4087,7 @@ and _menhir_run74 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_exp = 
 # 216 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
           ( Syntax.FalseExp, () )
-# 4057 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4091 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv276)
 
@@ -4069,7 +4103,7 @@ and _menhir_run75 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4073 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4107 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = _v in
         ((let _menhir_stack = (_menhir_stack, _v) in
         let _menhir_env = _menhir_discard _menhir_env in
@@ -4080,7 +4114,7 @@ and _menhir_run75 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv267 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4084 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4118 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -4126,7 +4160,7 @@ and _menhir_run75 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv269 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4130 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4164 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv270)) : 'freshtv272)
@@ -4140,45 +4174,53 @@ and _menhir_run75 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
 
 and _menhir_run78 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 4145 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+       (WrapBn.t)
+# 4179 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_env = _menhir_discard _menhir_env in
     let (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : 'freshtv265) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
-    let (d : (
+    let ((d : (
 # 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 4155 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+       (WrapBn.t)
+# 4189 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) : (
+# 4 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (WrapBn.t)
+# 4193 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
     )) = _v in
     ((let _v : 'tv_exp = 
 # 218 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                 ( Syntax.DecLit8Exp d, ())
-# 4160 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4198 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv266)
 
 and _menhir_run79 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 4167 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+       (WrapBn.t)
+# 4205 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_env = _menhir_discard _menhir_env in
     let (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : 'freshtv263) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
-    let (d : (
+    let ((d : (
 # 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
-       (Wrap_bn.t)
-# 4177 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+       (WrapBn.t)
+# 4215 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) : (
+# 3 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (WrapBn.t)
+# 4219 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
     )) = _v in
     ((let _v : 'tv_exp = 
 # 217 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                   ( Syntax.DecLit256Exp d, ())
-# 4182 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4224 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_exp _menhir_env _menhir_stack _menhir_s _v) : 'freshtv264)
 
@@ -4305,11 +4347,11 @@ and _menhir_goto_event_arg : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_ev
     | RPAR ->
         let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv251 * _menhir_state * 'tv_event_arg) = Obj.magic _menhir_stack in
-        ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, (x : 'tv_event_arg)) = _menhir_stack in
         let _v : 'tv_separated_nonempty_list_COMMA_event_arg_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 215 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [ x ] )
-# 4313 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4355 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_separated_nonempty_list_COMMA_event_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv252)
     | _ ->
@@ -4323,18 +4365,22 @@ and _menhir_goto_event_arg : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_ev
 and _menhir_run15 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4327 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4369 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _v ->
     let _menhir_env = _menhir_discard _menhir_env in
     let (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : 'freshtv247 * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
-    let (i : (
+    let ((i : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4336 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4378 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    )) : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4382 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
     )) = _v in
-    ((let (_menhir_stack, _menhir_s, t) = _menhir_stack in
+    ((let (_menhir_stack, _menhir_s, (t : 'tv_typ)) = _menhir_stack in
     let _v : 'tv_arg = 
 # 139 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( { Syntax.arg_typ = t
@@ -4342,7 +4388,7 @@ and _menhir_run15 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> (
       ; Syntax.arg_location = None
       }
     )
-# 4346 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4392 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     let (_menhir_env : _menhir_env) = _menhir_env in
     let (_menhir_stack : 'freshtv245) = _menhir_stack in
@@ -4355,11 +4401,11 @@ and _menhir_run15 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> (
         let (_menhir_stack : 'freshtv235 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : 'freshtv233 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
-        ((let (_menhir_stack, _menhir_s, a) = _menhir_stack in
+        ((let (_menhir_stack, _menhir_s, (a : 'tv_arg)) = _menhir_stack in
         let _v : 'tv_event_arg = 
 # 147 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.event_arg_of_arg a false )
-# 4363 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4409 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_event_arg _menhir_env _menhir_stack _menhir_s _v) : 'freshtv234)) : 'freshtv236)
     | MenhirState26 | MenhirState46 | MenhirState42 | MenhirState37 ->
@@ -4393,11 +4439,11 @@ and _menhir_run15 : _menhir_env -> 'ttv_tail * _menhir_state * 'tv_typ -> (
         | RPAR ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv239 * _menhir_state * 'tv_arg) = Obj.magic _menhir_stack in
-            ((let (_menhir_stack, _menhir_s, x) = _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, (x : 'tv_arg)) = _menhir_stack in
             let _v : 'tv_separated_nonempty_list_COMMA_arg_ = 
-# 216 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 215 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [ x ] )
-# 4401 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4447 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_separated_nonempty_list_COMMA_arg_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv240)
         | _ ->
@@ -4443,7 +4489,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
         let (_menhir_stack : ((('freshtv205 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4447 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4493 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -4453,7 +4499,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv201 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4457 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4503 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -4463,7 +4509,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((('freshtv197 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4467 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4513 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let _tok = _menhir_env._menhir_token in
@@ -4485,7 +4531,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((('freshtv199 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4489 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4535 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv200)) : 'freshtv202)
@@ -4496,7 +4542,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((('freshtv203 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4500 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4546 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv204)) : 'freshtv206)
@@ -4505,7 +4551,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
         let (_menhir_stack : ((((('freshtv217 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4509 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4555 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -4515,7 +4561,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((((('freshtv213 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4519 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4565 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -4525,16 +4571,20 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((((('freshtv209 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4529 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4575 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : (((((('freshtv207 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4536 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4582 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
-                ((let ((((_menhir_stack, _menhir_s), _), name), _, xs000) = _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4587 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))), _, (xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__)) = _menhir_stack in
                 let _6 = () in
                 let _300 = () in
                 let _100 = () in
@@ -4552,21 +4602,21 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                     let x =
                       let xs = xs0 in
                       
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 4558 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4608 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 4564 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4614 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     
                   in
                   
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 4570 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4620 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
@@ -4577,7 +4627,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
       ; case_arguments = args
       }
     )
-# 4581 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4631 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv208)) : 'freshtv210)
             | _ ->
@@ -4587,7 +4637,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((((('freshtv211 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4591 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4641 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv212)) : 'freshtv214)
@@ -4598,7 +4648,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((((('freshtv215 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4602 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4652 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv216)) : 'freshtv218)
@@ -4607,7 +4657,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
         let (_menhir_stack : ((((('freshtv229 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4611 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4661 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
         ((assert (not _menhir_env._menhir_error);
         let _tok = _menhir_env._menhir_token in
@@ -4617,7 +4667,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((((('freshtv225 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4621 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4671 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -4627,16 +4677,20 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((((('freshtv221 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4631 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4681 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : (((((('freshtv219 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4688 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
-                ((let ((((_menhir_stack, _menhir_s), _, return_typ), name), _, xs000) = _menhir_stack in
+                ((let ((((_menhir_stack, _menhir_s), _, (return_typ : 'tv_typ)), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4693 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                ))), _, (xs000 : 'tv_loption_separated_nonempty_list_COMMA_arg__)) = _menhir_stack in
                 let _6 = () in
                 let _300 = () in
                 let _100 = () in
@@ -4653,21 +4707,21 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                     let x =
                       let xs = xs0 in
                       
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 4659 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4713 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                       
                     in
                     
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 4665 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4719 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                     
                   in
                   
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 4671 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4725 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
@@ -4678,7 +4732,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
       ; case_arguments = args
       }
     )
-# 4682 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4736 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_case_header _menhir_env _menhir_stack _menhir_s _v) : 'freshtv220)) : 'freshtv222)
             | _ ->
@@ -4688,7 +4742,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
                 let (_menhir_stack : (((((('freshtv223 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4692 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4746 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__)) = Obj.magic _menhir_stack in
                 ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv224)) : 'freshtv226)
@@ -4699,7 +4753,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
             let (_menhir_stack : ((((('freshtv227 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4703 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4757 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv228)) : 'freshtv230)
@@ -4709,14 +4763,18 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ : _menhir_env -> 't
 and _menhir_reduce80 : _menhir_env -> 'ttv_tail * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4713 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4767 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack ->
-    let (_menhir_stack, _menhir_s, s) = _menhir_stack in
+    let (_menhir_stack, _menhir_s, (s : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4773 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+    ))) = _menhir_stack in
     let _v : 'tv_typ = 
 # 171 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
               ( Syntax.ContractInstanceType s )
-# 4720 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4778 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v
 
@@ -4744,17 +4802,21 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
                 let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4748 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4806 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = _v in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let (_menhir_env : _menhir_env) = _menhir_env in
                 let (_menhir_stack : ('freshtv155 * _menhir_state * 'tv_typ)) = Obj.magic _menhir_stack in
-                let (i : (
+                let ((i : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4756 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4814 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+                )) : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 4818 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = _v in
-                ((let (_menhir_stack, _menhir_s, t) = _menhir_stack in
+                ((let (_menhir_stack, _menhir_s, (t : 'tv_typ)) = _menhir_stack in
                 let _2 = () in
                 let _v : 'tv_event_arg = 
 # 151 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
@@ -4766,7 +4828,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
       ; Syntax.event_arg_indexed = true
       }
     )
-# 4770 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4832 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_event_arg _menhir_env _menhir_stack _menhir_s _v) : 'freshtv156)) : 'freshtv158)
             | _ ->
@@ -4796,12 +4858,12 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
         | IDENT _ | INDEXED ->
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (('freshtv167 * _menhir_state * 'tv_typ)) * _menhir_state * 'tv_typ) = Obj.magic _menhir_stack in
-            ((let ((_menhir_stack, _menhir_s, key), _, value) = _menhir_stack in
+            ((let ((_menhir_stack, _menhir_s, (key : 'tv_typ)), _, (value : 'tv_typ)) = _menhir_stack in
             let _2 = () in
             let _v : 'tv_typ = 
 # 170 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
     ( Syntax.MappingType (key, value) )
-# 4805 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4867 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv168)
         | _ ->
@@ -4840,7 +4902,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
             let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4844 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4906 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = _v in
             ((let _menhir_stack = (_menhir_stack, _v) in
             let _menhir_env = _menhir_discard _menhir_env in
@@ -4851,7 +4913,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
                 let (_menhir_stack : ((('freshtv177 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4855 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4917 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let _tok = _menhir_env._menhir_token in
@@ -4881,7 +4943,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
                 let (_menhir_stack : ((('freshtv179 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4885 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4947 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = Obj.magic _menhir_stack in
                 ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv180)) : 'freshtv182)
@@ -4906,7 +4968,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
             let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4910 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4972 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = _v in
             ((let _menhir_stack = (_menhir_stack, _v) in
             let _menhir_env = _menhir_discard _menhir_env in
@@ -4917,7 +4979,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
                 let (_menhir_stack : ('freshtv187 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4921 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 4983 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = Obj.magic _menhir_stack in
                 ((let _menhir_env = _menhir_discard _menhir_env in
                 let _tok = _menhir_env._menhir_token in
@@ -4961,7 +5023,7 @@ and _menhir_goto_typ : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_typ -> '
                 let (_menhir_stack : ('freshtv189 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 4965 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5027 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 )) = Obj.magic _menhir_stack in
                 ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
                 _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv190)) : 'freshtv192)
@@ -4984,7 +5046,7 @@ and _menhir_reduce77 : _menhir_env -> 'ttv_tail * _menhir_state -> 'ttv_return =
     let _v : 'tv_typ = 
 # 165 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.AddressType )
-# 4988 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5050 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v
 
@@ -5003,16 +5065,16 @@ and _menhir_goto_list_contract_ : _menhir_env -> 'ttv_tail -> _menhir_state -> '
             let (_menhir_stack : 'freshtv145 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
             ((let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv143 * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
-            ((let (_menhir_stack, _menhir_s, cs) = _menhir_stack in
+            ((let (_menhir_stack, _menhir_s, (cs : 'tv_list_contract_)) = _menhir_stack in
             let _2 = () in
             let _v : (
 # 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (unit Syntax.toplevel list)
-# 5012 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5074 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ) = 
 # 72 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                               ( cs )
-# 5016 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5078 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv141) = _menhir_stack in
@@ -5020,7 +5082,7 @@ and _menhir_goto_list_contract_ : _menhir_env -> 'ttv_tail -> _menhir_state -> '
             let (_v : (
 # 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (unit Syntax.toplevel list)
-# 5024 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5086 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = _v in
             ((let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv139) = Obj.magic _menhir_stack in
@@ -5028,15 +5090,19 @@ and _menhir_goto_list_contract_ : _menhir_env -> 'ttv_tail -> _menhir_state -> '
             let (_v : (
 # 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (unit Syntax.toplevel list)
-# 5032 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5094 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = _v in
             ((let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : 'freshtv137) = Obj.magic _menhir_stack in
             let (_menhir_s : _menhir_state) = _menhir_s in
-            let (_1 : (
+            let ((_1 : (
 # 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (unit Syntax.toplevel list)
-# 5040 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5102 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            )) : (
+# 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (unit Syntax.toplevel list)
+# 5106 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = _v in
             (Obj.magic _1 : 'freshtv138)) : 'freshtv140)) : 'freshtv142)) : 'freshtv144)) : 'freshtv146)
         | _ ->
@@ -5051,11 +5117,11 @@ and _menhir_goto_list_contract_ : _menhir_env -> 'ttv_tail -> _menhir_state -> '
         let (_menhir_stack : ('freshtv153 * _menhir_state * 'tv_contract) * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
         ((let (_menhir_env : _menhir_env) = _menhir_env in
         let (_menhir_stack : ('freshtv151 * _menhir_state * 'tv_contract) * _menhir_state * 'tv_list_contract_) = Obj.magic _menhir_stack in
-        ((let ((_menhir_stack, _menhir_s, x), _, xs) = _menhir_stack in
+        ((let ((_menhir_stack, _menhir_s, (x : 'tv_contract)), _, (xs : 'tv_list_contract_)) = _menhir_stack in
         let _v : 'tv_list_contract_ = 
-# 188 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 187 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x :: xs )
-# 5059 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5125 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
          in
         _menhir_goto_list_contract_ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv152)) : 'freshtv154)
     | _ ->
@@ -5068,7 +5134,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
     let (_menhir_stack : ((('freshtv135 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5072 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5138 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
     ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
     ((assert (not _menhir_env._menhir_error);
     let _tok = _menhir_env._menhir_token in
@@ -5078,7 +5144,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
         let (_menhir_stack : ((('freshtv131 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5082 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5148 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
         ((let _menhir_env = _menhir_discard _menhir_env in
         let _tok = _menhir_env._menhir_token in
@@ -5088,16 +5154,20 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
             let (_menhir_stack : (((('freshtv127 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5092 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5158 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let (_menhir_env : _menhir_env) = _menhir_env in
             let (_menhir_stack : (((('freshtv125 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5099 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5165 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
-            ((let (((_menhir_stack, _menhir_s), name), _, xs000) = _menhir_stack in
+            ((let (((_menhir_stack, _menhir_s), (name : (
+# 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
+       (string)
+# 5170 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+            ))), _, (xs000 : 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = _menhir_stack in
             let _4 = () in
             let _300 = () in
             let _100 = () in
@@ -5113,21 +5183,21 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
                 let x =
                   let xs = xs0 in
                   
-# 207 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 206 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( xs )
-# 5119 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5189 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                   
                 in
                 
-# 175 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 174 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( x )
-# 5125 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5195 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                 
               in
               
 # 69 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
                                                         (xs)
-# 5131 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5201 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
               
             in
             
@@ -5135,7 +5205,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
     ( Syntax.Event { Syntax.event_arguments = args
       ; event_name = name
       })
-# 5139 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5209 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
              in
             _menhir_goto_contract _menhir_env _menhir_stack _menhir_s _v) : 'freshtv126)) : 'freshtv128)
         | _ ->
@@ -5145,7 +5215,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
             let (_menhir_stack : (((('freshtv129 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5149 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5219 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__)) = Obj.magic _menhir_stack in
             ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv130)) : 'freshtv132)
@@ -5156,7 +5226,7 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
         let (_menhir_stack : ((('freshtv133 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5160 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5230 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_event_arg__) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv134)) : 'freshtv136)
@@ -5164,9 +5234,9 @@ and _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ : _menhir_env
 and _menhir_reduce45 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_loption_separated_nonempty_list_COMMA_arg__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 128 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 5170 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5240 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_loption_separated_nonempty_list_COMMA_arg__ _menhir_env _menhir_stack _menhir_s _v
 
@@ -5180,7 +5250,7 @@ and _menhir_run4 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_typ = 
 # 163 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
           ( Syntax.Uint8Type )
-# 5184 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5254 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv124)
 
@@ -5194,14 +5264,14 @@ and _menhir_run5 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_typ = 
 # 162 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.Uint256Type )
-# 5198 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5268 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv122)
 
 and _menhir_run6 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5205 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5275 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
@@ -5218,7 +5288,7 @@ and _menhir_run7 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_typ = 
 # 164 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
             ( Syntax.Bytes32Type )
-# 5222 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5292 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv120)
 
@@ -5232,7 +5302,7 @@ and _menhir_run8 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let _v : 'tv_typ = 
 # 166 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
          ( Syntax.BoolType )
-# 5236 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5306 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_typ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv118)
 
@@ -5280,7 +5350,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (('freshtv33 * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5284 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5354 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv34)
@@ -5299,7 +5369,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (('freshtv39 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5303 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5373 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv40)
@@ -5323,7 +5393,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (((('freshtv47 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5327 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5397 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv48)
@@ -5371,7 +5441,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : ((((('freshtv65 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5375 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5445 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_exp__)) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv66)
@@ -5380,7 +5450,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : ((('freshtv67 * _menhir_state * 'tv_exp)) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5384 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5454 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv68)
@@ -5424,7 +5494,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (('freshtv83 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5428 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5498 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv84)
@@ -5433,7 +5503,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : ('freshtv85 * _menhir_state * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5437 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5507 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv86)
@@ -5467,7 +5537,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (((('freshtv97 * _menhir_state)) * _menhir_state * 'tv_typ) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5471 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5541 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s, _), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv98)
@@ -5481,7 +5551,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (((('freshtv101 * _menhir_state)) * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5485 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5555 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv102)
@@ -5495,7 +5565,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : ((((('freshtv105 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5499 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5569 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) * _menhir_state * 'tv_loption_separated_nonempty_list_COMMA_arg__))) = Obj.magic _menhir_stack in
         ((let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv106)
@@ -5504,7 +5574,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (('freshtv107 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5508 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5578 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv108)
@@ -5523,7 +5593,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
         let (_menhir_stack : (('freshtv113 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5527 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5597 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         ))) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv114)
@@ -5535,9 +5605,9 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
 and _menhir_reduce41 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_list_contract_ = 
-# 186 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 185 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 5541 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5611 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
      in
     _menhir_goto_list_contract_ _menhir_env _menhir_stack _menhir_s _v
 
@@ -5553,7 +5623,7 @@ and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5557 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5627 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = _v in
         ((let _menhir_stack = (_menhir_stack, _v) in
         let _menhir_env = _menhir_discard _menhir_env in
@@ -5564,7 +5634,7 @@ and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv13 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5568 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5638 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -5586,9 +5656,9 @@ and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
                 let (_menhir_stack : 'freshtv11) = Obj.magic _menhir_stack in
                 let (_menhir_s : _menhir_state) = MenhirState3 in
                 ((let _v : 'tv_loption_separated_nonempty_list_COMMA_event_arg__ = 
-# 129 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 128 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
     ( [] )
-# 5592 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5662 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
                  in
                 _menhir_goto_loption_separated_nonempty_list_COMMA_event_arg__ _menhir_env _menhir_stack _menhir_s _v) : 'freshtv12)
             | _ ->
@@ -5602,7 +5672,7 @@ and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv15 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5606 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5676 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv16)) : 'freshtv18)
@@ -5626,7 +5696,7 @@ and _menhir_run24 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
         let (_v : (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5630 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5700 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
         )) = _v in
         ((let _menhir_stack = (_menhir_stack, _v) in
         let _menhir_env = _menhir_discard _menhir_env in
@@ -5637,7 +5707,7 @@ and _menhir_run24 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv3 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5641 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5711 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let _menhir_env = _menhir_discard _menhir_env in
             let _tok = _menhir_env._menhir_token in
@@ -5667,7 +5737,7 @@ and _menhir_run24 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
             let (_menhir_stack : ('freshtv5 * _menhir_state) * (
 # 2 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (string)
-# 5671 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5741 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
             )) = Obj.magic _menhir_stack in
             ((let ((_menhir_stack, _menhir_s), _) = _menhir_stack in
             _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s) : 'freshtv6)) : 'freshtv8)
@@ -5694,7 +5764,7 @@ and _menhir_discard : _menhir_env -> _menhir_env =
 and file : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (
 # 64 "/Users/javi/Development/github/bamboo/src/parse/parser.mly"
        (unit Syntax.toplevel list)
-# 5698 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5768 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
 ) =
   fun lexer lexbuf ->
     let _menhir_env =
@@ -5709,7 +5779,7 @@ and file : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (
       }) : _menhir_env)
     in
     Obj.magic (let (_menhir_env : _menhir_env) = _menhir_env in
-    let (_menhir_stack : 'freshtv1) = () in
+    let (_menhir_stack : 'freshtv1) = ((), _menhir_env._menhir_lexbuf.Lexing.lex_curr_p) in
     ((let _menhir_env = _menhir_discard _menhir_env in
     let _tok = _menhir_env._menhir_token in
     match _tok with
@@ -5724,8 +5794,8 @@ and file : (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (
         _menhir_env._menhir_error <- true;
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState0) : 'freshtv2))
 
-# 220 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
+# 219 "/Users/javi/.opam/4.02.3+buckle-master/lib/menhir/standard.mly"
   
 
 
-# 5732 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"
+# 5802 "/Users/javi/Development/github/bamboo/src/parse/parser.ml"

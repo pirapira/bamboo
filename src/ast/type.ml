@@ -126,7 +126,7 @@ let rec assign_type_call
    (ret_typ, side_effects))
 and assign_type_message_info contract_interfaces cname tenv
                              (orig : unit message_info) : (typ * SideEffect.t list) message_info =
-  let v' = Wrap_option.map (assign_type_exp contract_interfaces cname tenv)
+  let v' = WrapOption.map (assign_type_exp contract_interfaces cname tenv)
                             orig.message_value_info in
   let block' = assign_type_sentences contract_interfaces cname tenv orig.message_reentrance_info in
   { message_value_info = v'
@@ -329,10 +329,10 @@ and assign_type_return
       (cname : string)
       (tenv : TypeEnv.type_env)
       (src : unit return) : (typ * SideEffect.t list) return =
-  let exps = Wrap_option.map (assign_type_exp contract_interfaces
+  let exps = WrapOption.map (assign_type_exp contract_interfaces
                                    cname tenv) src.return_exp in
   let f = TypeEnv.lookup_expected_returns tenv in
-  let () = assert (f (Wrap_option.map (fun x -> (fst (snd x))) exps)) in
+  let () = assert (f (WrapOption.map (fun x -> (fst (snd x))) exps)) in
   { return_exp = exps
   ; return_cont =  assign_type_exp contract_interfaces
                                    cname tenv src.return_cont
@@ -442,7 +442,7 @@ let rec is_terminating_sentence (s : unit sentence) : termination list =
 (** [check_termination sentences] make sure that the last sentence in [sentences]
  *  cuts the continuation. *)
 and are_terminating sentences =
-  let last_sentence = Wrap_list.last sentences in
+  let last_sentence = WrapList.last sentences in
   is_terminating_sentence last_sentence
 
 let case_is_returning_void (case : unit case) : bool =
@@ -498,7 +498,7 @@ let has_distinct_signatures (c : unit Syntax.contract) : bool =
                        match c.case_header with
                        | UsualCaseHeader u -> Some (Ethereum.case_header_signature_string u)
                        | DefaultCaseHeader -> None) cases in
-  let unique_sig = Wrap_list.unique signatures in
+  let unique_sig = WrapList.unique signatures in
   List.length signatures = List.length unique_sig
 
 
@@ -572,7 +572,7 @@ and strip_side_effects_function_call fc =
   ; call_args = List.map strip_side_effects_exp fc.call_args
   }
 and strip_side_effects_msg_info m =
-  { message_value_info = Wrap_option.map strip_side_effects_exp m.message_value_info
+  { message_value_info = WrapOption.map strip_side_effects_exp m.message_value_info
   ; message_reentrance_info =
       List.map strip_side_effects_sentence m.message_reentrance_info
   }
@@ -636,7 +636,7 @@ and strip_side_effects_exp_inner i =
   | BalanceExp e ->
      BalanceExp (strip_side_effects_exp e)
 and strip_side_effects_return ret =
-  { return_exp = Wrap_option.map strip_side_effects_exp ret.return_exp
+  { return_exp = WrapOption.map strip_side_effects_exp ret.return_exp
   ; return_cont = strip_side_effects_exp ret.return_cont
   }
 and strip_side_effects_case_body (raw : (typ * 'a) case_body) : typ case_body =
@@ -661,7 +661,7 @@ let strip_side_effects (raw : (typ * 'a) Syntax.toplevel) : typ Syntax.toplevel 
 
 let has_distinct_contract_names (contracts : unit Syntax.contract Assoc.contract_id_assoc) : bool =
   let contract_names = (List.map (fun (_, b) -> b.Syntax.contract_name) contracts) in
-  List.length contracts = List.length (Wrap_list.unique contract_names)
+  List.length contracts = List.length (WrapList.unique contract_names)
 
 let assign_types (raw : unit Syntax.toplevel Assoc.contract_id_assoc) :
       Syntax.typ Syntax.toplevel Assoc.contract_id_assoc =

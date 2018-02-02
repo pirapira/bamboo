@@ -1,7 +1,7 @@
 %token CONTRACT
 %token <string> IDENT
-%token <Wrap_bn.t> DECLIT256
-%token <Wrap_bn.t> DECLIT8
+%token <WrapBn.t> DECLIT256
+%token <WrapBn.t> DECLIT8
 %token ADDRESS
 %token UINT256
 %token UINT8

@@ -66,8 +66,8 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
-  | DecLit256Exp of Wrap_bn.t
-  | DecLit8Exp of Wrap_bn.t
+  | DecLit256Exp of WrapBn.t
+  | DecLit8Exp of WrapBn.t
   | NowExp
   | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string
@@ -196,8 +196,8 @@ let string_of_exp_inner e =
   | SenderExp -> "sender"
   | TrueExp -> "true"
   | FalseExp -> "false"
-  | DecLit256Exp d -> "declit "^(Wrap_bn.string_of_big_int d)
-  | DecLit8Exp d -> "declit "^(Wrap_bn.string_of_big_int d)
+  | DecLit256Exp d -> "declit "^(WrapBn.string_of_big_int d)
+  | DecLit8Exp d -> "declit "^(WrapBn.string_of_big_int d)
   | NotExp _ -> "not"
   | NeqExp _ -> "neq"
   | LandExp _ -> "_ && _"
@@ -441,7 +441,7 @@ let lookup_usual_case_header (c : typ contract) (case_name : string) f : usual_c
   lookup_usual_case_header_inner [] c case_name f
 
 let size_of_typs (typs : typ list) =
-  Wrap_list.sum (List.map size_of_typ typs)
+  WrapList.sum (List.map size_of_typ typs)
 
 let acceptable_as t0 t1 =
   (t0 = t1) ||
