@@ -1,0 +1,92 @@
+{
+  "name": "bamboo",
+  "version": "0.0.02",
+  "bsc-flags": "-w -27 -g",
+  "warnings": {
+    "number": "-40+6+7-26-27+32..39-28-44+45",
+    "error": "+8"
+  },
+  "bs-dependencies": [
+    "bs-bn.js"
+  ],
+  "ocamlfind-dependencies": [
+    "batteries",
+    "cryptokit",
+    "hex",
+    "ppx_deriving",
+    "ppx_deriving_rpc",
+    "rpclib.json"
+  ],
+  "generators": [
+    {
+      "name": "ocamllex",
+      "command": "ocamllex $in"
+    },
+    {
+      "name": "menhir",
+      "command": "menhir $in"
+    }
+  ],
+  "sources": {
+    "dir": "src",
+    "subdirs": [
+      {"dir": "ast"},
+      {"dir": "basics"},
+      {"dir": "codegen"},
+      {"dir": "cross-platform"},
+      {"backend": "native", "dir": "exec"},
+      {"backend": "js", "dir": "exec-js"},
+      {"dir": "lib"},
+      {"dir": "parse"}
+    ],
+    "generators": [
+      {
+        "name": "ocamllex",
+        "edge": ["parse/lexer.ml", ":", "parse/lexer.mll"]
+      },
+      {
+        "name": "menhir",
+        "edge": ["parse/parser.ml", "parse/parser.mli", ":", "parse/parser.mly"]
+      }
+    ]
+  },
+  "entries": [
+    {
+      "backend": "native",
+      "main-module": "Bamboo"
+    },
+    {
+      "backend": "native",
+      "main-module": "Codegen_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Codegen_test2"
+    },
+    {
+      "backend": "native",
+      "main-module": "Lib_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Hex_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Parser_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "Ast_test"
+    },
+    {
+      "backend": "native",
+      "main-module": "EndToEnd"
+    },
+    {
+      "backend": "js",
+      "main-module": "BambooJs"
+    }
+  ],
+  "refmt": 3
+}

@@ -93,11 +93,11 @@ val string_of_pseudo_opcode : PseudoImm.pseudo_imm instruction -> string
 val string_of_pseudo_program : PseudoImm.pseudo_imm program -> string
 val print_pseudo_program : PseudoImm.pseudo_imm program -> unit
 
-val hex_of_instruction : Big_int.big_int instruction -> Hexa.hex
-val hex_of_program : Big_int.big_int program -> Hexa.hex
+val hex_of_instruction : WrapBn.t instruction -> Hexa.hex
+val hex_of_program : WrapBn.t program -> Hexa.hex
 
-val string_of_imm_program : Big_int.big_int program -> string
-val print_imm_program : Big_int.big_int program -> unit
+val string_of_imm_program : WrapBn.t program -> string
+val print_imm_program : WrapBn.t program -> unit
 
 val size_of_instruction : 'exp instruction -> int
 val size_of_program : 'exp program -> int
@@ -106,6 +106,6 @@ val size_of_program : 'exp program -> int
 Commented out till we need it.
 
 val string_of_real_instruction :
-  Big_int.big_int instruction -> string
-val string_of_real_program : Big_int.big_int program -> unit
+  WrapBn.t instruction -> string
+val string_of_real_program : WrapBn.t program -> unit
 *)

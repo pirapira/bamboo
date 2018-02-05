@@ -13,7 +13,7 @@ let rec change_first f lst =
   | h :: t ->
      begin match f h with
      | None ->
-       BatOption.map (fun rest -> h :: rest)
+       WrapOption.map (fun rest  -> h :: rest)
                   (change_first f t)
      | Some n -> Some (n :: t)
      end

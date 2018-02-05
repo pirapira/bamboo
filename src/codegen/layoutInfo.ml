@@ -110,41 +110,41 @@ let construct_post_layout_info (lst : (Assoc.contract_id * contract_layout_info)
 let runtime_code_offset (layout : layout_info) (cid : Assoc.contract_id) : int =
   layout.constructor_code_size cid
 
-let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm) : Big_int.big_int =
+let rec realize_pseudo_imm (layout : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm) : WrapBn.t =
   PseudoImm.(
   match p with
   | Big b -> b
-  | Int i -> Big_int.big_int_of_int i
+  | Int i -> WrapBn.big_int_of_int i
   | DestLabel l ->
-     Big_int.big_int_of_int (Label.lookup_value l)
+     WrapBn.big_int_of_int (Label.lookup_value l)
   | StorageProgramCounterIndex ->
-     Big_int.big_int_of_int (layout.l.storage_current_pc_index)
+     WrapBn.big_int_of_int (layout.l.storage_current_pc_index)
   | StorageConstructorArgumentsBegin cid ->
-     Big_int.big_int_of_int (layout.l.storage_constructor_arguments_begin cid)
+     WrapBn.big_int_of_int (layout.l.storage_constructor_arguments_begin cid)
   | StorageConstructorArgumentsSize cid ->
-     Big_int.big_int_of_int (layout.l.storage_constructor_arguments_size cid)
+     WrapBn.big_int_of_int (layout.l.storage_constructor_arguments_size cid)
   | InitDataSize cid ->
-     Big_int.big_int_of_int (layout.init_data_size cid)
+     WrapBn.big_int_of_int (layout.init_data_size cid)
   | RuntimeCodeOffset cid ->
-     Big_int.big_int_of_int (runtime_code_offset layout.l cid)
+     WrapBn.big_int_of_int (runtime_code_offset layout.l cid)
   | RuntimeCodeSize ->
-     Big_int.big_int_of_int (layout.runtime_code_size)
+     WrapBn.big_int_of_int (layout.runtime_code_size)
   | ConstructorCodeSize cid ->
-     Big_int.big_int_of_int (layout.l.constructor_code_size cid)
+     WrapBn.big_int_of_int (layout.l.constructor_code_size cid)
   | ConstructorInRuntimeCodeOffset cid ->
-     Big_int.big_int_of_int (Assoc.choose_contract cid layout.constructor_in_runtime_code_offset)
+     WrapBn.big_int_of_int (Assoc.choose_contract cid layout.constructor_in_runtime_code_offset)
   | ContractOffsetInRuntimeCode cid ->
-     Big_int.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
+     WrapBn.big_int_of_int (Assoc.choose_contract cid layout.contract_offset_in_runtime_code)
   | CaseOffsetInRuntimeCode (cid, case_header) ->
      let label = EntrypointDatabase.(lookup_entrypoint (Case (cid, case_header))) in
      let v = Label.lookup_value label in
-     Big_int.big_int_of_int v
+     WrapBn.big_int_of_int v
   | Minus (a, b) ->
-     Big_int.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
+     WrapBn.sub_big_int (realize_pseudo_imm layout initial_cid a) (realize_pseudo_imm layout initial_cid b)
   )
 
 let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contract_id) (i : PseudoImm.pseudo_imm Evm.instruction)
-    : Big_int.big_int Evm.instruction =
+    : WrapBn.t Evm.instruction =
   Evm.(
   match i with
   | PUSH1 imm -> PUSH1 (realize_pseudo_imm l initial_cid imm)
@@ -221,7 +221,7 @@ let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contr
   )
 
 let realize_pseudo_program (l : post_layout_info) (initial_cid : Assoc.contract_id) (p : PseudoImm.pseudo_imm Evm.program)
-    : Big_int.big_int Evm.program
+    : WrapBn.t Evm.program
   = List.map (realize_pseudo_instruction l initial_cid) p
 
 let layout_info_of_contract (c : Syntax.typ Syntax.contract) (constructor_code : PseudoImm.pseudo_imm Evm.program) =
@@ -258,4 +258,4 @@ let array_locations (cntr : Syntax.typ Syntax.contract) : Storage.storage_locati
   let total_num = List.length argument_types in
   if total_num = num_of_plains then []
   else
-  BatList.(range (2 + num_of_plains) `To (total_num + 1))
+  WrapList.range (2 + num_of_plains) (total_num + 1)

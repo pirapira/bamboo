@@ -32,11 +32,11 @@ let _ =
      let layout = LayoutInfo.construct_layout_info contracts_layout_info in
      let () = LayoutInfo.print_layout_info layout in
      let () = Printf.printf "=====bytecode (with the constructor for first contract)=====\n" in
-     let bytecode : Big_int.big_int Evm.program =
+     let bytecode : WrapBn.t Evm.program =
        compose_bytecode constructors runtime_compiled (fst (List.hd contracts)) in
      let () = Evm.print_imm_program bytecode in
      let () = Printf.printf "=====runtime bytecode=====\n" in
-     let runtime_bytecode : Big_int.big_int Evm.program =
+     let runtime_bytecode : WrapBn.t Evm.program =
        compose_runtime_bytecode constructors runtime_compiled in
      let () = Evm.print_imm_program runtime_bytecode in
      () in

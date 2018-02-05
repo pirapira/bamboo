@@ -310,7 +310,7 @@ let string_of_pseudo_program prg =
 let print_pseudo_program prg =
   Printf.printf "%s" (string_of_pseudo_program prg)
 
-let hex_of_instruction (i : Big_int.big_int instruction) : Hexa.hex =
+let hex_of_instruction (i : WrapBn.t instruction) : Hexa.hex =
   let h = Hexa.hex_of_string in
   match i with
   | PUSH1 i -> Hexa.concat_hex (h "60") (Hexa.hex_of_big_int i 1)
@@ -394,17 +394,17 @@ let log (n : int) =
   | 4 -> LOG4
   | _ -> failwith "too many indexed arguments for an event"
 
-let rev_append_op (h : Hexa.hex) (i : Big_int.big_int instruction) : Hexa.hex =
+let rev_append_op (h : Hexa.hex) (i : WrapBn.t instruction) : Hexa.hex =
   Hexa.concat_hex (hex_of_instruction i) h
 
-let hex_of_program (p : Big_int.big_int program) : Hexa.hex =
+let hex_of_program (p : WrapBn.t program) : Hexa.hex =
   List.fold_left rev_append_op Hexa.empty_hex p
 
-let print_imm_program (p : Big_int.big_int program) : unit =
+let print_imm_program (p : WrapBn.t program) : unit =
   let hex = hex_of_program p in
   Hexa.print_hex ~prefix:"0x" hex
 
-let string_of_imm_program (p : Big_int.big_int program) : string =
+let string_of_imm_program (p : WrapBn.t program) : string =
   let hex = hex_of_program p in
   Hexa.string_of_hex ~prefix:"0x" hex
 

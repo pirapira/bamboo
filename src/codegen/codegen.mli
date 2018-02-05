@@ -65,8 +65,8 @@ val move_info_around :
 
 val compose_bytecode : constructor_compiled Assoc.contract_id_assoc ->
                        runtime_compiled -> Assoc.contract_id ->
-                       Big_int.big_int Evm.program
+                       WrapBn.t Evm.program
 
 val compose_runtime_bytecode :
   constructor_compiled Assoc.contract_id_assoc ->
-  runtime_compiled -> Big_int.big_int Evm.program
+  runtime_compiled -> WrapBn.t Evm.program

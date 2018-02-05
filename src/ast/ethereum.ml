@@ -60,7 +60,7 @@ let get_interface_typ (raw : Syntax.arg) : (string * interface_typ) option =
   | _ -> Some (raw.Syntax.arg_ident, interpret_interface_type Syntax.(raw.arg_typ))
 
 let get_interface_typs : Syntax.arg list -> (string * interface_typ) list =
-  BatList.filter_map get_interface_typ
+  WrapList.filter_map get_interface_typ
 
 let rec argument_sizes_to_positions_inner ret used sizes =
   match sizes with
@@ -99,59 +99,19 @@ let get_array (raw : Syntax.arg) : (string * Syntax.typ * Syntax.typ) option =
   | _ -> None
 
 let arrays_in_contract c : (string * Syntax.typ * Syntax.typ) list =
-  BatList.filter_map get_array (c.Syntax.contract_arguments)
+  WrapList.filter_map get_array (c.Syntax.contract_arguments)
 
 let constructor_arguments (contract : Syntax.typ Syntax.contract)
     : (string * interface_typ) list
   = get_interface_typs (contract.Syntax.contract_arguments)
 
 let total_size_of_interface_args lst : int =
-  try BatList.sum (List.map interface_typ_size lst) with
+  try WrapList.sum (List.map interface_typ_size lst) with
         Invalid_argument _ -> 0
 
-module Hash = Cryptokit.Hash
+let string_keccak = WrapCryptokit.string_keccak
 
-let string_keccak str : string =
-  let sha3_256 = Hash.keccak 256 in
-  let () = sha3_256#add_string str in
-  let ret = sha3_256#result in
-  let tr = Cryptokit.Hexa.encode () in
-  let () = tr#put_string ret in
-  let () = tr#finish in
-  let ret = tr#get_string in
-  (* need to convert ret into hex *)
-  ret
-
-let strip_0x h =
-  if BatString.starts_with h "0x" then
-    BatString.tail h 2
-  else
-    h
-
-let add_hex sha3_256 h =
-  let h = strip_0x h in
-  let add_byte c =
-    sha3_256#add_char c in
-  let chars = BatString.explode h in
-  let rec work chars =
-    match chars with
-    | [] -> ()
-    | [x] -> failwith "odd-length hex"
-    | a :: b :: rest ->
-       let () = add_byte (Hex.to_char a b) in
-       work rest in
-  work chars
-
-let hex_keccak h : string =
-  let sha3_256 = Hash.keccak 256 in
-  let () = add_hex sha3_256 h in
-  let ret = sha3_256#result in
-  let tr = Cryptokit.Hexa.encode () in
-  let () = tr#put_string ret in
-  let () = tr#finish in
-  let ret = tr#get_string in
-  (* need to convert ret into hex *)
-  ret
+let hex_keccak = WrapCryptokit.hex_keccak
 
 let keccak_signature (str : string) : string =
   String.sub (string_keccak str) 0 8
@@ -194,9 +154,6 @@ let event_signature_hash (e : Syntax.event) : string =
 let compute_signature_hash (signature : string) : string =
   String.sub (string_keccak signature) 0 8
 
-let hex_to_big_int h =
-  BatBig_int.big_int_of_string ("0x"^h)
-
 let print_default_header =
   "{\"type\":\"fallback\",\"inputs\": [],\"outputs\": [],\"payable\": true}"
 
@@ -207,7 +164,7 @@ let print_input_abi (arg : Syntax.arg) : string =
 
 let print_inputs_abi (args : Syntax.arg list) : string =
   let strings = List.map print_input_abi args in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_output_abi (typ : Syntax.typ) : string =
   Printf.sprintf "{\"name\": \"\", \"type\": \"%s\"}"
@@ -215,7 +172,7 @@ let print_output_abi (typ : Syntax.typ) : string =
 
 let print_outputs_abi (typs : Syntax.typ list) : string =
   let strings = List.map print_output_abi typs in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_usual_case_abi u =
   Printf.sprintf
@@ -243,7 +200,7 @@ let print_contract_abi seen_constructor (c : Syntax.typ Syntax.contract) : strin
   let strings = if !seen_constructor then strings
                 else (print_constructor_abi c) :: strings in
   let () = (seen_constructor := true) in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_event_arg (a : Syntax.event_arg) : string =
   Printf.sprintf "{\"name\":\"%s\",\"type\":\"%s\",\"indexed\":%s}"
@@ -253,7 +210,7 @@ let print_event_arg (a : Syntax.event_arg) : string =
 
 let print_event_inputs (is : Syntax.event_arg list) : string =
   let strings : string list = List.map print_event_arg is in
-  BatString.concat "," strings
+  String.concat "," strings
 
 let print_event_abi (e : Syntax.event) : string =
   Printf.sprintf
@@ -271,6 +228,6 @@ let print_toplevel_abi seen_constructor (t : Syntax.typ Syntax.toplevel) : strin
 let print_abi (tops : Syntax.typ Syntax.toplevel Assoc.contract_id_assoc) : unit =
   let seen_constructor = ref false in
   let () = Printf.printf "[" in
-  let strings : string list = List.filter (fun s -> not (BatString.is_empty s)) (List.map (print_toplevel_abi seen_constructor) (Assoc.values tops)) in
-  let () = Printf.printf "%s" (BatString.concat "," strings) in
+  let strings : string list = List.filter (fun s -> (String.length s) != 0) (List.map (print_toplevel_abi seen_constructor) (Assoc.values tops)) in
+  let () = Printf.printf "%s" (String.concat "," strings) in
   Printf.printf "]"

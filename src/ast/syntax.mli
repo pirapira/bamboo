@@ -50,8 +50,8 @@ and 'exp_annot exp = 'exp_annot exp_inner * 'exp_annot
 and 'exp_annot exp_inner =
   | TrueExp
   | FalseExp
-  | DecLit256Exp of Big_int.big_int
-  | DecLit8Exp of Big_int.big_int
+  | DecLit256Exp of WrapBn.t
+  | DecLit8Exp of WrapBn.t
   | NowExp
   | FunctionCallExp of 'exp_annot function_call
   | IdentifierExp of string

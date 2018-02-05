@@ -1,7 +1,7 @@
 (* pseudo immediate value *)
 
 type pseudo_imm =
-  | Big of Big_int.big_int
+  | Big of WrapBn.t
   | Int of int
   | DestLabel of Label.label
   | StorageProgramCounterIndex
@@ -28,5 +28,5 @@ type pseudo_imm =
 
 val string_of_pseudo_imm : pseudo_imm -> string
 
-val is_constant_big : Big_int.big_int -> pseudo_imm -> bool
+val is_constant_big : WrapBn.t -> pseudo_imm -> bool
 val is_constant_int : int -> pseudo_imm -> bool

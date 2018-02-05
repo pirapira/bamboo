@@ -3,8 +3,8 @@ type hex = Rope.t
 let empty_hex = Rope.empty
 let concat_hex = Rope.concat2
 let length_of_hex h = Rope.length h / 2
-let hex_of_big_int (b : Big_int.big_int) (length : int) =
-  let raw = BatBig_int.to_string_in_hexa b in
+let hex_of_big_int (b : WrapBn.t) (length : int) =
+  let raw = WrapBn.to_string_in_hexa b in
   let char_limit = 2 * length in
   let () =
     if String.length raw > char_limit then failwith "hex_of_big_int: too big" in

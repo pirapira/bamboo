@@ -59,14 +59,14 @@ type contract_layout_info =
   }
 
 val realize_pseudo_instruction :
-  post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm Evm.instruction -> Big_int.big_int Evm.instruction
+  post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm Evm.instruction -> WrapBn.t Evm.instruction
 
 val realize_pseudo_program :
-  post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm Evm.program -> Big_int.big_int Evm.program
+  post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm Evm.program -> WrapBn.t Evm.program
 
 val layout_info_of_contract : Syntax.typ Syntax.contract -> PseudoImm.pseudo_imm Evm.program (* constructor *) -> contract_layout_info
 
-val realize_pseudo_imm : post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm -> Big_int.big_int
+val realize_pseudo_imm : post_layout_info -> Assoc.contract_id -> PseudoImm.pseudo_imm -> WrapBn.t
 
 type runtime_layout_info =
   { runtime_code_size : int
