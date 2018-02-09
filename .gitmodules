@@ -1,0 +1,3 @@
+[submodule "bamboo-tests"]
+	path = bamboo-tests
+	url = https://github.com/timgestson/bamboo-tests.git
