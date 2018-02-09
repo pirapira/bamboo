@@ -10,3 +10,6 @@ npm-debug.log
 /lib/bs/
 /lib/js/
 /node_modules/
+src/parse/lexer.ml
+src/parse/parser.ml
+
