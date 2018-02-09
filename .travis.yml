@@ -64,9 +64,15 @@ before_install:
 - sudo apt install texlive-latex-base texlive-science texlive-math-extra
 install:
 - npm install
+- cd bamboo-tests
+- npm install
+- cd -
 script:
 - make doc/spec.pdf
 - make
+- cd bamboo-tests
+- npm test
+- cd -
 - make test
 - which eth
 - eth --version
