@@ -151,7 +151,7 @@ The program searches the contract in the source code for a case that matches the
 
 The case contains a list of sentences.  If the list is empty, the Bamboo compiler is broken.  Otherwise, the evaluation point is set to the first sentence in the list of sentences.  To clarify the first-last direction, the first sentence is the closest to the case's header.
 
-If the world's call contains more values than ABI types, the program fails.  If the world's call contains fewer values then ABI types, the program also fails.  Otherwise, a variable environment is formed in a straightforward way (TODO: explain).
+If the world's call contains more values than ABI types, the program fails.  If the world's call contains fewer values than ABI types, the program also fails.  Otherwise, a variable environment is formed in a straightforward way (TODO: explain).
 
 The combination of the evaluation point, the variable environment, and the empty annotating function is kept as the current pending execution state.
 
