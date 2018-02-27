@@ -308,11 +308,14 @@ We pick something called $\bot$ (pronounced ``bottom'') which is not a value.  T
 A contract has \textit{states}.
 
 When a contract has a signature $(x, [T_1, T_2, \ldots, T_n])$ ($n \ge 0$),
-the set of the states of the contract is
-$\Pi_{i = 0}^{n} \sem{T_i}$.
+the set of the states of the contract~$C$ is
+$[[C]] \equiv \Pi_{i = 0}^{n} \sem{T_i}$.
 
 \subsection{A Program's Account States}
 A program determines a set of \textit{account states}.
+
+A program contains contract definitions $C_1, \ldots, C_n$ ($n \ge 0$),
+disjoint union of $[[C_i]]$ ($1 \le i \le n$).
 
 \section{Dynamics}
 
