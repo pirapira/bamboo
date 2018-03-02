@@ -6,6 +6,12 @@ This document covers
 * interaction with the deployed Ethereum contract
 
 ## Installing the Bamboo compiler
+Make sure OCaml 4.04 is installed
+```
+$ ocaml --version
+The OCaml toplevel, version 4.04.2
+```
+If a newer version is installed get the old one [here](http://ocaml.org/releases/4.04.html)
 
 The Bamboo compiler can be installed with the OCaml package manager `opam`.
 
