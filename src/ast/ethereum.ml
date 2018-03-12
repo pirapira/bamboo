@@ -113,6 +113,8 @@ let string_keccak = WrapCryptokit.string_keccak
 
 let hex_keccak = WrapCryptokit.hex_keccak
 
+(* Since `string_keccak` returns a hex representation of byte sequence,
+   as we want the first four bytes, we need to take the first eight characters. *)
 let keccak_signature (str : string) : string =
   String.sub (string_keccak str) 0 8
 
