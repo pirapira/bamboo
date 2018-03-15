@@ -37,16 +37,17 @@
       {"backend": "native", "dir": "exec"},
       {"backend": "js", "dir": "exec-js"},
       {"dir": "lib"},
-      {"dir": "parse"}
-    ],
-    "generators": [
-      {
-        "name": "ocamllex",
-        "edge": ["parse/Lexer.ml", ":", "parse/Lexer.mll"]
-      },
-      {
-        "name": "menhir",
-        "edge": ["parse/Parser.ml", "parse/Parser.mli", ":", "parse/Parser.mly"]
+      {"dir": "parse",
+       "generators": [
+           {
+             "name": "ocamllex",
+             "edge": ["Lexer.ml", ":", "Lexer.mll"]
+           },
+           {
+             "name": "menhir",
+             "edge": ["Parser.ml", "Parser.mli", ":", "Parser.mly"]
+           }
+           ]
       }
     ]
   },
