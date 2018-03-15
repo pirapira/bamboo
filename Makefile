@@ -1,9 +1,9 @@
-.PHONY: test bamboo clean
+.PHONY: test bamboo clean dep
 
 bamboo:
 	npm run build
 
-install:
+dep:
 	npm install
 	opam switch 4.02.3+buckle-master
 	eval `opam config env`
