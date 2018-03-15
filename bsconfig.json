@@ -41,11 +41,11 @@
        "generators": [
            {
              "name": "ocamllex",
-             "edge": ["Lexer.ml", ":", "Lexer.mll"]
+             "edge": ["lexer.ml", ":", "lexer.mll"]
            },
            {
              "name": "menhir",
-             "edge": ["Parser.ml", "Parser.mli", ":", "Parser.mly"]
+             "edge": ["parser.ml", "parser.mli", ":", "parser.mly"]
            }
            ]
       }
