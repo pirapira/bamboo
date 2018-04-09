@@ -70,6 +70,7 @@ install:
 script:
 - make doc/spec.pdf
 - make
+- ln -s ./bamboo.native lib/bs/native/bamboo
 - PATH=`pwd`/lib/bs/native:$PATH
 - cd bamboo-tests
 - npm test
