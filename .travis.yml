@@ -70,6 +70,7 @@ install:
 script:
 - make doc/spec.pdf
 - make
+- PATH=`pwd`/lib/bs/native:$PATH
 - cd bamboo-tests
 - npm test
 - cd -
@@ -80,6 +81,6 @@ script:
 - eth --test -d /tmp/test &> eth.log &
 - PID=$!
 - sleep 4
-- ./lib/bs/native/endtoend.native
+- endtoend.native
 - kill $PID
 - cat eth.log
