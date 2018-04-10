@@ -64,9 +64,17 @@ before_install:
 - sudo apt install texlive-latex-base texlive-science texlive-math-extra
 install:
 - npm install
+- cd bamboo-tests
+- npm install
+- cd -
 script:
 - make doc/spec.pdf
 - make
+- ln -s ./bamboo.native lib/bs/native/bamboo
+- PATH=`pwd`/lib/bs/native:$PATH
+- cd bamboo-tests
+- npm test
+- cd -
 - make test
 - which eth
 - eth --version
@@ -74,6 +82,6 @@ script:
 - eth --test -d /tmp/test &> eth.log &
 - PID=$!
 - sleep 4
-- ./lib/bs/native/endtoend.native
+- endtoend.native
 - kill $PID
 - cat eth.log
