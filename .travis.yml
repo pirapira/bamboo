@@ -41,7 +41,7 @@ before_install:
 - cd ./batteries-included && opam pin add -y batteries . && cd ..
 - opam install -y ocamlfind menhir rope zarith ppx_deriving rpc=1.9.52 cryptokit hex
 - cd ../..
-- if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/ethereum/cpp-ethereum --recursive; fi
+- if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/pirapira/cpp-ethereum --recursive; fi
 - sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
 - sudo apt purge -y cmake
 - mkdir -p cmake
