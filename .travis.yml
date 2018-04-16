@@ -42,7 +42,7 @@ before_install:
 - opam install -y ocamlfind menhir rope zarith ppx_deriving rpc=1.9.52 cryptokit hex
 - cd ../..
 - if [ ! -d cpp-ethereum/.git ]; then rm -rf cpp-ethereum; git clone https://github.com/pirapira/cpp-ethereum --recursive; fi
-- sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev
+- sudo apt install -y build-essential libgmp-dev libleveldb-dev libmicrohttpd-dev g++-4.8 gcc-4.8
 - sudo apt purge -y cmake
 - mkdir -p cmake
 - cd cmake
@@ -57,8 +57,8 @@ before_install:
 - git submodule update --recursive
 - mkdir -p build
 - cd build
-- cmake ..
-- make -j3 eth
+- CC=gcc-4.8 CXX=g++-4.8 cmake ..
+- CC=gcc-4.8 CXX=g++-4.8 make -j3 eth
 - sudo make install
 - cd $BAMBOO
 - sudo apt install texlive-latex-base texlive-science texlive-math-extra
