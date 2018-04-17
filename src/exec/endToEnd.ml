@@ -209,10 +209,10 @@ let rich_config (accounts : address list) : Rpc.t =
                         ; ("maximumExtraDataSize", String "0x1000000")
                         ; ("blockReward", String "0x")
                         ; ("allowFutureBlocks", String "1")
-			            ; ("homsteadForkBlock", String "0x00")
+			            ; ("homesteadForkBlock", String "0x00")
 			            ; ("EIP150ForkBlock", String "0x00")
 			            ; ("EIP158ForkBlock", String "0x00")
-                        ; ("metropolisForkBlock", String "0xffffffffffffffffffff")
+                        ; ("constantinopleForkBlock", String "0xffffffffffffffffffff")
            ])
 		 ; ("genesis", Dict
                          [ ("author", String "0000000000000010000000000000000000000000")
