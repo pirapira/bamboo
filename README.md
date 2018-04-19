@@ -61,3 +61,7 @@ $ ./lib/bs/native/bamboo.native < src/parse/examples/006auction_first_case.bbo
 ### Linden Scripting Language
 
 [Linden Scripting Language](http://wiki.secondlife.com/wiki/Getting_started_with_LSL#Introducing_States_and_Events) has similar organization of code according to `state`s.
+
+### Obsidian
+
+[Obsidian](https://ieeexplore.ieee.org/document/7965268/) is another programming language that models smart contracts as state machines.  Obsidian even tracks states of the contracts statically.
