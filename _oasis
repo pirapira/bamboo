@@ -1,0 +1,45 @@
+OASISFormat: 0.4
+Name:        bamboo
+Version:     0.0.02
+Synopsis:    A compiler targeting Ethereum Virtual Machine
+Authors:     Yoichi Hirai <i@yoichihirai.com>
+License:     Apache-2.0
+Plugins:     META (0.4)
+Homepage:    https://github.com/pirapira/bamboo
+Description: Bamboo compiles a simple language to Ethereum Virtual Machine. The language is designed to keep programmers away from common mistakes. It features: state transition as recursion with potentially changing arguments, mandatory reentrance continuation when calling out, no loops, no assignments except to mappings and partial compliance with common Ethereum ABI.
+SourceRepository opam-pin
+  Type: Git
+  Location: https://github.com/pirapira/bamboo.git
+  Branch: master
+Executable bamboo
+  Path:       src/exec
+  Install: true
+  BuildTools: ocamlbuild
+  MainIs:     bamboo.ml
+  CompiledObject: best
+  BuildDepends: parse, codegen
+Library ast
+  Path:       src/ast
+  Install:    false
+  BuildTools: ocamlbuild
+  Modules:    Contract, Syntax, TypeEnv, Type, PseudoImm, Evm, Location, Ethereum
+  BuildDepends: basics, cryptokit (>= 1.12), hex
+Library basics
+  Path:       src/basics
+  Install:    false
+  BuildTools: ocamlbuild
+  Modules:    Assoc, Hexa, Label, Misc, Storage
+  BuildDepends: batteries,rope
+Library codegen
+  Path:       src/codegen
+  Install:    false
+  BuildTools: ocamlbuild
+  Modules:    CodegenEnv, Codegen, EntrypointDatabase, CompileFile,
+    LayoutInfo, LocationEnv, Parse
+  BuildDepends: basics, ast, parse
+Library parse
+  Path:       src/parse
+  Install:    false
+  BuildTools: ocamlbuild
+  Modules:    Lexer
+  BuildDepends: ast, menhirLib
