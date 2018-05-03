@@ -1240,32 +1240,6 @@ let concat sep = function
  ***********************************************************************)
 
 (* Imported from pervasives.ml: *)
-#if BSB_BACKEND = "js" then
-#else
-external input_scan_line : in_channel -> int = "caml_ml_input_scan_line"
-
-let input_line ?(leaf_length=128) chan =
-  let b = Buffer.create leaf_length in
-  let rec scan () =
-    let n = input_scan_line chan in
-    if n = 0 then                   (* n = 0: we are at EOF *)
-      if Buffer.length b = 0 then raise End_of_file
-      else Buffer.contents b
-    else if n > 0 then (            (* n > 0: newline found in buffer *)
-      Buffer.add_channel b chan (n-1);
-      ignore (input_char chan);           (* skip the newline *)
-      Buffer.contents b
-    )
-    else (                          (* n < 0: newline not found *)
-      Buffer.add_channel b chan (-n);
-      scan ()
-    )
-  in scan()
-;;
-
-let read_line () = flush stdout; input_line stdin
-#end
-
 let rec output_string fh = function
   | Sub(s, i0, len) -> output fh (Bytes.unsafe_of_string s) i0 len
   | Concat(_, _, l,_, r) -> output_string fh l; output_string fh r

@@ -39,9 +39,5 @@
           | false  -> loop (Acc.accum dst h) t) in
     let dummy = Acc.dummy () in loop dummy l; dummy.tl;;
 #else
-  let range i j = BatList.(range i `To j)
-  let sum = BatList.sum
-  let filter_map = BatList.filter_map
-  let last = BatList.last
-  let unique = BatList.unique
+  include WrapListNative
 #end
