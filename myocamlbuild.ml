@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: ed367f6b6d3394fb533b5259e201518f) *)
+(* DO NOT EDIT (digest: 9311c1947cc1275785273cf40407014e) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -881,6 +881,7 @@ let package_default =
   {
      MyOCamlbuildBase.lib_ocaml =
        [
+          ("cross-platform", ["src/cross-platform-for-ocamlbuild"], []);
           ("basics", ["src/basics"], []);
           ("ast", ["src/ast"], []);
           ("parse", ["src/parse"], []);
@@ -893,6 +894,7 @@ let package_default =
           ("src/parse", ["src/ast"]);
           ("src/exec", ["src/codegen"; "src/parse"]);
           ("src/codegen", ["src/ast"; "src/basics"; "src/parse"]);
+          ("src/basics", ["src/cross-platform-for-ocamlbuild"]);
           ("src/ast", ["src/basics"])
        ]
   }
@@ -902,6 +904,6 @@ let conf = {MyOCamlbuildFindlib.no_automatic_syntax = false}
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default conf package_default;;
 
-# 906 "myocamlbuild.ml"
+# 908 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;

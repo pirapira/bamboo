@@ -8,6 +8,7 @@ homepage: "https://github.com/pirapira/bamboo"
 dev-repo: "https://github.com/pirapira/bamboo.git"
 bug-reports: "https://github.com/pirapira/bamboo/issues"
 build: [
+  ["rm" "-f" "src/parse/parser.ml" "src/parse/parser.mli" "src/parse/lexer.ml"]
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
   ["ocaml" "setup.ml" "-build"]
 ]

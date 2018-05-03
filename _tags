@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 2a2127f33ba3796438e6a561b562f590)
+# DO NOT EDIT (digest: c348eeadfb15aa1af2d805f976b82290)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -14,10 +14,19 @@ true: annot, bin_annot
 ".git": not_hygienic
 "_darcs": -traverse
 "_darcs": not_hygienic
+# Library cross-platform
+"src/cross-platform-for-ocamlbuild/cross-platform.cmxs": use_cross-platform
+<src/cross-platform-for-ocamlbuild/*.ml{,i,y}>: pkg_batteries
+<src/cross-platform-for-ocamlbuild/*.ml{,i,y}>: pkg_cryptokit
+<src/cross-platform-for-ocamlbuild/*.ml{,i,y}>: pkg_hex
+<src/cross-platform-for-ocamlbuild/*.ml{,i,y}>: pkg_rope
 # Library basics
 "src/basics/basics.cmxs": use_basics
 <src/basics/*.ml{,i,y}>: pkg_batteries
+<src/basics/*.ml{,i,y}>: pkg_cryptokit
+<src/basics/*.ml{,i,y}>: pkg_hex
 <src/basics/*.ml{,i,y}>: pkg_rope
+<src/basics/*.ml{,i,y}>: use_cross-platform
 # Library ast
 "src/ast/ast.cmxs": use_ast
 <src/ast/*.ml{,i,y}>: pkg_batteries
@@ -25,6 +34,7 @@ true: annot, bin_annot
 <src/ast/*.ml{,i,y}>: pkg_hex
 <src/ast/*.ml{,i,y}>: pkg_rope
 <src/ast/*.ml{,i,y}>: use_basics
+<src/ast/*.ml{,i,y}>: use_cross-platform
 # Library parse
 "src/parse/parse.cmxs": use_parse
 <src/parse/*.ml{,i,y}>: pkg_batteries
@@ -34,6 +44,7 @@ true: annot, bin_annot
 <src/parse/*.ml{,i,y}>: pkg_rope
 <src/parse/*.ml{,i,y}>: use_ast
 <src/parse/*.ml{,i,y}>: use_basics
+<src/parse/*.ml{,i,y}>: use_cross-platform
 # Library codegen
 "src/codegen/codegen.cmxs": use_codegen
 <src/codegen/*.ml{,i,y}>: pkg_batteries
@@ -43,6 +54,7 @@ true: annot, bin_annot
 <src/codegen/*.ml{,i,y}>: pkg_rope
 <src/codegen/*.ml{,i,y}>: use_ast
 <src/codegen/*.ml{,i,y}>: use_basics
+<src/codegen/*.ml{,i,y}>: use_cross-platform
 <src/codegen/*.ml{,i,y}>: use_parse
 # Executable bamboo
 <src/exec/bamboo.{native,byte}>: pkg_batteries
@@ -53,6 +65,7 @@ true: annot, bin_annot
 <src/exec/bamboo.{native,byte}>: use_ast
 <src/exec/bamboo.{native,byte}>: use_basics
 <src/exec/bamboo.{native,byte}>: use_codegen
+<src/exec/bamboo.{native,byte}>: use_cross-platform
 <src/exec/bamboo.{native,byte}>: use_parse
 <src/exec/*.ml{,i,y}>: pkg_batteries
 <src/exec/*.ml{,i,y}>: pkg_cryptokit
@@ -62,6 +75,11 @@ true: annot, bin_annot
 <src/exec/*.ml{,i,y}>: use_ast
 <src/exec/*.ml{,i,y}>: use_basics
 <src/exec/*.ml{,i,y}>: use_codegen
+<src/exec/*.ml{,i,y}>: use_cross-platform
 <src/exec/*.ml{,i,y}>: use_parse
 # OASIS_STOP
 true: use_menhir
+<bamboo-tests>: -traverse
+<lib/bs>: -traverse
+<node_modules>: -traverse
+<batteries-included>: -traverse

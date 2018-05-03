@@ -1,8 +1,8 @@
 # OASIS_START
-# DO NOT EDIT (digest: d72151c45549e73b4697cb225d63d8a9)
+# DO NOT EDIT (digest: 1e148fc7a95f09ac91c6e50835fab954)
 version = "0.0.02"
 description = "A compiler targeting Ethereum Virtual Machine"
-requires = "batteries rope"
+requires = "cross-platform"
 archive(byte) = "basics.cma"
 archive(byte, plugin) = "basics.cma"
 archive(native) = "basics.cmxa"

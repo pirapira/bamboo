@@ -29,12 +29,17 @@ Library basics
   Install:    false
   BuildTools: ocamlbuild
   Modules:    Assoc, Hexa, Label, Misc, Storage
-  BuildDepends: batteries,rope
+  BuildDepends: cross-platform
+Library cross-platform
+  Path:       src/cross-platform-for-ocamlbuild
+  BuildTools: ocamlbuild
+  Modules:    WrapBn, WrapCryptokit, WrapList, WrapString, WrapOption
+  BuildDepends: batteries,rope,cryptokit (>= 1.12),hex
 Library codegen
   Path:       src/codegen
   Install:    false
   BuildTools: ocamlbuild
-  Modules:    CodegenEnv, Codegen, EntrypointDatabase, CompileFile,
+  Modules:    CodegenEnv, Codegen, EntrypointDatabase,
     LayoutInfo, LocationEnv, Parse
   BuildDepends: basics, ast, parse
 Library parse
