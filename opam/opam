@@ -1,6 +1,8 @@
 opam-version: "1.2"
 maintainer: "Yoichi Hirai <i@yoichihirai.com>"
 authors: "Yoichi Hirai <i@yoichihirai.com>"
+name: "bamboo"
+version: "0.0.03"
 homepage: "https://github.com/pirapira/bamboo"
 bug-reports: "https://github.com/pirapira/bamboo/issues"
 license: "Apache-2.0"
