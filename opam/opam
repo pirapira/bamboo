@@ -28,7 +28,7 @@ depends: [
   "cryptokit" {build & >= "1.12"}
   "hex" {build & >= "0.1.0" & <= "1.0.0"}
   "menhir" {build & >= "20120123" & <= "20151005"}
-  "ocamlbuild" {build & >= "0.9.3"}
+  "ocamlbuild" {build & (>= "0.9.3" | = "0")}
   "ocamlfind" {build}
   "rope" {build}
 ]
