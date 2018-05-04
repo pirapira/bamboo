@@ -14,7 +14,7 @@ build: [
 ]
 install: ["ocaml" "setup.ml" "-install"]
 remove: [
-  ["ocaml" "%{etc}%/bamboo/setup.ml" "-C" "%{etc}%/bamboo" "-uninstall"]
+  ["ocamlfind" "remove" "bamboo"]
 ]
 build-test: [
   ["ocaml" "setup.ml" "-configure" "--enable-tests"]

@@ -87,3 +87,4 @@ script:
 - cat eth.log
 - opam pin add bamboo . -y
 - opam remove bamboo
+- opam install bamboo -y
