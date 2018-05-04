@@ -27,7 +27,7 @@ let parse_with_error lexbuf =
 
 let abi_option = BatOptParse.StdOpt.store_true ()
 
-let optparser : BatOptParse.OptParser.t = BatOptParse.OptParser.make ~version:"0.0.02" ~usage:"bamboo [options] < src.bbo" ~description:"By default, bamboo compiles the source from stdin and prints EVM bytecode in stdout.  Do not trust the output as the compiler still contains bugs probably." ()
+let optparser : BatOptParse.OptParser.t = BatOptParse.OptParser.make ~version:"0.0.03" ~usage:"bamboo [options] < src.bbo" ~description:"By default, bamboo compiles the source from stdin and prints EVM bytecode in stdout.  Do not trust the output as the compiler still contains bugs probably." ()
 
 let () =
   let () = BatOptParse.OptParser.add optparser ~long_names:["abi"] ~help:"print the ABI interface in JSON" abi_option in
