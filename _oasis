@@ -32,6 +32,7 @@ Library basics
   BuildDepends: cross-platform
 Library cross-platform
   Path:       src/cross-platform-for-ocamlbuild
+  Install:    false
   BuildTools: ocamlbuild
   Modules:    WrapBn, WrapCryptokit, WrapList, WrapString, WrapOption
   BuildDepends: batteries,rope,cryptokit (>= 1.12),hex
