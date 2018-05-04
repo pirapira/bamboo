@@ -1,0 +1,12 @@
+# OASIS_START
+# DO NOT EDIT (digest: c13f891232d5c3e0d504b5e1b0eb0164)
+version = "0.0.02"
+description = "A compiler targeting Ethereum Virtual Machine"
+requires = "batteries cryptokit hex"
+archive(byte) = "cross-platform.cma"
+archive(byte, plugin) = "cross-platform.cma"
+archive(native) = "cross-platform.cmxa"
+archive(native, plugin) = "cross-platform.cmxs"
+exists_if = "cross-platform.cma"
+# OASIS_STOP
+

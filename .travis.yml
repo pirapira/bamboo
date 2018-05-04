@@ -85,3 +85,5 @@ script:
 - endtoend.native
 - kill $PID
 - cat eth.log
+- opam pin add bamboo . -y
+- opam remove bamboo
