@@ -1,4 +1,4 @@
-Version 0.0.03
+Version 0.0.03 (2018-05-04)
 
 * fixes incorrect characters in the ABI https://github.com/pirapira/bamboo/issues/279
 * integration tests with Ganache-cli https://github.com/pirapira/bamboo/pull/263
