@@ -1,6 +1,6 @@
 opam-version: "1.2"
 name: "bamboo"
-version: "0.0.02"
+version: "0.0.03"
 maintainer: "Yoichi Hirai <i@yoichihirai.com>"
 authors: [ "Yoichi Hirai <i@yoichihirai.com>" ]
 license: "Apache-2.0"

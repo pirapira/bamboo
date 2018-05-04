@@ -1,3 +1,9 @@
+Version 0.0.03
+
+* fixes incorrect characters in the ABI https://github.com/pirapira/bamboo/issues/279
+* integration tests with Ganache-cli https://github.com/pirapira/bamboo/pull/263
+* bamboo.js using BuckleScript https://github.com/pirapira/bamboo/pull/260
+
 Version 0.0.02 (2017-10-13)
 
 * decimal literals #208 by @aupiff
