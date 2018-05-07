@@ -18,13 +18,11 @@ build: [
   ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
   ["ocaml" "setup.ml" "-build"]
 ]
-install: ["ocaml" "setup.ml" "-install"]
 build-test: [
   ["ocaml" "setup.ml" "-configure" "--enable-tests"]
   ["ocaml" "setup.ml" "-build"]
   ["ocaml" "setup.ml" "-test"]
 ]
-remove: ["ocamlfind" "remove" "bamboo"]
 depends: [
   "batteries" {build}
   "cryptokit" {build & >= "1.12"}
