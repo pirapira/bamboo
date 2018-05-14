@@ -1206,6 +1206,13 @@ let codegen_constructor_bytecode
   let le = LocationEnv.constructor_initial_env contract_id
                                                (Assoc.choose_contract contract_id contracts) in
   let ce = CodegenEnv.empty_env (cid_lookup_in_assoc contracts) contracts in
+  (* fail on block number over 5,600,000 *)
+  let ce = append_instruction ce (PUSH32 (Int 5600000)) in
+  let ce = append_instruction ce NUMBER in
+  let ce = append_instruction ce GT in
+  let ce = append_instruction ce (PUSH1 (Int 0)) in
+  let ce = append_instruction ce JUMPI in
+  (* back to normal operation *)
   let ce = initialize_memory_allocator ce in
   (* implement some kind of fold function over the argument list
    * each step generates new (le,ce) *)

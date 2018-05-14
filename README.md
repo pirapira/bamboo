@@ -37,6 +37,8 @@ prints ABI.
 [{"type": "constructor", "inputs":[{"name": "_beneficiary", "type": "address"},{"name": "_bidding_time", "type": "uint256"},{"name": "_highest_bid", "type": "uint256"}], "name": "auction", "outputs":[], "payable": true},{"type":"fallback","inputs": [],"outputs": [],"payable": true}]
 ```
 
+Currently on `master`, the compiler emits bytecode that fails to deploy on block numbers over 5,600,000.
+
 ## Developing Bamboo
 
 To try Bamboo in your local environment, run `make dep` from the project folder. That should install all dependencies.
