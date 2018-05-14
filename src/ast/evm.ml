@@ -4,6 +4,7 @@ type 'imm instruction =
   | PUSH32 of 'imm
   | NOT
   | TIMESTAMP
+  | NUMBER
   | EQ
   | ISZERO
   | LT
@@ -88,6 +89,7 @@ let stack_eaten = function
   | PUSH32 _ -> 0
   | NOT -> 1
   | TIMESTAMP -> 0
+  | NUMBER -> 0
   | EQ -> 2
   | ISZERO -> 1
   | LT -> 2
@@ -162,6 +164,7 @@ let stack_pushed = function
   | PUSH32 _ -> 1
   | NOT -> 1
   | TIMESTAMP -> 1
+  | NUMBER -> 1
   | EQ -> 1
   | ISZERO -> 1
   | LT -> 1
@@ -236,6 +239,7 @@ let string_of_pseudo_opcode op =
   | PUSH32 v -> "PUSH32 "^(PseudoImm.string_of_pseudo_imm v)
   | NOT -> "NOT"
   | TIMESTAMP -> "TIMESTAMP"
+  | NUMBER -> "NUMBER"
   | EQ -> "EQ"
   | ISZERO -> "ISZERO"
   | LT -> "LT"
@@ -318,6 +322,7 @@ let hex_of_instruction (i : WrapBn.t instruction) : Hexa.hex =
   | PUSH32 i -> Hexa.concat_hex (h "7f") (Hexa.hex_of_big_int i 32)
   | NOT -> h "19"
   | TIMESTAMP -> h "42"
+  | NUMBER -> h "43"
   | EQ -> h "14"
   | ISZERO -> h "15"
   | LT -> h "10"

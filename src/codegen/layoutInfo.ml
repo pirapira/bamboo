@@ -152,6 +152,7 @@ let realize_pseudo_instruction (l : post_layout_info) (initial_cid : Assoc.contr
   | PUSH32 imm -> PUSH32 (realize_pseudo_imm l initial_cid imm)
   | NOT -> NOT
   | TIMESTAMP -> TIMESTAMP
+  | NUMBER -> NUMBER
   | EQ -> EQ
   | ISZERO -> ISZERO
   | LT -> LT
