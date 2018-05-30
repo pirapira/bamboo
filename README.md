@@ -48,6 +48,27 @@ $ make
 $ ./lib/bs/native/bamboo.native < src/parse/examples/006auction_first_case.bbo
 ```
 
+**Embark**
+
+An [Embark plugin for Bamboo](https://github.com/embark-framework/embark-bamboo) is available. To use it, first install [Embark](https://embark.status.im/docs/) and add then add the plugin to your DApp.
+
+```Javascript
+npm install -g embark
+embark new AppName
+cd AppName
+npm install embark-bamboo --save
+```
+
+then add embark-bamboo to the plugins section in ```embark.json```:
+
+```Json
+  "plugins": {
+    "embark-bamboo": {}
+  }
+```
+
+Afterwards Embark will recognize .bbo files and compile them with Bamboo.
+
 ## How to Contribute
 
 * notice problems and point them out. [create issues](https://github.com/pirapira/bamboo/issues/new).
