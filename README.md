@@ -1,5 +1,9 @@
 # Bamboo: a language for morphing smart contracts
 
+Cornell Blockchain says they can now maintain the Bamboo compiler. https://github.com/CornellBlockchain/bamboo
+
+<hr>
+
 [![Join the chat at https://gitter.im/bbo-dev/Lobby](https://badges.gitter.im/bbo-dev/Lobby.svg)](https://gitter.im/bbo-dev/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/pirapira/bamboo.svg?branch=master)](https://travis-ci.org/pirapira/bamboo)
