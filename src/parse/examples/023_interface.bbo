@@ -1,0 +1,15 @@
+interface B // arguments are missing because it's impossible to deploy
+{
+    case(uint256 f(address)); // do we allow argument names?  probably not, because they don't change anything?
+
+    // default case is always assumed to exist? no.
+    default;
+}
+
+contract A()
+{
+    case(uint256 f(B b))
+    {
+		return b.f(b);
+	}
+}
